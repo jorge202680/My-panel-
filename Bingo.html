@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bingo vs Boss - Juego Completo</title>
+    <style>
+        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+        body { margin: 0; padding: 0; background: #1a1a2e; font-family: sans-serif; color: white; overflow: hidden; touch-action: manipulation; }
+        
+        .screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a1a2e; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; padding: 10px; }
+        .auth-box { width: 100%; max-width: 400px; padding: 20px; background: #16213e; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); border: 2px solid #0f3460; text-align: center; }
+        .hidden { display: none !important; }
+        h2 { color: #e94560; margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; margin: 8px 0; background: #0f3460; border: 1px solid #533483; color: white; border-radius: 8px; font-size: 15px; outline: none; }
+        button { width: 100%; padding: 12px; margin-top: 10px; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:active { background: #d63851; }
+        .link { margin-top: 12px; font-size: 13px; color: #a2dbfa; cursor: pointer; display: inline-block; }
+        
+        /* Pantalla de Juego */
+        #gameScreen { justify-content: flex-start; padding: 6px; overflow-y: auto; }
+        
+        /* Panel de Combate (Boss & Rival) */
+        .battle-panel { width: 100%; max-width: 450px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; padding: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .boss-info { text-align: left; flex: 1; }
+        .boss-name { font-size: 13px; color: #e94560; font-weight: bold; }
+        .boss-bar-bg { width: 100%; background: #0f3460; height: 8px; border-radius: 4px; margin-top: 4px; overflow: hidden; border: 1px solid #533483; }
+        #bossHpFill { height: 100%; width: 100%; background: #e94560; transition: width 0.3s ease; }
+        
+        .rival-box { text-align: right; font-size: 11px; color: #a2dbfa; padding-left: 8px; border-left: 1px solid #0f3460; display: flex; flex-direction: column; align-items: flex-end; }
+
+        /* Panel Superior (Bolilla actual y temporizador) */
+        .header-panel { width: 100%; max-width: 450px; display: flex; justify-content: space-between; align-items: center; background: #16213e; padding: 6px 10px; border-radius: 8px; border: 1px solid #0f3460; margin-bottom: 6px; }
+        .ball-display { width: 45px; height: 45px; background: #e94560; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; box-shadow: 0 4px 10px rgba(233,69,96,0.5); }
+        
+        /* Contenedor de Cartones (2 Tarjetas) */
+        .cards-wrapper { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+        .card-container { width: 100%; background: #16213e; border-radius: 8px; padding: 6px; border: 2px solid #0f3460; text-align: center; }
+        .bingo-table { width: 100%; border-collapse: collapse; margin-top: 3px; }
+        .bingo-table th { background: #0f3460; color: #e94560; padding: 4px; font-size: 12px; border: 1px solid #533483; }
+        .bingo-table td { width: 20%; height: 32px; background: #1a1a2e; border: 1px solid #533483; text-align: center; vertical-align: middle; font-size: 13px; font-weight: bold; color: #fff; cursor: pointer; }
+        .bingo-table td.marked { background: #4ecca3; color: #1a1a2e; text-decoration: line-through; }
+        .bingo-table td.free { background: #f39c12; color: #1a1a2e; font-size: 9px; }
+
+        /* Modal para ver el Cartón del Rival */
+        #rivalModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 100; display: flex; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { width: 100%; max-width: 400px; background: #16213e; border: 2px solid #e94560; border-radius: 12px; padding: 15px; text-align: center; }
+
+        .controls-panel { width: 100%; max-width: 450px; margin-top: 4px; display: flex; gap: 6px; }
+        .history-box { width: 100%; max-width: 450px; background: #16213e; border-radius: 8px; padding: 5px; margin-top: 5px; font-size: 11px; color: #a2dbfa; max-height: 45px; overflow-y: auto; border: 1px solid #0f3460; }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div id="loginScreen" class="screen">
+        <div class="auth-box">
+            <h2>Bingo vs Boss - Login</h2>
+            <input type="text" id="loginUser" placeholder="Usuario">
+            <input type="password" id="loginPass" placeholder="Contraseña">
+            <button onclick="goToMenu()">Ingresar</button>
+            <div class="link" onclick="switchScreen('registerScreen')">¿No tienes cuenta? Regístrate</div>
+        </div>
+    </div>
+
+    <!-- REGISTRO -->
+    <div id="registerScreen" class="screen hidden">
+        <div class="auth-box">
+            <h2>Crear Cuenta</h2>
+            <input type="text" id="regUser" placeholder="Nuevo Usuario">
+            <input type="password" id="regPass" placeholder="Contraseña">
+            <button onclick="goToMenu()">Registrarse</button>
+            <div class="link" onclick="switchScreen('loginScreen')">¿Ya tienes cuenta? Inicia sesión</div>
+        </div>
+    </div>
+
+    <!-- MENÚ PRINCIPAL -->
+    <div id="menuScreen" class="screen hidden">
+        <div class="auth-box" style="text-align: center;">
+            <h2>Batalla de Bingo</h2>
+            <p style="font-size: 13px; color: #a2dbfa; margin-bottom: 20px;">¡Juega con 2 cartones, auto-marcado cada 4s y derrota al Boss!</p>
+            <button onclick="startGame()" style="background: #4ecca3; color: #1a1a2e;">¡INICIAR COMBATE!</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA DE JUEGO -->
+    <div id="gameScreen" class="screen hidden">
+        <!-- Panel de Combate (Boss & Rival) -->
+        <div class="battle-panel">
+            <div class="boss-info">
+                <div class="boss-name">BOSS: Cronos (HP: <span id="bossHpText">100</span>%)</div>
+                <div class="boss-bar-bg">
+                    <div id="bossHpFill"></div>
+                </div>
+            </div>
+            <div class="rival-box">
+                <div>Rival: <b id="rivalName" style="color:#fff;">BotMaster</b></div>
+                <div id="rivalStatus" style="color: #f39c12; margin-bottom: 3px;">Progreso: 0%</div>
+                <button onclick="openRivalModal()" style="margin:0; padding: 2px 6px; font-size: 10px; background: #0f3460; border: 1px solid #e94560;">Ver Cartón Rival</button>
+            </div>
+        </div>
+
+        <!-- Panel de Estado / Bolilla Automática -->
+        <div class="header-panel">
+            <div>
+                <div style="font-size: 11px; color: #a2dbfa;" id="timerLabel">Siguiente en 4s:</div>
+                <div id="callStatus" style="font-size: 12px; font-weight: bold; color: #fff;">Marcado automático activo</div>
+            </div>
+            <div class="ball-display" id="currentBallBox">--</div>
+        </div>
+
+        <!-- Contenedor de los 2 Cartones de Bingo -->
+        <div class="cards-wrapper">
+            <!-- Cartón 1 -->
+            <div class="card-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <b style="color: #e94560; font-size: 12px;">Cartón 1</b>
+                    <button onclick="generateCard(0)" style="margin:0; padding: 2px 5px; font-size: 9px; background: #0f3460;">Cambiar</button>
+                </div>
+                <table class="bingo-table">
+                    <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+                    <tbody id="bingoCardBody0"></tbody>
+                </table>
+            </div>
+
+            <!-- Cartón 2 -->
+            <div class="card-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                    <b style="color: #4ecca3; font-size: 12px;">Cartón 2</b>
+                    <button onclick="generateCard(1)" style="margin:0; padding: 2px 5px; font-size: 9px; background: #0f3460;">Cambiar</button>
+                </div>
+                <table class="bingo-table">
+                    <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+                    <tbody id="bingoCardBody1"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Historial -->
+        <div class="history-box">
+            <b>Bolillas:</b> <span id="historyBalls">Ninguna</span>
+        </div>
+
+        <!-- Botones de Control -->
+        <div class="controls-panel">
+            <button onclick="checkBingo()" style="background: #e94560; margin:0; padding: 8px; font-size: 13px;">¡CANTAR BINGO!</button>
+        </div>
+        <button onclick="exitToMenu()" style="width: 100%; max-width: 450px; background: #0f3460; margin-top: 4px; padding: 5px; font-size: 11px;">Salir al Menú</button>
+    </div>
+
+    <!-- MODAL PARA VER EL CARTÓN DEL RIVAL -->
+    <div id="rivalModal" class="hidden">
+        <div class="modal-content">
+            <h3 style="color: #e94560; margin-top: 0; font-size: 16px;">Cartón del Rival (<span id="modalRivalName">Bot</span>)</h3>
+            <table class="bingo-table" style="margin-bottom: 10px;">
+                <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+                <tbody id="rivalCardBody"></tbody>
+            </table>
+            <button onclick="closeRivalModal()" style="background: #0f3460; padding: 8px; font-size: 13px;">Cerrar</button>
+        </div>
+    </div>
+
+<script>
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+        document.getElementById(screenId).classList.remove('hidden');
+    }
+
+    function goToMenu() {
+        switchScreen('menuScreen');
+    }
+
+    function exitToMenu() {
+        stopGameIntervals();
+        switchScreen('menuScreen');
+    }
+
+    let availableBalls = [];
+    let calledBalls = [];
+    let cardsData = [[], []]; // Dos cartones
+    let rivalCardData = []; // Cartón del rival
+    let gameActive = false;
+    let autoTimer = null;
+    let countdownInterval = null;
+    let secondsLeft = 4;
+    
+    let bossHp = 100;
+    let rivalProgress = 0;
+    const rivals = ["CyberBot", "BingoKing", "FastPlayer", "BotMaster"];
+    let currentRivalName = "BotMaster";
+
+    function startGame() {
+        switchScreen('gameScreen');
+        resetGameData();
+        generateCard(0);
+        generateCard(1);
+        generateRivalCard();
+        startAutoLoop();
+    }
+
+    function resetGameData() {
+        stopGameIntervals();
+        availableBalls = [];
+        for (let i = 1; i <= 75; i++) availableBalls.push(i);
+        calledBalls = [];
+        gameActive = true;
+        bossHp = 100;
+        rivalProgress = 0;
+        
+        currentRivalName = rivals[Math.floor(Math.random() * rivals.length)];
+        document.getElementById('rivalName').innerText = currentRivalName;
+        document.getElementById('modalRivalName').innerText = currentRivalName;
+        document.getElementById('rivalStatus').innerText = "Progreso: 0%";
+        
+        document.getElementById('bossHpFill').style.width = '100%';
+        document.getElementById('bossHpText').innerText = '100';
+        document.getElementById('currentBallBox').innerText = "--";
+        document.getElementById('callStatus').innerText = "¡Partida Iniciada!";
+        document.getElementById('historyBalls').innerText = "Ninguna";
+    }
+
+    function stopGameIntervals() {
+        if (autoTimer) clearInterval(autoTimer);
+        if (countdownInterval) clearInterval(countdownInterval);
+    }
+
+    function startAutoLoop() {
+        resetTimerAndCall();
+    }
+
+    function resetTimerAndCardCountdown() {
+        secondsLeft = 4;
+        updateTimerLabel();
+        
+        if (countdownInterval) clearInterval(countdownInterval);
+        countdownInterval = setInterval(() => {
+            secondsLeft--;
+            if (secondsLeft <= 0) secondsLeft = 4; // Bucle de cuenta regresiva de 4 segundos
+            updateTimerLabel();
+        }, 1000);
+
+        if (autoTimer) clearTimeout(autoTimer);
+        autoTimer = setTimeout(() => {
+            if (gameActive) {
+                callNextBall();
+                startAutoLoop();
+            }
+        }, 4000); // Intervalo fijo exacto de 4000 ms (4 segundos)
+    }
+
+    function resetTimerAndCall() {
+        resetTimerAndCardCountdown();
+    }
+
+    function updateTimerLabel() {
+        let label = document.getElementById('timerLabel');
+        if (label) label.innerText = `Siguiente en ${secondsLeft}s:`;
+    }
+
+    function generateCard(cardIndex) {
+        let cardData = [];
+        let ranges = [
+            {min: 1, max: 15},
+            {min: 16, max: 30},
+            {min: 31, max: 45},
+            {min: 46, max: 60},
+            {min: 61, max: 75}
+        ];
+
+        let colNumbers = [];
+        for (let col = 0; col < 5; col++) {
+            let pool = [];
+            for (let n = ranges[col].min; n <= ranges[col].max; n++) pool.push(n);
+            pool.sort(() => Math.random() - 0.5);
+            colNumbers[col] = pool.slice(0, 5);
+        }
+
+        for (let row = 0; row < 5; row++) {
+            let rowArr = [];
+            for (let col = 0; col < 5; col++) {
+                if (row === 2 && col === 2) {
+                    rowArr.push({val: 'FREE', marked: true, isFree: true});
+                } else {
+                    rowArr.push({val: colNumbers[col][row], marked: false, isFree: false});
+                }
+            }
+            cardData.push(rowArr);
+        }
+        cardsData[cardIndex] = cardData;
+        renderCard(cardIndex);
+    }
+
+    function generateRivalCard() {
+        rivalCardData = [];
+        let ranges = [{min:1, max:15}, {min:16, max:30}, {min:31, max:45}, {min:46, max:60}, {min:61, max:75}];
+        let colNumbers = [];
+        for (let col = 0; col < 5; col++) {
+            let pool = [];
+            for (let n = ranges[col].min; n <= ranges[col].max; n++) pool.push(n);
+            pool.sort(() => Math.random() - 0.5);
+            colNumbers[col] = pool.slice(0, 5);
+        }
+        for (let row = 0; row < 5; row++) {
+            let rowArr = [];
+            for (let col = 0; col < 5; col++) {
+                if (row === 2 && col === 2) rowArr.push({val: 'FREE', marked: true, isFree: true});
+                else rowArr.push({val: colNumbers[col][row], marked: false, isFree: false});
+            }
+            rivalCardData.push(rowArr);
+        }
+        renderRivalCard();
+    }
+
+    function renderCard(cardIndex) {
+        let tbody = document.getElementById('bingoCardBody' + cardIndex);
+        tbody.innerHTML = '';
+        let cardData = cardsData[cardIndex];
+        for (let r = 0; r < 5; r++) {
+            let tr = document.createElement('tr');
+            for (let c = 0; c < 5; c++) {
+                let td = document.createElement('td');
+                let cell = cardData[r][c];
+                td.innerText = cell.val;
+                if (cell.marked) td.classList.add('marked');
+                if (cell.isFree) td.classList.add('free');
+                
+                // Permitir marcar/desmarcar manualmente de manera opcional
+                td.onclick = () => {
+                    if (!cell.isFree) {
+                        cell.marked = !cell.marked;
+                        renderCard(cardIndex);
+                    }
+                };
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        }
+    }
+
+    function renderRivalCard() {
+        let tbody = document.getElementById('rivalCardBody');
+        tbody.innerHTML = '';
+        for (let r = 0; r < 5; r++) {
+            let tr = document.createElement('tr');
+            for (let c = 0; c < 5; c++) {
+                let td = document.createElement('td');
+                let cell = rivalCardData[r][c];
+                td.innerText = cell.val;
+                if (cell.marked) td.classList.add('marked');
+                if (cell.isFree) td.classList.add('free');
+                tr.appendChild(td);
+            }
+            tbody.appendChild(tr);
+        }
+    }
+
+    function openRivalModal() {
+        document.getElementById('rivalModal').classList.remove('hidden');
+    }
+
+    function closeRivalModal() {
+        document.getElementById('rivalModal').classList.add('hidden');
+    }
+
+    function callNextBall() {
+        if (!gameActive) return;
+        if (availableBalls.length === 0) return;
+        
+        let randomIndex = Math.floor(Math.random() * availableBalls.length);
+        let ball = availableBalls.splice(randomIndex, 1)[0];
+        calledBalls.push(ball);
+
+        let letter = '';
+        if (ball <= 15) letter = 'B';
+        else if (ball <= 30) letter = 'I';
+        else if (ball <= 45) letter = 'N';
+        else if (ball <= 60) letter = 'G';
+        else letter = 'O';
+
+        document.getElementById('currentBallBox').innerText = letter + "-" + ball;
+        document.getElementById('callStatus').innerText = `Salió: ${letter}-${ball} (Auto-marcado)`;
+        document.getElementById('historyBalls').innerText = calledBalls.join(', ');
+
+        // Auto-marcado automático en tus 2 Cartones
+        for (let i = 0; i < 2; i++) {
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    if (cardsData[i][r][c].val === ball) {
+                        cardsData[i][r][c].marked = true;
+                    }
+                }
+            }
+            renderCard(i);
+        }
+
+        // Auto-marcado automático en el cartón del rival
+        for (let r = 0; r < 5; r++) {
+            for (let c = 0; c < 5; c++) {
+                if (rivalCardData[r][c].val === ball) {
+                    rivalCardData[r][c].marked = true;
+                }
+            }
+        }
+        renderRivalCard();
+
+        // Incremento de progreso del rival (adaptado a 4 segundos)
+        rivalProgress += Math.floor(Math.random() * 5) + 3;
+        if (rivalProgress >= 100) {
+            rivalProgress = 100;
+            document.getElementById('rivalStatus').innerText = "¡El rival cantó BINGO!";
+            if (gameActive) {
+                gameActive = false;
+                stopGameIntervals();
+                alert("¡El rival y el Boss te han ganado la partida! Inténtalo de nuevo.");
+            }
+        } else {
+            document.getElementById('rivalStatus').innerText = `Progreso: ${rivalProgress}%`;
+        }
+    }
+
+    function checkBingo() {
+        if (!gameActive) return;
+        
+        let hasWon = false;
+        
+        // Revisar ambos cartones
+        for (let i = 0; i < 2; i++) {
+            let cardData = cardsData[i];
+            for (let r = 0; r < 5; r++) {
+                if (cardData[r].every(cell => cell.marked)) hasWon = true;
+            }
+            for (let c = 0; c < 5; c++) {
+                if (cardData.every(row => row[c].marked)) hasWon = true;
+            }
+            if (cardData[0][0].marked && cardData[1][1].marked && cardData[2][2].marked && cardData[3][3].marked && cardData[4][4].marked) hasWon = true;
+            if (cardData[0][4].marked && cardData[1][3].marked && cardData[2][2].marked && cardData[3][1].marked && cardData[4][0].marked) hasWon = true;
+        }
+
+        if (hasWon) {
+            bossHp -= 50;
+            if (bossHp <= 0) {
+                bossHp = 0;
+                gameActive = false;
+                stopGameIntervals();
+                document.getElementById('bossHpFill').style.width = '0%';
+                document.getElementById('bossHpText').innerText = '0';
+                alert("¡EXCELENTE! ¡Cantaste BINGO, le diste el golpe final al Boss Cronos y venciste a tu rival!");
+                exitToMenu();
+            } else {
+                document.getElementById('bossHpFill').style.width = bossHp + '%';
+                document.getElementById('bossHpText').innerText = bossHp;
+                alert("¡BINGO Válido en uno de tus cartones! ¡Le has restado vida al Boss!");
+                generateCard(0);
+                generateCard(1);
+            }
+        } else {
+            alert("¡Aún no se completa ninguna línea o diagonal en tus cartones!");
+        }
+    }
+</script>
+</body>
+</html>
