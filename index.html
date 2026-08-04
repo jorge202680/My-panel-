@@ -123,6 +123,7 @@
         .leaderboard-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #21262d; font-size:13px; }
         .leaderboard-row:last-child { border-bottom:none; }
         .leaderboard-rank { color:#d29922; font-weight:bold; width:26px; }
+        .rank-medal { font-size:15px; margin-right:2px; }
 
         /* ---- Confeti de victoria ---- */
         #confetti-layer { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index: 4000; overflow:hidden; }
@@ -340,7 +341,10 @@
         </div>
 
         <div class="card-widget">
-            <strong>👑 Top Jugadores</strong>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <strong>👑 Top Jugadores</strong>
+                <span style="color:#58a6ff; font-size:12px; cursor:pointer;" onclick="goToScreen('rankings-screen')">Ver Rankings ➜</span>
+            </div>
             <div id="leaderboard-list" style="margin-top:6px; font-size:12px; color:#8b949e;">Cargando...</div>
         </div>
 
@@ -480,6 +484,41 @@
         </div>
     </div>
 
+    <!-- PANTALLA RANKINGS -->
+    <div id="rankings-screen" class="screen" style="padding-bottom:80px;">
+        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="goToScreen('main-screen')">⬅ Volver al Menú</span>
+        <h2 style="color:#d29922; margin:10px 0 12px;">🏆 Rankings</h2>
+
+        <div class="admin-tabs" style="padding:0 0 10px;">
+            <div class="admin-tab ranking-type-tab active" data-type="bingos" onclick="renderRankingsScreen('bingos', null, null)">🎯 Bingos</div>
+            <div class="admin-tab ranking-type-tab" data-type="gold" onclick="renderRankingsScreen('gold', null, null)">🪙 Oro</div>
+        </div>
+        <div class="admin-tabs" style="padding:0 0 10px;">
+            <div class="admin-tab ranking-period-tab active" data-period="weekly" onclick="renderRankingsScreen(null, 'weekly', null)">Semanal</div>
+            <div class="admin-tab ranking-period-tab" data-period="monthly" onclick="renderRankingsScreen(null, 'monthly', null)">Mensual</div>
+            <div class="admin-tab" id="ranking-friends-toggle" onclick="toggleRankingFriends()">👥 Solo amigos</div>
+        </div>
+
+        <div class="card-widget">
+            <div id="ranking-list" style="font-size:13px;">Cargando...</div>
+        </div>
+
+        <div class="card-widget">
+            <strong>🏛️ Salón de la Fama (periodo anterior)</strong>
+            <div id="hall-of-fame-list" style="margin-top:8px; font-size:13px;">Cargando...</div>
+        </div>
+
+        <div class="card-widget">
+            <strong>👥 Mis Amigos</strong>
+            <p style="font-size:12px; color:#8b949e; margin:6px 0;">Agrega amigos por nombre de usuario para filtrar el ranking solo entre ustedes.</p>
+            <div style="display:flex; gap:6px; margin-bottom:8px;">
+                <input type="text" id="ranking-friend-input" placeholder="Nombre de usuario" style="flex:1; padding:8px; border-radius:8px; border:1px solid #30363d; background:#0d1117; color:#fff;">
+                <button class="mission-claim-btn" style="margin-top:0;" onclick="addRankingFriend()">Agregar</button>
+            </div>
+            <div id="ranking-friends-list"></div>
+        </div>
+    </div>
+
     <!-- PANTALLA MISIONES -->
     <div id="missions-screen" class="screen">
         <h2 style="color: #d29922; margin-bottom: 15px;">📜 Misiones Diarias</h2>
@@ -569,6 +608,10 @@
                 <div class="admin-field"><label>Regalo diario VIP — Gemas</label><input type="number" id="cfg-vipPassDailyGiftGems" min="0"></div>
                 <div class="admin-field"><label>Rasca y Gana VIP — Oro mínimo</label><input type="number" id="cfg-vipPassScratchMinGold" min="0"></div>
                 <div class="admin-field"><label>Rasca y Gana VIP — Oro máximo</label><input type="number" id="cfg-vipPassScratchMaxGold" min="0"></div>
+
+                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🏆 Premios de Ranking (oro para 1°, 2° y 3° lugar)</div>
+                <div class="admin-field"><label>Premios Semanales (separados por coma)</label><input type="text" id="cfg-weeklyPrizesGold" placeholder="1500,800,400"></div>
+                <div class="admin-field"><label>Premios Mensuales (separados por coma)</label><input type="text" id="cfg-monthlyPrizesGold" placeholder="6000,3000,1500"></div>
 
                 <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🖼️ Imágenes de Salas</div>
                 <div id="admin-room-images"></div>
@@ -716,6 +759,8 @@ function defaultConfig() {
         vipPassScratchMaxGold: 900,
         vipAvatarImages: {},
         vipIconImages: {},
+        weeklyPrizesGold: [1500, 800, 400],
+        monthlyPrizesGold: [6000, 3000, 1500],
         multipliers: [ {mult:3, cost:1}, {mult:5, cost:2}, {mult:10, cost:4} ],
         roulettePrizes: [
             {label:'+200 🪙', gold:200, gems:0},
@@ -874,6 +919,15 @@ function defaultState(username) {
         freeExtraBalls: 0,
         favoriteCard: null,
         useFavoriteCard: false,
+        weeklyBingos: 0,
+        weeklyGold: 0,
+        monthlyBingos: 0,
+        monthlyGold: 0,
+        weeklyTrophyBingos: null,
+        weeklyTrophyGold: null,
+        monthlyTrophyBingos: null,
+        monthlyTrophyGold: null,
+        friends: [],
     };
 }
 
@@ -915,7 +969,181 @@ function ensurePlayerDefaults(p) {
     if (p.freeExtraBalls === undefined) p.freeExtraBalls = 0;
     if (p.favoriteCard === undefined) p.favoriteCard = null;
     if (p.useFavoriteCard === undefined) p.useFavoriteCard = false;
+    if (p.weeklyBingos === undefined) p.weeklyBingos = 0;
+    if (p.weeklyGold === undefined) p.weeklyGold = 0;
+    if (p.monthlyBingos === undefined) p.monthlyBingos = 0;
+    if (p.monthlyGold === undefined) p.monthlyGold = 0;
+    if (p.weeklyTrophyBingos === undefined) p.weeklyTrophyBingos = null;
+    if (p.weeklyTrophyGold === undefined) p.weeklyTrophyGold = null;
+    if (p.monthlyTrophyBingos === undefined) p.monthlyTrophyBingos = null;
+    if (p.monthlyTrophyGold === undefined) p.monthlyTrophyGold = null;
+    if (p.friends === undefined) p.friends = [];
     return p;
+}
+
+/* ---------- RANKINGS SEMANAL / MENSUAL ---------- */
+function getWeekKey(d) {
+    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = (date.getUTCDay() + 6) % 7; // lunes=0
+    date.setUTCDate(date.getUTCDate() - dayNum + 3);
+    const firstThursday = new Date(Date.UTC(date.getUTCFullYear(), 0, 4));
+    const week = 1 + Math.round(((date - firstThursday) / 86400000 - 3 + ((firstThursday.getUTCDay() + 6) % 7)) / 7);
+    return `${date.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
+}
+function getMonthKey(d) { return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; }
+
+const RANKING_TYPES = [
+    { id: 'bingos', field: 'weeklyBingos', monthField: 'monthlyBingos', label: 'Bingos cantados', icon: '🎯' },
+    { id: 'gold',   field: 'weeklyGold',   monthField: 'monthlyGold',   label: 'Oro acumulado',   icon: '🪙' },
+];
+const TROPHY_ICONS = { gold: '🥇', silver: '🥈', bronze: '🥉' };
+
+async function checkPeriodResets() {
+    try {
+        const now = new Date();
+        const weekKey = getWeekKey(now);
+        const monthKey = getMonthKey(now);
+        let meta = await fsGet('config', 'ranking');
+        if (!meta) meta = { lastWeekKey: weekKey, lastMonthKey: monthKey };
+        let changed = false;
+        if (meta.lastWeekKey && meta.lastWeekKey !== weekKey) { await closeRankingPeriod('weekly', meta.lastWeekKey); changed = true; }
+        if (meta.lastMonthKey && meta.lastMonthKey !== monthKey) { await closeRankingPeriod('monthly', meta.lastMonthKey); changed = true; }
+        meta.lastWeekKey = weekKey; meta.lastMonthKey = monthKey;
+        if (changed || !meta.createdOnce) { meta.createdOnce = true; await fsSet('config', 'ranking', meta); }
+    } catch (e) { console.error('Error revisando reseteo de ranking:', e); }
+}
+
+async function closeRankingPeriod(period, oldKey) {
+    const players = await fsGetAll('players');
+    if (!players.length) return;
+    const prizesField = period === 'weekly' ? 'weeklyPrizesGold' : 'monthlyPrizesGold';
+    const prizes = CONFIG[prizesField] || [0, 0, 0];
+    const trophyKeyPrefix = period === 'weekly' ? 'weeklyTrophy' : 'monthlyTrophy';
+    const countField = period === 'weekly' ? 'weeklyBingos' : 'monthlyBingos';
+    const goldField = period === 'weekly' ? 'weeklyGold' : 'monthlyGold';
+
+    for (const rt of RANKING_TYPES) {
+        const field = period === 'weekly' ? rt.field : rt.monthField;
+        const sorted = players.filter(p => (p[field] || 0) > 0).sort((a, b) => (b[field] || 0) - (a[field] || 0)).slice(0, 3);
+        if (sorted.length) {
+            await fsSet('hallOfFame', `${period}_${rt.id}_${oldKey}`, {
+                period, type: rt.id, periodKey: oldKey,
+                top: sorted.map(p => ({ username: p.username, value: p[field] || 0 })),
+                closedAt: Date.now(),
+            });
+        }
+        const ranks = ['gold', 'silver', 'bronze'];
+        for (let i = 0; i < sorted.length; i++) {
+            const pl = await fsGet('players', sorted[i].username.toLowerCase());
+            if (!pl) continue;
+            const bonus = prizes[i] || 0;
+            pl.gold = (pl.gold || 0) + bonus;
+            pl[`${trophyKeyPrefix}${rt.id === 'bingos' ? 'Bingos' : 'Gold'}`] = ranks[i];
+            await fsSet('players', sorted[i].username.toLowerCase(), pl);
+        }
+    }
+    // Reinicia contadores del periodo para todos los jugadores
+    for (const p of players) {
+        const fresh = await fsGet('players', p.username.toLowerCase());
+        if (!fresh) continue;
+        if (period === 'weekly') fresh.weeklyBingos = 0, fresh.weeklyGold = 0;
+        else fresh.monthlyBingos = 0, fresh.monthlyGold = 0;
+        await fsSet('players', p.username.toLowerCase(), fresh);
+    }
+}
+
+async function renderRankingsScreen(type, period, friendsOnly) {
+    currentRankingType = type || currentRankingType || 'bingos';
+    currentRankingPeriod = period || currentRankingPeriod || 'weekly';
+    currentRankingFriendsOnly = friendsOnly !== undefined ? friendsOnly : (currentRankingFriendsOnly || false);
+
+    document.querySelectorAll('.ranking-type-tab').forEach(t => t.classList.toggle('active', t.dataset.type === currentRankingType));
+    document.querySelectorAll('.ranking-period-tab').forEach(t => t.classList.toggle('active', t.dataset.period === currentRankingPeriod));
+    document.getElementById('ranking-friends-toggle').classList.toggle('active', currentRankingFriendsOnly);
+
+    const wrap = document.getElementById('ranking-list');
+    wrap.innerHTML = 'Cargando...';
+    try {
+        let players = await fsGetAll('players');
+        if (currentRankingFriendsOnly) {
+            const friends = (state.friends || []).map(f => f.toLowerCase());
+            players = players.filter(p => friends.includes(p.username.toLowerCase()) || p.username.toLowerCase() === state.username.toLowerCase());
+        }
+        const rt = RANKING_TYPES.find(r => r.id === currentRankingType);
+        const field = currentRankingPeriod === 'weekly' ? rt.field : rt.monthField;
+        players.sort((a, b) => (b[field] || 0) - (a[field] || 0));
+        const top = players.slice(0, 20);
+        if (!top.length || !(top[0][field] > 0)) { wrap.innerHTML = '<div style="color:#8b949e;font-size:12px;">Aún no hay datos para este ranking.</div>'; }
+        else {
+            wrap.innerHTML = top.map((p, i) => {
+                const nm = escapeHtml(p.username);
+                const isMe = p.username.toLowerCase() === state.username.toLowerCase();
+                const crown = i === 0 ? '👑 ' : '';
+                const badge = i < 3 ? `<span class="rank-medal">${['🥇','🥈','🥉'][i]}</span>` : `<span class="leaderboard-rank">#${i+1}</span>`;
+                return `<div class="leaderboard-row" style="${isMe ? 'color:#d29922;font-weight:bold;' : ''}"><span>${badge} ${crown}${p.equippedAvatar ? avatarHtml(p.equippedAvatar) + ' ' : ''}${nm}</span><span>${rt.icon} ${(p[field]||0).toLocaleString()}</span></div>`;
+            }).join('');
+        }
+    } catch (e) { wrap.innerHTML = 'No se pudo cargar el ranking.'; }
+    renderHallOfFame();
+}
+let currentRankingType = 'bingos', currentRankingPeriod = 'weekly', currentRankingFriendsOnly = false;
+
+async function renderHallOfFame() {
+    const wrap = document.getElementById('hall-of-fame-list');
+    if (!wrap) return;
+    wrap.innerHTML = 'Cargando...';
+    try {
+        const rt = RANKING_TYPES.find(r => r.id === currentRankingType);
+        const now = new Date();
+        let prevKey;
+        if (currentRankingPeriod === 'weekly') {
+            const prevDate = new Date(now); prevDate.setDate(prevDate.getDate() - 7);
+            prevKey = getWeekKey(prevDate);
+        } else {
+            const prevDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+            prevKey = getMonthKey(prevDate);
+        }
+        const doc = await fsGet('hallOfFame', `${currentRankingPeriod}_${rt.id}_${prevKey}`);
+        if (!doc || !doc.top || !doc.top.length) { wrap.innerHTML = '<div style="color:#8b949e;font-size:12px;">Todavía no hay historial del periodo anterior.</div>'; return; }
+        wrap.innerHTML = doc.top.map((p, i) => `<div class="leaderboard-row"><span>${['🥇','🥈','🥉'][i]} ${escapeHtml(p.username)}</span><span>${rt.icon} ${p.value.toLocaleString()}</span></div>`).join('');
+    } catch (e) { wrap.innerHTML = 'No se pudo cargar el historial.'; }
+}
+
+function toggleRankingFriends() { renderRankingsScreen(currentRankingType, currentRankingPeriod, !currentRankingFriendsOnly); }
+
+async function addRankingFriend() {
+    const input = document.getElementById('ranking-friend-input');
+    const uname = (input.value || '').trim();
+    if (!uname) return;
+    if (uname.toLowerCase() === state.username.toLowerCase()) { showToast('No puedes agregarte a ti mismo.'); return; }
+    const exists = await fsGet('players', uname.toLowerCase());
+    if (!exists) { showToast('❌ Ese usuario no existe.'); return; }
+    if (!state.friends) state.friends = [];
+    if (state.friends.some(f => f.toLowerCase() === uname.toLowerCase())) { showToast('Ya está en tu lista de amigos.'); return; }
+    state.friends.push(exists.username);
+    saveState();
+    input.value = '';
+    showToast(`✅ ${exists.username} agregado a tus amigos.`);
+    renderFriendsList();
+}
+function removeRankingFriend(uname) {
+    state.friends = (state.friends || []).filter(f => f.toLowerCase() !== uname.toLowerCase());
+    saveState();
+    renderFriendsList();
+}
+function renderFriendsList() {
+    const wrap = document.getElementById('ranking-friends-list');
+    if (!wrap) return;
+    if (!state.friends || !state.friends.length) { wrap.innerHTML = '<div style="color:#8b949e;font-size:12px;">Aún no agregaste amigos.</div>'; return; }
+    wrap.innerHTML = state.friends.map(f => `<div class="leaderboard-row"><span>${escapeHtml(f)}</span><button class="btn-delete" style="font-size:10px;padding:3px 6px;" onclick="removeRankingFriend('${escapeHtml(f)}')">Quitar</button></div>`).join('');
+}
+function trophyBadgesHtml(p) {
+    let out = '';
+    if (p.weeklyTrophyBingos) out += `<span title="Top semanal por Bingos">${TROPHY_ICONS[p.weeklyTrophyBingos]}</span>`;
+    if (p.weeklyTrophyGold) out += `<span title="Top semanal por Oro">${TROPHY_ICONS[p.weeklyTrophyGold]}</span>`;
+    if (p.monthlyTrophyBingos) out += `<span title="Top mensual por Bingos">🏵️</span>`;
+    if (p.monthlyTrophyGold) out += `<span title="Top mensual por Oro">🏵️</span>`;
+    return out;
 }
 
 const ACHIEVEMENTS = [
@@ -1023,6 +1251,7 @@ async function login() {
 
     state = result.player;
     checkVipMissionRecovery();
+    checkPeriodResets();
     const streakBonus = applyLoginStreak(state);
     currentUser = username; isAdmin = false;
     localStorage.setItem(SESSION_KEY, username);
@@ -1064,6 +1293,7 @@ async function tryAutoLogin() {
     document.getElementById('login-screen').classList.remove('active');
     currentUser = savedUser; isAdmin = false; state = p;
     checkVipMissionRecovery();
+    checkPeriodResets();
     const streakBonus = applyLoginStreak(state);
     document.getElementById('bottom-nav').style.display = 'flex';
     refreshAllUI();
@@ -1117,6 +1347,7 @@ function goToScreen(screenId, isReplace) {
     if (screenId === 'campaign-screen') refreshRouletteUI();
     if (screenId === 'main-screen') { renderAchievements(); refreshLeaderboard(); }
     if (screenId === 'vippass-screen') renderVipPassScreen();
+    if (screenId === 'rankings-screen') { renderRankingsScreen(); renderFriendsList(); }
 
     if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
 }
@@ -1583,6 +1814,10 @@ function endRound(won) {
 
         state.gold += reward;
         state.totalWins += 1;
+        state.weeklyBingos = (state.weeklyBingos || 0) + 1;
+        state.monthlyBingos = (state.monthlyBingos || 0) + 1;
+        state.weeklyGold = (state.weeklyGold || 0) + reward;
+        state.monthlyGold = (state.monthlyGold || 0) + reward;
         state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
         gainVipXP(CONFIG.vipPassXPPerWin);
         const newAchievements = checkAchievements(state);
@@ -2040,7 +2275,7 @@ async function refreshLeaderboard() {
         wrap.innerHTML = top.map((p, i) => {
             const crown = p.vipPassActive ? '<span class="vip-crown-badge">👑</span> ' : '';
             const nm = p.vipPassActive ? `<span class="vip-gold-name">${escapeHtml(p.username)}</span>` : escapeHtml(p.username);
-            return `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${crown}${p.equippedAvatar ? avatarHtml(p.equippedAvatar) + ' ' : ''}${nm}</span><span>🏆 ${p.totalWins || 0}</span></div>`;
+            return `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${crown}${p.equippedAvatar ? avatarHtml(p.equippedAvatar) + ' ' : ''}${nm} ${trophyBadgesHtml(p)}</span><span>🏆 ${p.totalWins || 0}</span></div>`;
         }).join('');
     } catch(e) { wrap.innerHTML = 'No se pudo cargar el ranking.'; }
 }
@@ -2088,6 +2323,8 @@ function fillAdminGeneralForm() {
     document.getElementById('cfg-vipPassDailyGiftGems').value = CONFIG.vipPassDailyGiftGems;
     document.getElementById('cfg-vipPassScratchMinGold').value = CONFIG.vipPassScratchMinGold;
     document.getElementById('cfg-vipPassScratchMaxGold').value = CONFIG.vipPassScratchMaxGold;
+    document.getElementById('cfg-weeklyPrizesGold').value = (CONFIG.weeklyPrizesGold || []).join(',');
+    document.getElementById('cfg-monthlyPrizesGold').value = (CONFIG.monthlyPrizesGold || []).join(',');
     renderAdminRoomImages();
     renderAdminVipImages();
 }
@@ -2195,6 +2432,8 @@ async function saveAdminGeneral() {
     CONFIG.vipPassDailyGiftGems = parseInt(document.getElementById('cfg-vipPassDailyGiftGems').value) || 0;
     CONFIG.vipPassScratchMinGold = parseInt(document.getElementById('cfg-vipPassScratchMinGold').value) || 0;
     CONFIG.vipPassScratchMaxGold = parseInt(document.getElementById('cfg-vipPassScratchMaxGold').value) || 0;
+    CONFIG.weeklyPrizesGold = (document.getElementById('cfg-weeklyPrizesGold').value || '').split(',').map(n => parseInt(n.trim()) || 0);
+    CONFIG.monthlyPrizesGold = (document.getElementById('cfg-monthlyPrizesGold').value || '').split(',').map(n => parseInt(n.trim()) || 0);
     await saveConfig();
     showToast('✅ Configuración general guardada en la nube.');
 }
