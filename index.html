@@ -100,7 +100,7 @@
         .card-azul .b-cell.marked { background: #1f6feb !important; border-color: #58a6ff !important; }
         .card-verde .b-cell.marked { background: #238636 !important; border-color: #3fb950 !important; }
         .card-amarillo .b-cell.marked { background: #9e6a03 !important; border-color: #d29922 !important; color: #fff !important; }
-        .b-cell.flash-new { animation: newNumberFlash 0.6s ease-in-out 3; position: relative; z-index: 2; }
+        .b-cell.flash-new { animation: newNumberFlash 0.7s ease-in-out infinite; position: relative; z-index: 2; }
         @keyframes newNumberFlash { 0%,100% { transform: scale(1); box-shadow: none; filter: brightness(1); } 50% { transform: scale(1.18); box-shadow: 0 0 14px 4px #ffd23f; filter: brightness(1.6); } }
 
         .game-action-btn { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; margin-bottom: 10px; }
@@ -344,7 +344,7 @@
                 <button class="logout-btn" onclick="logout()">Salir</button>
             </div>
         </div>
-        <div style="text-align:right; font-size:10px; color:#484f58; padding:2px 15px 0;" id="app-version-label">v2.1</div>
+        <div style="text-align:right; font-size:13px; font-weight:bold; color:#58a6ff; padding:2px 15px 0;" id="app-version-label">v2.1</div>
 
         <div class="play-banner" onclick="navTabTo('game-screen')">
             🎯 ¡ENTRAR A LA SALA DE BINGO AUTOMÁTICO! 🚀
@@ -403,12 +403,12 @@
             <div class="jackpot-banner" id="jackpot-banner">💰 Pozo acumulado: 0 🪙</div>
 
             <div class="cards-options-grid">
-                <div class="card-opt-btn selected" onclick="selectCardCount(1, this)">1 Cartón<span>Premio Base x1</span></div>
-                <div class="card-opt-btn" onclick="selectCardCount(2, this)">2 Cartones<span>Premio x2</span></div>
-                <div class="card-opt-btn" onclick="selectCardCount(4, this)">4 Cartones<span>Premio x4</span></div>
-                <div class="card-opt-btn" onclick="selectCardCount(8, this)">8 Cartones<span>Premio x8</span></div>
-                <div class="card-opt-btn" onclick="selectCardCount(12, this)">12 Cartones<span>Premio x12</span></div>
-                <div class="card-opt-btn" onclick="selectCardCount(16, this)">16 Cartones<span>Premio x16 (¡Máximo!)</span></div>
+                <div class="card-opt-btn selected" onclick="selectCardCount(1, this)">1 Cartón<span id="cost-label-1">Premio Base x1</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(2, this)">2 Cartones<span id="cost-label-2">Premio x2</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(4, this)">4 Cartones<span id="cost-label-4">Premio x4</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(8, this)">8 Cartones<span id="cost-label-8">Premio x8</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(12, this)">12 Cartones<span id="cost-label-12">Premio x12</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(16, this)">16 Cartones<span id="cost-label-16">Premio x16 (¡Máximo!)</span></div>
             </div>
 
             <div class="option-group">
@@ -448,10 +448,6 @@
             <div class="ball-callout-container">
                 <div class="bingo-ball" id="current-ball-num">--</div>
                 <div class="ball-text-info" id="current-ball-text">Esperando sorteo...</div>
-            </div>
-
-            <div id="manual-draw-wrap" style="display:none; margin-bottom:10px;">
-                <button class="game-action-btn" style="background:#8957e5;" onclick="manualDrawBall()">🔔 ¡Cantar siguiente bola!</button>
             </div>
 
             <div class="history-strip" id="history-strip"></div>
@@ -516,6 +512,18 @@
         <div class="store-pages" id="store-pages"></div>
 
         <div class="products-grid" id="products-grid"></div>
+    </div>
+
+    <!-- PANTALLA MASCOTA -->
+    <div id="pet-screen" class="screen" style="padding-bottom:80px;">
+        <h2 style="color: #d29922; margin-bottom: 12px;">🐾 Mi Mascota</h2>
+        <div class="admin-tabs" style="padding:0 0 10px;">
+            <div class="admin-tab pet-tab active" data-tab="adoptar" onclick="renderPetScreen('adoptar')">🏪 Adoptar</div>
+            <div class="admin-tab pet-tab" data-tab="alimentos" onclick="renderPetScreen('alimentos')">🌾 Alimentos</div>
+            <div class="admin-tab pet-tab" data-tab="reacciones" onclick="renderPetScreen('reacciones')">🎭 Reacciones</div>
+            <div class="admin-tab pet-tab" data-tab="progreso" onclick="renderPetScreen('progreso')">📈 Progreso</div>
+        </div>
+        <div id="pet-content"></div>
     </div>
 
     <!-- PANTALLA CAMPAÑA -->
@@ -727,6 +735,7 @@
         <button class="nav-item" id="nav-juego" onclick="navTabTo('game-screen')">🎯<br>Bingo</button>
         <button class="nav-item" id="nav-campaña" onclick="navTabTo('campaign-screen')">🗺️<br>Campaña</button>
         <button class="nav-item" id="nav-missions" onclick="navTabTo('missions-screen')">📜<br>Misiones</button>
+        <button class="nav-item" id="nav-pet" onclick="navTabTo('pet-screen')">🐾<br>Mascota</button>
         <button class="nav-item" id="nav-vippass" onclick="navTabTo('vippass-screen')">🎫<br>Pase VIP</button>
     </div>
 
@@ -799,7 +808,7 @@ function defaultConfig() {
         rouletteSpinsPerDay: 3,
         ballIntervalMs: 3000,
         extraBallCost: 8,
-        roomJackpots: { clasica: 500, oro: 1500, neon: 2500, fuego: 4000, espacial: 6000, aurora: 8000 },
+        roomJackpots: { clasica: 825, oro: 1575, neon: 2500, fuego: 4000, espacial: 6000, aurora: 8000 },
         roomImages: {},
         vipPassCostGems: 60,
         vipPassXPPerLevel: 100,
@@ -863,7 +872,7 @@ let activeBetLabel = 'Sencillo';
 let historyStack = ['main-screen'];
 let selectedRoom = null;
 let ballSpeedMode = 'normal';
-let gameMode = 'manual';
+let currentPetTab = 'adoptar';
 let selectedFrame = null;
 let roundLuckyNumber = null;
 let roundWinPattern = null;
@@ -996,11 +1005,11 @@ function defaultState(username) {
 
 /* ---------- SALAS TEMÁTICAS ---------- */
 const ROOMS = [
-    { id:'clasica',  name:'Clásica',  icon:'🎱', cls:'room-clasica',  theme:'theme-clasica',  minLevel:1,  minStreak:0, welcomeBonus:0 },
-    { id:'oro',      name:'Oro',      icon:'👑', cls:'room-oro',      theme:'theme-oro',      minLevel:3,  minStreak:0, welcomeBonus:300 },
-    { id:'neon',     name:'Neón',     icon:'💜', cls:'room-neon',     theme:'theme-neon',     minLevel:5,  minStreak:0, welcomeBonus:500 },
-    { id:'fuego',    name:'Fuego',    icon:'🔥', cls:'room-fuego',    theme:'theme-fuego',    minLevel:8,  minStreak:3, welcomeBonus:800 },
-    { id:'espacial', name:'Espacial', icon:'🚀', cls:'room-espacial', theme:'theme-espacial', minLevel:12, minStreak:5, welcomeBonus:1500 },
+    { id:'clasica',  name:'Clásica',  icon:'🎱', cls:'room-clasica',  theme:'theme-clasica',  minLevel:1,  minStreak:0, welcomeBonus:0,    baseWinReward:825,  unlockDiamonds:0,   cardCosts:{1:10,  2:20,  4:40,  8:80,  12:120, 16:160} },
+    { id:'oro',      name:'Oro',      icon:'👑', cls:'room-oro',      theme:'theme-oro',      minLevel:10, minStreak:0, welcomeBonus:300,  baseWinReward:1575, unlockDiamonds:20,  cardCosts:{1:50,  2:100, 4:200, 8:400, 12:600, 16:800} },
+    { id:'neon',     name:'Neón',     icon:'💜', cls:'room-neon',     theme:'theme-neon',     minLevel:25, minStreak:0, welcomeBonus:500,  baseWinReward:2500, unlockDiamonds:40,  cardCosts:{1:150, 2:300, 4:600, 8:1200,12:1800,16:2400} },
+    { id:'fuego',    name:'Fuego',    icon:'🔥', cls:'room-fuego',    theme:'theme-fuego',    minLevel:45, minStreak:3, welcomeBonus:800,  baseWinReward:4000, unlockDiamonds:80,  cardCosts:{1:400, 2:800, 4:1600,8:3200,12:4800,16:6400} },
+    { id:'espacial', name:'Espacial', icon:'🚀', cls:'room-espacial', theme:'theme-espacial', minLevel:70, minStreak:5, welcomeBonus:1500, baseWinReward:6000, unlockDiamonds:130, cardCosts:{1:800, 2:1600,4:3200,8:6400,12:9600,16:12800} },
     { id:'aurora',   name:'Aurora',   icon:'🌌', cls:'room-aurora',   theme:'theme-aurora',   minLevel:1,  minStreak:0, welcomeBonus:1000, vipEarlyOnly:true },
 ];
 const FRAMES = [
@@ -1009,6 +1018,54 @@ const FRAMES = [
     { id:'frame-real',   name:'Real',   productName:'Marco Real' },
     { id:'frame-mitico', name:'Mítico', productName:'Marco Mítico' },
 ];
+
+/* ---------- MASCOTAS: catálogo, alimentos, reacciones, progresión ---------- */
+const PET_TYPES = [
+    { id:'gallo',         tipo:'Gallo',  raza:'Gallo de Lucha / Estándar', icon:'🐓', costGold:5000,  costGems:0,   desc:'Mascota inicial de granja' },
+    { id:'gato_domestico',tipo:'Gato',   raza:'Gato Doméstico / Común',    icon:'🐱', costGold:12000, costGems:0,   desc:'Mascota ágil' },
+    { id:'gato_siames',   tipo:'Gato',   raza:'Gato Siamés / Elegante',    icon:'😼', costGold:0,     costGems:30,  desc:'Variante exclusiva de tienda' },
+    { id:'bulldog',       tipo:'Perro',  raza:'Bulldog',                   icon:'🐶', costGold:20000, costGems:0,   desc:'Raza robusta y clásica' },
+    { id:'pastor_aleman', tipo:'Perro',  raza:'Pastor Alemán',             icon:'🐕', costGold:35000, costGems:0,   desc:'Raza avanzada' },
+    { id:'husky',         tipo:'Perro',  raza:'Husky Siberiano',           icon:'🐺', costGold:0,     costGems:60,  desc:'Raza de alta gama (Exclusiva)' },
+    { id:'aguila',        tipo:'Águila', raza:'Águila Real / Imperial',    icon:'🦅', costGold:0,     costGems:100, desc:'Mascota de nivel máximo (Prestigio)' },
+];
+const PET_FOOD_PACKS = [
+    { id:'saco_pequeno',        name:'Saco Pequeño',        raciones:2000,   costGold:500,   desc:'Permite cubrir con soltura los primeros niveles de crecimiento.' },
+    { id:'saco_mediano',        name:'Saco Mediano',        raciones:10000,  costGold:2200,  desc:'Ideal para abastecer el crecimiento intermedio y avanzar varios niveles.' },
+    { id:'caja_grande',         name:'Caja Grande',         raciones:40000,  costGold:8000,  desc:'Diseñado para sostener el avance constante en la fase avanzada.' },
+    { id:'banquete_legendario', name:'Banquete Legendario', raciones:200000, costGold:35000, desc:'Cantidad masiva para asegurar los niveles más pesados hasta el Nivel 20.' },
+];
+const PET_REACTIONS = [
+    { id:'acariciar',      name:'Acariciar (Caricia básica)',   desc:'Muestra un corazón flotante y activa la animación de felicidad.',                costGold:200,  type:'repeat' },
+    { id:'golosina',       name:'Dar Golosina / Snack rápido',  desc:'Alimenta una etapa pequeña de golpe sin usar el inventario principal.',           costGold:500,  type:'repeat' },
+    { id:'sonido',         name:'Sonido / Ladrido / Maullido',  desc:'Emite el efecto de sonido característico con un salto en pantalla.',              costGold:300,  type:'repeat' },
+    { id:'truco_especial', name:'Truco Especial',               desc:'Desbloquea de forma permanente la animación avanzada de la raza.',                costGold:1000, type:'permanent' },
+    { id:'baile_victoria', name:'Baile de Victoria',             desc:'La mascota festeja automáticamente cada vez que haces un Bingo.',                 costGold:2500, type:'permanent' },
+];
+// Nivel 1..20: costo de raciones por etapa (5 etapas/nivel), costo total del nivel, bono de monedas pasivo (%)
+const PET_LEVELS = [
+    { level:1,  etapaCost:40,   totalCost:200,   bonusPercent:1 },
+    { level:2,  etapaCost:55,   totalCost:275,   bonusPercent:2 },
+    { level:3,  etapaCost:75,   totalCost:375,   bonusPercent:3 },
+    { level:4,  etapaCost:100,  totalCost:500,   bonusPercent:4 },
+    { level:5,  etapaCost:135,  totalCost:675,   bonusPercent:5 },
+    { level:6,  etapaCost:180,  totalCost:900,   bonusPercent:6 },
+    { level:7,  etapaCost:235,  totalCost:1175,  bonusPercent:7 },
+    { level:8,  etapaCost:305,  totalCost:1525,  bonusPercent:8 },
+    { level:9,  etapaCost:390,  totalCost:1950,  bonusPercent:9 },
+    { level:10, etapaCost:495,  totalCost:2475,  bonusPercent:10 },
+    { level:11, etapaCost:620,  totalCost:3100,  bonusPercent:11 },
+    { level:12, etapaCost:770,  totalCost:3850,  bonusPercent:12 },
+    { level:13, etapaCost:950,  totalCost:4750,  bonusPercent:13 },
+    { level:14, etapaCost:1165, totalCost:5825,  bonusPercent:14 },
+    { level:15, etapaCost:1420, totalCost:7100,  bonusPercent:15 },
+    { level:16, etapaCost:1720, totalCost:8600,  bonusPercent:16 },
+    { level:17, etapaCost:2075, totalCost:10375, bonusPercent:17 },
+    { level:18, etapaCost:2490, totalCost:12450, bonusPercent:18 },
+    { level:19, etapaCost:2975, totalCost:14875, bonusPercent:19 },
+    { level:20, etapaCost:3550, totalCost:17750, bonusPercent:20 },
+];
+
 function playerLevel(p) { return 1 + Math.floor((p.totalWins || 0) / 5); }
 function ensurePlayerDefaults(p) {
     if (p.winStreak === undefined) p.winStreak = 0;
@@ -1041,6 +1098,12 @@ function ensurePlayerDefaults(p) {
     if (p.monthlyTrophyBingos === undefined) p.monthlyTrophyBingos = null;
     if (p.monthlyTrophyGold === undefined) p.monthlyTrophyGold = null;
     if (p.friends === undefined) p.friends = [];
+    if (p.petLevel === undefined) p.petLevel = 0;
+    if (p.petOwned === undefined) p.petOwned = null;
+    if (p.petRations === undefined) p.petRations = 0;
+    if (p.petStage === undefined) p.petStage = 0;
+    if (p.petUnlockedReactions === undefined) p.petUnlockedReactions = [];
+    if (p.unlockedRooms === undefined) p.unlockedRooms = ['clasica'];
     return p;
 }
 
@@ -1466,12 +1529,13 @@ function goToScreen(screenId, isReplace) {
     document.getElementById(screenId).classList.add('active');
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass'};
+    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','pet-screen':'nav-pet','vippass-screen':'nav-vippass'};
     if (map[screenId]) document.getElementById(map[screenId]).classList.add('active');
 
     if (screenId === 'game-screen') { openBingoLobby(); renderVipChatEmotes(); }
     if (screenId === 'store-screen') renderStore(currentStorePage);
     if (screenId === 'missions-screen' || screenId === 'main-screen') refreshMissionUI();
+    if (screenId === 'pet-screen') renderPetScreen(currentPetTab);
     if (screenId === 'campaign-screen') refreshRouletteUI();
     if (screenId === 'main-screen') { renderAchievements(); refreshLeaderboard(); }
     if (screenId === 'vippass-screen') renderVipPassScreen();
@@ -1504,19 +1568,21 @@ function renderRoomSelect() {
     const lvl = playerLevel(state);
     ROOMS.forEach(room => {
         const vipLocked = room.vipEarlyOnly && !state.vipPassActive;
-        const locked = lvl < room.minLevel || (state.winStreak || 0) < room.minStreak || vipLocked;
+        const levelOk = lvl >= room.minLevel && (state.winStreak || 0) >= room.minStreak;
+        const needsUnlock = (room.unlockDiamonds || 0) > 0 && !(state.unlockedRooms || []).includes(room.id);
+        const locked = !levelOk || vipLocked;
         const jackpot = CONFIG.roomJackpots[room.id] || 0;
         const customImg = (CONFIG.roomImages || {})[room.id];
         const div = document.createElement('div');
-        div.className = 'room-card ' + room.cls + (locked ? ' locked' : '');
+        div.className = 'room-card ' + room.cls + (locked || needsUnlock ? ' locked' : '');
         div.innerHTML = `
             <span class="room-icon">${customImg ? `<img src="${customImg}" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">` : room.icon}</span>
             <div class="room-name">${room.name}${room.vipEarlyOnly ? ' 🎫' : ''}</div>
             <div class="room-meta">Nivel mín. ${room.minLevel}${room.minStreak ? ' · Racha ' + room.minStreak + '+' : ''}</div>
             <div class="room-jackpot">💰 ${jackpot.toLocaleString('es')} 🪙</div>
-            ${vipLocked ? `<div class="room-lock-note">🎫 Acceso anticipado — Requiere Pase VIP</div>` : (locked ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : '')}
+            ${vipLocked ? `<div class="room-lock-note">🎫 Acceso anticipado — Requiere Pase VIP</div>` : (!levelOk ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : (needsUnlock ? `<button class="game-action-btn" style="padding:6px 10px;font-size:11px;margin-top:4px;" onclick="event.stopPropagation(); unlockRoomWithDiamonds('${room.id}')">🔓 Desbloquear (💎 ${room.unlockDiamonds})</button>` : ''))}
         `;
-        if (!locked) div.onclick = () => chooseRoom(room.id);
+        if (levelOk && !vipLocked && !needsUnlock) div.onclick = () => chooseRoom(room.id);
         grid.appendChild(div);
     });
 }
@@ -1586,6 +1652,19 @@ function selectCardCount(count, element) {
     chosenCardCount = count;
     document.querySelectorAll('.card-opt-btn').forEach(btn => btn.classList.remove('selected'));
     element.classList.add('selected');
+    refreshCardCostLabels();
+}
+
+function refreshCardCostLabels() {
+    [1, 2, 4, 8, 12, 16].forEach(count => {
+        const el = document.getElementById(`cost-label-${count}`);
+        if (!el) return;
+        const cost = (selectedRoom && selectedRoom.cardCosts) ? selectedRoom.cardCosts[count] : undefined;
+        if (cost === undefined) { el.innerText = `Premio x${count}`; return; }
+        const discount = vipCardCostDiscount();
+        const finalCost = Math.round(cost * (1 - discount));
+        el.innerText = discount > 0 ? `🪙 ${finalCost} (antes ${cost})` : `🪙 ${finalCost}`;
+    });
 }
 
 function renderBetTierOptions() {
@@ -1607,9 +1686,10 @@ function selectBetTier(i, element) {
 }
 function updateBonusSummary() {
     const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
+    const petBonus = petBonusMultiplier();
     const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
     const el = document.getElementById('bonus-summary');
-    if (el) el.innerText = `Bonus VIP: x${vipBonus.toFixed(2)} · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'} · Apuesta: ${tier.label} (x${tier.mult}${tier.cost > 0 ? ', costo 🪙' + tier.cost : ''})`;
+    if (el) el.innerText = `Bonus VIP: x${vipBonus.toFixed(2)} · 🐾 Mascota Nv.${state.petLevel || 0}/20: +${((petBonus - 1) * 100).toFixed(0)}% · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'} · Apuesta: ${tier.label} (x${tier.mult}${tier.cost > 0 ? ', costo 🪙' + tier.cost : ''})`;
 }
 
 function openBingoLobby() {
@@ -1629,6 +1709,7 @@ function openBingoLobby() {
     renderLobbyOptions();
     renderBetTierOptions();
     updateBonusSummary();
+    refreshCardCostLabels();
     document.getElementById('jackpot-banner').innerText =
         `💰 Pozo acumulado de la sala ${selectedRoom.name}: ${(CONFIG.roomJackpots[selectedRoom.id] || 0).toLocaleString('es')} 🪙`;
 }
@@ -1675,6 +1756,7 @@ function generateAllCards() {
             cell.className = 'b-cell';
             if (i === 12) { cell.className += ' free marked'; cell.innerText = 'FREE'; cell.dataset.value = 'FREE'; }
             else { cell.innerText = numbers[i]; cell.dataset.value = numbers[i]; }
+            cell.onclick = () => { cell.classList.remove('flash-new'); };
             gridDiv.appendChild(cell);
             singleCardCells.push(cell);
         }
@@ -1840,12 +1922,207 @@ function buyExtraBall(cardIndex) {
     if (winPattern) { roundWinPattern = winPattern; endRound(true); }
 }
 
+function petBonusMultiplier() {
+    const lvl = Math.min(state.petLevel || 0, 20);
+    return 1 + 0.01 * lvl;
+}
+
+function buyPetType(petId) {
+    const pet = PET_TYPES.find(p => p.id === petId);
+    if (!pet) return;
+    if (state.petOwned) { showToast('❌ Ya tienes una mascota. Vende o cambia primero desde soporte.'); return; }
+    if (pet.costGold > 0 && state.gold < pet.costGold) { showToast(`❌ Necesitas 🪙 ${pet.costGold} para adoptar a ${pet.raza}.`); return; }
+    if (pet.costGems > 0 && state.gems < pet.costGems) { showToast(`❌ Necesitas 💎 ${pet.costGems} para adoptar a ${pet.raza}.`); return; }
+    if (pet.costGold > 0) state.gold -= pet.costGold;
+    if (pet.costGems > 0) state.gems -= pet.costGems;
+    state.petOwned = petId;
+    state.petLevel = 0;
+    state.petStage = 0;
+    saveState(); refreshAllUI();
+    showToast(`🐾 ¡Adoptaste a tu ${pet.raza}!`);
+    renderPetScreen('adoptar');
+}
+
+function buyFoodPack(packId) {
+    const pack = PET_FOOD_PACKS.find(p => p.id === packId);
+    if (!pack) return;
+    if (state.gold < pack.costGold) { showToast(`❌ Necesitas 🪙 ${pack.costGold} para comprar ${pack.name}.`); return; }
+    state.gold -= pack.costGold;
+    state.petRations = (state.petRations || 0) + pack.raciones;
+    saveState(); refreshAllUI();
+    showToast(`🌾 +${pack.raciones.toLocaleString('es')} raciones (${pack.name}).`);
+    renderPetScreen('alimentos');
+}
+
+function feedPetStage() {
+    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
+    if ((state.petLevel || 0) >= 20) { showToast('🐾 Tu mascota ya está en el nivel máximo (20).'); return; }
+    const levelData = PET_LEVELS[state.petLevel];
+    if (state.petRations < levelData.etapaCost) { showToast(`❌ Necesitas ${levelData.etapaCost.toLocaleString('es')} raciones para alimentar esta etapa.`); return; }
+    state.petRations -= levelData.etapaCost;
+    state.petStage = (state.petStage || 0) + 1;
+    if (state.petStage >= 5) {
+        state.petStage = 0;
+        state.petLevel += 1;
+        showToast(`🐾 ¡Tu mascota subió a nivel ${state.petLevel}! Bono: +${PET_LEVELS[state.petLevel - 1].bonusPercent}% monedas.`);
+    } else {
+        showToast(`🍽️ Etapa alimentada (${state.petStage}/5).`);
+    }
+    saveState(); refreshAllUI();
+    renderPetScreen('progreso');
+}
+
+function buyReaction(reactionId) {
+    const reaction = PET_REACTIONS.find(r => r.id === reactionId);
+    if (!reaction) return;
+    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
+    if (reaction.type === 'permanent') {
+        if ((state.petUnlockedReactions || []).includes(reactionId)) { showToast('✅ Ya tienes esta reacción desbloqueada.'); return; }
+        if (state.gold < reaction.costGold) { showToast(`❌ Necesitas 🪙 ${reaction.costGold} para desbloquear "${reaction.name}".`); return; }
+        state.gold -= reaction.costGold;
+        state.petUnlockedReactions = state.petUnlockedReactions || [];
+        state.petUnlockedReactions.push(reactionId);
+        saveState(); refreshAllUI();
+        showToast(`🔓 ¡"${reaction.name}" desbloqueado permanentemente!`);
+        renderPetScreen('reacciones');
+        return;
+    }
+    // Reacciones repetibles (uso por evento)
+    if (state.gold < reaction.costGold) { showToast(`❌ Necesitas 🪙 ${reaction.costGold} para usar "${reaction.name}".`); return; }
+    state.gold -= reaction.costGold;
+    if (reactionId === 'golosina') {
+        if (!state.petOwned) { saveState(); refreshAllUI(); return; }
+        if ((state.petLevel || 0) >= 20) { showToast('🐾 Tu mascota ya está en el nivel máximo (20).'); saveState(); refreshAllUI(); return; }
+        state.petStage = (state.petStage || 0) + 1;
+        if (state.petStage >= 5) {
+            state.petStage = 0;
+            state.petLevel += 1;
+            showToast(`🍬 ¡Golosina! Tu mascota subió a nivel ${state.petLevel}.`);
+        } else {
+            showToast(`🍬 Golosina dada — etapa (${state.petStage}/5) avanzada sin gastar raciones.`);
+        }
+    } else if (reactionId === 'acariciar') {
+        showToast('💗 Tu mascota se ve muy feliz.');
+    } else if (reactionId === 'sonido') {
+        showToast('🔊 ¡Tu mascota hace su sonido característico!');
+    }
+    saveState(); refreshAllUI();
+    renderPetScreen('reacciones');
+}
+
+function petCelebrateIfUnlocked() {
+    if ((state.petUnlockedReactions || []).includes('baile_victoria') && state.petOwned) {
+        showToast('🎉 ¡Tu mascota celebra tu Bingo con un baile de victoria!');
+    }
+}
+
+function renderPetScreen(tab) {
+    currentPetTab = tab || currentPetTab || 'adoptar';
+    document.querySelectorAll('.pet-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === currentPetTab));
+    const wrap = document.getElementById('pet-content');
+    if (!wrap) return;
+    const ownedPet = state.petOwned ? PET_TYPES.find(p => p.id === state.petOwned) : null;
+
+    if (currentPetTab === 'adoptar') {
+        wrap.innerHTML = `<p style="font-size:12px;color:#8b949e;margin-bottom:10px;">Compra única. Elige una mascota para empezar a alimentarla y ganar su bono pasivo de monedas.</p>` +
+            PET_TYPES.map(pet => `
+                <div class="card-widget" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <span style="font-size:28px;">${pet.icon}</span>
+                    <div style="flex:1;">
+                        <div style="font-weight:bold;">${pet.tipo} — ${pet.raza}</div>
+                        <div style="font-size:11px;color:#8b949e;">${pet.desc}</div>
+                    </div>
+                    <button class="buy-product-btn" style="width:auto;padding:8px 12px;" ${state.petOwned === pet.id ? 'disabled' : ''} onclick="buyPetType('${pet.id}')">
+                        ${state.petOwned === pet.id ? '✅ Tuya' : (pet.costGems > 0 ? `💎 ${pet.costGems}` : `🪙 ${pet.costGold.toLocaleString('es')}`)}
+                    </button>
+                </div>`).join('');
+    } else if (currentPetTab === 'alimentos') {
+        wrap.innerHTML = `<p style="font-size:12px;color:#d29922;margin-bottom:10px;">🌾 Raciones en inventario: <strong>${(state.petRations || 0).toLocaleString('es')}</strong></p>` +
+            PET_FOOD_PACKS.map(pack => `
+                <div class="card-widget" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold;">${pack.name} — ${pack.raciones.toLocaleString('es')} raciones</div>
+                        <div style="font-size:11px;color:#8b949e;">${pack.desc}</div>
+                    </div>
+                    <button class="buy-product-btn" style="width:auto;padding:8px 12px;" ${state.gold < pack.costGold ? 'disabled' : ''} onclick="buyFoodPack('${pack.id}')">🪙 ${pack.costGold.toLocaleString('es')}</button>
+                </div>`).join('');
+    } else if (currentPetTab === 'reacciones') {
+        wrap.innerHTML = PET_REACTIONS.map(r => {
+            const unlocked = (state.petUnlockedReactions || []).includes(r.id);
+            const label = r.type === 'permanent' ? (unlocked ? '✅ Desbloqueado' : `🪙 ${r.costGold.toLocaleString('es')}`) : `Usar 🪙 ${r.costGold.toLocaleString('es')}`;
+            return `
+                <div class="card-widget" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <div style="flex:1;">
+                        <div style="font-weight:bold;">${r.name}</div>
+                        <div style="font-size:11px;color:#8b949e;">${r.desc}</div>
+                    </div>
+                    <button class="buy-product-btn" style="width:auto;padding:8px 12px;" ${r.type === 'permanent' && unlocked ? 'disabled' : ''} onclick="buyReaction('${r.id}')">${label}</button>
+                </div>`;
+        }).join('');
+    } else if (currentPetTab === 'progreso') {
+        if (!ownedPet) {
+            wrap.innerHTML = `<p style="font-size:13px;color:#8b949e;">Aún no tienes una mascota. Ve a la pestaña "Adoptar" para elegir una.</p>`;
+        } else {
+            const lvl = state.petLevel || 0;
+            const stage = state.petStage || 0;
+            const maxed = lvl >= 20;
+            const levelData = maxed ? PET_LEVELS[19] : PET_LEVELS[lvl];
+            wrap.innerHTML = `
+                <div class="card-widget" style="text-align:center;">
+                    <span style="font-size:40px;">${ownedPet.icon}</span>
+                    <div style="font-weight:bold;font-size:15px;margin-top:4px;">${ownedPet.raza}</div>
+                    <div style="color:#d29922;margin:6px 0;">Nivel ${lvl} / 20 · Etapa ${stage}/5</div>
+                    <div style="color:#3fb950;font-size:13px;">Bono pasivo actual: +${(petBonusMultiplier() * 100 - 100).toFixed(0)}% monedas</div>
+                    ${!maxed ? `<div style="font-size:12px;color:#8b949e;margin:8px 0;">Costo por etapa: ${levelData.etapaCost.toLocaleString('es')} raciones (tienes ${(state.petRations || 0).toLocaleString('es')})</div>
+                    <button class="game-action-btn" ${(state.petRations || 0) < levelData.etapaCost ? 'disabled' : ''} onclick="feedPetStage()">🍽️ Alimentar etapa</button>` :
+                    `<div style="font-size:12px;color:#3fb950;margin-top:8px;">🏆 ¡Nivel máximo alcanzado!</div>`}
+                </div>`;
+        }
+    }
+}
+
+function unlockRoomWithDiamonds(roomId) {
+    const room = ROOMS.find(r => r.id === roomId);
+    if (!room) return;
+    if ((state.unlockedRooms || []).includes(roomId)) return;
+    const cost = room.unlockDiamonds || 0;
+    if (state.gems < cost) { showToast(`❌ Necesitas 💎 ${cost} para desbloquear la sala ${room.name}.`); return; }
+    state.gems -= cost;
+    state.unlockedRooms = state.unlockedRooms || ['clasica'];
+    state.unlockedRooms.push(roomId);
+    saveState();
+    showToast(`🔓 ¡Sala ${room.name} desbloqueada!`);
+    renderRoomSelect();
+    refreshAllUI();
+}
+
+function vipCardCostDiscount() {
+    if (!state.vipPassActive) return 0;
+    const lvl = state.vipPassLevel || 1;
+    if (lvl >= 41) return 0.20;
+    if (lvl >= 31) return 0.18;
+    if (lvl >= 21) return 0.15;
+    if (lvl >= 11) return 0.10;
+    return 0.05;
+}
+
+function currentCardEntryCost() {
+    const baseCost = (selectedRoom && selectedRoom.cardCosts) ? (selectedRoom.cardCosts[chosenCardCount] || 0) : 0;
+    return Math.round(baseCost * (1 - vipCardCostDiscount()));
+}
+
 function startBingoGame() {
+    const entryCost = currentCardEntryCost();
+    if (entryCost > state.gold) {
+        showToast(`❌ No tienes suficiente oro para entrar con ${chosenCardCount} cartón(es) en esta sala (🪙 ${entryCost}).`);
+        return;
+    }
     const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
-    if ((tier.cost || 0) > state.gold) {
+    if ((tier.cost || 0) > state.gold - entryCost) {
         showToast(`❌ No tienes suficiente oro para la apuesta "${tier.label}" (🪙 ${tier.cost}).`);
         return;
     }
+    state.gold -= entryCost;
     state.gold -= (tier.cost || 0);
     activeBetMultiplier = tier.mult || 1;
     activeBetLabel = tier.label;
@@ -1856,8 +2133,7 @@ function startBingoGame() {
     document.getElementById('hud-selected-cards-label').innerText = chosenCardCount;
     document.getElementById('hud-my-name').innerText = state.username;
     roundWinPattern = null;
-    document.getElementById('manual-draw-wrap').style.display = 'block';
-    document.getElementById('current-ball-text').innerText = 'Pulsa el botón para cantar la primera bola';
+    document.getElementById('current-ball-text').innerText = 'Sorteo automático en curso...';
     document.getElementById('chat-log').innerHTML = '';
     roundLuckyNumber = Math.floor(Math.random() * 75) + 1;
     generateAllCards();
@@ -1865,10 +2141,15 @@ function startBingoGame() {
     CONFIG.roomJackpots[selectedRoom.id] = (CONFIG.roomJackpots[selectedRoom.id] || 0) + 25;
     saveConfig();
 
-    /* el jugador canta las bolas manualmente */
+    runAutoBingoLoop();
 }
 
-function manualDrawBall() { handleBallDraw(); }
+function runAutoBingoLoop() {
+    if (bingoInterval) clearInterval(bingoInterval);
+    const speedFactors = { lento: 1.6, normal: 1, rapido: 0.5 };
+    const interval = Math.max(400, 3000 * (speedFactors[ballSpeedMode] || 1));
+    bingoInterval = setInterval(() => { handleBallDraw(); }, interval);
+}
 
 function handleBallDraw() {
     const drawn = drawNextNumber();
@@ -1904,9 +2185,6 @@ function handleBallDraw() {
 
     if (justMarkedCells.length) {
         justMarkedCells.forEach(cell => cell.classList.add('flash-new'));
-        setTimeout(() => {
-            justMarkedCells.forEach(cell => cell.classList.remove('flash-new'));
-        }, 1800);
     }
 
     if (rivalCardNumbers.includes(drawn)) {
@@ -1956,7 +2234,8 @@ function endRound(won) {
         const usedMultiplier = pendingMultiplier;
         const betMult = activeBetMultiplier || 1;
         const pattern = roundWinPattern || { label:'Cartón Lleno', mult:1 };
-        let reward = Math.round(CONFIG.baseWinReward * chosenCardCount * pattern.mult * vipBonus * usedMultiplier * betMult);
+        const roomBaseReward = (selectedRoom && selectedRoom.baseWinReward) || CONFIG.baseWinReward;
+        let reward = Math.round(roomBaseReward * chosenCardCount * pattern.mult * vipBonus * petBonusMultiplier() * usedMultiplier * betMult);
         pendingMultiplier = 1;
 
         let jackpotWon = 0;
@@ -1975,6 +2254,7 @@ function endRound(won) {
         state.monthlyGold = (state.monthlyGold || 0) + reward;
         state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
         const xpGained = gainVipXP(CONFIG.vipPassXPPerWin);
+        petCelebrateIfUnlocked();
         const newAchievements = checkAchievements(state);
         saveState(); refreshAllUI();
         triggerBingoFlash(pattern.label);
