@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Súper Bingo Rey — v2.1 (Rankings + Sistema de Apuesta previa + Popup de Victoria estilo "¡Tú Ganas!") -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -246,6 +247,22 @@
         #bingo-flash { display:none; position: fixed; top:0; left:0; width:100%; height:100%; z-index:3900; align-items:center; justify-content:center; pointer-events:none; }
         #bingo-flash.active { display:flex; }
         #bingo-flash span { font-size: 54px; font-weight:900; color:#ffd23f; text-shadow: 0 0 30px #ffd23f, 0 0 60px #f0a500; animation: bingoFlashPop 1.4s ease forwards; letter-spacing: 3px; }
+
+        #win-popup-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:4200; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); overflow:hidden; }
+        #win-popup-overlay.active { display:flex; }
+        #win-coin-rain { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+        .win-coin-piece { position:absolute; top:-40px; font-size:26px; animation: winCoinFall linear forwards; }
+        @keyframes winCoinFall { to { transform: translateY(115vh) rotate(360deg); } }
+        .win-popup-box { position:relative; width:88%; max-width:360px; background:linear-gradient(180deg,#fdf3d8,#f7e2a8); border:4px solid #d29922; border-radius:18px; padding:26px 18px 20px; text-align:center; box-shadow:0 0 40px rgba(210,153,34,0.6); animation: winPopupPop 0.4s ease; }
+        @keyframes winPopupPop { from { transform: scale(0.7); opacity:0; } to { transform: scale(1); opacity:1; } }
+        .win-popup-banner { position:absolute; top:-20px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg,#da3633,#f0433a); color:#fff; font-weight:900; font-size:20px; padding:8px 26px; border-radius:24px; box-shadow:0 4px 10px rgba(0,0,0,0.3); white-space:nowrap; }
+        .win-popup-close { position:absolute; top:8px; right:10px; background:rgba(0,0,0,0.15); border:none; color:#4a3200; width:26px; height:26px; border-radius:50%; font-weight:bold; cursor:pointer; }
+        .win-popup-subtitle { margin-top:22px; color:#5c4200; font-weight:bold; font-size:14px; }
+        .win-popup-rewards { display:flex; justify-content:center; gap:36px; margin:18px 0 6px; }
+        .win-popup-reward-item { display:flex; flex-direction:column; align-items:center; }
+        .win-popup-coin-icon, .win-popup-star-icon { font-size:44px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
+        .win-popup-reward-value { font-weight:900; font-size:20px; color:#8a5a00; margin-top:4px; }
+        .win-popup-extra { font-size:12px; color:#7a5a00; min-height:16px; margin-top:4px; }
         @keyframes bingoFlashPop { 0% { transform: scale(0.3) rotate(-8deg); opacity:0; } 30% { transform: scale(1.25) rotate(3deg); opacity:1; } 55% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1) rotate(0deg); opacity:0; } }
 
         /* ================= NIVEL Y RACHA ================= */
@@ -403,6 +420,11 @@
                 <div class="option-row" id="frame-options"></div>
             </div>
 
+            <div class="option-group">
+                <div class="option-group-label">💰 Apuesta antes de jugar (multiplica tu premio)</div>
+                <div id="bet-tier-options" class="cards-options-grid"></div>
+            </div>
+
             <div style="font-size:12px; color:#8b949e; margin-bottom:10px;" id="bonus-summary">Bonus VIP: x1.00 · Multiplicador extra: Ninguno</div>
 
             <button class="game-action-btn" onclick="startBingoGame()">🚀 ¡Comenzar Bingo!</button>
@@ -455,6 +477,28 @@
         <div class="countdown-label" id="countdown-label">Siguiente partida...</div>
     </div>
     <div id="bingo-flash"><span id="bingo-flash-text">¡BINGO!</span></div>
+
+    <!-- POPUP DE VICTORIA ESTILO "¡TÚ GANAS!" -->
+    <div id="win-popup-overlay">
+        <div id="win-coin-rain"></div>
+        <div class="win-popup-box">
+            <div class="win-popup-banner">¡Tú Ganas!</div>
+            <button class="win-popup-close" onclick="closeWinPopup()">✕</button>
+            <div class="win-popup-subtitle" id="win-popup-subtitle"></div>
+            <div class="win-popup-rewards">
+                <div class="win-popup-reward-item">
+                    <div class="win-popup-coin-icon">🪙</div>
+                    <div class="win-popup-reward-value" id="win-popup-gold">0</div>
+                </div>
+                <div class="win-popup-reward-item">
+                    <div class="win-popup-star-icon">⭐</div>
+                    <div class="win-popup-reward-value" id="win-popup-xp">0</div>
+                </div>
+            </div>
+            <div class="win-popup-extra" id="win-popup-extra"></div>
+            <button class="game-action-btn" style="margin-top:14px;" onclick="closeWinPopup()">¡Genial!</button>
+        </div>
+    </div>
 
     <!-- PANTALLA TIENDA -->
     <div id="store-screen" class="screen">
@@ -574,7 +618,7 @@
     <!-- PANEL DE ADMINISTRADOR -->
     <div id="admin-screen" class="screen">
         <div class="admin-top">
-            <strong>⚙️ Panel de Administrador</strong>
+            <strong>⚙️ Panel de Administrador <span style="color:#8b949e; font-weight:normal; font-size:11px;">v2.1 — Apuestas + Popup</span></strong>
             <button class="logout-btn" onclick="logout()">Salir</button>
         </div>
         <div class="admin-tabs">
@@ -612,6 +656,10 @@
                 <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🏆 Premios de Ranking (oro para 1°, 2° y 3° lugar)</div>
                 <div class="admin-field"><label>Premios Semanales (separados por coma)</label><input type="text" id="cfg-weeklyPrizesGold" placeholder="1500,800,400"></div>
                 <div class="admin-field"><label>Premios Mensuales (separados por coma)</label><input type="text" id="cfg-monthlyPrizesGold" placeholder="6000,3000,1500"></div>
+
+                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">💰 Niveles de Apuesta previa al juego</div>
+                <p style="font-size:11px;color:#8b949e;margin-bottom:6px;">Formato por línea: Nombre,CostoOro,Multiplicador</p>
+                <textarea id="cfg-betTiers" rows="4" style="width:100%; background:#0d1117; color:#fff; border:1px solid #30363d; border-radius:8px; padding:8px; font-size:12px;" placeholder="Sencillo,10,1.2"></textarea>
 
                 <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🖼️ Imágenes de Salas</div>
                 <div id="admin-room-images"></div>
@@ -761,6 +809,12 @@ function defaultConfig() {
         vipIconImages: {},
         weeklyPrizesGold: [1500, 800, 400],
         monthlyPrizesGold: [6000, 3000, 1500],
+        betTiers: [
+            { label: 'Sencillo', cost: 10, mult: 1.2 },
+            { label: 'Doble', cost: 20, mult: 1.5 },
+            { label: 'Triple', cost: 40, mult: 2 },
+            { label: 'Múltiple', cost: 100, mult: 3 },
+        ],
         multipliers: [ {mult:3, cost:1}, {mult:5, cost:2}, {mult:10, cost:4} ],
         roulettePrizes: [
             {label:'+200 🪙', gold:200, gems:0},
@@ -797,6 +851,9 @@ let rivalCardNumbers = [];
 let drawnNumbers = [];
 let currentStorePage = 0;
 let pendingMultiplier = 1;
+let selectedBetTierIndex = 0;
+let activeBetMultiplier = 1;
+let activeBetLabel = 'Sencillo';
 let historyStack = ['main-screen'];
 let selectedRoom = null;
 let ballSpeedMode = 'normal';
@@ -1191,6 +1248,53 @@ function launchConfetti() {
         setTimeout(() => piece.remove(), 3200);
     }
 }
+
+let winCoinRainTimer = null;
+function launchWinCoinRain() {
+    const layer = document.getElementById('win-coin-rain');
+    if (!layer) return;
+    layer.innerHTML = '';
+    const icons = ['🪙', '⭐', '💰'];
+    function spawnBatch() {
+        for (let i = 0; i < 10; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'win-coin-piece';
+            piece.innerText = icons[Math.floor(Math.random() * icons.length)];
+            piece.style.left = Math.random() * 100 + '%';
+            piece.style.fontSize = (18 + Math.random() * 20) + 'px';
+            piece.style.animationDuration = (1.6 + Math.random() * 1.6) + 's';
+            piece.style.animationDelay = (Math.random() * 0.4) + 's';
+            layer.appendChild(piece);
+            setTimeout(() => piece.remove(), 3600);
+        }
+    }
+    spawnBatch();
+    if (winCoinRainTimer) clearInterval(winCoinRainTimer);
+    winCoinRainTimer = setInterval(spawnBatch, 450);
+}
+function stopWinCoinRain() {
+    if (winCoinRainTimer) { clearInterval(winCoinRainTimer); winCoinRainTimer = null; }
+    const layer = document.getElementById('win-coin-rain');
+    if (layer) layer.innerHTML = '';
+}
+
+function openWinPopup(info) {
+    document.getElementById('win-popup-subtitle').innerText = info.title || '¡BINGO!';
+    document.getElementById('win-popup-gold').innerText = '+' + (info.gold || 0).toLocaleString('es');
+    document.getElementById('win-popup-xp').innerText = '+' + (info.xp || 0);
+    let extra = '';
+    if (info.jackpot > 0) extra += `💰 ¡Incluye el POZO de ${info.jackpot.toLocaleString('es')} 🪙! `;
+    if (info.betLabel) extra += `🔥 Apuesta "${info.betLabel}" activada.`;
+    document.getElementById('win-popup-extra').innerText = extra;
+    document.getElementById('win-popup-overlay').classList.add('active');
+    launchWinCoinRain();
+    launchConfetti();
+}
+function closeWinPopup() {
+    document.getElementById('win-popup-overlay').classList.remove('active');
+    stopWinCoinRain();
+}
+
 function playWinSound() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1470,6 +1574,30 @@ function selectCardCount(count, element) {
     element.classList.add('selected');
 }
 
+function renderBetTierOptions() {
+    const wrap = document.getElementById('bet-tier-options');
+    if (!wrap) return;
+    const tiers = CONFIG.betTiers || [];
+    wrap.innerHTML = tiers.map((t, i) => `
+        <div class="card-opt-btn ${selectedBetTierIndex === i ? 'selected' : ''}" onclick="selectBetTier(${i}, this)">
+            ${t.label}<span>${t.cost > 0 ? '🪙 ' + t.cost : 'Gratis'} · Premio x${t.mult}</span>
+        </div>
+    `).join('');
+    updateBonusSummary();
+}
+function selectBetTier(i, element) {
+    selectedBetTierIndex = i;
+    document.querySelectorAll('#bet-tier-options .card-opt-btn').forEach(btn => btn.classList.remove('selected'));
+    element.classList.add('selected');
+    updateBonusSummary();
+}
+function updateBonusSummary() {
+    const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
+    const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
+    const el = document.getElementById('bonus-summary');
+    if (el) el.innerText = `Bonus VIP: x${vipBonus.toFixed(2)} · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'} · Apuesta: ${tier.label} (x${tier.mult}${tier.cost > 0 ? ', costo 🪙' + tier.cost : ''})`;
+}
+
 function openBingoLobby() {
     stopAutoBingo();
     if (!selectedRoom) {
@@ -1485,9 +1613,8 @@ function openBingoLobby() {
     document.getElementById('active-game-area').style.display = 'none';
     document.getElementById('room-mode-title').innerText = `Sala ${selectedRoom.name}`;
     renderLobbyOptions();
-    const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
-    document.getElementById('bonus-summary').innerText =
-        `Bonus VIP: x${vipBonus.toFixed(2)} · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'}`;
+    renderBetTierOptions();
+    updateBonusSummary();
     document.getElementById('jackpot-banner').innerText =
         `💰 Pozo acumulado de la sala ${selectedRoom.name}: ${(CONFIG.roomJackpots[selectedRoom.id] || 0).toLocaleString('es')} 🪙`;
 }
@@ -1700,6 +1827,16 @@ function buyExtraBall(cardIndex) {
 }
 
 function startBingoGame() {
+    const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
+    if ((tier.cost || 0) > state.gold) {
+        showToast(`❌ No tienes suficiente oro para la apuesta "${tier.label}" (🪙 ${tier.cost}).`);
+        return;
+    }
+    state.gold -= (tier.cost || 0);
+    activeBetMultiplier = tier.mult || 1;
+    activeBetLabel = tier.label;
+    saveState();
+
     document.getElementById('lobby-modal').style.display = 'none';
     document.getElementById('active-game-area').style.display = 'block';
     document.getElementById('hud-selected-cards-label').innerText = chosenCardCount;
@@ -1800,8 +1937,9 @@ function endRound(won) {
         state.winStreak = (state.winStreak || 0) + 1;
         const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
         const usedMultiplier = pendingMultiplier;
+        const betMult = activeBetMultiplier || 1;
         const pattern = roundWinPattern || { label:'Cartón Lleno', mult:1 };
-        let reward = Math.round(CONFIG.baseWinReward * chosenCardCount * pattern.mult * vipBonus * usedMultiplier);
+        let reward = Math.round(CONFIG.baseWinReward * chosenCardCount * pattern.mult * vipBonus * usedMultiplier * betMult);
         pendingMultiplier = 1;
 
         let jackpotWon = 0;
@@ -1819,15 +1957,20 @@ function endRound(won) {
         state.weeklyGold = (state.weeklyGold || 0) + reward;
         state.monthlyGold = (state.monthlyGold || 0) + reward;
         state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
-        gainVipXP(CONFIG.vipPassXPPerWin);
+        const xpGained = gainVipXP(CONFIG.vipPassXPPerWin);
         const newAchievements = checkAchievements(state);
         saveState(); refreshAllUI();
         triggerBingoFlash(pattern.label);
-        launchConfetti();
         playWinSound();
-        showToast(`🎉 ¡${pattern.label.toUpperCase()}! Ganaste +${reward} 🪙${jackpotWon > 0 ? ` (¡incluye el POZO de ${jackpotWon} 🪙!)` : ''} (VIP x${vipBonus.toFixed(2)}${usedMultiplier>1?' · extra x'+usedMultiplier:''})`);
+        openWinPopup({
+            title: pattern.label.toUpperCase(),
+            gold: reward,
+            xp: xpGained || CONFIG.vipPassXPPerWin,
+            jackpot: jackpotWon,
+            betLabel: betMult > 1 ? activeBetLabel : null,
+        });
         newAchievements.forEach((a, i) => {
-            setTimeout(() => showToast(`🏆 Logro desbloqueado: ${a.label}`), 1200 + i * 1400);
+            setTimeout(() => showToast(`🏆 Logro desbloqueado: ${a.label}`), 600 + i * 1400);
         });
     } else {
         state.winStreak = 0;
@@ -1835,6 +1978,7 @@ function endRound(won) {
         showToast('🤖 El rival completó su cartón primero. ¡Inténtalo de nuevo!');
     }
     roundWinPattern = null;
+    activeBetMultiplier = 1; activeBetLabel = 'Sencillo'; selectedBetTierIndex = 0;
     startRoundCountdown();
 }
 function stopAutoBingo() { if (bingoInterval) { clearInterval(bingoInterval); bingoInterval = null; } }
@@ -1991,7 +2135,7 @@ function vipToast(msg) {
 }
 
 function gainVipXP(baseAmount) {
-    if (!state || baseAmount <= 0) return;
+    if (!state || baseAmount <= 0) return 0;
     const amount = state.vipPassActive ? Math.round(baseAmount * 1.5) : baseAmount; // +50% XP pasivo con pase activo
     state.vipPassXP += amount;
     let leveledUp = false;
@@ -2004,6 +2148,7 @@ function gainVipXP(baseAmount) {
     }
     saveState();
     if (leveledUp) renderVipPassScreen();
+    return amount;
 }
 
 function levelUpVipPass() {
@@ -2325,6 +2470,7 @@ function fillAdminGeneralForm() {
     document.getElementById('cfg-vipPassScratchMaxGold').value = CONFIG.vipPassScratchMaxGold;
     document.getElementById('cfg-weeklyPrizesGold').value = (CONFIG.weeklyPrizesGold || []).join(',');
     document.getElementById('cfg-monthlyPrizesGold').value = (CONFIG.monthlyPrizesGold || []).join(',');
+    document.getElementById('cfg-betTiers').value = (CONFIG.betTiers || []).map(t => `${t.label},${t.cost},${t.mult}`).join('\n');
     renderAdminRoomImages();
     renderAdminVipImages();
 }
@@ -2434,6 +2580,13 @@ async function saveAdminGeneral() {
     CONFIG.vipPassScratchMaxGold = parseInt(document.getElementById('cfg-vipPassScratchMaxGold').value) || 0;
     CONFIG.weeklyPrizesGold = (document.getElementById('cfg-weeklyPrizesGold').value || '').split(',').map(n => parseInt(n.trim()) || 0);
     CONFIG.monthlyPrizesGold = (document.getElementById('cfg-monthlyPrizesGold').value || '').split(',').map(n => parseInt(n.trim()) || 0);
+    const betLines = (document.getElementById('cfg-betTiers').value || '').split('\n').map(l => l.trim()).filter(Boolean);
+    if (betLines.length) {
+        CONFIG.betTiers = betLines.map(l => {
+            const [label, cost, mult] = l.split(',').map(s => s.trim());
+            return { label: label || 'Apuesta', cost: parseInt(cost) || 0, mult: parseFloat(mult) || 1 };
+        });
+    }
     await saveConfig();
     showToast('✅ Configuración general guardada en la nube.');
 }
