@@ -249,6 +249,40 @@
 
         /* ================= NIVEL Y RACHA ================= */
         .level-badge { background:#21262d; border:1px solid #30363d; border-radius:20px; padding:2px 8px; font-size:10px; color:#c9d1d9; }
+
+        /* ================= PASE VIP ================= */
+        .vip-header { background:linear-gradient(135deg,#3a2a06,#1a1300); border:1px solid #d29922; border-radius:12px; padding:14px; margin-bottom:14px; text-align:center; }
+        .vip-header h3 { color:#ffd866; margin-bottom:4px; }
+        .vip-cycle-tag { font-size:11px; color:#f0c040; }
+        .vip-level-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; margin:8px 0 4px; color:#e6c67a; }
+        .vip-xp-bar-bg { background:#21262d; border-radius:10px; height:12px; overflow:hidden; border:1px solid #30363d; }
+        .vip-xp-bar-fill { height:100%; background:linear-gradient(90deg,#d29922,#ffd866); transition:width .3s; }
+        .vip-buy-pass-btn { margin-top:10px; background:linear-gradient(135deg,#d29922,#ffb300); color:#1a1300; border:none; border-radius:8px; padding:10px 16px; font-weight:bold; cursor:pointer; width:100%; }
+        .vip-buy-pass-btn:disabled { opacity:.6; }
+        .vip-active-tag { color:#3fb950; font-weight:bold; font-size:12px; }
+        .vip-section-title { color:#d29922; font-size:13px; font-weight:bold; margin:14px 0 6px; }
+        .vip-track-scroll { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; }
+        .vip-track-node { flex:0 0 auto; width:56px; text-align:center; font-size:10px; color:#8b949e; background:#161b22; border:1px solid #30363d; border-radius:8px; padding:6px 4px; }
+        .vip-track-node.claimed { border-color:#3fb950; color:#3fb950; }
+        .vip-track-node.chest { border-color:#d29922; }
+        .vip-track-node .lvl-num { display:block; font-weight:bold; color:#c9d1d9; margin-bottom:2px; }
+        .vip-pick-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+        .vip-pick-item { background:#161b22; border:1px solid #30363d; border-radius:8px; padding:8px 4px; text-align:center; font-size:20px; cursor:pointer; position:relative; }
+        .vip-pick-item.locked { opacity:.35; cursor:not-allowed; }
+        .vip-pick-item.equipped { border-color:#3fb950; box-shadow:0 0 0 1px #3fb950; }
+        .vip-pick-item .pick-label { display:block; font-size:9px; color:#8b949e; margin-top:2px; }
+        .vip-anim-avatar { animation: vipPulse 1.4s infinite; }
+        @keyframes vipPulse { 0%,100% { transform:scale(1); } 50% { transform:scale(1.18); } }
+        .vip-crown-badge { display:inline-block; animation: vipFloat 1.8s ease-in-out infinite; margin-right:2px; }
+        @keyframes vipFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-3px); } }
+        .vip-gold-name { background:linear-gradient(90deg,#ffd866,#d29922,#ffd866); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:bold; }
+        .vip-daily-gift-btn, .vip-scratch-btn { background:#238636; color:#fff; border:none; border-radius:8px; padding:10px; font-weight:bold; width:100%; margin-top:6px; cursor:pointer; }
+        .vip-daily-gift-btn:disabled, .vip-scratch-btn:disabled { background:#30363d; color:#8b949e; cursor:not-allowed; }
+        .vip-locked-note { font-size:11px; color:#f85149; margin-top:6px; }
+        .vip-fav-card-box { background:#161b22; border:1px dashed #30363d; border-radius:8px; padding:10px; font-size:12px; color:#8b949e; }
+        .toast.vip-toast { background:linear-gradient(135deg,#3a2a06,#1a1300); border:1px solid #d29922; color:#ffd866; }
+        .room-aurora { background:linear-gradient(135deg,#2d1b4e,#5c1f8a); }
+        .theme-aurora { background:linear-gradient(160deg,#1c1033,#2d1b4e); }
     </style>
 </head>
 <body>
@@ -333,7 +367,8 @@
         <div id="lobby-modal" style="display:none;">
             <p style="font-size:11px;"><span style="cursor:pointer;color:#58a6ff;" onclick="backToRoomSelect()">⬅ Cambiar de sala</span></p>
             <h3 style="color: #d29922; margin: 6px 0;">Selecciona tus Cartones</h3>
-            <p style="font-size: 12px; color: #8b949e; margin-bottom: 10px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
+            <p style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
+            <p style="font-size: 11px; color: #58a6ff; margin-bottom: 10px;">🏁 Modos de victoria: Línea, Columna, Diagonal, 4 Esquinas (primeras 8 bolas) o Cartón Lleno. ¡El primero que completes te hace ganar!</p>
 
             <div class="jackpot-banner" id="jackpot-banner">💰 Pozo acumulado: 0 🪙</div>
 
@@ -453,6 +488,47 @@
         </div>
     </div>
 
+    <!-- PANTALLA PASE VIP -->
+    <div id="vippass-screen" class="screen" style="padding-bottom:80px;">
+        <h2 style="color: #d29922; margin-bottom: 12px;">🎫 Pase VIP</h2>
+
+        <div class="vip-header">
+            <h3 id="vip-status-title">Pase VIP inactivo</h3>
+            <div class="vip-cycle-tag" id="vip-cycle-tag">Ciclo 0</div>
+            <div class="vip-level-row">
+                <span id="vip-level-label">Nivel 1</span>
+                <span id="vip-xp-label">0 / 100 XP</span>
+            </div>
+            <div class="vip-xp-bar-bg"><div class="vip-xp-bar-fill" id="vip-xp-bar" style="width:0%;"></div></div>
+            <button class="vip-buy-pass-btn" id="vip-buy-btn2" onclick="buyVipPass()">Activar Pase VIP</button>
+        </div>
+
+        <div class="vip-section-title">🎁 Ruta de recompensas (cofre cada varios niveles)</div>
+        <div class="vip-track-scroll" id="vip-track-scroll"></div>
+
+        <div class="vip-section-title">🎖️ Título de perfil</div>
+        <div class="vip-pick-grid" id="vip-titles-grid"></div>
+
+        <div class="vip-section-title">💬 Emotes de chat</div>
+        <div class="vip-pick-grid" id="vip-emotes-grid"></div>
+
+        <div class="vip-section-title">🧑 Avatar</div>
+        <div class="vip-pick-grid" id="vip-avatars-grid"></div>
+
+        <div class="vip-section-title">⏳ Ícono de carga</div>
+        <div class="vip-pick-grid" id="vip-icons-grid"></div>
+
+        <div class="vip-section-title">🃏 Cartón favorito</div>
+        <div class="vip-fav-card-box" id="vip-fav-card-box"></div>
+
+        <div class="vip-section-title">📬 Regalo diario VIP</div>
+        <button class="vip-daily-gift-btn" id="vip-daily-gift-btn" onclick="claimVipDailyGift()">Reclamar regalo diario VIP</button>
+
+        <div class="vip-section-title">🎰 Minijuego exclusivo: Rasca y Gana VIP</div>
+        <button class="vip-scratch-btn" id="vip-scratch-btn" onclick="playVipScratch()">Rascar (1 vez al día)</button>
+        <div id="vip-locked-note" class="vip-locked-note" style="display:none;">🔒 Activa el Pase VIP para desbloquear el regalo diario y el minijuego exclusivo.</div>
+    </div>
+
     <!-- PANEL DE ADMINISTRADOR -->
     <div id="admin-screen" class="screen">
         <div class="admin-top">
@@ -478,6 +554,19 @@
                 <div class="admin-field"><label>Costo de girar la ruleta (gemas)</label><input type="number" id="cfg-rouletteCost" min="0"></div>
                 <div class="admin-field"><label>Giros de ruleta disponibles por día</label><input type="number" id="cfg-rouletteSpinsPerDay" min="0"></div>
                 <div class="admin-field"><label>Velocidad de sorteo de balotas (segundos)</label><input type="number" id="cfg-ballIntervalSec" min="1" step="0.5"></div>
+
+                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🎫 Pase VIP</div>
+                <div class="admin-field"><label>Costo de activar el Pase VIP (gemas)</label><input type="number" id="cfg-vipPassCostGems" min="0"></div>
+                <div class="admin-field"><label>XP necesaria por nivel</label><input type="number" id="cfg-vipPassXPPerLevel" min="1"></div>
+                <div class="admin-field"><label>Niveles por ciclo (luego reinicia temporada)</label><input type="number" id="cfg-vipPassLevelsPerCycle" min="1"></div>
+                <div class="admin-field"><label>XP ganada por Bingo ganado</label><input type="number" id="cfg-vipPassXPPerWin" min="0"></div>
+                <div class="admin-field"><label>Cofre sorpresa cada cuántos niveles</label><input type="number" id="cfg-vipPassChestEvery" min="1"></div>
+                <div class="admin-field"><label>Descuento en tienda para Pase VIP (%)</label><input type="number" id="cfg-vipPassStoreDiscount" min="0" max="90"></div>
+                <div class="admin-field"><label>Regalo diario VIP — Oro</label><input type="number" id="cfg-vipPassDailyGiftGold" min="0"></div>
+                <div class="admin-field"><label>Regalo diario VIP — Gemas</label><input type="number" id="cfg-vipPassDailyGiftGems" min="0"></div>
+                <div class="admin-field"><label>Rasca y Gana VIP — Oro mínimo</label><input type="number" id="cfg-vipPassScratchMinGold" min="0"></div>
+                <div class="admin-field"><label>Rasca y Gana VIP — Oro máximo</label><input type="number" id="cfg-vipPassScratchMaxGold" min="0"></div>
+
                 <button class="admin-save-btn" onclick="saveAdminGeneral()">💾 Guardar configuración general</button>
             </div>
 
@@ -530,6 +619,7 @@
         <button class="nav-item" id="nav-juego" onclick="goToScreen('game-screen')">🎯<br>Bingo</button>
         <button class="nav-item" id="nav-campaña" onclick="goToScreen('campaign-screen')">🗺️<br>Campaña</button>
         <button class="nav-item" id="nav-missions" onclick="goToScreen('missions-screen')">📜<br>Misiones</button>
+        <button class="nav-item" id="nav-vippass" onclick="goToScreen('vippass-screen')">🎫<br>Pase VIP</button>
     </div>
 
     <!-- Pantalla de carga mientras conecta con Firebase -->
@@ -595,7 +685,17 @@ function defaultConfig() {
         rouletteSpinsPerDay: 3,
         ballIntervalMs: 3000,
         extraBallCost: 8,
-        roomJackpots: { clasica: 500, oro: 1500, neon: 2500, fuego: 4000, espacial: 6000 },
+        roomJackpots: { clasica: 500, oro: 1500, neon: 2500, fuego: 4000, espacial: 6000, aurora: 8000 },
+        vipPassCostGems: 60,
+        vipPassXPPerLevel: 100,
+        vipPassLevelsPerCycle: 30,
+        vipPassXPPerWin: 20,
+        vipPassChestEvery: 5,
+        vipPassStoreDiscount: 10,
+        vipPassDailyGiftGold: 400,
+        vipPassDailyGiftGems: 3,
+        vipPassScratchMinGold: 100,
+        vipPassScratchMaxGold: 900,
         multipliers: [ {mult:3, cost:1}, {mult:5, cost:2}, {mult:10, cost:4} ],
         roulettePrizes: [
             {label:'+200 🪙', gold:200, gems:0},
@@ -628,6 +728,7 @@ let chosenCardCount = 1;
 let bingoInterval = null;
 let playerCardData = [];
 let rivalProgress = 0;
+let rivalCardNumbers = [];
 let drawnNumbers = [];
 let currentStorePage = 0;
 let pendingMultiplier = 1;
@@ -637,8 +738,10 @@ let ballSpeedMode = 'normal';
 let gameMode = 'auto';
 let selectedFrame = null;
 let roundLuckyNumber = null;
+let roundWinPattern = null;
 
 function todayStr() { return new Date().toISOString().slice(0,10); }
+function escapeHtml(str) { const d = document.createElement('div'); d.innerText = String(str); return d.innerHTML; }
 
 /* ---------- Helpers de Firestore ---------- */
 function waitForFirebase() {
@@ -700,6 +803,24 @@ function defaultState(username) {
         winStreak: 0,
         ownedFrames: [],
         claimedWelcomeBonuses: [],
+        vipPassActive: false,
+        vipPassLevel: 1,
+        vipPassXP: 0,
+        vipPassCycle: 0,
+        vipPassClaimedLevels: [],
+        vipPassLastRecoveryDate: null,
+        vipPassDailyGiftDate: null,
+        vipPassScratchDate: null,
+        unlockedTitles: [],
+        profileTitle: null,
+        unlockedEmotes: [],
+        unlockedAvatars: ['🙂'],
+        equippedAvatar: '🙂',
+        unlockedIcons: ['🎰'],
+        loadingIconVIP: '🎰',
+        freeExtraBalls: 0,
+        favoriteCard: null,
+        useFavoriteCard: false,
     };
 }
 
@@ -710,6 +831,7 @@ const ROOMS = [
     { id:'neon',     name:'Neón',     icon:'💜', cls:'room-neon',     theme:'theme-neon',     minLevel:5,  minStreak:0, welcomeBonus:500 },
     { id:'fuego',    name:'Fuego',    icon:'🔥', cls:'room-fuego',    theme:'theme-fuego',    minLevel:8,  minStreak:3, welcomeBonus:800 },
     { id:'espacial', name:'Espacial', icon:'🚀', cls:'room-espacial', theme:'theme-espacial', minLevel:12, minStreak:5, welcomeBonus:1500 },
+    { id:'aurora',   name:'Aurora',   icon:'🌌', cls:'room-aurora',   theme:'theme-aurora',   minLevel:1,  minStreak:0, welcomeBonus:1000, vipEarlyOnly:true },
 ];
 const FRAMES = [
     { id:'frame-fuego',  name:'Fuego',  productName:'Marco Fuego' },
@@ -722,6 +844,24 @@ function ensurePlayerDefaults(p) {
     if (p.winStreak === undefined) p.winStreak = 0;
     if (p.ownedFrames === undefined) p.ownedFrames = [];
     if (p.claimedWelcomeBonuses === undefined) p.claimedWelcomeBonuses = [];
+    if (p.vipPassActive === undefined) p.vipPassActive = false;
+    if (p.vipPassLevel === undefined) p.vipPassLevel = 1;
+    if (p.vipPassXP === undefined) p.vipPassXP = 0;
+    if (p.vipPassCycle === undefined) p.vipPassCycle = 0;
+    if (p.vipPassClaimedLevels === undefined) p.vipPassClaimedLevels = [];
+    if (p.vipPassLastRecoveryDate === undefined) p.vipPassLastRecoveryDate = null;
+    if (p.vipPassDailyGiftDate === undefined) p.vipPassDailyGiftDate = null;
+    if (p.vipPassScratchDate === undefined) p.vipPassScratchDate = null;
+    if (p.unlockedTitles === undefined) p.unlockedTitles = [];
+    if (p.profileTitle === undefined) p.profileTitle = null;
+    if (p.unlockedEmotes === undefined) p.unlockedEmotes = [];
+    if (p.unlockedAvatars === undefined) p.unlockedAvatars = ['🙂'];
+    if (p.equippedAvatar === undefined) p.equippedAvatar = '🙂';
+    if (p.unlockedIcons === undefined) p.unlockedIcons = ['🎰'];
+    if (p.loadingIconVIP === undefined) p.loadingIconVIP = '🎰';
+    if (p.freeExtraBalls === undefined) p.freeExtraBalls = 0;
+    if (p.favoriteCard === undefined) p.favoriteCard = null;
+    if (p.useFavoriteCard === undefined) p.useFavoriteCard = false;
     return p;
 }
 
@@ -829,6 +969,7 @@ async function login() {
     errorBox.innerText = '';
 
     state = result.player;
+    checkVipMissionRecovery();
     const streakBonus = applyLoginStreak(state);
     currentUser = username; isAdmin = false;
     localStorage.setItem(SESSION_KEY, username);
@@ -869,6 +1010,7 @@ async function tryAutoLogin() {
     ensurePlayerDefaults(p);
     document.getElementById('login-screen').classList.remove('active');
     currentUser = savedUser; isAdmin = false; state = p;
+    checkVipMissionRecovery();
     const streakBonus = applyLoginStreak(state);
     document.getElementById('bottom-nav').style.display = 'flex';
     refreshAllUI();
@@ -913,14 +1055,15 @@ function goToScreen(screenId, isReplace) {
     document.getElementById(screenId).classList.add('active');
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions'};
+    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass'};
     if (map[screenId]) document.getElementById(map[screenId]).classList.add('active');
 
-    if (screenId === 'game-screen') openBingoLobby();
+    if (screenId === 'game-screen') { openBingoLobby(); renderVipChatEmotes(); }
     if (screenId === 'store-screen') renderStore(currentStorePage);
     if (screenId === 'missions-screen' || screenId === 'main-screen') refreshMissionUI();
     if (screenId === 'campaign-screen') refreshRouletteUI();
     if (screenId === 'main-screen') { renderAchievements(); refreshLeaderboard(); }
+    if (screenId === 'vippass-screen') renderVipPassScreen();
 
     if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
 }
@@ -948,16 +1091,17 @@ function renderRoomSelect() {
     grid.innerHTML = '';
     const lvl = playerLevel(state);
     ROOMS.forEach(room => {
-        const locked = lvl < room.minLevel || (state.winStreak || 0) < room.minStreak;
+        const vipLocked = room.vipEarlyOnly && !state.vipPassActive;
+        const locked = lvl < room.minLevel || (state.winStreak || 0) < room.minStreak || vipLocked;
         const jackpot = CONFIG.roomJackpots[room.id] || 0;
         const div = document.createElement('div');
         div.className = 'room-card ' + room.cls + (locked ? ' locked' : '');
         div.innerHTML = `
             <span class="room-icon">${room.icon}</span>
-            <div class="room-name">${room.name}</div>
+            <div class="room-name">${room.name}${room.vipEarlyOnly ? ' 🎫' : ''}</div>
             <div class="room-meta">Nivel mín. ${room.minLevel}${room.minStreak ? ' · Racha ' + room.minStreak + '+' : ''}</div>
             <div class="room-jackpot">💰 ${jackpot.toLocaleString('es')} 🪙</div>
-            ${locked ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : ''}
+            ${vipLocked ? `<div class="room-lock-note">🎫 Acceso anticipado — Requiere Pase VIP</div>` : (locked ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : '')}
         `;
         if (!locked) div.onclick = () => chooseRoom(room.id);
         grid.appendChild(div);
@@ -1082,12 +1226,15 @@ function generateCardNumbers() {
 function generateAllCards() {
     const container = document.getElementById('cards-container-grid');
     container.innerHTML = '';
-    playerCardData = []; rivalProgress = 0; drawnNumbers = [];
+    playerCardData = []; drawnNumbers = [];
+    const rivalNumbersRaw = generateCardNumbers();
+    rivalCardNumbers = rivalNumbersRaw.filter((n, i) => i !== 12);
+    rivalProgress = 1; // la casilla FREE del rival ya viene marcada, igual que en un cartón real
     renderHistoryStrip();
 
     for (let c = 0; c < chosenCardCount; c++) {
         const colorName = COLORS[c % COLORS.length];
-        const numbers = generateCardNumbers();
+        const numbers = (c === 0 && state.useFavoriteCard && state.favoriteCard) ? state.favoriteCard.slice() : generateCardNumbers();
         const cardDiv = document.createElement('div');
         cardDiv.className = `bingo-card card-${colorName}` + (selectedFrame ? ' ' + selectedFrame : '');
         const titleHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;margin-bottom:2px;">
@@ -1111,11 +1258,11 @@ function generateAllCards() {
         extraBtn.className = 'extra-ball-btn';
         extraBtn.id = `extra-btn-${c}`;
         extraBtn.style.display = 'none';
-        extraBtn.innerText = `🃏 Bola Extra (💎 ${CONFIG.extraBallCost || 8})`;
+        extraBtn.innerText = (state.freeExtraBalls || 0) > 0 ? `🎫 Bola Extra GRATIS (${state.freeExtraBalls} disp.)` : `🃏 Bola Extra (💎 ${CONFIG.extraBallCost || 8})`;
         extraBtn.onclick = () => buyExtraBall(c);
         cardDiv.appendChild(extraBtn);
         container.appendChild(cardDiv);
-        playerCardData.push({ cardIndex: c, cells: singleCardCells, completed: false, lineAwarded: false, cornersAwarded: false });
+        playerCardData.push({ cardIndex: c, cells: singleCardCells, completed: false, closestMissingCell: null, winPattern: null });
     }
 }
 
@@ -1162,6 +1309,7 @@ function playLuckySound() {
 function triggerTombolaSpin() {
     const icon = document.getElementById('tombola-icon');
     if (!icon) return;
+    if (state && state.loadingIconVIP) icon.innerText = state.loadingIconVIP;
     icon.classList.remove('spinning');
     void icon.offsetWidth;
     icon.classList.add('spinning');
@@ -1191,55 +1339,79 @@ function maybeRivalChat() {
     }
 }
 
-/* ---------- Premios secundarios: Línea y 4 Esquinas ---------- */
-function checkSecondaryPrizes(cardObj) {
-    const cells = cardObj.cells;
-    if (!cardObj.lineAwarded) {
-        for (let row = 0; row < 5; row++) {
-            let full = true;
-            for (let col = 0; col < 5; col++) { if (!cells[row * 5 + col].classList.contains('marked')) { full = false; break; } }
-            if (full) { cardObj.lineAwarded = true; awardSecondaryPrize(cardObj, 'Línea', 0.15); break; }
-        }
-    }
-    if (!cardObj.cornersAwarded && drawnNumbers.length <= 8) {
-        const corners = [0, 4, 20, 24];
-        if (corners.every(i => cells[i].classList.contains('marked'))) {
-            cardObj.cornersAwarded = true;
-            awardSecondaryPrize(cardObj, '4 Esquinas', 0.20);
-        }
-    }
+/* ---------- MODOS DE VICTORIA (patrones) ---------- */
+const WIN_PATTERNS = (() => {
+    const rows = [0,1,2,3,4].map(r => [0,1,2,3,4].map(c => r*5+c));
+    const cols = [0,1,2,3,4].map(c => [0,1,2,3,4].map(r => r*5+c));
+    const full = Array.from({length:25}, (_, i) => i);
+    const list = [];
+    list.push({ id:'corners', label:'4 Esquinas', cells:[0,4,20,24], mult:0.35, earlyOnly:true });
+    list.push({ id:'diag1', label:'Diagonal', cells:[0,6,12,18,24], mult:0.5 });
+    list.push({ id:'diag2', label:'Diagonal', cells:[4,8,12,16,20], mult:0.5 });
+    rows.forEach((cells, i) => list.push({ id:'row'+i, label:'Línea', cells, mult:0.4 }));
+    cols.forEach((cells, i) => list.push({ id:'col'+i, label:'Columna', cells, mult:0.4 }));
+    list.push({ id:'full', label:'Cartón Lleno', cells: full, mult:1 });
+    return list;
+})();
+
+function getActivePatterns() {
+    // "4 Esquinas" solo cuenta como victoria si se logra en las primeras 8 bolas cantadas
+    return WIN_PATTERNS.filter(p => !p.earlyOnly || drawnNumbers.length <= 8);
 }
-function awardSecondaryPrize(cardObj, label, pct) {
-    const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
-    const prize = Math.round(CONFIG.baseWinReward * pct * vipBonus);
-    state.gold += prize; saveState(); refreshAllUI();
-    showToast(`✨ Premio "${label}" en cartón #${cardObj.cardIndex + 1}: +${prize} 🪙`);
+
+/* Revisa un cartón: si ya completó algún patrón, lo declara ganador (elige el de mayor premio).
+   Si no, actualiza el indicador "¡A PUNTO!" con el patrón más cercano (y el botón de Bola Extra). */
+function evaluateCardPatterns(cardObj) {
+    const cells = cardObj.cells;
+    const cardDiv = cells[0].closest('.bingo-card');
+    const statusEl = document.getElementById(`card-status-${cardObj.cardIndex}`);
+    const extraBtn = document.getElementById(`extra-btn-${cardObj.cardIndex}`);
+    const active = getActivePatterns();
+
+    const completed = active.filter(p => p.cells.every(i => cells[i].classList.contains('marked')));
+    if (completed.length > 0) {
+        const winPattern = completed.reduce((best, p) => (p.mult > best.mult ? p : best), completed[0]);
+        cardObj.completed = true;
+        cardObj.winPattern = winPattern;
+        cardDiv.classList.remove('about-to-win');
+        if (extraBtn) extraBtn.style.display = 'none';
+        statusEl.innerText = `¡${winPattern.label.toUpperCase()}!`; statusEl.style.color = '#3fb950';
+        return winPattern;
+    }
+
+    let closest = null;
+    active.forEach(p => {
+        const missing = p.cells.filter(i => !cells[i].classList.contains('marked'));
+        if (missing.length > 0 && (!closest || missing.length < closest.missing.length)) closest = { pattern: p, missing };
+    });
+    if (closest && closest.missing.length === 1) {
+        cardObj.closestMissingCell = closest.missing[0];
+        cardDiv.classList.add('about-to-win');
+        statusEl.innerHTML = `Jugando <span class="about-to-win-badge">¡A PUNTO! (${closest.pattern.label})</span>`;
+        if (extraBtn) extraBtn.style.display = 'block';
+    } else {
+        cardObj.closestMissingCell = null;
+        cardDiv.classList.remove('about-to-win');
+        statusEl.innerText = 'Jugando'; statusEl.style.color = '#8b949e';
+        if (extraBtn) extraBtn.style.display = 'none';
+    }
+    return null;
 }
 
 /* ---------- Comodín: Bola Extra ---------- */
 function buyExtraBall(cardIndex) {
     const cost = CONFIG.extraBallCost || 8;
-    if (state.gems < cost) { showToast('❌ No tienes suficientes gemas para la Bola Extra.'); return; }
+    const useFree = (state.freeExtraBalls || 0) > 0;
+    if (!useFree && state.gems < cost) { showToast('❌ No tienes suficientes gemas para la Bola Extra.'); return; }
     const cardObj = playerCardData.find(c => c.cardIndex === cardIndex);
-    if (!cardObj || cardObj.completed) return;
-    const missingCell = cardObj.cells.find(c => !c.classList.contains('marked'));
-    if (!missingCell) return;
-    state.gems -= cost;
-    missingCell.classList.add('marked');
+    if (!cardObj || cardObj.completed || cardObj.closestMissingCell === null || cardObj.closestMissingCell === undefined) return;
+    if (useFree) { state.freeExtraBalls -= 1; } else { state.gems -= cost; }
+    cardObj.cells[cardObj.closestMissingCell].classList.add('marked');
     saveState(); refreshAllUI();
-    showToast(`🃏 Bola Extra usada en cartón #${cardIndex + 1}.`);
+    showToast(useFree ? `🎫 Bola Extra gratis (Pase VIP) usada en cartón #${cardIndex + 1}.` : `🃏 Bola Extra usada en cartón #${cardIndex + 1}.`);
 
-    const markedCount = cardObj.cells.filter(c => c.classList.contains('marked')).length;
-    const cardDiv = cardObj.cells[0].closest('.bingo-card');
-    const statusEl = document.getElementById(`card-status-${cardIndex}`);
-    const extraBtn = document.getElementById(`extra-btn-${cardIndex}`);
-    if (markedCount === 25) {
-        cardObj.completed = true;
-        cardDiv.classList.remove('about-to-win');
-        if (extraBtn) extraBtn.style.display = 'none';
-        statusEl.innerText = '¡BINGO!'; statusEl.style.color = '#3fb950';
-        endRound(true);
-    }
+    const winPattern = evaluateCardPatterns(cardObj);
+    if (winPattern) { roundWinPattern = winPattern; endRound(true); }
 }
 
 function startBingoGame() {
@@ -1247,6 +1419,7 @@ function startBingoGame() {
     document.getElementById('active-game-area').style.display = 'block';
     document.getElementById('hud-selected-cards-label').innerText = chosenCardCount;
     document.getElementById('hud-my-name').innerText = state.username;
+    roundWinPattern = null;
     document.getElementById('manual-draw-wrap').style.display = gameMode === 'manual' ? 'block' : 'none';
     document.getElementById('current-ball-text').innerText = gameMode === 'manual' ? 'Pulsa el botón para cantar la primera bola' : 'Esperando sorteo automático...';
     document.getElementById('chat-log').innerHTML = '';
@@ -1289,46 +1462,29 @@ function handleBallDraw() {
     let userWonRound = false;
     playerCardData.forEach((cardObj) => {
         if (cardObj.completed) return;
-        let markedCount = 0;
         cardObj.cells.forEach(cell => {
             if (cell.dataset.value == drawn && !cell.classList.contains('marked')) cell.classList.add('marked');
-            if (cell.classList.contains('marked')) markedCount++;
         });
 
-        checkSecondaryPrizes(cardObj);
-
-        const cardDiv = cardObj.cells[0].closest('.bingo-card');
-        const statusEl = document.getElementById(`card-status-${cardObj.cardIndex}`);
-        const extraBtn = document.getElementById(`extra-btn-${cardObj.cardIndex}`);
-        if (markedCount === 24) {
-            cardDiv.classList.add('about-to-win');
-            statusEl.innerHTML = 'Jugando <span class="about-to-win-badge">¡A PUNTO!</span>';
-            if (extraBtn) extraBtn.style.display = 'block';
-        } else if (!cardObj.completed) {
-            cardDiv.classList.remove('about-to-win');
-            if (extraBtn) extraBtn.style.display = 'none';
-        }
-
-        if (markedCount === 25) {
-            cardObj.completed = true;
-            cardDiv.classList.remove('about-to-win');
-            if (extraBtn) extraBtn.style.display = 'none';
-            statusEl.innerText = '¡BINGO!'; statusEl.style.color = '#3fb950';
-            userWonRound = true;
-        }
+        const winPattern = evaluateCardPatterns(cardObj);
+        if (winPattern) { userWonRound = true; roundWinPattern = winPattern; }
     });
 
-    rivalProgress += Math.floor(Math.random() * 3) + 1;
-    document.getElementById('hud-rival-status').innerText = `Progreso: ${Math.min(rivalProgress,25)}/25`;
-    maybeRivalChat();
+    if (rivalCardNumbers.includes(drawn)) {
+        rivalProgress += 1;
+        document.getElementById('hud-rival-status').innerText = `Progreso: ${Math.min(rivalProgress,25)}/25`;
+        maybeRivalChat();
+    }
 
     if (userWonRound) { endRound(true); }
     else if (rivalProgress >= 25) { endRound(false); }
 }
 
-function triggerBingoFlash() {
+function triggerBingoFlash(label) {
     const el = document.getElementById('bingo-flash');
+    const textEl = document.getElementById('bingo-flash-text');
     if (!el) return;
+    if (textEl) textEl.innerText = '¡' + (label || 'BINGO').toUpperCase() + '!';
     el.classList.add('active');
     setTimeout(() => el.classList.remove('active'), 1500);
 }
@@ -1359,11 +1515,12 @@ function endRound(won) {
         state.winStreak = (state.winStreak || 0) + 1;
         const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
         const usedMultiplier = pendingMultiplier;
-        let reward = Math.round(CONFIG.baseWinReward * chosenCardCount * vipBonus * usedMultiplier);
+        const pattern = roundWinPattern || { label:'Cartón Lleno', mult:1 };
+        let reward = Math.round(CONFIG.baseWinReward * chosenCardCount * pattern.mult * vipBonus * usedMultiplier);
         pendingMultiplier = 1;
 
         let jackpotWon = 0;
-        if (Math.random() < 0.15) {
+        if (pattern.id === 'full' && Math.random() < 0.15) {
             jackpotWon = CONFIG.roomJackpots[selectedRoom.id] || 0;
             reward += jackpotWon;
             CONFIG.roomJackpots[selectedRoom.id] = (defaultConfig().roomJackpots[selectedRoom.id]) || 500;
@@ -1373,12 +1530,13 @@ function endRound(won) {
         state.gold += reward;
         state.totalWins += 1;
         state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
+        gainVipXP(CONFIG.vipPassXPPerWin);
         const newAchievements = checkAchievements(state);
         saveState(); refreshAllUI();
-        triggerBingoFlash();
+        triggerBingoFlash(pattern.label);
         launchConfetti();
         playWinSound();
-        showToast(`🎉 ¡BINGO! Ganaste +${reward} 🪙${jackpotWon > 0 ? ` (¡incluye el POZO de ${jackpotWon} 🪙!)` : ''} (VIP x${vipBonus.toFixed(2)}${usedMultiplier>1?' · extra x'+usedMultiplier:''})`);
+        showToast(`🎉 ¡${pattern.label.toUpperCase()}! Ganaste +${reward} 🪙${jackpotWon > 0 ? ` (¡incluye el POZO de ${jackpotWon} 🪙!)` : ''} (VIP x${vipBonus.toFixed(2)}${usedMultiplier>1?' · extra x'+usedMultiplier:''})`);
         newAchievements.forEach((a, i) => {
             setTimeout(() => showToast(`🏆 Logro desbloqueado: ${a.label}`), 1200 + i * 1400);
         });
@@ -1387,6 +1545,7 @@ function endRound(won) {
         saveState(); refreshAllUI();
         showToast('🤖 El rival completó su cartón primero. ¡Inténtalo de nuevo!');
     }
+    roundWinPattern = null;
     startRoundCountdown();
 }
 function stopAutoBingo() { if (bingoInterval) { clearInterval(bingoInterval); bingoInterval = null; } }
@@ -1408,17 +1567,20 @@ function renderStore(page) {
     const grid = document.getElementById('products-grid');
     grid.innerHTML = '';
     const items = CONFIG.products.slice(page * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE + PRODUCTS_PER_PAGE);
+    const vipDiscount = state.vipPassActive ? (CONFIG.vipPassStoreDiscount || 0) : 0;
     items.forEach(prod => {
+        const finalCost = Math.max(0, Math.round(prod.gemCost * (1 - vipDiscount / 100)));
         const card = document.createElement('div');
         card.className = 'product-card';
         card.innerHTML = `
             <div class="product-img-box"><span class="default-icon">${prod.isCosmetic ? '🖼️' : '🛍️'}</span></div>
             <div class="product-title">${prod.name}</div>
             <div class="product-pricing">
-                <span class="new-price">💎 ${prod.gemCost}</span>
+                <span class="new-price">💎 ${finalCost}${vipDiscount > 0 ? ` <span style="color:#8b949e;text-decoration:line-through;">${prod.gemCost}</span>` : ''}</span>
                 ${prod.discount ? `<span class="discount-tag">${prod.discount}</span>` : ''}
+                ${vipDiscount > 0 ? `<span class="discount-tag" style="background:#d29922;">🎫 -${vipDiscount}%</span>` : ''}
             </div>
-            <button class="buy-product-btn" ${state.gems < prod.gemCost ? 'disabled' : ''} onclick="buyProduct(${prod.id})">
+            <button class="buy-product-btn" ${state.gems < finalCost ? 'disabled' : ''} onclick="buyProduct(${prod.id})">
                 ${prod.isCosmetic ? 'DESBLOQUEAR' : 'COMPRAR'}
             </button>`;
         grid.appendChild(card);
@@ -1442,8 +1604,10 @@ function renderStore(page) {
 function buyProduct(id) {
     const prod = CONFIG.products.find(p => p.id === id);
     if (!prod) return;
-    if (state.gems < prod.gemCost) { showToast('❌ No tienes suficientes gemas.'); return; }
-    state.gems -= prod.gemCost;
+    const discount = state.vipPassActive ? (CONFIG.vipPassStoreDiscount || 0) : 0;
+    const finalCost = Math.max(0, Math.round(prod.gemCost * (1 - discount / 100)));
+    if (state.gems < finalCost) { showToast('❌ No tienes suficientes gemas.'); return; }
+    state.gems -= finalCost;
     state.gold += prod.goldReward;
     if (prod.isCosmetic) {
         const frame = FRAMES.find(f => f.productName === prod.name);
@@ -1503,10 +1667,291 @@ function spinRoulette() {
     showToast(`🎡 ${prize.label}`);
 }
 
+/* =========================================================
+   PASE VIP (niveles infinitos/cíclicos + beneficios)
+   ========================================================= */
+const VIP_TITLES = [
+    { level:5,  id:'novato_vip', label:'Novato Dorado' },
+    { level:10, id:'veterano',   label:'Veterano VIP' },
+    { level:15, id:'maestro',    label:'Maestro del Bingo' },
+    { level:20, id:'leyenda',    label:'Leyenda Dorada' },
+    { level:25, id:'campeon',    label:'Campeón Supremo' },
+    { level:30, id:'inmortal',   label:'Inmortal VIP' },
+];
+const VIP_EMOTES = [
+    { level:3,  emoji:'💎' }, { level:8,  emoji:'👑' }, { level:13, emoji:'🎯' },
+    { level:18, emoji:'🥳' }, { level:23, emoji:'⚡' }, { level:28, emoji:'🌟' },
+];
+const VIP_AVATARS = [
+    { level:6,  emoji:'😎', animated:false }, { level:11, emoji:'🤩', animated:false },
+    { level:16, emoji:'👽', animated:true },  { level:21, emoji:'🦄', animated:true },
+    { level:26, emoji:'🐉', animated:true },
+];
+const VIP_ICONS = [
+    { level:4, icon:'💫' }, { level:9, icon:'🌀' }, { level:14, icon:'🔮' },
+    { level:19, icon:'🎆' }, { level:24, icon:'🌠' },
+];
+
+function vipXPNeeded() { return CONFIG.vipPassXPPerLevel; }
+
+function vipToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast vip-toast'; t.innerText = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+}
+
+function gainVipXP(baseAmount) {
+    if (!state || baseAmount <= 0) return;
+    const amount = state.vipPassActive ? Math.round(baseAmount * 1.5) : baseAmount; // +50% XP pasivo con pase activo
+    state.vipPassXP += amount;
+    let leveledUp = false;
+    let guard = 0;
+    while (state.vipPassXP >= vipXPNeeded() && guard < 50) {
+        state.vipPassXP -= vipXPNeeded();
+        levelUpVipPass();
+        leveledUp = true;
+        guard++;
+    }
+    saveState();
+    if (leveledUp) renderVipPassScreen();
+}
+
+function levelUpVipPass() {
+    state.vipPassLevel += 1;
+    let goldReward = 50 + state.vipPassLevel * 10;
+    if (state.vipPassActive) goldReward *= 2; // recompensas dobles con pase activo
+    state.gold += goldReward;
+    if (!state.vipPassClaimedLevels.includes(state.vipPassLevel)) state.vipPassClaimedLevels.push(state.vipPassLevel);
+    vipToast(`🎫 ¡Nivel de Pase VIP ${state.vipPassLevel}! +${goldReward} 🪙${state.vipPassActive ? ' (recompensa doble)' : ''}`);
+
+    state.freeExtraBalls = (state.freeExtraBalls || 0) + 1; // paquete de comodín gratis por subir de nivel
+
+    if (state.vipPassLevel % CONFIG.vipPassChestEvery === 0) openVipChest();
+
+    VIP_TITLES.forEach(t => { if (state.vipPassLevel === t.level && !state.unlockedTitles.includes(t.id)) { state.unlockedTitles.push(t.id); vipToast(`🎖️ Título desbloqueado: ${t.label}`); } });
+    VIP_EMOTES.forEach(e => { if (state.vipPassLevel === e.level && !state.unlockedEmotes.includes(e.emoji)) { state.unlockedEmotes.push(e.emoji); vipToast(`💬 Nuevo emote de chat desbloqueado: ${e.emoji}`); } });
+    VIP_AVATARS.forEach(a => { if (state.vipPassLevel === a.level && !state.unlockedAvatars.includes(a.emoji)) { state.unlockedAvatars.push(a.emoji); vipToast(`🧑 Nuevo avatar desbloqueado: ${a.emoji}`); } });
+    VIP_ICONS.forEach(ic => { if (state.vipPassLevel === ic.level && !state.unlockedIcons.includes(ic.icon)) { state.unlockedIcons.push(ic.icon); vipToast(`⏳ Nuevo ícono de carga desbloqueado: ${ic.icon}`); } });
+
+    if (state.vipPassLevel >= CONFIG.vipPassLevelsPerCycle) {
+        const finalReward = 500 * (state.vipPassCycle + 1) * (state.vipPassActive ? 2 : 1);
+        state.gold += finalReward;
+        state.vipPassCycle += 1;
+        state.vipPassLevel = 1;
+        state.vipPassClaimedLevels = [];
+        vipToast(`🔁 ¡Reinicio de Temporada! Ciclo ${state.vipPassCycle} completado. Premio final: +${finalReward} 🪙. Los niveles vuelven a empezar con recompensas renovadas.`);
+    }
+}
+
+function openVipChest() {
+    const pool = [
+        () => { const g = 150 + Math.floor(Math.random()*350); state.gold += g; return `+${g} 🪙`; },
+        () => { const g = 5 + Math.floor(Math.random()*10); state.gems += g; return `+${g} 💎`; },
+        () => { state.freeExtraBalls = (state.freeExtraBalls||0) + 2; return '+2 🃏 Bolas Extra gratis'; },
+    ];
+    const desc = pool[Math.floor(Math.random()*pool.length)]();
+    vipToast(`🎁 ¡Cofre sorpresa nivel ${state.vipPassLevel}! ${desc}`);
+}
+
+function buyVipPass() {
+    if (!state || state.vipPassActive) return;
+    const cost = CONFIG.vipPassCostGems;
+    if (state.gems < cost) { showToast('❌ No tienes suficientes gemas para el Pase VIP.'); return; }
+    state.gems -= cost;
+    state.vipPassActive = true;
+    saveState(); refreshAllUI(); renderVipPassScreen();
+    vipToast('🎫 ¡Pase VIP activado! Recompensas de nivel dobles, +50% XP, descuentos y más beneficios desbloqueados.');
+}
+
+function claimVipDailyGift() {
+    if (!state.vipPassActive) { showToast('🔒 Necesitas el Pase VIP activo para este regalo.'); return; }
+    if (state.vipPassDailyGiftDate === todayStr()) { showToast('Ya reclamaste tu regalo VIP de hoy.'); return; }
+    state.vipPassDailyGiftDate = todayStr();
+    state.gold += CONFIG.vipPassDailyGiftGold;
+    state.gems += CONFIG.vipPassDailyGiftGems;
+    saveState(); refreshAllUI(); renderVipPassScreen();
+    vipToast(`📬 Regalo diario VIP: +${CONFIG.vipPassDailyGiftGold} 🪙 +${CONFIG.vipPassDailyGiftGems} 💎`);
+}
+
+function playVipScratch() {
+    if (!state.vipPassActive) { showToast('🔒 Necesitas el Pase VIP activo para este minijuego.'); return; }
+    if (state.vipPassScratchDate === todayStr()) { showToast('Ya jugaste el Rasca y Gana VIP hoy.'); return; }
+    state.vipPassScratchDate = todayStr();
+    const min = CONFIG.vipPassScratchMinGold, max = Math.max(min + 1, CONFIG.vipPassScratchMaxGold);
+    const reward = min + Math.floor(Math.random() * (max - min));
+    state.gold += reward;
+    saveState(); refreshAllUI(); renderVipPassScreen();
+    vipToast(`🎰 ¡Rasca y Gana VIP! Ganaste +${reward} 🪙`);
+}
+
+function equipTitle(id) {
+    if (id !== null && !state.unlockedTitles.includes(id)) return;
+    state.profileTitle = id;
+    saveState(); refreshAllUI(); renderVipPassScreen();
+}
+function equipAvatar(emoji) {
+    if (!state.unlockedAvatars.includes(emoji)) return;
+    state.equippedAvatar = emoji;
+    saveState(); refreshAllUI(); renderVipPassScreen();
+}
+function setLoadingIconVIP(icon) {
+    if (!state.unlockedIcons.includes(icon)) return;
+    state.loadingIconVIP = icon;
+    saveState(); renderVipPassScreen();
+}
+
+function toggleUseFavoriteCard() {
+    if (!state.favoriteCard) { showToast('Primero guarda un cartón favorito jugando una partida.'); return; }
+    state.useFavoriteCard = !state.useFavoriteCard;
+    saveState(); renderVipPassScreen();
+    showToast(state.useFavoriteCard ? '✅ Tu cartón favorito se usará en tu próxima partida (Cartón #1).' : 'Cartón favorito desactivado para la próxima partida.');
+}
+function saveFavoriteCardFromCurrent() {
+    if (!playerCardData.length) { showToast('Entra a una partida para guardar el Cartón #1 como favorito.'); return; }
+    const cells = playerCardData[0].cells;
+    const numbers = cells.map(c => c.dataset.value === 'FREE' ? 0 : parseInt(c.dataset.value));
+    state.favoriteCard = numbers;
+    saveState(); renderVipPassScreen();
+    showToast('🃏 Cartón #1 actual guardado como tu favorito.');
+}
+
+function vipFavoriteSlots() { return state.vipPassActive ? 3 : 1; }
+
+function titleLabel(id) { const t = VIP_TITLES.find(x => x.id === id); return t ? t.label : null; }
+
+function checkVipMissionRecovery() {
+    if (!state || !state.vipPassActive) return;
+    const today = todayStr();
+    const twoDaysAgo = new Date(Date.now() - 2*86400000).toISOString().slice(0,10);
+    if (state.lastLoginDate === twoDaysAgo && state.vipPassLastRecoveryDate !== today) {
+        state.vipPassLastRecoveryDate = today;
+        state.gold += CONFIG.missionRewardGold;
+        state.gems += CONFIG.missionRewardGems;
+        vipToast(`🎫 Recuperamos tu misión VIP del día que no te conectaste: +${CONFIG.missionRewardGold} 🪙 +${CONFIG.missionRewardGems} 💎`);
+    }
+}
+
+function renderVipPassScreen() {
+    if (!state) return;
+    const active = state.vipPassActive;
+    document.getElementById('vip-status-title').innerText = active ? '🎫 Pase VIP activo' : 'Pase VIP inactivo';
+    document.getElementById('vip-cycle-tag').innerText = `Ciclo ${state.vipPassCycle} · Niveles infinitos`;
+    document.getElementById('vip-level-label').innerText = `Nivel ${state.vipPassLevel}`;
+    document.getElementById('vip-xp-label').innerText = `${state.vipPassXP} / ${vipXPNeeded()} XP`;
+    document.getElementById('vip-xp-bar').style.width = Math.min(100, (state.vipPassXP / vipXPNeeded()) * 100) + '%';
+    const buyBtn = document.getElementById('vip-buy-btn2');
+    buyBtn.innerText = active ? '✅ Pase VIP activo' : `Activar Pase VIP (💎 ${CONFIG.vipPassCostGems})`;
+    buyBtn.disabled = active;
+
+    // ruta de recompensas / cofres
+    const track = document.getElementById('vip-track-scroll');
+    track.innerHTML = '';
+    for (let lvl = 1; lvl <= CONFIG.vipPassLevelsPerCycle; lvl++) {
+        const isChest = lvl % CONFIG.vipPassChestEvery === 0;
+        const claimed = state.vipPassClaimedLevels.includes(lvl);
+        const node = document.createElement('div');
+        node.className = 'vip-track-node' + (claimed ? ' claimed' : '') + (isChest ? ' chest' : '');
+        node.innerHTML = `<span class="lvl-num">${lvl}</span>${isChest ? '🎁' : (claimed ? '✅' : '🔒')}`;
+        track.appendChild(node);
+    }
+
+    // títulos
+    const titlesGrid = document.getElementById('vip-titles-grid');
+    titlesGrid.innerHTML = '';
+    const noneItem = document.createElement('div');
+    noneItem.className = 'vip-pick-item' + (state.profileTitle === null ? ' equipped' : '');
+    noneItem.innerHTML = `🚫<span class="pick-label">Ninguno</span>`;
+    noneItem.onclick = () => equipTitle(null);
+    titlesGrid.appendChild(noneItem);
+    VIP_TITLES.forEach(t => {
+        const unlocked = state.unlockedTitles.includes(t.id);
+        const item = document.createElement('div');
+        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked') + (state.profileTitle === t.id ? ' equipped' : '');
+        item.innerHTML = `🎖️<span class="pick-label">${t.label} (Nv.${t.level})</span>`;
+        if (unlocked) item.onclick = () => equipTitle(t.id);
+        titlesGrid.appendChild(item);
+    });
+
+    // emotes
+    const emotesGrid = document.getElementById('vip-emotes-grid');
+    emotesGrid.innerHTML = '';
+    VIP_EMOTES.forEach(e => {
+        const unlocked = state.unlockedEmotes.includes(e.emoji);
+        const item = document.createElement('div');
+        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked');
+        item.innerHTML = `${e.emoji}<span class="pick-label">Nv.${e.level}</span>`;
+        emotesGrid.appendChild(item);
+    });
+
+    // avatares
+    const avatarsGrid = document.getElementById('vip-avatars-grid');
+    avatarsGrid.innerHTML = '';
+    ['🙂'].concat(VIP_AVATARS.map(a => a.emoji)).forEach(emoji => {
+        const meta = VIP_AVATARS.find(a => a.emoji === emoji);
+        const unlocked = state.unlockedAvatars.includes(emoji);
+        const item = document.createElement('div');
+        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked') + (state.equippedAvatar === emoji ? ' equipped' : '');
+        item.innerHTML = `<span class="${meta && meta.animated ? 'vip-anim-avatar' : ''}">${emoji}</span><span class="pick-label">${meta ? 'Nv.' + meta.level + (meta.animated ? ' · Animado' : '') : 'Base'}</span>`;
+        if (unlocked) item.onclick = () => equipAvatar(emoji);
+        avatarsGrid.appendChild(item);
+    });
+
+    // íconos de carga
+    const iconsGrid = document.getElementById('vip-icons-grid');
+    iconsGrid.innerHTML = '';
+    ['🎰'].concat(VIP_ICONS.map(i => i.icon)).forEach(icon => {
+        const meta = VIP_ICONS.find(i => i.icon === icon);
+        const unlocked = state.unlockedIcons.includes(icon);
+        const item = document.createElement('div');
+        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked') + (state.loadingIconVIP === icon ? ' equipped' : '');
+        item.innerHTML = `${icon}<span class="pick-label">${meta ? 'Nv.' + meta.level : 'Base'}</span>`;
+        if (unlocked) item.onclick = () => setLoadingIconVIP(icon);
+        iconsGrid.appendChild(item);
+    });
+
+    // cartón favorito
+    const favBox = document.getElementById('vip-fav-card-box');
+    favBox.innerHTML = `
+        Ranuras disponibles: ${vipFavoriteSlots()} ${active ? '(2 extra por Pase VIP)' : '(activa el Pase VIP para +2 ranuras)'}<br>
+        ${state.favoriteCard ? '✅ Tienes un cartón favorito guardado.' : 'Aún no guardas un cartón favorito.'}<br>
+        <div style="display:flex;gap:6px;margin-top:8px;">
+            <button class="vip-daily-gift-btn" style="margin-top:0;" onclick="saveFavoriteCardFromCurrent()">Guardar Cartón #1 actual</button>
+            <button class="vip-daily-gift-btn" style="margin-top:0;background:${state.useFavoriteCard ? '#8957e5' : '#30363d'};" onclick="toggleUseFavoriteCard()">${state.useFavoriteCard ? '✅ Se usará' : 'Usar en próxima partida'}</button>
+        </div>`;
+
+    // regalo diario y minijuego
+    const giftBtn = document.getElementById('vip-daily-gift-btn');
+    const scratchBtn = document.getElementById('vip-scratch-btn');
+    const lockedNote = document.getElementById('vip-locked-note');
+    lockedNote.style.display = active ? 'none' : 'block';
+    giftBtn.disabled = !active || state.vipPassDailyGiftDate === todayStr();
+    giftBtn.innerText = !active ? '🔒 Requiere Pase VIP' : (state.vipPassDailyGiftDate === todayStr() ? '✅ Ya reclamado hoy' : `Reclamar (+${CONFIG.vipPassDailyGiftGold} 🪙 +${CONFIG.vipPassDailyGiftGems} 💎)`);
+    scratchBtn.disabled = !active || state.vipPassScratchDate === todayStr();
+    scratchBtn.innerText = !active ? '🔒 Requiere Pase VIP' : (state.vipPassScratchDate === todayStr() ? '✅ Ya jugado hoy' : 'Rascar (1 vez al día)');
+}
+
+function renderVipChatEmotes() {
+    const wrap = document.querySelector('.chat-emojis');
+    if (!wrap || !state) return;
+    document.querySelectorAll('.chat-emoji-btn.vip-emote').forEach(b => b.remove());
+    (state.unlockedEmotes || []).forEach(emoji => {
+        const btn = document.createElement('button');
+        btn.className = 'chat-emoji-btn vip-emote';
+        btn.style.borderColor = '#d29922';
+        btn.innerText = emoji;
+        btn.onclick = () => sendQuickChat(emoji);
+        wrap.appendChild(btn);
+    });
+}
+
 /* ---------- REFRESCO GENERAL ---------- */
 function refreshAllUI() {
     if (!state) return;
-    document.getElementById('display-user').innerText = `👑 ${state.username} · Nv.${playerLevel(state)} · VIP ${state.vipCards}`;
+    const crown = state.vipPassActive ? '<span class="vip-crown-badge">👑</span>' : '👑';
+    const nameSpan = state.vipPassActive ? `<span class="vip-gold-name">${escapeHtml(state.username)}</span>` : escapeHtml(state.username);
+    const titleTxt = state.profileTitle ? ` · ${titleLabel(state.profileTitle)}` : '';
+    document.getElementById('display-user').innerHTML = `${crown} ${state.equippedAvatar || '🙂'} ${nameSpan} · Nv.${playerLevel(state)} · VIP ${state.vipCards}${titleTxt}`;
     document.getElementById('res-gold').innerText = state.gold.toLocaleString('es');
     document.getElementById('res-gem').innerText = state.gems.toLocaleString('es');
     document.getElementById('stat-total-wins').innerText = state.totalWins;
@@ -1514,6 +1959,7 @@ function refreshAllUI() {
     if (streakEl) streakEl.innerText = `🔥 Racha: ${state.loginStreak || 0} días`;
     renderAchievements();
     refreshMissionUI(); refreshRouletteUI();
+    if (document.getElementById('vippass-screen') && document.getElementById('vippass-screen').classList.contains('active')) renderVipPassScreen();
 }
 
 function renderAchievements() {
@@ -1537,9 +1983,11 @@ async function refreshLeaderboard() {
         players.sort((a, b) => (b.totalWins || 0) - (a.totalWins || 0));
         const top = players.slice(0, 5);
         if (top.length === 0) { wrap.innerHTML = 'Todavía no hay jugadores.'; return; }
-        wrap.innerHTML = top.map((p, i) =>
-            `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${p.username}</span><span>🏆 ${p.totalWins || 0}</span></div>`
-        ).join('');
+        wrap.innerHTML = top.map((p, i) => {
+            const crown = p.vipPassActive ? '<span class="vip-crown-badge">👑</span> ' : '';
+            const nm = p.vipPassActive ? `<span class="vip-gold-name">${escapeHtml(p.username)}</span>` : escapeHtml(p.username);
+            return `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${crown}${p.equippedAvatar ? p.equippedAvatar + ' ' : ''}${nm}</span><span>🏆 ${p.totalWins || 0}</span></div>`;
+        }).join('');
     } catch(e) { wrap.innerHTML = 'No se pudo cargar el ranking.'; }
 }
 
@@ -1576,6 +2024,16 @@ function fillAdminGeneralForm() {
     document.getElementById('cfg-rouletteCost').value = CONFIG.rouletteCost;
     document.getElementById('cfg-rouletteSpinsPerDay').value = CONFIG.rouletteSpinsPerDay;
     document.getElementById('cfg-ballIntervalSec').value = CONFIG.ballIntervalMs / 1000;
+    document.getElementById('cfg-vipPassCostGems').value = CONFIG.vipPassCostGems;
+    document.getElementById('cfg-vipPassXPPerLevel').value = CONFIG.vipPassXPPerLevel;
+    document.getElementById('cfg-vipPassLevelsPerCycle').value = CONFIG.vipPassLevelsPerCycle;
+    document.getElementById('cfg-vipPassXPPerWin').value = CONFIG.vipPassXPPerWin;
+    document.getElementById('cfg-vipPassChestEvery').value = CONFIG.vipPassChestEvery;
+    document.getElementById('cfg-vipPassStoreDiscount').value = CONFIG.vipPassStoreDiscount;
+    document.getElementById('cfg-vipPassDailyGiftGold').value = CONFIG.vipPassDailyGiftGold;
+    document.getElementById('cfg-vipPassDailyGiftGems').value = CONFIG.vipPassDailyGiftGems;
+    document.getElementById('cfg-vipPassScratchMinGold').value = CONFIG.vipPassScratchMinGold;
+    document.getElementById('cfg-vipPassScratchMaxGold').value = CONFIG.vipPassScratchMaxGold;
 }
 async function saveAdminGeneral() {
     CONFIG.missionTarget = parseInt(document.getElementById('cfg-missionTarget').value) || 1;
@@ -1587,6 +2045,16 @@ async function saveAdminGeneral() {
     CONFIG.rouletteCost = parseInt(document.getElementById('cfg-rouletteCost').value) || 0;
     CONFIG.rouletteSpinsPerDay = parseInt(document.getElementById('cfg-rouletteSpinsPerDay').value) || 0;
     CONFIG.ballIntervalMs = Math.max(500, (parseFloat(document.getElementById('cfg-ballIntervalSec').value) || 3) * 1000);
+    CONFIG.vipPassCostGems = parseInt(document.getElementById('cfg-vipPassCostGems').value) || 0;
+    CONFIG.vipPassXPPerLevel = Math.max(1, parseInt(document.getElementById('cfg-vipPassXPPerLevel').value) || 100);
+    CONFIG.vipPassLevelsPerCycle = Math.max(1, parseInt(document.getElementById('cfg-vipPassLevelsPerCycle').value) || 30);
+    CONFIG.vipPassXPPerWin = parseInt(document.getElementById('cfg-vipPassXPPerWin').value) || 0;
+    CONFIG.vipPassChestEvery = Math.max(1, parseInt(document.getElementById('cfg-vipPassChestEvery').value) || 5);
+    CONFIG.vipPassStoreDiscount = parseInt(document.getElementById('cfg-vipPassStoreDiscount').value) || 0;
+    CONFIG.vipPassDailyGiftGold = parseInt(document.getElementById('cfg-vipPassDailyGiftGold').value) || 0;
+    CONFIG.vipPassDailyGiftGems = parseInt(document.getElementById('cfg-vipPassDailyGiftGems').value) || 0;
+    CONFIG.vipPassScratchMinGold = parseInt(document.getElementById('cfg-vipPassScratchMinGold').value) || 0;
+    CONFIG.vipPassScratchMaxGold = parseInt(document.getElementById('cfg-vipPassScratchMaxGold').value) || 0;
     await saveConfig();
     showToast('✅ Configuración general guardada en la nube.');
 }
@@ -1704,7 +2172,7 @@ async function renderAdminUsers() {
         const key = p.id; // id del documento = usuario en minúsculas
         const tr = document.createElement('tr');
         tr.innerHTML = `
-            <td>${p.username}</td><td>${p.gold}</td><td>${p.gems}</td><td>${p.vipCards}</td><td>${p.totalWins}</td>
+            <td>${escapeHtml(p.username)}</td><td>${p.gold}</td><td>${p.gems}</td><td>${p.vipCards}</td><td>${p.totalWins}</td>
             <td>
                 <button class="btn-give" onclick="adminGiveResources('${key}', 1000, 0)">+1000🪙</button>
                 <button class="btn-give" onclick="adminGiveResources('${key}', 0, 100)">+100💎</button>
