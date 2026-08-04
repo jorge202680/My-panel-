@@ -2,461 +2,1128 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Bingo vs Boss - Juego Completo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>New Bound Bingo</title>
     <style>
-        * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
-        body { margin: 0; padding: 0; background: #1a1a2e; font-family: sans-serif; color: white; overflow: hidden; touch-action: manipulation; }
-        
-        .screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a1a2e; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 10; padding: 10px; }
-        .auth-box { width: 100%; max-width: 400px; padding: 20px; background: #16213e; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); border: 2px solid #0f3460; text-align: center; }
-        .hidden { display: none !important; }
-        h2 { color: #e94560; margin-bottom: 15px; }
-        input { width: 100%; padding: 10px; margin: 8px 0; background: #0f3460; border: 1px solid #533483; color: white; border-radius: 8px; font-size: 15px; outline: none; }
-        button { width: 100%; padding: 12px; margin-top: 10px; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-        button:active { background: #d63851; }
-        .link { margin-top: 12px; font-size: 13px; color: #a2dbfa; cursor: pointer; display: inline-block; }
-        
-        /* Pantalla de Juego */
-        #gameScreen { justify-content: flex-start; padding: 6px; overflow-y: auto; }
-        
-        /* Panel de Combate (Boss & Rival) */
-        .battle-panel { width: 100%; max-width: 450px; background: #16213e; border: 2px solid #0f3460; border-radius: 10px; padding: 8px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .boss-info { text-align: left; flex: 1; }
-        .boss-name { font-size: 13px; color: #e94560; font-weight: bold; }
-        .boss-bar-bg { width: 100%; background: #0f3460; height: 8px; border-radius: 4px; margin-top: 4px; overflow: hidden; border: 1px solid #533483; }
-        #bossHpFill { height: 100%; width: 100%; background: #e94560; transition: width 0.3s ease; }
-        
-        .rival-box { text-align: right; font-size: 11px; color: #a2dbfa; padding-left: 8px; border-left: 1px solid #0f3460; display: flex; flex-direction: column; align-items: flex-end; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0d1117; color: #fff; padding-bottom: 75px; user-select: none; }
 
-        /* Panel Superior (Bolilla actual y temporizador) */
-        .header-panel { width: 100%; max-width: 450px; display: flex; justify-content: space-between; align-items: center; background: #16213e; padding: 6px 10px; border-radius: 8px; border: 1px solid #0f3460; margin-bottom: 6px; }
-        .ball-display { width: 45px; height: 45px; background: #e94560; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 18px; font-weight: bold; box-shadow: 0 4px 10px rgba(233,69,96,0.5); }
-        
-        /* Contenedor de Cartones (2 Tarjetas) */
-        .cards-wrapper { width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
-        .card-container { width: 100%; background: #16213e; border-radius: 8px; padding: 6px; border: 2px solid #0f3460; text-align: center; }
-        .bingo-table { width: 100%; border-collapse: collapse; margin-top: 3px; }
-        .bingo-table th { background: #0f3460; color: #e94560; padding: 4px; font-size: 12px; border: 1px solid #533483; }
-        .bingo-table td { width: 20%; height: 32px; background: #1a1a2e; border: 1px solid #533483; text-align: center; vertical-align: middle; font-size: 13px; font-weight: bold; color: #fff; cursor: pointer; }
-        .bingo-table td.marked { background: #4ecca3; color: #1a1a2e; text-decoration: line-through; }
-        .bingo-table td.free { background: #f39c12; color: #1a1a2e; font-size: 9px; }
+        .screen { display: none; padding: 15px; }
+        .screen.active { display: block; }
 
-        /* Modal para ver el Cartón del Rival */
-        #rivalModal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 100; display: flex; justify-content: center; align-items: center; padding: 15px; }
-        .modal-content { width: 100%; max-width: 400px; background: #16213e; border: 2px solid #e94560; border-radius: 12px; padding: 15px; text-align: center; }
+        #login-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #161b22, #0d1117); z-index: 2000; }
 
-        .controls-panel { width: 100%; max-width: 450px; margin-top: 4px; display: flex; gap: 6px; }
-        .history-box { width: 100%; max-width: 450px; background: #16213e; border-radius: 8px; padding: 5px; margin-top: 5px; font-size: 11px; color: #a2dbfa; max-height: 45px; overflow-y: auto; border: 1px solid #0f3460; }
+        .login-box { background: #161b22; border: 1px solid #30363d; padding: 30px; border-radius: 12px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .login-box h2 { color: #58a6ff; margin-bottom: 6px; }
+        .login-box p { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 6px; }
+        .login-box button { width: 100%; padding: 12px; background: #238636; border: none; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; }
+        .login-box button:hover { background: #2ea043; }
+        .login-error { color: #f85149; font-size: 12px; min-height: 16px; margin-bottom: 6px; }
+
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 10px 15px; border-bottom: 1px solid #30363d; font-size: 13px; }
+        .user-badge { background: linear-gradient(135deg, #d29922, #bc8c22); padding: 4px 12px; border-radius: 20px; font-weight: bold; color: #0d1117; }
+        .resources { display: flex; gap: 8px; font-size: 12px; align-items: center; }
+        .logout-btn { background: none; border: 1px solid #30363d; color: #8b949e; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+
+        .play-banner { background: linear-gradient(135deg, #238636, #2ea043); color: white; padding: 18px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; font-size: 17px; font-weight: bold; box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4); border: 1px solid #3fb950; }
+
+        .card-widget { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
+        .progress-container { background: #30363d; border-radius: 10px; height: 12px; overflow: hidden; margin-top: 8px; }
+        .progress-bar { background: linear-gradient(90deg, #58a6ff, #1f6feb); height: 100%; width: 0%; transition: width .3s; }
+
+        .store-header-box { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .store-vip-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+        .vip-buy-btn { background: linear-gradient(135deg, #d29922, #bc8c22); border: none; color: #0d1117; font-weight: bold; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+
+        .store-multipliers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        .mult-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 10px; text-align: center; color: #fff; cursor: pointer; font-size: 13px; }
+        .mult-btn.active { border-color: #58a6ff; background: #1f2937; }
+        .mult-btn span { display: block; font-size: 11px; color: #d29922; margin-top: 4px; }
+
+        .store-pages { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; }
+        .page-tab { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 8px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .page-tab.active { background: #8957e5; color: #fff; border-color: #a371f7; font-weight: bold; }
+
+        .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .product-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-img-box { background: #21262d; border: 1px solid #30363d; border-radius: 8px; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+        .product-img-box .default-icon { font-size: 32px; }
+
+        .product-title { font-size: 14px; font-weight: bold; margin-bottom: 6px; }
+        .product-pricing { display: flex; align-items: center; gap: 6px; font-size: 13px; margin-bottom: 10px; flex-wrap: wrap; }
+        .discount-tag { color: #3fb950; font-size: 11px; font-weight: bold; }
+        .new-price { color: #d29922; font-weight: bold; }
+        .buy-product-btn { background: #8957e5; color: white; border: none; padding: 8px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 12px; }
+        .buy-product-btn:hover { background: #a371f7; }
+        .buy-product-btn:disabled { background: #30363d; color: #6e7681; cursor: not-allowed; }
+
+        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #161b22; border-top: 1px solid #30363d; display: none; justify-content: space-around; padding: 10px 0; z-index: 1000; }
+        .nav-item { text-align: center; color: #8b949e; font-size: 11px; cursor: pointer; background: none; border: none; }
+        .nav-item.active { color: #58a6ff; }
+
+        #lobby-modal { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; }
+        .cards-options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+        .card-opt-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px; color: #fff; cursor: pointer; font-weight: bold; font-size: 14px; text-align: center; }
+        .card-opt-btn:hover, .card-opt-btn.selected { background: #1f6feb; border-color: #58a6ff; }
+        .card-opt-btn span { display: block; font-size: 10px; color: #d29922; margin-top: 4px; }
+
+        .battle-status { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+        .player-card-hud { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; text-align: center; font-size: 12px; }
+
+        .ball-callout-container { display: flex; align-items: center; justify-content: center; gap: 12px; background: #161b22; border: 1px solid #30363d; padding: 12px; border-radius: 10px; margin-bottom: 6px; }
+        .bingo-ball { width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #58a6ff, #1f6feb); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.5), 0 4px 10px rgba(31,111,235,0.4); border: 2px solid #8cb4ff; }
+        .ball-text-info { font-size: 13px; font-weight: bold; color: #c9d1d9; }
+        .drawn-history { font-size: 10px; color: #6e7681; margin-bottom: 12px; text-align: center; word-break: break-all; }
+
+        .cards-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-bottom: 15px; }
+        .bingo-card { background: #161b22; border-radius: 8px; padding: 6px; position: relative; border: 2px solid transparent; }
+
+        .bingo-card.card-rojo { animation: ledGlowRed 1.5s infinite alternate; }
+        .bingo-card.card-azul { animation: ledGlowBlue 1.5s infinite alternate; }
+        .bingo-card.card-verde { animation: ledGlowGreen 1.5s infinite alternate; }
+        .bingo-card.card-amarillo { animation: ledGlowYellow 1.5s infinite alternate; }
+
+        @keyframes ledGlowRed { 0% { border-color:#da3633; box-shadow:0 0 4px #da3633, inset 0 0 4px #da3633; } 100% { border-color:#ff7b72; box-shadow:0 0 10px #ff7b72, inset 0 0 8px #ff7b72; } }
+        @keyframes ledGlowBlue { 0% { border-color:#1f6feb; box-shadow:0 0 4px #1f6feb, inset 0 0 4px #1f6feb; } 100% { border-color:#58a6ff; box-shadow:0 0 10px #58a6ff, inset 0 0 8px #58a6ff; } }
+        @keyframes ledGlowGreen { 0% { border-color:#238636; box-shadow:0 0 4px #238636, inset 0 0 4px #238636; } 100% { border-color:#3fb950; box-shadow:0 0 10px #3fb950, inset 0 0 8px #3fb950; } }
+        @keyframes ledGlowYellow { 0% { border-color:#9e6a03; box-shadow:0 0 4px #9e6a03, inset 0 0 4px #9e6a03; } 100% { border-color:#d29922; box-shadow:0 0 10px #d29922, inset 0 0 8px #d29922; } }
+
+        .bingo-header-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; margin-top: 4px; text-align: center; font-size: 9px; font-weight: bold; color: #58a6ff; background: #1f242c; padding: 2px 0; border-radius: 3px; }
+        .bingo-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; margin-top: 2px; }
+
+        .b-cell { background: #21262d; border: 1px solid #30363d; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; color: #fff; border-radius: 3px; }
+        .b-cell.free { font-size: 7px; }
+
+        .card-rojo .b-cell.marked { background: #da3633 !important; border-color: #f85149 !important; }
+        .card-azul .b-cell.marked { background: #1f6feb !important; border-color: #58a6ff !important; }
+        .card-verde .b-cell.marked { background: #238636 !important; border-color: #3fb950 !important; }
+        .card-amarillo .b-cell.marked { background: #9e6a03 !important; border-color: #d29922 !important; color: #fff !important; }
+
+        .game-action-btn { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; margin-bottom: 10px; }
+        .game-action-btn:hover { background: #2ea043; }
+        .game-action-btn:disabled { background: #30363d; color: #6e7681; cursor: not-allowed; }
+
+        .mission-claim-btn { background: #d29922; color: #0d1117; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; margin-top: 8px; }
+        .mission-claim-btn:disabled { background: #30363d; color: #6e7681; cursor: not-allowed; }
+
+        .toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #3fb950; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; max-width: 90%; }
+
+        /* ---- Botón de tornillo (acceso admin discreto) ---- */
+        .admin-fab { position: fixed; bottom: 85px; left: 12px; width: 38px; height: 38px; border-radius: 50%; background: #161b22; border: 1px solid #30363d; color: #6e7681; font-size: 17px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2500; opacity: 0.55; }
+        .admin-fab:hover { opacity: 1; border-color: #8957e5; color: #a371f7; }
+        .admin-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3500; align-items: center; justify-content: center; }
+        .admin-modal-overlay.active { display: flex; }
+        .admin-modal-box { background: #161b22; border: 1px solid #8957e5; border-radius: 12px; padding: 24px; width: 85%; max-width: 320px; text-align: center; }
+        .admin-modal-box h3 { color: #a371f7; margin-bottom: 6px; }
+        .admin-modal-box p { color: #8b949e; font-size: 12px; margin-bottom: 15px; }
+        .admin-modal-box input { width: 100%; padding: 12px; margin-bottom: 12px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 6px; }
+        .admin-modal-box .admin-modal-error { color: #f85149; font-size: 12px; min-height: 16px; margin-bottom: 6px; }
+        .admin-modal-actions { display: flex; gap: 8px; }
+        .admin-modal-actions button { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .admin-modal-cancel { background: #21262d; color: #8b949e; }
+        .admin-modal-confirm { background: #8957e5; color: #fff; }
+
+        /* ---- ADMIN ---- */
+        #admin-screen.active { display: block; }
+        .admin-top { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 12px 15px; border-bottom: 1px solid #8957e5; }
+        .admin-top strong { color: #a371f7; }
+        .admin-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 10px 15px; background: #0d1117; }
+        .admin-tab { background: #21262d; border: 1px solid #30363d; color: #8b949e; padding: 8px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; white-space: nowrap; }
+        .admin-tab.active { background: #8957e5; color: #fff; border-color: #a371f7; font-weight: bold; }
+        .admin-body { padding: 15px; }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        .admin-field { margin-bottom: 12px; }
+        .admin-field label { display: block; font-size: 12px; color: #8b949e; margin-bottom: 4px; }
+        .admin-field input { width: 100%; padding: 10px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 6px; font-size: 13px; }
+        .admin-save-btn { background: #8957e5; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
+        .admin-save-btn:hover { background: #a371f7; }
+        .admin-row-card { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
+        .admin-row-card .row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .admin-row-card input[type=checkbox] { width: auto; margin-right: 6px; }
+        .admin-del-btn { background: #da3633; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+        .admin-add-btn { background: #238636; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 12px; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .admin-table th, .admin-table td { border-bottom: 1px solid #30363d; padding: 8px 4px; text-align: left; }
+        .admin-table button { font-size: 10px; padding: 4px 6px; margin: 2px; border-radius: 5px; border: none; cursor: pointer; }
+        .btn-give { background: #1f6feb; color: #fff; }
+        .btn-reset { background: #d29922; color: #0d1117; }
+        .btn-delete { background: #da3633; color: #fff; }
     </style>
 </head>
 <body>
 
     <!-- LOGIN -->
-    <div id="loginScreen" class="screen">
-        <div class="auth-box">
-            <h2>Bingo vs Boss - Login</h2>
-            <input type="text" id="loginUser" placeholder="Usuario">
-            <input type="password" id="loginPass" placeholder="Contraseña">
-            <button onclick="goToMenu()">Ingresar</button>
-            <div class="link" onclick="switchScreen('registerScreen')">¿No tienes cuenta? Regístrate</div>
+    <div id="login-screen" class="screen active">
+        <div class="login-box">
+            <h2>New Bound Bingo</h2>
+            <p>Inicia sesión para guardar tu progreso en este dispositivo</p>
+            <div class="login-error" id="login-error"></div>
+            <input type="text" id="username" placeholder="Nombre de usuario" maxlength="18">
+            <input type="password" id="password" placeholder="Contraseña">
+            <button onclick="login()">Ingresar</button>
         </div>
     </div>
 
-    <!-- REGISTRO -->
-    <div id="registerScreen" class="screen hidden">
-        <div class="auth-box">
-            <h2>Crear Cuenta</h2>
-            <input type="text" id="regUser" placeholder="Nuevo Usuario">
-            <input type="password" id="regPass" placeholder="Contraseña">
-            <button onclick="goToMenu()">Registrarse</button>
-            <div class="link" onclick="switchScreen('loginScreen')">¿Ya tienes cuenta? Inicia sesión</div>
+    <!-- INICIO -->
+    <div id="main-screen" class="screen">
+        <div class="top-bar">
+            <div class="user-badge" id="display-user">Jugador</div>
+            <div class="resources">
+                <span>🪙 <span id="res-gold">0</span></span>
+                <span>💎 <span id="res-gem">0</span></span>
+                <button class="logout-btn" onclick="logout()">Salir</button>
+            </div>
+        </div>
+
+        <div class="play-banner" onclick="goToScreen('game-screen')">
+            🎯 ¡ENTRAR A LA SALA DE BINGO AUTOMÁTICO! 🚀
+        </div>
+
+        <div class="card-widget">
+            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <span>Bingos ganados en total</span>
+                <span id="stat-total-wins">0</span>
+            </div>
+        </div>
+
+        <div class="card-widget">
+            <strong>📜 Misión diaria: Completa cartones de Bingo</strong>
+            <div class="progress-container">
+                <div class="progress-bar" id="mission-progress-bar"></div>
+            </div>
+            <div style="font-size: 12px; color: #8b949e; margin-top: 5px;" id="mission-progress-text">0 / 3</div>
+            <button class="mission-claim-btn" id="mission-claim-btn" onclick="claimMission()" disabled>Reclamar</button>
         </div>
     </div>
 
-    <!-- MENÚ PRINCIPAL -->
-    <div id="menuScreen" class="screen hidden">
-        <div class="auth-box" style="text-align: center;">
-            <h2>Batalla de Bingo</h2>
-            <p style="font-size: 13px; color: #a2dbfa; margin-bottom: 20px;">¡Juega con 2 cartones, auto-marcado cada 4s y derrota al Boss!</p>
-            <button onclick="startGame()" style="background: #4ecca3; color: #1a1a2e;">¡INICIAR COMBATE!</button>
+    <!-- PANTALLA DE JUEGO / SALA -->
+    <div id="game-screen" class="screen">
+        <div class="top-bar" style="border-radius: 8px; margin-bottom: 10px;">
+            <span style="cursor: pointer; color: #58a6ff;" onclick="quitToMenu()">⬅ Salir al Menú</span>
+            <strong id="room-mode-title">Sala de Bingo Automático</strong>
         </div>
-    </div>
 
-    <!-- PANTALLA DE JUEGO -->
-    <div id="gameScreen" class="screen hidden">
-        <!-- Panel de Combate (Boss & Rival) -->
-        <div class="battle-panel">
-            <div class="boss-info">
-                <div class="boss-name">BOSS: Cronos (HP: <span id="bossHpText">100</span>%)</div>
-                <div class="boss-bar-bg">
-                    <div id="bossHpFill"></div>
+        <div id="lobby-modal">
+            <h3 style="color: #58a6ff; margin-bottom: 6px;">Selecciona tus Cartones</h3>
+            <p style="font-size: 12px; color: #8b949e; margin-bottom: 15px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
+
+            <div class="cards-options-grid">
+                <div class="card-opt-btn selected" onclick="selectCardCount(1, this)">1 Cartón<span>Premio Base x1</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(2, this)">2 Cartones<span>Premio x2</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(4, this)">4 Cartones<span>Premio x4</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(8, this)">8 Cartones<span>Premio x8</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(12, this)">12 Cartones<span>Premio x12</span></div>
+                <div class="card-opt-btn" onclick="selectCardCount(16, this)">16 Cartones<span>Premio x16 (¡Máximo!)</span></div>
+            </div>
+
+            <div style="font-size:12px; color:#8b949e; margin-bottom:10px;" id="bonus-summary">Bonus VIP: x1.00 · Multiplicador extra: Ninguno</div>
+
+            <button class="game-action-btn" onclick="startBingoGame()">🚀 ¡Comenzar Bingo Automático!</button>
+        </div>
+
+        <div id="active-game-area" style="display: none;">
+            <div class="battle-status">
+                <div class="player-card-hud" style="border-color: #58a6ff;">
+                    👤 <span id="hud-my-name">Tú</span> (<span id="hud-selected-cards-label">1</span> Cartones)<br>
+                    <span style="color: #3fb950; font-weight: bold;" id="hud-my-status">Estado: En juego</span>
+                </div>
+                <div class="player-card-hud" style="border-color: #d29922;">
+                    🤖 Rival Automático<br>
+                    <span style="color: #d29922; font-weight: bold;" id="hud-rival-status">Progreso: 0/25</span>
                 </div>
             </div>
-            <div class="rival-box">
-                <div>Rival: <b id="rivalName" style="color:#fff;">BotMaster</b></div>
-                <div id="rivalStatus" style="color: #f39c12; margin-bottom: 3px;">Progreso: 0%</div>
-                <button onclick="openRivalModal()" style="margin:0; padding: 2px 6px; font-size: 10px; background: #0f3460; border: 1px solid #e94560;">Ver Cartón Rival</button>
+
+            <div class="ball-callout-container">
+                <div class="bingo-ball" id="current-ball-num">--</div>
+                <div class="ball-text-info" id="current-ball-text">Esperando sorteo automático...</div>
             </div>
+            <div class="drawn-history" id="drawn-history">Balotas cantadas: —</div>
+
+            <div class="cards-container" id="cards-container-grid"></div>
+        </div>
+    </div>
+
+    <!-- PANTALLA TIENDA -->
+    <div id="store-screen" class="screen">
+        <h2 style="color: #58a6ff; margin-bottom: 12px;">🛒 Tienda de Recompensas</h2>
+
+        <div class="store-header-box">
+            <div class="store-vip-row">
+                <span>Tus Tarjetas VIP: <strong style="color: #d29922;" id="store-vip-count">0</strong> · Bonus activo: <span style="color: #3fb950;" id="store-vip-bonus">x1.00</span></span>
+                <button class="vip-buy-btn" id="vip-buy-btn" onclick="buyVipCard()">Comprar VIP</button>
+            </div>
+            <div class="store-multipliers" id="store-multipliers"></div>
         </div>
 
-        <!-- Panel de Estado / Bolilla Automática -->
-        <div class="header-panel">
-            <div>
-                <div style="font-size: 11px; color: #a2dbfa;" id="timerLabel">Siguiente en 4s:</div>
-                <div id="callStatus" style="font-size: 12px; font-weight: bold; color: #fff;">Marcado automático activo</div>
-            </div>
-            <div class="ball-display" id="currentBallBox">--</div>
-        </div>
+        <div class="store-pages" id="store-pages"></div>
 
-        <!-- Contenedor de los 2 Cartones de Bingo -->
-        <div class="cards-wrapper">
-            <!-- Cartón 1 -->
-            <div class="card-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <b style="color: #e94560; font-size: 12px;">Cartón 1</b>
-                    <button onclick="generateCard(0)" style="margin:0; padding: 2px 5px; font-size: 9px; background: #0f3460;">Cambiar</button>
-                </div>
-                <table class="bingo-table">
-                    <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
-                    <tbody id="bingoCardBody0"></tbody>
+        <div class="products-grid" id="products-grid"></div>
+    </div>
+
+    <!-- PANTALLA CAMPAÑA -->
+    <div id="campaign-screen" class="screen">
+        <h2 style="color: #58a6ff; margin-bottom: 15px;">🎡 Campaña & Ruleta</h2>
+        <div class="card-widget" style="text-align: center;">
+            <h3>Ruleta Diaria</h3>
+            <p style="font-size: 13px; color: #8b949e; margin: 10px 0;" id="roulette-desc">Gira para obtener premios exclusivos.</p>
+            <p style="font-size: 12px; color: #d29922; margin-bottom: 10px;" id="roulette-count">Giros restantes hoy: 3</p>
+            <button class="game-action-btn" id="roulette-btn" onclick="spinRoulette()">Girar Ruleta</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA MISIONES -->
+    <div id="missions-screen" class="screen">
+        <h2 style="color: #58a6ff; margin-bottom: 15px;">📜 Misiones Diarias</h2>
+        <div class="card-widget">
+            <strong id="mission-title-2">Completar cartones de Bingo</strong>
+            <div class="progress-container"><div class="progress-bar" id="mission-progress-bar-2"></div></div>
+            <p style="font-size: 12px; color: #8b949e; margin-top: 5px;" id="mission-progress-text-2">0 / 3</p>
+            <button class="mission-claim-btn" id="mission-claim-btn-2" onclick="claimMission()" disabled>Reclamar</button>
+        </div>
+    </div>
+
+    <!-- PANEL DE ADMINISTRADOR -->
+    <div id="admin-screen" class="screen">
+        <div class="admin-top">
+            <strong>⚙️ Panel de Administrador</strong>
+            <button class="logout-btn" onclick="logout()">Salir</button>
+        </div>
+        <div class="admin-tabs">
+            <div class="admin-tab active" data-tab="general" onclick="switchAdminTab('general', this)">General</div>
+            <div class="admin-tab" data-tab="tienda" onclick="switchAdminTab('tienda', this)">Tienda</div>
+            <div class="admin-tab" data-tab="ruleta" onclick="switchAdminTab('ruleta', this)">Ruleta</div>
+            <div class="admin-tab" data-tab="multiplicadores" onclick="switchAdminTab('multiplicadores', this)">Multiplicadores</div>
+            <div class="admin-tab" data-tab="usuarios" onclick="switchAdminTab('usuarios', this)">Usuarios</div>
+        </div>
+        <div class="admin-body">
+
+            <div class="admin-section active" id="admin-general">
+                <div class="admin-field"><label>Meta de la misión diaria (cartones a completar)</label><input type="number" id="cfg-missionTarget" min="1"></div>
+                <div class="admin-field"><label>Recompensa de misión — Oro</label><input type="number" id="cfg-missionRewardGold" min="0"></div>
+                <div class="admin-field"><label>Recompensa de misión — Gemas</label><input type="number" id="cfg-missionRewardGems" min="0"></div>
+                <div class="admin-field"><label>Premio base por Bingo ganado (con 1 cartón)</label><input type="number" id="cfg-baseWinReward" min="0"></div>
+                <div class="admin-field"><label>Bonus VIP por tarjeta (%, ej. 5 = +5% por tarjeta)</label><input type="number" id="cfg-vipBonusPerCard" min="0" step="0.1"></div>
+                <div class="admin-field"><label>Costo de Tarjeta VIP (gemas)</label><input type="number" id="cfg-vipCardCost" min="0"></div>
+                <div class="admin-field"><label>Costo de girar la ruleta (gemas)</label><input type="number" id="cfg-rouletteCost" min="0"></div>
+                <div class="admin-field"><label>Giros de ruleta disponibles por día</label><input type="number" id="cfg-rouletteSpinsPerDay" min="0"></div>
+                <div class="admin-field"><label>Velocidad de sorteo de balotas (segundos)</label><input type="number" id="cfg-ballIntervalSec" min="1" step="0.5"></div>
+                <button class="admin-save-btn" onclick="saveAdminGeneral()">💾 Guardar configuración general</button>
+            </div>
+
+            <div class="admin-section" id="admin-tienda">
+                <button class="admin-add-btn" onclick="addProductRow()">➕ Agregar producto</button>
+                <div id="admin-products-list"></div>
+                <button class="admin-save-btn" onclick="saveAdminProducts()">💾 Guardar tienda</button>
+            </div>
+
+            <div class="admin-section" id="admin-ruleta">
+                <button class="admin-add-btn" onclick="addRouletteRow()">➕ Agregar premio</button>
+                <div id="admin-roulette-list"></div>
+                <button class="admin-save-btn" onclick="saveAdminRoulette()">💾 Guardar premios de ruleta</button>
+            </div>
+
+            <div class="admin-section" id="admin-multiplicadores">
+                <div id="admin-multipliers-list"></div>
+                <button class="admin-save-btn" onclick="saveAdminMultipliers()">💾 Guardar multiplicadores</button>
+            </div>
+
+            <div class="admin-section" id="admin-usuarios">
+                <table class="admin-table">
+                    <thead><tr><th>Usuario</th><th>🪙</th><th>💎</th><th>VIP</th><th>Bingos</th><th>Acciones</th></tr></thead>
+                    <tbody id="admin-users-body"></tbody>
                 </table>
             </div>
 
-            <!-- Cartón 2 -->
-            <div class="card-container">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                    <b style="color: #4ecca3; font-size: 12px;">Cartón 2</b>
-                    <button onclick="generateCard(1)" style="margin:0; padding: 2px 5px; font-size: 9px; background: #0f3460;">Cambiar</button>
-                </div>
-                <table class="bingo-table">
-                    <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
-                    <tbody id="bingoCardBody1"></tbody>
-                </table>
+        </div>
+    </div>
+
+    <!-- BOTÓN DE TORNILLO (acceso admin discreto, siempre visible) -->
+    <button class="admin-fab" onclick="openAdminGearModal()" title="Acceso administrador">🔧</button>
+    <div class="admin-modal-overlay" id="admin-modal-overlay">
+        <div class="admin-modal-box">
+            <h3>⚙️ Acceso Administrador</h3>
+            <p>Introduce la contraseña de administrador de este dispositivo.</p>
+            <div class="admin-modal-error" id="admin-modal-error"></div>
+            <input type="password" id="admin-modal-password" placeholder="Contraseña de admin">
+            <div class="admin-modal-actions">
+                <button class="admin-modal-cancel" onclick="closeAdminGearModal()">Cancelar</button>
+                <button class="admin-modal-confirm" onclick="submitAdminGearLogin()">Entrar</button>
             </div>
         </div>
-
-        <!-- Historial -->
-        <div class="history-box">
-            <b>Bolillas:</b> <span id="historyBalls">Ninguna</span>
-        </div>
-
-        <!-- Botones de Control -->
-        <div class="controls-panel">
-            <button onclick="checkBingo()" style="background: #e94560; margin:0; padding: 8px; font-size: 13px;">¡CANTAR BINGO!</button>
-        </div>
-        <button onclick="exitToMenu()" style="width: 100%; max-width: 450px; background: #0f3460; margin-top: 4px; padding: 5px; font-size: 11px;">Salir al Menú</button>
     </div>
 
-    <!-- MODAL PARA VER EL CARTÓN DEL RIVAL -->
-    <div id="rivalModal" class="hidden">
-        <div class="modal-content">
-            <h3 style="color: #e94560; margin-top: 0; font-size: 16px;">Cartón del Rival (<span id="modalRivalName">Bot</span>)</h3>
-            <table class="bingo-table" style="margin-bottom: 10px;">
-                <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
-                <tbody id="rivalCardBody"></tbody>
-            </table>
-            <button onclick="closeRivalModal()" style="background: #0f3460; padding: 8px; font-size: 13px;">Cerrar</button>
-        </div>
+    <!-- NAVEGACIÓN INFERIOR -->
+    <div class="nav-bar" id="bottom-nav">
+        <button class="nav-item active" id="nav-inicio" onclick="goToScreen('main-screen')">🏠<br>Inicio</button>
+        <button class="nav-item" id="nav-tienda" onclick="goToScreen('store-screen')">🛒<br>Tienda</button>
+        <button class="nav-item" id="nav-juego" onclick="goToScreen('game-screen')">🎯<br>Bingo</button>
+        <button class="nav-item" id="nav-campaña" onclick="goToScreen('campaign-screen')">🗺️<br>Campaña</button>
+        <button class="nav-item" id="nav-missions" onclick="goToScreen('missions-screen')">📜<br>Misiones</button>
     </div>
+
+    <!-- Pantalla de carga mientras conecta con Firebase -->
+    <div id="cloud-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0d1117;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8b949e;font-size:13px;">
+        <div style="font-size:32px;margin-bottom:10px;">☁️</div>
+        Conectando con la nube...
+    </div>
+
+    <!-- SDK de Firebase (modular, vía CDN) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import {
+            getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs
+        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjPIi-Ce-S0s9tUtS444AKnKUU_XWmMwo",
+            authDomain: "baseregistro-dee82.firebaseapp.com",
+            projectId: "baseregistro-dee82",
+            storageBucket: "baseregistro-dee82.firebasestorage.app",
+            messagingSenderId: "907337162019",
+            appId: "1:907337162019:web:4a10b4425d9c5166390096",
+            measurementId: "G-NBGEEWM2M8"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Se exponen en window para que el script clásico (no-módulo) los use
+        window.db = db;
+        window.fs = { doc, getDoc, setDoc, deleteDoc, collection, getDocs };
+        window.__firebaseReady = true;
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
 
 <script>
-    function switchScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        document.getElementById(screenId).classList.remove('hidden');
+/* =======================================================
+   NEW BOUND BINGO — lógica completa + Panel de Administrador
+   Persistencia: Firebase Firestore (nube), separado por colecciones:
+     - players/{usuario}  → progreso de cada jugador
+     - config/main        → configuración editable desde el panel admin
+     - config/admin       → contraseña del panel admin
+   Acceso admin: botón de tornillo 🔧 + contraseña
+   ======================================================= */
+
+const SAVE_PREFIX = 'newBoundBingo_';
+const SESSION_KEY = SAVE_PREFIX + 'session';
+const ADMIN_SESSION_KEY = SAVE_PREFIX + 'admin_session';
+const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]]; // B I N G O
+const LETTERS = ['B','I','N','G','O'];
+const COLORS = ['rojo','azul','verde','amarillo'];
+const PRODUCTS_PER_PAGE = 2;
+
+function defaultConfig() {
+    return {
+        missionTarget: 3,
+        missionRewardGold: 300,
+        missionRewardGems: 5,
+        baseWinReward: 500,
+        vipBonusPerCard: 5,     // en %
+        vipCardCost: 25,
+        rouletteCost: 10,
+        rouletteSpinsPerDay: 3,
+        ballIntervalMs: 3000,
+        multipliers: [ {mult:3, cost:1}, {mult:5, cost:2}, {mult:10, cost:4} ],
+        roulettePrizes: [
+            {label:'+200 🪙', gold:200, gems:0},
+            {label:'+500 🪙', gold:500, gems:0},
+            {label:'+1000 🪙', gold:1000, gems:0},
+            {label:'+5 💎', gold:0, gems:5},
+            {label:'+15 💎', gold:0, gems:15},
+            {label:'Sin premio esta vez', gold:0, gems:0},
+        ],
+        products: [
+            {id:1, name:'Paquete Bronce',  gemCost:5,  goldReward:400,  discount:'', isCosmetic:false},
+            {id:2, name:'Paquete Plata',   gemCost:12, goldReward:1100, discount:'10% MÁS', isCosmetic:false},
+            {id:3, name:'Paquete Oro',     gemCost:25, goldReward:2500, discount:'15% MÁS', isCosmetic:false},
+            {id:4, name:'Paquete Platino', gemCost:50, goldReward:5500, discount:'20% MÁS', isCosmetic:false},
+            {id:5, name:'Paquete Diamante',gemCost:90, goldReward:11000,discount:'25% MÁS', isCosmetic:false},
+            {id:6, name:'Paquete Rubí',    gemCost:150,goldReward:20000,discount:'30% MÁS', isCosmetic:false},
+            {id:7, name:'Marco Fuego',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:8, name:'Marco Hielo',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:9, name:'Marco Real',      gemCost:80, goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:10,name:'Marco Mítico',    gemCost:160,goldReward:0,    discount:'Cosmético', isCosmetic:true},
+        ],
+    };
+}
+
+let CONFIG = null;
+let state = null;
+let currentUser = null;
+let isAdmin = false;
+let chosenCardCount = 1;
+let bingoInterval = null;
+let playerCardData = [];
+let rivalProgress = 0;
+let drawnNumbers = [];
+let currentStorePage = 0;
+let pendingMultiplier = 1;
+let historyStack = ['main-screen'];
+
+function todayStr() { return new Date().toISOString().slice(0,10); }
+
+/* ---------- Helpers de Firestore ---------- */
+function waitForFirebase() {
+    return new Promise(resolve => {
+        if (window.__firebaseReady) return resolve();
+        window.addEventListener('firebase-ready', () => resolve(), { once: true });
+    });
+}
+async function fsGet(col, id) {
+    const ref = window.fs.doc(window.db, col, id);
+    const snap = await window.fs.getDoc(ref);
+    return snap.exists() ? snap.data() : null;
+}
+async function fsSet(col, id, data) {
+    const ref = window.fs.doc(window.db, col, id);
+    await window.fs.setDoc(ref, data);
+}
+async function fsDelete(col, id) {
+    const ref = window.fs.doc(window.db, col, id);
+    await window.fs.deleteDoc(ref);
+}
+async function fsGetAll(col) {
+    const snap = await window.fs.getDocs(window.fs.collection(window.db, col));
+    const out = [];
+    snap.forEach(d => out.push(Object.assign({ id: d.id }, d.data())));
+    return out;
+}
+
+async function loadConfig() {
+    const def = defaultConfig();
+    let cfg = await fsGet('config', 'main');
+    if (!cfg) { cfg = def; await fsSet('config', 'main', cfg); }
+    else { cfg = Object.assign({}, def, cfg); } // rellena campos nuevos si faltan
+    return cfg;
+}
+async function saveConfig() { await fsSet('config', 'main', CONFIG); }
+
+async function getAdminPassword() {
+    const doc = await fsGet('config', 'admin');
+    return doc ? doc.password : null;
+}
+async function setAdminPassword(pass) { await fsSet('config', 'admin', { password: pass }); }
+
+function defaultState(username) {
+    return {
+        username,
+        gold: 5000,
+        gems: 100,
+        vipCards: 0,
+        totalWins: 0,
+        missionDate: todayStr(),
+        missionProgress: 0,
+        missionClaimed: false,
+        rouletteDate: todayStr(),
+        rouletteSpinsLeft: CONFIG.rouletteSpinsPerDay,
+    };
+}
+
+async function loadOrCreatePlayer(username, password) {
+    let p = await fsGet('players', username.toLowerCase());
+    if (!p) {
+        p = defaultState(username);
+        p.password = password;
+        await fsSet('players', username.toLowerCase(), p);
+        return { player: p, isNew: true };
+    }
+    if (p.password !== password) return { player: null, isNew: false, wrongPass: true };
+    if (p.missionDate !== todayStr()) { p.missionDate = todayStr(); p.missionProgress = 0; p.missionClaimed = false; }
+    if (p.rouletteDate !== todayStr()) { p.rouletteDate = todayStr(); p.rouletteSpinsLeft = CONFIG.rouletteSpinsPerDay; }
+    return { player: p, isNew: false };
+}
+async function saveState() { if (state) await fsSet('players', state.username.toLowerCase(), state); }
+
+function showToast(msg) {
+    const t = document.createElement('div');
+    t.className = 'toast'; t.innerText = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2600);
+}
+
+/* ---------- LOGIN / LOGOUT ---------- */
+async function login() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+    const errorBox = document.getElementById('login-error');
+    errorBox.innerText = '';
+    if (!username) { errorBox.innerText = 'Escribe un nombre de usuario.'; return; }
+    if (!password) { errorBox.innerText = 'Escribe una contraseña.'; return; }
+
+    errorBox.innerText = 'Conectando...';
+    const result = await loadOrCreatePlayer(username, password);
+    if (result.wrongPass) { errorBox.innerText = 'Contraseña incorrecta para ese usuario.'; return; }
+    errorBox.innerText = '';
+
+    state = result.player;
+    currentUser = username; isAdmin = false;
+    localStorage.setItem(SESSION_KEY, username);
+    document.getElementById('login-screen').classList.remove('active');
+    document.getElementById('bottom-nav').style.display = 'flex';
+    refreshAllUI();
+    goToScreen('main-screen', true);
+    saveState();
+}
+
+function logout() {
+    stopAutoBingo();
+    if (isAdmin) { localStorage.removeItem(ADMIN_SESSION_KEY); }
+    else { localStorage.removeItem(SESSION_KEY); }
+    currentUser = null; state = null; isAdmin = false;
+    document.getElementById('bottom-nav').style.display = 'none';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('login-screen').classList.add('active');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+}
+
+async function tryAutoLogin() {
+    if (localStorage.getItem(ADMIN_SESSION_KEY) === '1') {
+        document.getElementById('login-screen').classList.remove('active');
+        await openAdminPanel();
+        return;
+    }
+    const savedUser = localStorage.getItem(SESSION_KEY);
+    if (!savedUser) return;
+    const p = await fsGet('players', savedUser.toLowerCase());
+    if (!p) { localStorage.removeItem(SESSION_KEY); return; } // la cuenta ya no existe en la nube
+    if (p.missionDate !== todayStr()) { p.missionDate = todayStr(); p.missionProgress = 0; p.missionClaimed = false; }
+    if (p.rouletteDate !== todayStr()) { p.rouletteDate = todayStr(); p.rouletteSpinsLeft = CONFIG.rouletteSpinsPerDay; }
+    document.getElementById('login-screen').classList.remove('active');
+    currentUser = savedUser; isAdmin = false; state = p;
+    document.getElementById('bottom-nav').style.display = 'flex';
+    refreshAllUI();
+    goToScreen('main-screen', true);
+}
+
+/* ---------- BOTÓN DE TORNILLO (acceso admin) ---------- */
+function openAdminGearModal() {
+    document.getElementById('admin-modal-error').innerText = '';
+    document.getElementById('admin-modal-password').value = '';
+    document.getElementById('admin-modal-overlay').classList.add('active');
+}
+function closeAdminGearModal() {
+    document.getElementById('admin-modal-overlay').classList.remove('active');
+}
+async function submitAdminGearLogin() {
+    const pass = document.getElementById('admin-modal-password').value;
+    const errorBox = document.getElementById('admin-modal-error');
+    if (!pass) { errorBox.innerText = 'Escribe la contraseña.'; return; }
+    errorBox.innerText = 'Conectando...';
+
+    const savedPass = await getAdminPassword();
+    if (savedPass === null) {
+        await setAdminPassword(pass); // primera vez: queda como la contraseña de admin
+    } else if (savedPass !== pass) {
+        errorBox.innerText = 'Contraseña incorrecta.';
+        return;
     }
 
-    function goToMenu() {
-        switchScreen('menuScreen');
-    }
+    closeAdminGearModal();
+    localStorage.setItem(ADMIN_SESSION_KEY, '1');
+    document.getElementById('login-screen').classList.remove('active');
+    await openAdminPanel();
+}
 
-    function exitToMenu() {
-        stopGameIntervals();
-        switchScreen('menuScreen');
-    }
+/* ---------- NAVEGACIÓN + BOTÓN ATRÁS ---------- */
+function goToScreen(screenId, isReplace) {
+    stopAutoBingo();
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
 
-    let availableBalls = [];
-    let calledBalls = [];
-    let cardsData = [[], []]; // Dos cartones
-    let rivalCardData = []; // Cartón del rival
-    let gameActive = false;
-    let autoTimer = null;
-    let countdownInterval = null;
-    let secondsLeft = 4;
-    
-    let bossHp = 100;
-    let rivalProgress = 0;
-    const rivals = ["CyberBot", "BingoKing", "FastPlayer", "BotMaster"];
-    let currentRivalName = "BotMaster";
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions'};
+    if (map[screenId]) document.getElementById(map[screenId]).classList.add('active');
 
-    function startGame() {
-        switchScreen('gameScreen');
-        resetGameData();
-        generateCard(0);
-        generateCard(1);
-        generateRivalCard();
-        startAutoLoop();
-    }
+    if (screenId === 'game-screen') openBingoLobby();
+    if (screenId === 'store-screen') renderStore(currentStorePage);
+    if (screenId === 'missions-screen' || screenId === 'main-screen') refreshMissionUI();
+    if (screenId === 'campaign-screen') refreshRouletteUI();
 
-    function resetGameData() {
-        stopGameIntervals();
-        availableBalls = [];
-        for (let i = 1; i <= 75; i++) availableBalls.push(i);
-        calledBalls = [];
-        gameActive = true;
-        bossHp = 100;
-        rivalProgress = 0;
-        
-        currentRivalName = rivals[Math.floor(Math.random() * rivals.length)];
-        document.getElementById('rivalName').innerText = currentRivalName;
-        document.getElementById('modalRivalName').innerText = currentRivalName;
-        document.getElementById('rivalStatus').innerText = "Progreso: 0%";
-        
-        document.getElementById('bossHpFill').style.width = '100%';
-        document.getElementById('bossHpText').innerText = '100';
-        document.getElementById('currentBallBox').innerText = "--";
-        document.getElementById('callStatus').innerText = "¡Partida Iniciada!";
-        document.getElementById('historyBalls').innerText = "Ninguna";
-    }
+    if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
+}
 
-    function stopGameIntervals() {
-        if (autoTimer) clearInterval(autoTimer);
-        if (countdownInterval) clearInterval(countdownInterval);
-    }
-
-    function startAutoLoop() {
-        resetTimerAndCall();
-    }
-
-    function resetTimerAndCardCountdown() {
-        secondsLeft = 4;
-        updateTimerLabel();
-        
-        if (countdownInterval) clearInterval(countdownInterval);
-        countdownInterval = setInterval(() => {
-            secondsLeft--;
-            if (secondsLeft <= 0) secondsLeft = 4; // Bucle de cuenta regresiva de 4 segundos
-            updateTimerLabel();
-        }, 1000);
-
-        if (autoTimer) clearTimeout(autoTimer);
-        autoTimer = setTimeout(() => {
-            if (gameActive) {
-                callNextBall();
-                startAutoLoop();
-            }
-        }, 4000); // Intervalo fijo exacto de 4000 ms (4 segundos)
-    }
-
-    function resetTimerAndCall() {
-        resetTimerAndCardCountdown();
-    }
-
-    function updateTimerLabel() {
-        let label = document.getElementById('timerLabel');
-        if (label) label.innerText = `Siguiente en ${secondsLeft}s:`;
-    }
-
-    function generateCard(cardIndex) {
-        let cardData = [];
-        let ranges = [
-            {min: 1, max: 15},
-            {min: 16, max: 30},
-            {min: 31, max: 45},
-            {min: 46, max: 60},
-            {min: 61, max: 75}
-        ];
-
-        let colNumbers = [];
-        for (let col = 0; col < 5; col++) {
-            let pool = [];
-            for (let n = ranges[col].min; n <= ranges[col].max; n++) pool.push(n);
-            pool.sort(() => Math.random() - 0.5);
-            colNumbers[col] = pool.slice(0, 5);
-        }
-
-        for (let row = 0; row < 5; row++) {
-            let rowArr = [];
-            for (let col = 0; col < 5; col++) {
-                if (row === 2 && col === 2) {
-                    rowArr.push({val: 'FREE', marked: true, isFree: true});
-                } else {
-                    rowArr.push({val: colNumbers[col][row], marked: false, isFree: false});
-                }
-            }
-            cardData.push(rowArr);
-        }
-        cardsData[cardIndex] = cardData;
-        renderCard(cardIndex);
-    }
-
-    function generateRivalCard() {
-        rivalCardData = [];
-        let ranges = [{min:1, max:15}, {min:16, max:30}, {min:31, max:45}, {min:46, max:60}, {min:61, max:75}];
-        let colNumbers = [];
-        for (let col = 0; col < 5; col++) {
-            let pool = [];
-            for (let n = ranges[col].min; n <= ranges[col].max; n++) pool.push(n);
-            pool.sort(() => Math.random() - 0.5);
-            colNumbers[col] = pool.slice(0, 5);
-        }
-        for (let row = 0; row < 5; row++) {
-            let rowArr = [];
-            for (let col = 0; col < 5; col++) {
-                if (row === 2 && col === 2) rowArr.push({val: 'FREE', marked: true, isFree: true});
-                else rowArr.push({val: colNumbers[col][row], marked: false, isFree: false});
-            }
-            rivalCardData.push(rowArr);
-        }
-        renderRivalCard();
-    }
-
-    function renderCard(cardIndex) {
-        let tbody = document.getElementById('bingoCardBody' + cardIndex);
-        tbody.innerHTML = '';
-        let cardData = cardsData[cardIndex];
-        for (let r = 0; r < 5; r++) {
-            let tr = document.createElement('tr');
-            for (let c = 0; c < 5; c++) {
-                let td = document.createElement('td');
-                let cell = cardData[r][c];
-                td.innerText = cell.val;
-                if (cell.marked) td.classList.add('marked');
-                if (cell.isFree) td.classList.add('free');
-                
-                // Permitir marcar/desmarcar manualmente de manera opcional
-                td.onclick = () => {
-                    if (!cell.isFree) {
-                        cell.marked = !cell.marked;
-                        renderCard(cardIndex);
-                    }
-                };
-                tr.appendChild(td);
-            }
-            tbody.appendChild(tr);
-        }
-    }
-
-    function renderRivalCard() {
-        let tbody = document.getElementById('rivalCardBody');
-        tbody.innerHTML = '';
-        for (let r = 0; r < 5; r++) {
-            let tr = document.createElement('tr');
-            for (let c = 0; c < 5; c++) {
-                let td = document.createElement('td');
-                let cell = rivalCardData[r][c];
-                td.innerText = cell.val;
-                if (cell.marked) td.classList.add('marked');
-                if (cell.isFree) td.classList.add('free');
-                tr.appendChild(td);
-            }
-            tbody.appendChild(tr);
-        }
-    }
-
-    function openRivalModal() {
-        document.getElementById('rivalModal').classList.remove('hidden');
-    }
-
-    function closeRivalModal() {
-        document.getElementById('rivalModal').classList.add('hidden');
-    }
-
-    function callNextBall() {
-        if (!gameActive) return;
-        if (availableBalls.length === 0) return;
-        
-        let randomIndex = Math.floor(Math.random() * availableBalls.length);
-        let ball = availableBalls.splice(randomIndex, 1)[0];
-        calledBalls.push(ball);
-
-        let letter = '';
-        if (ball <= 15) letter = 'B';
-        else if (ball <= 30) letter = 'I';
-        else if (ball <= 45) letter = 'N';
-        else if (ball <= 60) letter = 'G';
-        else letter = 'O';
-
-        document.getElementById('currentBallBox').innerText = letter + "-" + ball;
-        document.getElementById('callStatus').innerText = `Salió: ${letter}-${ball} (Auto-marcado)`;
-        document.getElementById('historyBalls').innerText = calledBalls.join(', ');
-
-        // Auto-marcado automático en tus 2 Cartones
-        for (let i = 0; i < 2; i++) {
-            for (let r = 0; r < 5; r++) {
-                for (let c = 0; c < 5; c++) {
-                    if (cardsData[i][r][c].val === ball) {
-                        cardsData[i][r][c].marked = true;
-                    }
-                }
-            }
-            renderCard(i);
-        }
-
-        // Auto-marcado automático en el cartón del rival
-        for (let r = 0; r < 5; r++) {
-            for (let c = 0; c < 5; c++) {
-                if (rivalCardData[r][c].val === ball) {
-                    rivalCardData[r][c].marked = true;
-                }
-            }
-        }
-        renderRivalCard();
-
-        // Incremento de progreso del rival (adaptado a 4 segundos)
-        rivalProgress += Math.floor(Math.random() * 5) + 3;
-        if (rivalProgress >= 100) {
-            rivalProgress = 100;
-            document.getElementById('rivalStatus').innerText = "¡El rival cantó BINGO!";
-            if (gameActive) {
-                gameActive = false;
-                stopGameIntervals();
-                alert("¡El rival y el Boss te han ganado la partida! Inténtalo de nuevo.");
-            }
-        } else {
-            document.getElementById('rivalStatus').innerText = `Progreso: ${rivalProgress}%`;
-        }
-    }
-
-    function checkBingo() {
-        if (!gameActive) return;
-        
-        let hasWon = false;
-        
-        // Revisar ambos cartones
-        for (let i = 0; i < 2; i++) {
-            let cardData = cardsData[i];
-            for (let r = 0; r < 5; r++) {
-                if (cardData[r].every(cell => cell.marked)) hasWon = true;
-            }
-            for (let c = 0; c < 5; c++) {
-                if (cardData.every(row => row[c].marked)) hasWon = true;
-            }
-            if (cardData[0][0].marked && cardData[1][1].marked && cardData[2][2].marked && cardData[3][3].marked && cardData[4][4].marked) hasWon = true;
-            if (cardData[0][4].marked && cardData[1][3].marked && cardData[2][2].marked && cardData[3][1].marked && cardData[4][0].marked) hasWon = true;
-        }
-
-        if (hasWon) {
-            bossHp -= 50;
-            if (bossHp <= 0) {
-                bossHp = 0;
-                gameActive = false;
-                stopGameIntervals();
-                document.getElementById('bossHpFill').style.width = '0%';
-                document.getElementById('bossHpText').innerText = '0';
-                alert("¡EXCELENTE! ¡Cantaste BINGO, le diste el golpe final al Boss Cronos y venciste a tu rival!");
-                exitToMenu();
-            } else {
-                document.getElementById('bossHpFill').style.width = bossHp + '%';
-                document.getElementById('bossHpText').innerText = bossHp;
-                alert("¡BINGO Válido en uno de tus cartones! ¡Le has restado vida al Boss!");
-                generateCard(0);
-                generateCard(1);
+window.addEventListener('popstate', () => {
+    if (isAdmin) return;
+    if (historyStack.length > 1) {
+        historyStack.pop();
+        goToScreen(historyStack[historyStack.length - 1], true);
+    } else if (currentUser) {
+        if (confirm('¿Salir de New Bound Bingo?')) {
+            if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App) {
+                window.Capacitor.Plugins.App.exitApp();
             }
         } else {
-            alert("¡Aún no se completa ninguna línea o diagonal en tus cartones!");
+            history.pushState({screen:'main-screen'}, '', '');
         }
     }
+});
+
+/* ---------- BINGO ---------- */
+function selectCardCount(count, element) {
+    chosenCardCount = count;
+    document.querySelectorAll('.card-opt-btn').forEach(btn => btn.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function openBingoLobby() {
+    stopAutoBingo();
+    document.getElementById('lobby-modal').style.display = 'block';
+    document.getElementById('active-game-area').style.display = 'none';
+    const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
+    document.getElementById('bonus-summary').innerText =
+        `Bonus VIP: x${vipBonus.toFixed(2)} · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'}`;
+}
+function quitToMenu() { goToScreen('main-screen'); }
+
+function generateCardNumbers() {
+    const cols = RANGES.map(([min, max]) => {
+        const pool = [];
+        for (let n = min; n <= max; n++) pool.push(n);
+        for (let i = pool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [pool[i], pool[j]] = [pool[j], pool[i]];
+        }
+        return pool.slice(0, 5);
+    });
+    const grid = new Array(25);
+    for (let col = 0; col < 5; col++) for (let row = 0; row < 5; row++) grid[row * 5 + col] = cols[col][row];
+    return grid;
+}
+
+function generateAllCards() {
+    const container = document.getElementById('cards-container-grid');
+    container.innerHTML = '';
+    playerCardData = []; rivalProgress = 0; drawnNumbers = [];
+    document.getElementById('drawn-history').innerText = 'Balotas cantadas: —';
+
+    for (let c = 0; c < chosenCardCount; c++) {
+        const colorName = COLORS[c % COLORS.length];
+        const numbers = generateCardNumbers();
+        const cardDiv = document.createElement('div');
+        cardDiv.className = `bingo-card card-${colorName}`;
+        const titleHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;margin-bottom:2px;">
+            <strong>#${c + 1} (${colorName.toUpperCase()})</strong>
+            <span id="card-status-${c}" style="color:#8b949e;">Jugando</span></div>`;
+        const headerHTML = `<div class="bingo-header-row">${LETTERS.map(l => `<span>${l}</span>`).join('')}</div>`;
+        const gridDiv = document.createElement('div');
+        gridDiv.className = 'bingo-grid';
+        const singleCardCells = [];
+        for (let i = 0; i < 25; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'b-cell';
+            if (i === 12) { cell.className += ' free marked'; cell.innerText = 'FREE'; cell.dataset.value = 'FREE'; }
+            else { cell.innerText = numbers[i]; cell.dataset.value = numbers[i]; }
+            gridDiv.appendChild(cell);
+            singleCardCells.push(cell);
+        }
+        cardDiv.innerHTML = titleHTML + headerHTML;
+        cardDiv.appendChild(gridDiv);
+        container.appendChild(cardDiv);
+        playerCardData.push({ cardIndex: c, cells: singleCardCells, completed: false });
+    }
+}
+
+function letterForNumber(n) { if (n<=15) return 'B'; if (n<=30) return 'I'; if (n<=45) return 'N'; if (n<=60) return 'G'; return 'O'; }
+
+function drawNextNumber() {
+    if (drawnNumbers.length >= 75) return null;
+    let n;
+    do { n = Math.floor(Math.random() * 75) + 1; } while (drawnNumbers.includes(n));
+    drawnNumbers.push(n);
+    return n;
+}
+
+function startBingoGame() {
+    document.getElementById('lobby-modal').style.display = 'none';
+    document.getElementById('active-game-area').style.display = 'block';
+    document.getElementById('hud-selected-cards-label').innerText = chosenCardCount;
+    document.getElementById('hud-my-name').innerText = state.username;
+    generateAllCards();
+    runAutoBingoLoop();
+}
+
+function runAutoBingoLoop() {
+    if (bingoInterval) clearInterval(bingoInterval);
+    bingoInterval = setInterval(() => {
+        const drawn = drawNextNumber();
+        if (drawn === null) { stopAutoBingo(); return; }
+        document.getElementById('current-ball-num').innerText = letterForNumber(drawn) + drawn;
+        document.getElementById('current-ball-text').innerText = 'Balota sorteada automáticamente';
+        document.getElementById('drawn-history').innerText = 'Balotas cantadas: ' + drawnNumbers.map(n => letterForNumber(n) + n).join(', ');
+
+        let userWonRound = false;
+        playerCardData.forEach((cardObj) => {
+            if (cardObj.completed) return;
+            let markedCount = 0;
+            cardObj.cells.forEach(cell => {
+                if (cell.dataset.value == drawn && !cell.classList.contains('marked')) cell.classList.add('marked');
+                if (cell.classList.contains('marked')) markedCount++;
+            });
+            if (markedCount === 25) {
+                cardObj.completed = true;
+                const statusEl = document.getElementById(`card-status-${cardObj.cardIndex}`);
+                statusEl.innerText = '¡BINGO!'; statusEl.style.color = '#3fb950';
+                userWonRound = true;
+            }
+        });
+
+        rivalProgress += Math.floor(Math.random() * 3) + 1;
+        document.getElementById('hud-rival-status').innerText = `Progreso: ${Math.min(rivalProgress,25)}/25`;
+
+        if (userWonRound) {
+            stopAutoBingo();
+            const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
+            const usedMultiplier = pendingMultiplier;
+            const reward = Math.round(CONFIG.baseWinReward * chosenCardCount * vipBonus * usedMultiplier);
+            state.gold += reward;
+            state.totalWins += 1;
+            state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
+            pendingMultiplier = 1;
+            saveState(); refreshAllUI();
+            showToast(`🎉 ¡BINGO! Ganaste +${reward} 🪙 (VIP x${vipBonus.toFixed(2)}${usedMultiplier>1?' · extra x'+usedMultiplier:''})`);
+            openBingoLobby();
+        } else if (rivalProgress >= 25) {
+            stopAutoBingo();
+            showToast('🤖 El rival completó su cartón primero. ¡Inténtalo de nuevo!');
+            openBingoLobby();
+        }
+    }, CONFIG.ballIntervalMs);
+}
+function stopAutoBingo() { if (bingoInterval) { clearInterval(bingoInterval); bingoInterval = null; } }
+
+/* ---------- TIENDA (jugador) ---------- */
+function renderStore(page) {
+    currentStorePage = page;
+    const totalPages = Math.max(1, Math.ceil(CONFIG.products.length / PRODUCTS_PER_PAGE));
+    const pagesWrap = document.getElementById('store-pages');
+    pagesWrap.innerHTML = '';
+    for (let p = 0; p < totalPages; p++) {
+        const tab = document.createElement('div');
+        tab.className = 'page-tab' + (p === page ? ' active' : '');
+        tab.innerText = `Página ${p + 1}`;
+        tab.onclick = () => renderStore(p);
+        pagesWrap.appendChild(tab);
+    }
+
+    const grid = document.getElementById('products-grid');
+    grid.innerHTML = '';
+    const items = CONFIG.products.slice(page * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE + PRODUCTS_PER_PAGE);
+    items.forEach(prod => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+            <div class="product-img-box"><span class="default-icon">${prod.isCosmetic ? '🖼️' : '🛍️'}</span></div>
+            <div class="product-title">${prod.name}</div>
+            <div class="product-pricing">
+                <span class="new-price">💎 ${prod.gemCost}</span>
+                ${prod.discount ? `<span class="discount-tag">${prod.discount}</span>` : ''}
+            </div>
+            <button class="buy-product-btn" ${state.gems < prod.gemCost ? 'disabled' : ''} onclick="buyProduct(${prod.id})">
+                ${prod.isCosmetic ? 'DESBLOQUEAR' : 'COMPRAR'}
+            </button>`;
+        grid.appendChild(card);
+    });
+
+    const multWrap = document.getElementById('store-multipliers');
+    multWrap.innerHTML = '';
+    CONFIG.multipliers.forEach((m, idx) => {
+        const btn = document.createElement('div');
+        btn.className = 'mult-btn' + (pendingMultiplier === m.mult ? ' active' : '');
+        btn.innerHTML = `x${m.mult} <span>💎 ${m.cost}</span>`;
+        btn.onclick = () => buyMultiplier(m.mult, m.cost);
+        multWrap.appendChild(btn);
+    });
+
+    document.getElementById('store-vip-count').innerText = state.vipCards;
+    document.getElementById('store-vip-bonus').innerText = `x${(1 + state.vipCards * (CONFIG.vipBonusPerCard/100)).toFixed(2)}`;
+    document.getElementById('vip-buy-btn').innerText = `Comprar VIP (💎 ${CONFIG.vipCardCost})`;
+}
+
+function buyProduct(id) {
+    const prod = CONFIG.products.find(p => p.id === id);
+    if (!prod) return;
+    if (state.gems < prod.gemCost) { showToast('❌ No tienes suficientes gemas.'); return; }
+    state.gems -= prod.gemCost;
+    state.gold += prod.goldReward;
+    saveState(); refreshAllUI(); renderStore(currentStorePage);
+    showToast(prod.isCosmetic ? `✅ ${prod.name} desbloqueado.` : `✅ +${prod.goldReward} 🪙 obtenidas.`);
+}
+function buyVipCard() {
+    const cost = CONFIG.vipCardCost;
+    if (state.gems < cost) { showToast('❌ No tienes suficientes gemas.'); return; }
+    state.gems -= cost; state.vipCards += 1;
+    saveState(); refreshAllUI(); renderStore(currentStorePage);
+    showToast(`✅ Tarjeta VIP #${state.vipCards} activada.`);
+}
+function buyMultiplier(mult, gemCost) {
+    if (state.gems < gemCost) { showToast('❌ No tienes suficientes gemas.'); return; }
+    state.gems -= gemCost; pendingMultiplier = mult;
+    saveState(); refreshAllUI(); renderStore(currentStorePage);
+    showToast(`✅ Multiplicador x${mult} listo para tu próxima partida.`);
+}
+
+/* ---------- MISIONES ---------- */
+function refreshMissionUI() {
+    if (!state) return;
+    const target = CONFIG.missionTarget;
+    const pct = Math.min(100, (state.missionProgress / target) * 100);
+    ['mission-progress-bar','mission-progress-bar-2'].forEach(id => { const el = document.getElementById(id); if (el) el.style.width = pct + '%'; });
+    ['mission-progress-text','mission-progress-text-2'].forEach(id => { const el = document.getElementById(id); if (el) el.innerText = `${state.missionProgress} / ${target}`; });
+    const ready = state.missionProgress >= target && !state.missionClaimed;
+    ['mission-claim-btn','mission-claim-btn-2'].forEach(id => { const el = document.getElementById(id); if (el) { el.disabled = !ready; el.innerText = `Reclamar (🪙 ${CONFIG.missionRewardGold} + 💎 ${CONFIG.missionRewardGems})`; } });
+    const titleTxt = `Completar ${target} cartones de Bingo`;
+    const t2 = document.getElementById('mission-title-2'); if (t2) t2.innerText = titleTxt;
+}
+function claimMission() {
+    if (state.missionProgress < CONFIG.missionTarget || state.missionClaimed) return;
+    state.gold += CONFIG.missionRewardGold; state.gems += CONFIG.missionRewardGems; state.missionClaimed = true;
+    saveState(); refreshAllUI();
+    showToast(`🎁 Misión reclamada: +${CONFIG.missionRewardGold} 🪙 +${CONFIG.missionRewardGems} 💎`);
+}
+
+/* ---------- RULETA ---------- */
+function refreshRouletteUI() {
+    if (!state) return;
+    document.getElementById('roulette-desc').innerText = `Gira para obtener premios exclusivos. Máximo ${CONFIG.rouletteSpinsPerDay} giros por día.`;
+    document.getElementById('roulette-count').innerText = `Giros restantes hoy: ${state.rouletteSpinsLeft}`;
+    document.getElementById('roulette-btn').innerText = `Girar Ruleta (Coste: 💎 ${CONFIG.rouletteCost})`;
+    document.getElementById('roulette-btn').disabled = state.rouletteSpinsLeft <= 0 || state.gems < CONFIG.rouletteCost;
+}
+function spinRoulette() {
+    if (state.rouletteSpinsLeft <= 0) { showToast('❌ Ya no tienes giros hoy.'); return; }
+    if (state.gems < CONFIG.rouletteCost) { showToast('❌ No tienes suficientes gemas.'); return; }
+    state.gems -= CONFIG.rouletteCost; state.rouletteSpinsLeft -= 1;
+    const prize = CONFIG.roulettePrizes[Math.floor(Math.random() * CONFIG.roulettePrizes.length)];
+    state.gold += prize.gold; state.gems += prize.gems;
+    saveState(); refreshAllUI(); refreshRouletteUI();
+    showToast(`🎡 ${prize.label}`);
+}
+
+/* ---------- REFRESCO GENERAL ---------- */
+function refreshAllUI() {
+    if (!state) return;
+    document.getElementById('display-user').innerText = `${state.username} VIP ${state.vipCards}`;
+    document.getElementById('res-gold').innerText = state.gold.toLocaleString('es');
+    document.getElementById('res-gem').innerText = state.gems.toLocaleString('es');
+    document.getElementById('stat-total-wins').innerText = state.totalWins;
+    refreshMissionUI(); refreshRouletteUI();
+}
+
+/* =========================================================
+   PANEL DE ADMINISTRADOR
+   ========================================================= */
+function openAdminPanel() {
+    currentUser = 'admin'; isAdmin = true;
+    document.getElementById('bottom-nav').style.display = 'none';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('admin-screen').classList.add('active');
+    fillAdminGeneralForm();
+    renderAdminProducts();
+    renderAdminRoulette();
+    renderAdminMultipliers();
+    renderAdminUsers();
+}
+
+function switchAdminTab(tab, el) {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('admin-' + tab).classList.add('active');
+    if (tab === 'usuarios') renderAdminUsers();
+}
+
+function fillAdminGeneralForm() {
+    document.getElementById('cfg-missionTarget').value = CONFIG.missionTarget;
+    document.getElementById('cfg-missionRewardGold').value = CONFIG.missionRewardGold;
+    document.getElementById('cfg-missionRewardGems').value = CONFIG.missionRewardGems;
+    document.getElementById('cfg-baseWinReward').value = CONFIG.baseWinReward;
+    document.getElementById('cfg-vipBonusPerCard').value = CONFIG.vipBonusPerCard;
+    document.getElementById('cfg-vipCardCost').value = CONFIG.vipCardCost;
+    document.getElementById('cfg-rouletteCost').value = CONFIG.rouletteCost;
+    document.getElementById('cfg-rouletteSpinsPerDay').value = CONFIG.rouletteSpinsPerDay;
+    document.getElementById('cfg-ballIntervalSec').value = CONFIG.ballIntervalMs / 1000;
+}
+async function saveAdminGeneral() {
+    CONFIG.missionTarget = parseInt(document.getElementById('cfg-missionTarget').value) || 1;
+    CONFIG.missionRewardGold = parseInt(document.getElementById('cfg-missionRewardGold').value) || 0;
+    CONFIG.missionRewardGems = parseInt(document.getElementById('cfg-missionRewardGems').value) || 0;
+    CONFIG.baseWinReward = parseInt(document.getElementById('cfg-baseWinReward').value) || 0;
+    CONFIG.vipBonusPerCard = parseFloat(document.getElementById('cfg-vipBonusPerCard').value) || 0;
+    CONFIG.vipCardCost = parseInt(document.getElementById('cfg-vipCardCost').value) || 0;
+    CONFIG.rouletteCost = parseInt(document.getElementById('cfg-rouletteCost').value) || 0;
+    CONFIG.rouletteSpinsPerDay = parseInt(document.getElementById('cfg-rouletteSpinsPerDay').value) || 0;
+    CONFIG.ballIntervalMs = Math.max(500, (parseFloat(document.getElementById('cfg-ballIntervalSec').value) || 3) * 1000);
+    await saveConfig();
+    showToast('✅ Configuración general guardada en la nube.');
+}
+
+function renderAdminProducts() {
+    const wrap = document.getElementById('admin-products-list');
+    wrap.innerHTML = '';
+    CONFIG.products.forEach((p, idx) => {
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="text" value="${p.name}" data-field="name" placeholder="Nombre">
+                <input type="number" value="${p.gemCost}" data-field="gemCost" placeholder="Costo en gemas">
+                <input type="number" value="${p.goldReward}" data-field="goldReward" placeholder="Recompensa en oro">
+                <input type="text" value="${p.discount || ''}" data-field="discount" placeholder="Etiqueta (opcional)">
+            </div>
+            <label style="font-size:11px;color:#8b949e;"><input type="checkbox" data-field="isCosmetic" ${p.isCosmetic ? 'checked' : ''}> Es cosmético (no da oro)</label>
+            <div style="text-align:right; margin-top:8px;"><button class="admin-del-btn" onclick="removeProductRow(${idx})">Eliminar</button></div>
+        `;
+        row.dataset.index = idx;
+        wrap.appendChild(row);
+    });
+}
+function addProductRow() {
+    const newId = CONFIG.products.length ? Math.max(...CONFIG.products.map(p=>p.id)) + 1 : 1;
+    CONFIG.products.push({id:newId, name:'Nuevo producto', gemCost:10, goldReward:500, discount:'', isCosmetic:false});
+    renderAdminProducts();
+}
+function removeProductRow(idx) { CONFIG.products.splice(idx, 1); renderAdminProducts(); }
+async function saveAdminProducts() {
+    const rows = document.querySelectorAll('#admin-products-list .admin-row-card');
+    rows.forEach(row => {
+        const idx = parseInt(row.dataset.index);
+        const p = CONFIG.products[idx];
+        row.querySelectorAll('[data-field]').forEach(input => {
+            const field = input.dataset.field;
+            if (field === 'isCosmetic') p[field] = input.checked;
+            else if (field === 'gemCost' || field === 'goldReward') p[field] = parseInt(input.value) || 0;
+            else p[field] = input.value;
+        });
+    });
+    await saveConfig();
+    showToast('✅ Tienda guardada en la nube.');
+}
+
+function renderAdminRoulette() {
+    const wrap = document.getElementById('admin-roulette-list');
+    wrap.innerHTML = '';
+    CONFIG.roulettePrizes.forEach((prize, idx) => {
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="text" value="${prize.label}" data-field="label" placeholder="Texto del premio">
+                <input type="number" value="${prize.gold}" data-field="gold" placeholder="Oro">
+                <input type="number" value="${prize.gems}" data-field="gems" placeholder="Gemas">
+            </div>
+            <div style="text-align:right;"><button class="admin-del-btn" onclick="removeRouletteRow(${idx})">Eliminar</button></div>
+        `;
+        row.dataset.index = idx;
+        wrap.appendChild(row);
+    });
+}
+function addRouletteRow() { CONFIG.roulettePrizes.push({label:'Nuevo premio', gold:0, gems:0}); renderAdminRoulette(); }
+function removeRouletteRow(idx) { CONFIG.roulettePrizes.splice(idx, 1); renderAdminRoulette(); }
+async function saveAdminRoulette() {
+    const rows = document.querySelectorAll('#admin-roulette-list .admin-row-card');
+    rows.forEach(row => {
+        const idx = parseInt(row.dataset.index);
+        const p = CONFIG.roulettePrizes[idx];
+        row.querySelectorAll('[data-field]').forEach(input => {
+            const field = input.dataset.field;
+            p[field] = (field === 'label') ? input.value : (parseInt(input.value) || 0);
+        });
+    });
+    await saveConfig();
+    showToast('✅ Premios de ruleta guardados en la nube.');
+}
+
+function renderAdminMultipliers() {
+    const wrap = document.getElementById('admin-multipliers-list');
+    wrap.innerHTML = '';
+    CONFIG.multipliers.forEach((m, idx) => {
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="number" value="${m.mult}" data-field="mult" placeholder="Multiplicador (ej. 3)">
+                <input type="number" value="${m.cost}" data-field="cost" placeholder="Costo en gemas">
+            </div>
+        `;
+        row.dataset.index = idx;
+        wrap.appendChild(row);
+    });
+}
+async function saveAdminMultipliers() {
+    const rows = document.querySelectorAll('#admin-multipliers-list .admin-row-card');
+    rows.forEach(row => {
+        const idx = parseInt(row.dataset.index);
+        const m = CONFIG.multipliers[idx];
+        row.querySelectorAll('[data-field]').forEach(input => { m[input.dataset.field] = parseFloat(input.value) || 0; });
+    });
+    await saveConfig();
+    showToast('✅ Multiplicadores guardados en la nube.');
+}
+
+async function renderAdminUsers() {
+    const body = document.getElementById('admin-users-body');
+    body.innerHTML = '<tr><td colspan="6" style="color:#8b949e;">Cargando...</td></tr>';
+    const players = await fsGetAll('players');
+    if (players.length === 0) { body.innerHTML = '<tr><td colspan="6" style="color:#8b949e;">Aún no hay jugadores registrados en la nube.</td></tr>'; return; }
+    body.innerHTML = '';
+    players.forEach(p => {
+        const key = p.id; // id del documento = usuario en minúsculas
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${p.username}</td><td>${p.gold}</td><td>${p.gems}</td><td>${p.vipCards}</td><td>${p.totalWins}</td>
+            <td>
+                <button class="btn-give" onclick="adminGiveResources('${key}', 1000, 0)">+1000🪙</button>
+                <button class="btn-give" onclick="adminGiveResources('${key}', 0, 100)">+100💎</button>
+                <button class="btn-reset" onclick="adminResetUser('${key}')">Reiniciar</button>
+                <button class="btn-delete" onclick="adminDeleteUser('${key}')">Eliminar</button>
+            </td>`;
+        body.appendChild(tr);
+    });
+}
+async function adminGiveResources(key, gold, gems) {
+    const p = await fsGet('players', key);
+    if (!p) return;
+    p.gold += gold; p.gems += gems;
+    await fsSet('players', key, p);
+    renderAdminUsers();
+    showToast(`✅ Recursos entregados a ${p.username}.`);
+}
+async function adminResetUser(key) {
+    const p = await fsGet('players', key);
+    if (!p) return;
+    if (!confirm(`¿Reiniciar todo el progreso de "${p.username}"?`)) return;
+    const fresh = defaultState(p.username);
+    fresh.password = p.password;
+    await fsSet('players', key, fresh);
+    renderAdminUsers();
+    showToast(`♻️ Progreso de ${p.username} reiniciado.`);
+}
+async function adminDeleteUser(key) {
+    const p = await fsGet('players', key);
+    if (!p) return;
+    if (!confirm(`¿Eliminar la cuenta "${p.username}" por completo? Esto no se puede deshacer.`)) return;
+    await fsDelete('players', key);
+    renderAdminUsers();
+    showToast(`🗑️ Cuenta de ${p.username} eliminada.`);
+}
+
+/* ---------- INIT ---------- */
+window.addEventListener('load', async () => {
+    await waitForFirebase();
+    try {
+        CONFIG = await loadConfig();
+    } catch (e) {
+        document.getElementById('cloud-loading').innerHTML =
+            '<div style="text-align:center;padding:20px;color:#f85149;">⚠️ No se pudo conectar con Firebase.<br><span style="font-size:11px;color:#8b949e;">Revisa que Firestore esté activado y que las reglas permitan lectura/escritura.</span></div>';
+        return;
+    }
+    history.replaceState({screen:'main-screen'}, '', '');
+    document.getElementById('cloud-loading').style.display = 'none';
+    await tryAutoLogin();
+});
 </script>
 </body>
 </html>
