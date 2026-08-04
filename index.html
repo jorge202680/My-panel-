@@ -790,15 +790,24 @@ async function fsGetAll(col) {
     return out;
 }
 
-/* ---------- Subida de imágenes a Firebase Storage ---------- */
+/* ---------- Subida de imágenes a Cloudinary ---------- */
+const CLOUDINARY_CLOUD_NAME = 'ine4lwjf';
+const CLOUDINARY_UPLOAD_PRESET = 'gaming_premier_unsigned';
 async function uploadImageToStorage(file, pathPrefix) {
-    await waitForFirebase();
-    const { storage, ref, uploadBytes, getDownloadURL } = window.storageRefs;
-    const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-    const path = `${pathPrefix}/${Date.now()}_${cleanName}`;
-    const storageRef = ref(storage, path);
-    await uploadBytes(storageRef, file);
-    return await getDownloadURL(storageRef);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    formData.append('folder', pathPrefix);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData
+    });
+    if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error?.message || 'Error al subir a Cloudinary');
+    }
+    const data = await res.json();
+    return data.secure_url;
 }
 function imgOrFallback(url, fallbackHtml, extraClass) {
     return url ? `<img src="${url}" class="${extraClass || ''}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">` : fallbackHtml;
@@ -2109,7 +2118,7 @@ async function uploadRoomImage(roomId, inputEl) {
         await saveConfig();
         renderAdminRoomImages();
         showToast('✅ Imagen de la sala guardada en la nube.');
-    } catch (e) { showToast('❌ Error al subir la imagen.'); }
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
 function renderAdminVipImages() {
     const avWrap = document.getElementById('admin-vip-avatar-images');
@@ -2151,7 +2160,7 @@ async function uploadVipAvatarImage(emoji, inputEl) {
         await saveConfig();
         renderAdminVipImages();
         showToast('✅ Avatar VIP guardado en la nube.');
-    } catch (e) { showToast('❌ Error al subir la imagen.'); }
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
 async function uploadVipIconImage(icon, inputEl) {
     const file = inputEl.files[0];
@@ -2164,7 +2173,7 @@ async function uploadVipIconImage(icon, inputEl) {
         await saveConfig();
         renderAdminVipImages();
         showToast('✅ Ícono VIP guardado en la nube.');
-    } catch (e) { showToast('❌ Error al subir la imagen.'); }
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
 async function saveAdminGeneral() {
     CONFIG.missionTarget = parseInt(document.getElementById('cfg-missionTarget').value) || 1;
@@ -2225,7 +2234,7 @@ async function uploadProductImage(idx, inputEl) {
         renderAdminProducts();
         renderStore(currentStorePage);
         showToast('✅ Imagen del producto guardada en la nube.');
-    } catch (e) { showToast('❌ Error al subir la imagen.'); }
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
 function addProductRow() {
     const newId = CONFIG.products.length ? Math.max(...CONFIG.products.map(p=>p.id)) + 1 : 1;
