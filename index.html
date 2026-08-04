@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.1 (Rankings + Sistema de Apuesta previa + Popup de Victoria estilo "¡Tú Ganas!") -->
+<!-- Súper Bingo Rey — v2.2 (Cerrar panel admin sin logout + navegación por pestañas sin acumular historial + auto-actualización) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -100,6 +100,8 @@
         .card-azul .b-cell.marked { background: #1f6feb !important; border-color: #58a6ff !important; }
         .card-verde .b-cell.marked { background: #238636 !important; border-color: #3fb950 !important; }
         .card-amarillo .b-cell.marked { background: #9e6a03 !important; border-color: #d29922 !important; color: #fff !important; }
+        .b-cell.flash-new { animation: newNumberFlash 0.6s ease-in-out 3; position: relative; z-index: 2; }
+        @keyframes newNumberFlash { 0%,100% { transform: scale(1); box-shadow: none; filter: brightness(1); } 50% { transform: scale(1.18); box-shadow: 0 0 14px 4px #ffd23f; filter: brightness(1.6); } }
 
         .game-action-btn { background: #238636; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; margin-bottom: 10px; }
         .game-action-btn:hover { background: #2ea043; }
@@ -134,6 +136,9 @@
         /* ---- Botón de tornillo (acceso admin discreto) ---- */
         .admin-fab { position: fixed; bottom: 85px; left: 12px; width: 38px; height: 38px; border-radius: 50%; background: #161b22; border: 1px solid #30363d; color: #6e7681; font-size: 17px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2500; opacity: 0.55; }
         .admin-fab:hover { opacity: 1; border-color: #8957e5; color: #a371f7; }
+        #update-fab { display:none; position: fixed; bottom: 85px; right: 12px; background: linear-gradient(135deg,#238636,#2ea043); color:#fff; border:none; border-radius: 24px; padding: 10px 16px; font-size: 12px; font-weight:bold; cursor:pointer; z-index: 2600; box-shadow: 0 3px 12px rgba(0,0,0,0.4); animation: updatePulse 1.6s ease-in-out infinite; }
+        #update-fab.active { display:flex; align-items:center; gap:6px; }
+        @keyframes updatePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         .admin-modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3500; align-items: center; justify-content: center; }
         .admin-modal-overlay.active { display: flex; }
         .admin-modal-box { background: #161b22; border: 1px solid #8957e5; border-radius: 12px; padding: 24px; width: 85%; max-width: 320px; text-align: center; }
@@ -339,8 +344,9 @@
                 <button class="logout-btn" onclick="logout()">Salir</button>
             </div>
         </div>
+        <div style="text-align:right; font-size:10px; color:#484f58; padding:2px 15px 0;" id="app-version-label">v2.1</div>
 
-        <div class="play-banner" onclick="goToScreen('game-screen')">
+        <div class="play-banner" onclick="navTabTo('game-screen')">
             🎯 ¡ENTRAR A LA SALA DE BINGO AUTOMÁTICO! 🚀
         </div>
 
@@ -403,11 +409,6 @@
                 <div class="card-opt-btn" onclick="selectCardCount(8, this)">8 Cartones<span>Premio x8</span></div>
                 <div class="card-opt-btn" onclick="selectCardCount(12, this)">12 Cartones<span>Premio x12</span></div>
                 <div class="card-opt-btn" onclick="selectCardCount(16, this)">16 Cartones<span>Premio x16 (¡Máximo!)</span></div>
-            </div>
-
-            <div class="option-group">
-                <div class="option-group-label">🎙️ Modo de cantada</div>
-                <div class="option-row" id="mode-options"></div>
             </div>
 
             <div class="option-group">
@@ -530,7 +531,7 @@
 
     <!-- PANTALLA RANKINGS -->
     <div id="rankings-screen" class="screen" style="padding-bottom:80px;">
-        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="goToScreen('main-screen')">⬅ Volver al Menú</span>
+        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="navTabTo('main-screen')">⬅ Volver al Menú</span>
         <h2 style="color:#d29922; margin:10px 0 12px;">🏆 Rankings</h2>
 
         <div class="admin-tabs" style="padding:0 0 10px;">
@@ -618,8 +619,11 @@
     <!-- PANEL DE ADMINISTRADOR -->
     <div id="admin-screen" class="screen">
         <div class="admin-top">
-            <strong>⚙️ Panel de Administrador <span style="color:#8b949e; font-weight:normal; font-size:11px;">v2.1 — Apuestas + Popup</span></strong>
-            <button class="logout-btn" onclick="logout()">Salir</button>
+            <strong>⚙️ Panel de Administrador <span style="color:#8b949e; font-weight:normal; font-size:11px;" id="admin-version-label">v2.1 — Apuestas + Popup</span></strong>
+            <div style="display:flex; gap:6px;">
+                <button class="logout-btn" style="background:#30363d;" onclick="closeAdminPanel()">✕ Cerrar</button>
+                <button class="logout-btn" onclick="logout()">Salir</button>
+            </div>
         </div>
         <div class="admin-tabs">
             <div class="admin-tab active" data-tab="general" onclick="switchAdminTab('general', this)">General</div>
@@ -702,6 +706,7 @@
 
     <!-- BOTÓN DE TORNILLO (acceso admin discreto, siempre visible) -->
     <button class="admin-fab" onclick="openAdminGearModal()" title="Acceso administrador">🔧</button>
+    <button id="update-fab" onclick="applyAppUpdate()">🔄 Actualizar</button>
     <div class="admin-modal-overlay" id="admin-modal-overlay">
         <div class="admin-modal-box">
             <h3>⚙️ Acceso Administrador</h3>
@@ -717,12 +722,12 @@
 
     <!-- NAVEGACIÓN INFERIOR -->
     <div class="nav-bar" id="bottom-nav">
-        <button class="nav-item active" id="nav-inicio" onclick="goToScreen('main-screen')">🏠<br>Inicio</button>
-        <button class="nav-item" id="nav-tienda" onclick="goToScreen('store-screen')">🛒<br>Tienda</button>
-        <button class="nav-item" id="nav-juego" onclick="goToScreen('game-screen')">🎯<br>Bingo</button>
-        <button class="nav-item" id="nav-campaña" onclick="goToScreen('campaign-screen')">🗺️<br>Campaña</button>
-        <button class="nav-item" id="nav-missions" onclick="goToScreen('missions-screen')">📜<br>Misiones</button>
-        <button class="nav-item" id="nav-vippass" onclick="goToScreen('vippass-screen')">🎫<br>Pase VIP</button>
+        <button class="nav-item active" id="nav-inicio" onclick="navTabTo('main-screen')">🏠<br>Inicio</button>
+        <button class="nav-item" id="nav-tienda" onclick="navTabTo('store-screen')">🛒<br>Tienda</button>
+        <button class="nav-item" id="nav-juego" onclick="navTabTo('game-screen')">🎯<br>Bingo</button>
+        <button class="nav-item" id="nav-campaña" onclick="navTabTo('campaign-screen')">🗺️<br>Campaña</button>
+        <button class="nav-item" id="nav-missions" onclick="navTabTo('missions-screen')">📜<br>Misiones</button>
+        <button class="nav-item" id="nav-vippass" onclick="navTabTo('vippass-screen')">🎫<br>Pase VIP</button>
     </div>
 
     <!-- Pantalla de carga mientras conecta con Firebase -->
@@ -778,6 +783,7 @@ const SESSION_KEY = SAVE_PREFIX + 'session';
 const ADMIN_SESSION_KEY = SAVE_PREFIX + 'admin_session';
 const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]]; // B I N G O
 const LETTERS = ['B','I','N','G','O'];
+const APP_VERSION = 'v2.2';
 const COLORS = ['rojo','azul','verde','amarillo'];
 const PRODUCTS_PER_PAGE = 2;
 
@@ -857,7 +863,7 @@ let activeBetLabel = 'Sencillo';
 let historyStack = ['main-screen'];
 let selectedRoom = null;
 let ballSpeedMode = 'normal';
-let gameMode = 'auto';
+let gameMode = 'manual';
 let selectedFrame = null;
 let roundLuckyNumber = null;
 let roundWinPattern = null;
@@ -1367,6 +1373,19 @@ async function login() {
     if (streakBonus > 0) showToast(`🔥 Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
 }
 
+async function closeAdminPanel() {
+    localStorage.removeItem(ADMIN_SESSION_KEY);
+    isAdmin = false; currentUser = null; state = null;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const savedUser = localStorage.getItem(SESSION_KEY);
+    if (savedUser) {
+        await tryAutoLogin();
+    } else {
+        document.getElementById('bottom-nav').style.display = 'none';
+        document.getElementById('login-screen').classList.add('active');
+    }
+}
+
 function logout() {
     stopAutoBingo();
     if (isAdmin) { localStorage.removeItem(ADMIN_SESSION_KEY); }
@@ -1436,6 +1455,11 @@ async function submitAdminGearLogin() {
 }
 
 /* ---------- NAVEGACIÓN + BOTÓN ATRÁS ---------- */
+function navTabTo(screenId) {
+    historyStack = [screenId];
+    goToScreen(screenId, true);
+    history.replaceState({screen: screenId}, '', '');
+}
 function goToScreen(screenId, isReplace) {
     stopAutoBingo();
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -1525,16 +1549,6 @@ function backToRoomSelect() {
 }
 
 function renderLobbyOptions() {
-    const modeWrap = document.getElementById('mode-options');
-    modeWrap.innerHTML = '';
-    [['auto', '🎙️ Automática'], ['manual', '✋ Manual']].forEach(([val, label]) => {
-        const chip = document.createElement('div');
-        chip.className = 'opt-chip' + (gameMode === val ? ' selected' : '');
-        chip.innerText = label;
-        chip.onclick = () => { gameMode = val; renderLobbyOptions(); };
-        modeWrap.appendChild(chip);
-    });
-
     const speedWrap = document.getElementById('speed-options');
     speedWrap.innerHTML = '';
     [['lento', '🐢 Lento'], ['normal', '🚶 Normal'], ['rapido', '⚡ Rápido']].forEach(([val, label]) => {
@@ -1618,7 +1632,7 @@ function openBingoLobby() {
     document.getElementById('jackpot-banner').innerText =
         `💰 Pozo acumulado de la sala ${selectedRoom.name}: ${(CONFIG.roomJackpots[selectedRoom.id] || 0).toLocaleString('es')} 🪙`;
 }
-function quitToMenu() { selectedRoom = null; goToScreen('main-screen'); }
+function quitToMenu() { selectedRoom = null; navTabTo('main-screen'); }
 
 function generateCardNumbers() {
     const cols = RANGES.map(([min, max]) => {
@@ -1842,8 +1856,8 @@ function startBingoGame() {
     document.getElementById('hud-selected-cards-label').innerText = chosenCardCount;
     document.getElementById('hud-my-name').innerText = state.username;
     roundWinPattern = null;
-    document.getElementById('manual-draw-wrap').style.display = gameMode === 'manual' ? 'block' : 'none';
-    document.getElementById('current-ball-text').innerText = gameMode === 'manual' ? 'Pulsa el botón para cantar la primera bola' : 'Esperando sorteo automático...';
+    document.getElementById('manual-draw-wrap').style.display = 'block';
+    document.getElementById('current-ball-text').innerText = 'Pulsa el botón para cantar la primera bola';
     document.getElementById('chat-log').innerHTML = '';
     roundLuckyNumber = Math.floor(Math.random() * 75) + 1;
     generateAllCards();
@@ -1851,18 +1865,10 @@ function startBingoGame() {
     CONFIG.roomJackpots[selectedRoom.id] = (CONFIG.roomJackpots[selectedRoom.id] || 0) + 25;
     saveConfig();
 
-    if (gameMode === 'manual') { /* el jugador cantará las bolas manualmente */ }
-    else { runAutoBingoLoop(); }
+    /* el jugador canta las bolas manualmente */
 }
 
-function manualDrawBall() { if (gameMode === 'manual') handleBallDraw(); }
-
-function runAutoBingoLoop() {
-    if (bingoInterval) clearInterval(bingoInterval);
-    const speedFactors = { lento: 1.6, normal: 1, rapido: 0.5 };
-    const interval = Math.max(400, CONFIG.ballIntervalMs * (speedFactors[ballSpeedMode] || 1));
-    bingoInterval = setInterval(() => { handleBallDraw(); }, interval);
-}
+function manualDrawBall() { handleBallDraw(); }
 
 function handleBallDraw() {
     const drawn = drawNextNumber();
@@ -1870,7 +1876,7 @@ function handleBallDraw() {
     triggerTombolaSpin();
     const letter = letterForNumber(drawn);
     document.getElementById('current-ball-num').innerText = letter + drawn;
-    document.getElementById('current-ball-text').innerText = gameMode === 'manual' ? 'Bola cantada — ¡marca tus cartones!' : 'Balota sorteada automáticamente';
+    document.getElementById('current-ball-text').innerText = 'Bola cantada — ¡marca tus cartones!';
     playBallSound(letter);
     renderHistoryStrip();
 
@@ -1882,15 +1888,26 @@ function handleBallDraw() {
     }
 
     let userWonRound = false;
+    const justMarkedCells = [];
     playerCardData.forEach((cardObj) => {
         if (cardObj.completed) return;
         cardObj.cells.forEach(cell => {
-            if (cell.dataset.value == drawn && !cell.classList.contains('marked')) cell.classList.add('marked');
+            if (cell.dataset.value == drawn && !cell.classList.contains('marked')) {
+                cell.classList.add('marked');
+                justMarkedCells.push(cell);
+            }
         });
 
         const winPattern = evaluateCardPatterns(cardObj);
         if (winPattern) { userWonRound = true; roundWinPattern = winPattern; }
     });
+
+    if (justMarkedCells.length) {
+        justMarkedCells.forEach(cell => cell.classList.add('flash-new'));
+        setTimeout(() => {
+            justMarkedCells.forEach(cell => cell.classList.remove('flash-new'));
+        }, 1800);
+    }
 
     if (rivalCardNumbers.includes(drawn)) {
         rivalProgress += 1;
@@ -2758,8 +2775,30 @@ async function adminDeleteUser(key) {
     showToast(`🗑️ Cuenta de ${p.username} eliminada.`);
 }
 
+/* ---------- DETECCIÓN DE NUEVA VERSIÓN ---------- */
+let updateCheckInFlight = false;
+async function checkForAppUpdate() {
+    if (updateCheckInFlight) return;
+    updateCheckInFlight = true;
+    try {
+        const res = await fetch(location.pathname + '?_v=' + Date.now(), { cache: 'no-store' });
+        const html = await res.text();
+        const match = html.match(/const APP_VERSION = '([^']+)'/);
+        if (match && match[1] && match[1] !== APP_VERSION) {
+            document.getElementById('update-fab').classList.add('active');
+        }
+    } catch (e) { /* sin conexión, se ignora */ }
+    updateCheckInFlight = false;
+}
+function applyAppUpdate() {
+    window.location.href = location.pathname + '?_v=' + Date.now();
+}
+setInterval(checkForAppUpdate, 5 * 60 * 1000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForAppUpdate(); });
+
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
+    document.querySelectorAll('#app-version-label, #admin-version-label').forEach(el => { el.innerText = APP_VERSION; });
     const splashTimer = new Promise(resolve => setTimeout(resolve, 2200));
     await waitForFirebase();
     try {
@@ -2776,6 +2815,7 @@ window.addEventListener('load', async () => {
     await splashTimer;
     document.getElementById('splash-screen').classList.add('fade-out');
     await tryAutoLogin();
+    checkForAppUpdate();
 });
 </script>
 </body>
