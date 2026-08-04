@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>New Bound Bingo</title>
+    <title>Súper Bingo Rey</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0d1117; color: #fff; padding-bottom: 75px; user-select: none; }
@@ -14,7 +14,7 @@
         #login-screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #161b22, #0d1117); z-index: 2000; }
 
         .login-box { background: #161b22; border: 1px solid #30363d; padding: 30px; border-radius: 12px; width: 90%; max-width: 350px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
-        .login-box h2 { color: #58a6ff; margin-bottom: 6px; }
+        .login-box h2 { color: #d29922; margin-bottom: 6px; }
         .login-box p { color: #8b949e; font-size: 12px; margin-bottom: 20px; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; background: #0d1117; border: 1px solid #30363d; color: #fff; border-radius: 6px; }
         .login-box button { width: 100%; padding: 12px; background: #238636; border: none; color: #fff; font-weight: bold; border-radius: 6px; cursor: pointer; }
@@ -26,7 +26,7 @@
         .resources { display: flex; gap: 8px; font-size: 12px; align-items: center; }
         .logout-btn { background: none; border: 1px solid #30363d; color: #8b949e; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
 
-        .play-banner { background: linear-gradient(135deg, #238636, #2ea043); color: white; padding: 18px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; font-size: 17px; font-weight: bold; box-shadow: 0 4px 15px rgba(35, 134, 54, 0.4); border: 1px solid #3fb950; }
+        .play-banner { background: linear-gradient(135deg, #b91c1c, #d29922); color: white; padding: 18px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; font-size: 17px; font-weight: bold; box-shadow: 0 4px 15px rgba(210,153,34,0.4); border: 1px solid #f0c040; }
 
         .card-widget { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
         .progress-container { background: #30363d; border-radius: 10px; height: 12px; overflow: hidden; margin-top: 8px; }
@@ -60,7 +60,7 @@
 
         .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: #161b22; border-top: 1px solid #30363d; display: none; justify-content: space-around; padding: 10px 0; z-index: 1000; }
         .nav-item { text-align: center; color: #8b949e; font-size: 11px; cursor: pointer; background: none; border: none; }
-        .nav-item.active { color: #58a6ff; }
+        .nav-item.active { color: #d29922; }
 
         #lobby-modal { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; }
         .cards-options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
@@ -109,6 +109,26 @@
 
         .toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #3fb950; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; max-width: 90%; }
 
+        /* ---- Splash / portada ---- */
+        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; z-index: 6000; background:#0d1117; display:flex; align-items:center; justify-content:center; transition: opacity .6s ease; }
+        #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
+        #splash-screen.fade-out { opacity: 0; pointer-events: none; }
+
+        /* ---- Racha / logros / ranking ---- */
+        .streak-badge { display:inline-flex; align-items:center; gap:4px; background: linear-gradient(135deg,#da3633,#9e2f2c); color:#fff; padding:4px 10px; border-radius: 20px; font-size:12px; font-weight:bold; }
+        .achievements-grid { display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; margin-top:10px; }
+        .achv-item { background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:8px 4px; text-align:center; font-size:18px; opacity:0.35; }
+        .achv-item.unlocked { opacity:1; border-color:#d29922; box-shadow:0 0 8px rgba(210,153,34,0.5); }
+        .achv-item .achv-label { display:block; font-size:8px; color:#8b949e; margin-top:2px; }
+        .leaderboard-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #21262d; font-size:13px; }
+        .leaderboard-row:last-child { border-bottom:none; }
+        .leaderboard-rank { color:#d29922; font-weight:bold; width:26px; }
+
+        /* ---- Confeti de victoria ---- */
+        #confetti-layer { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index: 4000; overflow:hidden; }
+        .confetti-piece { position:absolute; top:-20px; width:8px; height:14px; opacity:0.95; animation: confettiFall 2.4s linear forwards; }
+        @keyframes confettiFall { to { transform: translateY(110vh) rotate(540deg); opacity:0; } }
+
         /* ---- Botón de tornillo (acceso admin discreto) ---- */
         .admin-fab { position: fixed; bottom: 85px; left: 12px; width: 38px; height: 38px; border-radius: 50%; background: #161b22; border: 1px solid #30363d; color: #6e7681; font-size: 17px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2500; opacity: 0.55; }
         .admin-fab:hover { opacity: 1; border-color: #8957e5; color: #a371f7; }
@@ -154,6 +174,15 @@
 </head>
 <body>
 
+    <!-- SPLASH / PORTADA -->
+    <div id="splash-screen">
+        <img src="portada.jpg" alt="Súper Bingo Rey">
+    </div>
+
+    <!-- Capa de confeti para la animación de victoria -->
+    <div id="confetti-layer"></div>
+
+
     <!-- LOGIN -->
     <div id="login-screen" class="screen active">
         <div class="login-box">
@@ -182,10 +211,21 @@
         </div>
 
         <div class="card-widget">
-            <div style="display: flex; justify-content: space-between; font-size: 13px;">
+            <div style="display: flex; justify-content: space-between; align-items:center; font-size: 13px;">
                 <span>Bingos ganados en total</span>
                 <span id="stat-total-wins">0</span>
             </div>
+            <div style="margin-top:8px;"><span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span></div>
+        </div>
+
+        <div class="card-widget">
+            <strong>🏆 Salón de Trofeos</strong>
+            <div class="achievements-grid" id="achievements-grid"></div>
+        </div>
+
+        <div class="card-widget">
+            <strong>👑 Top Jugadores</strong>
+            <div id="leaderboard-list" style="margin-top:6px; font-size:12px; color:#8b949e;">Cargando...</div>
         </div>
 
         <div class="card-widget">
@@ -206,7 +246,7 @@
         </div>
 
         <div id="lobby-modal">
-            <h3 style="color: #58a6ff; margin-bottom: 6px;">Selecciona tus Cartones</h3>
+            <h3 style="color: #d29922; margin-bottom: 6px;">Selecciona tus Cartones</h3>
             <p style="font-size: 12px; color: #8b949e; margin-bottom: 15px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
 
             <div class="cards-options-grid">
@@ -247,11 +287,11 @@
 
     <!-- PANTALLA TIENDA -->
     <div id="store-screen" class="screen">
-        <h2 style="color: #58a6ff; margin-bottom: 12px;">🛒 Tienda de Recompensas</h2>
+        <h2 style="color: #d29922; margin-bottom: 12px;">🛒 Tienda de Recompensas</h2>
 
         <div class="store-header-box">
             <div class="store-vip-row">
-                <span>Tus Tarjetas VIP: <strong style="color: #d29922;" id="store-vip-count">0</strong> · Bonus activo: <span style="color: #3fb950;" id="store-vip-bonus">x1.00</span></span>
+                <span>👑 Tus Tarjetas VIP: <strong style="color: #d29922;" id="store-vip-count">0</strong> · Bonus activo: <span style="color: #3fb950;" id="store-vip-bonus">x1.00</span></span>
                 <button class="vip-buy-btn" id="vip-buy-btn" onclick="buyVipCard()">Comprar VIP</button>
             </div>
             <div class="store-multipliers" id="store-multipliers"></div>
@@ -264,7 +304,7 @@
 
     <!-- PANTALLA CAMPAÑA -->
     <div id="campaign-screen" class="screen">
-        <h2 style="color: #58a6ff; margin-bottom: 15px;">🎡 Campaña & Ruleta</h2>
+        <h2 style="color: #d29922; margin-bottom: 15px;">🎡 Campaña & Ruleta</h2>
         <div class="card-widget" style="text-align: center;">
             <h3>Ruleta Diaria</h3>
             <p style="font-size: 13px; color: #8b949e; margin: 10px 0;" id="roulette-desc">Gira para obtener premios exclusivos.</p>
@@ -275,7 +315,7 @@
 
     <!-- PANTALLA MISIONES -->
     <div id="missions-screen" class="screen">
-        <h2 style="color: #58a6ff; margin-bottom: 15px;">📜 Misiones Diarias</h2>
+        <h2 style="color: #d29922; margin-bottom: 15px;">📜 Misiones Diarias</h2>
         <div class="card-widget">
             <strong id="mission-title-2">Completar cartones de Bingo</strong>
             <div class="progress-container"><div class="progress-bar" id="mission-progress-bar-2"></div></div>
@@ -518,7 +558,73 @@ function defaultState(username) {
         missionClaimed: false,
         rouletteDate: todayStr(),
         rouletteSpinsLeft: CONFIG.rouletteSpinsPerDay,
+        loginStreak: 0,
+        lastLoginDate: null,
+        unlockedAchievements: [],
     };
+}
+
+const ACHIEVEMENTS = [
+    { id: 'w1',   icon:'🥉', label:'1 Bingo',   check: p => p.totalWins >= 1 },
+    { id: 'w10',  icon:'🥈', label:'10 Bingos',  check: p => p.totalWins >= 10 },
+    { id: 'w50',  icon:'🥇', label:'50 Bingos',  check: p => p.totalWins >= 50 },
+    { id: 'w100', icon:'🏆', label:'100 Bingos', check: p => p.totalWins >= 100 },
+    { id: 'streak7', icon:'🔥', label:'Racha 7d', check: p => p.loginStreak >= 7 },
+];
+
+function applyLoginStreak(p) {
+    const today = todayStr();
+    if (p.lastLoginDate === today) return 0; // ya contó hoy
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+    p.loginStreak = (p.lastLoginDate === yesterday) ? (p.loginStreak || 0) + 1 : 1;
+    p.lastLoginDate = today;
+    const bonus = p.loginStreak * 50;
+    p.gold += bonus;
+    return bonus;
+}
+
+function checkAchievements(p) {
+    const unlocked = [];
+    ACHIEVEMENTS.forEach(a => {
+        if (!p.unlockedAchievements.includes(a.id) && a.check(p)) {
+            p.unlockedAchievements.push(a.id);
+            unlocked.push(a);
+        }
+    });
+    return unlocked;
+}
+
+/* ---------- Confeti + sonido de victoria ---------- */
+function launchConfetti() {
+    const layer = document.getElementById('confetti-layer');
+    const colors = ['#d29922', '#f0c040', '#da3633', '#ffffff', '#3fb950'];
+    for (let i = 0; i < 60; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + 'vw';
+        piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = (Math.random() * 0.5) + 's';
+        piece.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
+        layer.appendChild(piece);
+        setTimeout(() => piece.remove(), 3200);
+    }
+}
+function playWinSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5 E5 G5 C6
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.12 + 0.3);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(ctx.currentTime + i * 0.12);
+            osc.stop(ctx.currentTime + i * 0.12 + 0.3);
+        });
+    } catch(e) { /* audio no soportado, se ignora */ }
 }
 
 async function loadOrCreatePlayer(username, password) {
@@ -532,6 +638,9 @@ async function loadOrCreatePlayer(username, password) {
     if (p.password !== password) return { player: null, isNew: false, wrongPass: true };
     if (p.missionDate !== todayStr()) { p.missionDate = todayStr(); p.missionProgress = 0; p.missionClaimed = false; }
     if (p.rouletteDate !== todayStr()) { p.rouletteDate = todayStr(); p.rouletteSpinsLeft = CONFIG.rouletteSpinsPerDay; }
+    if (p.unlockedAchievements === undefined) p.unlockedAchievements = [];
+    if (p.loginStreak === undefined) p.loginStreak = 0;
+    if (p.lastLoginDate === undefined) p.lastLoginDate = null;
     return { player: p, isNew: false };
 }
 async function saveState() { if (state) await fsSet('players', state.username.toLowerCase(), state); }
@@ -558,6 +667,7 @@ async function login() {
     errorBox.innerText = '';
 
     state = result.player;
+    const streakBonus = applyLoginStreak(state);
     currentUser = username; isAdmin = false;
     localStorage.setItem(SESSION_KEY, username);
     document.getElementById('login-screen').classList.remove('active');
@@ -565,6 +675,7 @@ async function login() {
     refreshAllUI();
     goToScreen('main-screen', true);
     saveState();
+    if (streakBonus > 0) showToast(`🔥 Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
 }
 
 function logout() {
@@ -591,11 +702,16 @@ async function tryAutoLogin() {
     if (!p) { localStorage.removeItem(SESSION_KEY); return; } // la cuenta ya no existe en la nube
     if (p.missionDate !== todayStr()) { p.missionDate = todayStr(); p.missionProgress = 0; p.missionClaimed = false; }
     if (p.rouletteDate !== todayStr()) { p.rouletteDate = todayStr(); p.rouletteSpinsLeft = CONFIG.rouletteSpinsPerDay; }
+    if (p.unlockedAchievements === undefined) p.unlockedAchievements = [];
+    if (p.loginStreak === undefined) p.loginStreak = 0;
     document.getElementById('login-screen').classList.remove('active');
     currentUser = savedUser; isAdmin = false; state = p;
+    const streakBonus = applyLoginStreak(state);
     document.getElementById('bottom-nav').style.display = 'flex';
     refreshAllUI();
     goToScreen('main-screen', true);
+    saveState();
+    if (streakBonus > 0) showToast(`🔥 Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
 }
 
 /* ---------- BOTÓN DE TORNILLO (acceso admin) ---------- */
@@ -641,6 +757,7 @@ function goToScreen(screenId, isReplace) {
     if (screenId === 'store-screen') renderStore(currentStorePage);
     if (screenId === 'missions-screen' || screenId === 'main-screen') refreshMissionUI();
     if (screenId === 'campaign-screen') refreshRouletteUI();
+    if (screenId === 'main-screen') { renderAchievements(); refreshLeaderboard(); }
 
     if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
 }
@@ -782,8 +899,14 @@ function runAutoBingoLoop() {
             state.totalWins += 1;
             state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
             pendingMultiplier = 1;
+            const newAchievements = checkAchievements(state);
             saveState(); refreshAllUI();
+            launchConfetti();
+            playWinSound();
             showToast(`🎉 ¡BINGO! Ganaste +${reward} 🪙 (VIP x${vipBonus.toFixed(2)}${usedMultiplier>1?' · extra x'+usedMultiplier:''})`);
+            newAchievements.forEach((a, i) => {
+                setTimeout(() => showToast(`🏆 Logro desbloqueado: ${a.label}`), 1200 + i * 1400);
+            });
             openBingoLobby();
         } else if (rivalProgress >= 25) {
             stopAutoBingo();
@@ -905,11 +1028,41 @@ function spinRoulette() {
 /* ---------- REFRESCO GENERAL ---------- */
 function refreshAllUI() {
     if (!state) return;
-    document.getElementById('display-user').innerText = `${state.username} VIP ${state.vipCards}`;
+    document.getElementById('display-user').innerText = `👑 ${state.username} VIP ${state.vipCards}`;
     document.getElementById('res-gold').innerText = state.gold.toLocaleString('es');
     document.getElementById('res-gem').innerText = state.gems.toLocaleString('es');
     document.getElementById('stat-total-wins').innerText = state.totalWins;
+    const streakEl = document.getElementById('streak-badge');
+    if (streakEl) streakEl.innerText = `🔥 Racha: ${state.loginStreak || 0} días`;
+    renderAchievements();
     refreshMissionUI(); refreshRouletteUI();
+}
+
+function renderAchievements() {
+    const grid = document.getElementById('achievements-grid');
+    if (!grid || !state) return;
+    grid.innerHTML = '';
+    ACHIEVEMENTS.forEach(a => {
+        const unlocked = (state.unlockedAchievements || []).includes(a.id);
+        const div = document.createElement('div');
+        div.className = 'achv-item' + (unlocked ? ' unlocked' : '');
+        div.innerHTML = `${a.icon}<span class="achv-label">${a.label}</span>`;
+        grid.appendChild(div);
+    });
+}
+
+async function refreshLeaderboard() {
+    const wrap = document.getElementById('leaderboard-list');
+    if (!wrap) return;
+    try {
+        const players = await fsGetAll('players');
+        players.sort((a, b) => (b.totalWins || 0) - (a.totalWins || 0));
+        const top = players.slice(0, 5);
+        if (top.length === 0) { wrap.innerHTML = 'Todavía no hay jugadores.'; return; }
+        wrap.innerHTML = top.map((p, i) =>
+            `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${p.username}</span><span>🏆 ${p.totalWins || 0}</span></div>`
+        ).join('');
+    } catch(e) { wrap.innerHTML = 'No se pudo cargar el ranking.'; }
 }
 
 /* =========================================================
@@ -1112,16 +1265,21 @@ async function adminDeleteUser(key) {
 
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
+    const splashTimer = new Promise(resolve => setTimeout(resolve, 2200));
     await waitForFirebase();
     try {
         CONFIG = await loadConfig();
     } catch (e) {
         document.getElementById('cloud-loading').innerHTML =
             '<div style="text-align:center;padding:20px;color:#f85149;">⚠️ No se pudo conectar con Firebase.<br><span style="font-size:11px;color:#8b949e;">Revisa que Firestore esté activado y que las reglas permitan lectura/escritura.</span></div>';
+        await splashTimer;
+        document.getElementById('splash-screen').classList.add('fade-out');
         return;
     }
     history.replaceState({screen:'main-screen'}, '', '');
     document.getElementById('cloud-loading').style.display = 'none';
+    await splashTimer;
+    document.getElementById('splash-screen').classList.add('fade-out');
     await tryAutoLogin();
 });
 </script>
