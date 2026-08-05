@@ -563,35 +563,9 @@
         /* --- Objeto sorpresa --- */
         .ph-surprise-obj { position:absolute; z-index:3; font-size:20px; cursor:pointer; animation:petSurprisePulse 1.4s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,0.5)); }
         @keyframes petSurprisePulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
-    
-        /* === v3.5 MEJORAS - SIN ROMPER NADA === */
-        #splash-screen.fade-out{opacity:0; pointer-events:none; transition:opacity .6s ease;}
-        .tournament-banner{background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b); border:1px solid #fbbf24; border-radius:14px; padding:14px; margin-bottom:14px; cursor:pointer; animation: tourPulse 2s infinite;}
-        @keyframes tourPulse{0%,100%{box-shadow:0 0 12px rgba(251,191,36,.4)}50%{box-shadow:0 0 28px rgba(251,191,36,.8)}}
-        .tour-top{display:flex; justify-content:space-between; align-items:center;}
-        .tour-pot{font-size:16px; font-weight:bold; color:#fff;}
-        .tour-timer{background:#0006; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; color:#fff;}
-        .pattern-selector{display:flex; gap:8px; overflow-x:auto; padding:8px 0; margin-bottom:8px;}
-        .pattern-chip{flex:0 0 auto; background:#21262d; border:1px solid #30363d; border-radius:10px; padding:8px 12px; font-size:11px; text-align:center; cursor:pointer; min-width:65px;}
-        .pattern-chip.active{border-color:#fbbf24; background:#2a2305; color:#ffd866;}
-        .pattern-chip b{display:block; font-size:18px;}
-        .fire-ball{position:fixed; top:70px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; padding:10px 18px; border-radius:20px; font-weight:bold; z-index:6000; display:none; border:1px solid #fbbf24;}
-        .fire-ball.active{display:block;}
-        .secret-mission{background:linear-gradient(135deg,#064e3b,#065f46); border:1px solid #10b981; border-radius:12px; padding:12px; margin-bottom:12px;}
-        .secret-dot{width:12px; height:12px; border-radius:50%; background:#30363d; display:inline-block; margin-right:4px;}
-        .secret-dot.done{background:#10b981; box-shadow:0 0 8px #10b981;}
-        .chat-emotes{display:flex; gap:6px; margin:10px 0; overflow-x:auto;}
-        .emote-btn{background:#21262d; border:1px solid #30363d; border-radius:20px; padding:6px 12px; cursor:pointer; font-size:12px; color:#fff; flex:0 0 auto;}
-        .emote-bubble{position:fixed; background:#fff; color:#000; padding:8px 12px; border-radius:16px; font-size:12px; font-weight:bold; animation: bubbleUp 2.5s forwards; z-index:6500;}
-        @keyframes bubbleUp{0%{opacity:1; transform:translateY(0)}100%{opacity:0; transform:translateY(-80px)}}
-        .pet-battle-arena{background:radial-gradient(circle at 50% 30%,#1e1b4b,#0d1117); border:1px solid #4f46e5; border-radius:12px; padding:16px; text-align:center; margin-top:12px;}
-
-</style>
+    </style>
 </head>
 <body>
-<div id="fire-ball-indicator" class="fire-ball">🔥 BOLA DE FUEGO x2 ACTIVA!</div>
-<div id="chat-bubbles-layer"></div>
-
 
     <!-- SPLASH / PORTADA -->
     <div id="splash-screen">
@@ -700,7 +674,7 @@
             <div class="rooms-grid" id="rooms-grid"></div>
         </div>
 
-        <div style="margin-bottom:10px;"><strong style="font-size:13px; color:#fbbf24;">🎯 Patrón ganador v3.5</strong><div id="pattern-selector" class="pattern-selector"></div></div><div id="lobby-modal" style="display:none;">
+        <div id="lobby-modal" style="display:none;">
             <p style="font-size:11px;"><span style="cursor:pointer;color:#58a6ff;" onclick="backToRoomSelect()">⬅ Cambiar de sala</span></p>
             <h3 style="color: #d29922; margin: 6px 0;">Selecciona tus Cartones</h3>
             <p style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
@@ -1241,42 +1215,46 @@
         </div>
     </div>
 
-    <!-- Pantalla de carga mientras conecta con Firebase -->
+    <!-- Pantalla de carga mientras conecta con Firebase - FIX -->
     <div id="cloud-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0d1117;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8b949e;font-size:13px;">
         <div style="font-size:32px;margin-bottom:10px;">☁️</div>
-        Conectando con la nube...
+        <span id="cloud-text">Conectando...</span>
     </div>
 
-    <!-- SDK de Firebase (modular, vía CDN) -->
+    <!-- Firebase con TIMEOUT para que nunca se congele -->
+    <script>
+    window.__firebaseReady=false;
+    window.__firebaseFailed=false;
+    window.__firebaseTimer=setTimeout(function(){
+        if(!window.__firebaseReady){
+            console.warn('Firebase timeout -> offline');
+            window.__firebaseFailed=true;
+            window.__firebaseReady=true;
+            var t=document.getElementById('cloud-text'); if(t) t.textContent='Modo offline';
+            window.dispatchEvent(new Event('firebase-ready'));
+        }
+    }, 3500);
+    </script>
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import {
-            getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import {
-            getStorage, ref, uploadBytes, getDownloadURL
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCjPIi-Ce-S0s9tUtS444AKnKUU_XWmMwo",
-            authDomain: "baseregistro-dee82.firebaseapp.com",
-            projectId: "baseregistro-dee82",
-            storageBucket: "baseregistro-dee82.firebasestorage.app",
-            messagingSenderId: "907337162019",
-            appId: "1:907337162019:web:4a10b4425d9c5166390096",
-            measurementId: "G-NBGEEWM2M8"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        // Se exponen en window para que el script clásico (no-módulo) los use
-        window.db = db;
-        window.fs = { doc, getDoc, setDoc, deleteDoc, collection, getDocs };
-        window.storageRefs = { storage, ref, uploadBytes, getDownloadURL };
-        window.__firebaseReady = true;
-        window.dispatchEvent(new Event('firebase-ready'));
+        try{
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+            const firebaseConfig={apiKey:"AIzaSyCjPIi-Ce-S0s9tUtS444AKnKUU_XWmMwo",authDomain:"baseregistro-dee82.firebaseapp.com",projectId:"baseregistro-dee82",storageBucket:"baseregistro-dee82.firebasestorage.app",messagingSenderId:"907337162019",appId:"1:907337162019:web:4a10b4425d9c5166390096"};
+            const app=initializeApp(firebaseConfig);
+            window.db=getFirestore(app);
+            window.fs={doc,getDoc,setDoc,deleteDoc,collection,getDocs};
+            window.storageRefs={storage:getStorage(app),ref,uploadBytes,getDownloadURL};
+            clearTimeout(window.__firebaseTimer);
+            window.__firebaseReady=true;
+            window.__firebaseFailed=false;
+            window.dispatchEvent(new Event('firebase-ready'));
+        }catch(e){
+            console.error('Firebase module fail',e);
+            window.__firebaseFailed=true;
+            window.__firebaseReady=true;
+            window.dispatchEvent(new Event('firebase-ready'));
+        }
     </script>
 
 <script>
@@ -1294,7 +1272,7 @@ const SESSION_KEY = SAVE_PREFIX + 'session';
 const ADMIN_SESSION_KEY = SAVE_PREFIX + 'admin_session';
 const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]]; // B I N G O
 const LETTERS = ['B','I','N','G','O'];
-const APP_VERSION = 'v3.5-FIX';
+const APP_VERSION = 'v2.5';
 const COLORS = ['rojo','azul','verde','amarillo'];
 const PRODUCTS_PER_PAGE = 2;
 
@@ -1389,17 +1367,9 @@ function todayStr() { return new Date().toISOString().slice(0,10); }
 function escapeHtml(str) { const d = document.createElement('div'); d.innerText = String(str); return d.innerHTML; }
 
 /* ---------- Helpers de Firestore ---------- */
-function waitForFirebase() {
-    return new Promise(resolve => {
-        if (window.__firebaseReady) return resolve();
-        window.addEventListener('firebase-ready', () => resolve(), { once: true });
-    });
-}
-async function fsGet(col, id) {
-    const ref = window.fs.doc(window.db, col, id);
-    const snap = await window.fs.getDoc(ref);
-    return snap.exists() ? snap.data() : null;
-}
+function waitForFirebase(){return new Promise(function(res){if(window.__firebaseReady)return res();window.addEventListener('firebase-ready',function(){res();},{once:true});setTimeout(function(){res();},4000);});}
+function forceHideSplash(){try{var s=document.getElementById('splash-screen');var c=document.getElementById('cloud-loading');if(c)c.style.display='none';if(s){s.style.opacity='0';s.style.pointerEvents='none';setTimeout(function(){s.style.display='none';},600);}}catch(e){}}
+async function fsGet(col,id){try{if(!window.db||!window.fs)return null;var ref=window.fs.doc(window.db,col,id);var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('fs timeout'));},2000);});var snap=await Promise.race([window.fs.getDoc(ref),to]);return snap.exists()?snap.data():null;}catch(e){console.warn('fsGet',col,id,e.message);return null;}}
 async function fsSet(col, id, data) {
     const ref = window.fs.doc(window.db, col, id);
     await window.fs.setDoc(ref, data);
@@ -1448,12 +1418,19 @@ function iconHtml(icon) {
     return icon;
 }
 
-async function loadConfig() {
-    const def = defaultConfig();
-    let cfg = await fsGet('config', 'main');
-    if (!cfg) { cfg = def; await fsSet('config', 'main', cfg); }
-    else { cfg = Object.assign({}, def, cfg); } // rellena campos nuevos si faltan
-    return cfg;
+async function loadConfig(){
+    if(window.__firebaseFailed){return defaultConfig();}
+    var def=defaultConfig();
+    try{
+        var timeout=new Promise(function(_,rej){setTimeout(function(){rej(new Error('timeout'));},2500);});
+        var cfg=await Promise.race([fsGet('config','main'),timeout]);
+        if(!cfg){cfg=def; try{await fsSet('config','main',cfg);}catch(e){}}
+        else{cfg=Object.assign({},def,cfg);}
+        return cfg;
+    }catch(e){
+        console.warn('loadConfig fallback',e.message);
+        return def;
+    }
 }
 async function saveConfig() { await fsSet('config', 'main', CONFIG); }
 
@@ -5157,58 +5134,22 @@ function applyAppUpdate() {
 setInterval(checkForAppUpdate, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForAppUpdate(); });
 
-
-/* ===== v3.5 LOGIC - MEJORAS SIN ROMPER BASE ===== */
-const WIN_PATTERNS = {
-  linea: { name:'Línea', icon:'➖', check: m=> m.some(row=> row.every(Boolean)) },
-  esquinas: { name:'Esquinas', icon:'🔲', check: m=> m[0][0] && m[0][4] && m[4][0] && m[4][4] },
-  x: { name:'X', icon:'❌', check: m=> [0,1,2,3,4].every(i=> m[i][i] && m[i][4-i]) },
-  t: { name:'T', icon:'T', check: m=> m[0].every(Boolean) && m.every(r=> r[2]) },
-  diamante: { name:'Diamante', icon:'♦️', check: m=> m[1][2] && m[2][1] && m[2][3] && m[3][2] },
-  full: { name:'Lleno', icon:'🏆', check: m=> m.flat().every(Boolean) }
-};
-let selectedPattern='full', fireBallActive=false, fireBallCount=0, secretGoldenNumber=42, tournamentPot=15750, tournamentEndsAt=Date.now()+3*3600*1000, duelMode=false;
-const PET_ABILITIES={ gallo:{cooldown:60,effect:()=>{ autoMarkRandomNumber(); showToast('🐓 ¡Gallo marcó!','achievement'); }}, gato_domestico:{cooldown:45,effect:()=>{ petHelpUsesLeft+=1; showToast('🐱 +1 ayuda','freespin'); }}, gato_siames:{cooldown:50,effect:()=>{ fireBallActive=true; document.getElementById('fire-ball-indicator').classList.add('active'); setTimeout(()=>{fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active');},15000); showToast('😼 15s fuego','vip'); }}, bulldog:{cooldown:55,effect:()=>{ rivalProgress=Math.max(0,rivalProgress-15); showToast('🐶 Rival -15%','achievement'); }}, pastor_aleman:{cooldown:40,effect:()=>{ state.gold+=Math.floor((selectedRoom?.baseWinReward||500)*0.1); showToast('🐕 +10% oro','achievement'); saveState(); refreshAllUI(); }}, husky:{cooldown:65,effect:()=>{ if(bingoInterval){ clearInterval(bingoInterval); bingoInterval=null; showToast('🐺 Congelado 5s','freespin'); setTimeout(()=>{ if(drawnNumbers.length<75) startBingoLoop(); },5000); } }}, aguila:{cooldown:30,effect:()=>{ const next=rivalCardNumbers.flat().filter(n=>!drawnNumbers.includes(n))[0]; if(next) showToast('🦅 Próximo: '+next,'vip'); }} };
-function renderTournamentBanner(){ const potEl=document.querySelector('.tour-pot'); const timerEl=document.getElementById('tour-timer'); if(!potEl||!timerEl) return; const diff=Math.max(0,tournamentEndsAt-Date.now()); const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000); potEl.innerText='🏆 Bote: '+tournamentPot.toLocaleString()+' 🪙'; timerEl.innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; if(diff<=0){ tournamentEndsAt=Date.now()+3*3600000; tournamentPot=5000+Math.floor(Math.random()*15000); } }
-setInterval(renderTournamentBanner,1000);
-function renderPatternSelector(){ const wrap=document.getElementById('pattern-selector'); if(!wrap) return; wrap.innerHTML=''; Object.entries(WIN_PATTERNS).forEach(([id,p])=>{ const d=document.createElement('div'); d.className='pattern-chip'+(id===selectedPattern?' active':''); d.innerHTML=`<b>${p.icon}</b>${p.name}`; d.onclick=()=>{ selectedPattern=id; renderPatternSelector(); showToast('Patrón: '+p.name,'achievement'); }; wrap.appendChild(d); }); }
-function maybeTriggerFireBall(){ fireBallCount++; if(fireBallCount%10===0){ fireBallActive=true; document.getElementById('fire-ball-indicator').classList.add('active'); showToast('🔥 ¡BOLA DE FUEGO x2! 15s','freespin'); setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000); } }
-function autoMarkRandomNumber(){ for(let card of playerCardData){ for(let row of card.cells){ for(let cell of row){ if(!cell.marked){ cell.marked=true; refreshBingoUI(); return; } } } } }
-function initSecretMission(){ secretGoldenNumber=10+Math.floor(Math.random()*65); const el=document.getElementById('secret-golden-num'); if(el) el.innerText=secretGoldenNumber; updateSecretDots(); }
-function updateSecretDots(){ const wrap=document.getElementById('secret-dots'); if(!wrap) return; const prog=state?.secretMissionProgress||0; wrap.innerHTML=''; for(let i=0;i<3;i++){ const d=document.createElement('span'); d.className='secret-dot'+(i<prog?' done':''); wrap.appendChild(d); } }
-function checkSecretMission(num){ if(!state) return; if(num===secretGoldenNumber){ state.secretMissionProgress=(state.secretMissionProgress||0)+1; updateSecretDots(); showToast(`🥚 ¡Dorado ${num}! ${state.secretMissionProgress}/3`,'achievement'); if(state.secretMissionProgress>=3){ state.huevosMascota.comun=(state.huevosMascota.comun||0)+1; state.secretMissionProgress=0; showToast('🎉 ¡Huevo ganado!','vip'); initSecretMission(); } saveState(); } }
-const QUICK_EMOTES=['¡Casi! 😅','BINGO! 🎉','🔥🔥🔥','😂','¡Vamos!','GG 👏'];
-function sendQuickEmote(txt){ const layer=document.getElementById('chat-bubbles-layer'); const b=document.createElement('div'); b.className='emote-bubble'; b.style.left=(10+Math.random()*70)+'vw'; b.style.top=(15+Math.random()*50)+'vh'; b.innerText=(state?.username||'Tú')+': '+txt; layer.appendChild(b); setTimeout(()=>b.remove(),2500); }
-function renderEmotesBar(){ let bar=document.getElementById('emotes-bar'); if(!bar){ const gs=document.getElementById('game-screen'); if(gs){ bar=document.createElement('div'); bar.id='emotes-bar'; bar.className='chat-emotes'; gs.prepend(bar); } } if(!bar) return; bar.innerHTML=''; QUICK_EMOTES.forEach(e=>{ const btn=document.createElement('button'); btn.className='emote-btn'; btn.innerText=e; btn.onclick=()=>sendQuickEmote(e); bar.appendChild(btn); }); }
-function petBattle(){ if(!state?.mascotas?.length){ showToast('Necesitas mascota'); return; } const win=Math.random()>0.5; if(win){ const r=500+Math.floor(Math.random()*500); state.gold+=r; showToast(`🏆 ¡Ganaste! +${r} 🪙`,'achievement'); } else showToast('💔 Perdiste',''); saveState(); refreshAllUI(); }
-function fusePets(){ if((state?.mascotas||[]).filter(m=>m.etapa==='adulto').length<2){ showToast('Necesitas 2 adultas'); return; } if(state.gold<10000){ showToast('10k 🪙 necesarios'); return; } state.gold-=10000; state.huevosMascota.comun+=1; showToast('✨ Fusión ok','vip'); saveState(); refreshAllUI(); }
-function usePetAbility(){ if(!state?.mascotaActiva){ showToast('Activa mascota'); return; } const masc=state.mascotas.find(m=>m.id===state.mascotaActiva); const ab=PET_ABILITIES[masc?.tipoId]; if(!ab){ showToast('Sin habilidad'); return; } if(Date.now()-(state.lastPetAbilityAt||0) < ab.cooldown*1000){ showToast('Enfriamiento'); return; } state.lastPetAbilityAt=Date.now(); ab.effect(); saveState(); }
-function startDuelMode(){ duelMode=true; const cost=selectedRoom?.cardCosts?.[chosenCardCount]||10; const bet=cost*2; if(!state){ showToast('Login primero'); return; } if(state.gold<bet){ showToast('Necesitas '+bet+' 🪙'); return; } state.gold-=bet; tournamentPot+=bet; showToast('⚔️ Duelo bote '+(bet*2),'vip'); saveState(); refreshAllUI(); openLobby(); }
-function checkBingoWinPatched(){ const pat=WIN_PATTERNS[selectedPattern]; if(!pat) return false; for(let card of playerCardData){ const marks=card.cells.map(r=>r.map(c=>c.marked)); if(pat.check(marks)){ let reward=selectedRoom?.baseWinReward||500; if(fireBallActive) reward*=2; if(duelMode){ reward+=tournamentPot; tournamentPot=5000; duelMode=false; } state.gold+=reward; state.totalWins=(state.totalWins||0)+1; showToast('🎉 BINGO '+pat.name+' +'+reward,'achievement'); saveState(); refreshAllUI(); return true; } } return false; }
-function renderPetBattleExtras(){ return `<div class='pet-battle-arena'><h4>⚔️ Arena v3.5</h4><div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'><button class='game-action-btn' onclick='petBattle()'>Batallar</button><button class='game-action-btn' style='background:#d29922; color:#000;' onclick='fusePets()'>Fusionar</button></div><button class='pet-help-btn' style='margin-top:8px; width:100%;' onclick='usePetAbility()'>✨ Habilidad</button></div>`; }
-
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
-    document.querySelectorAll('#app-version-label, #admin-version-label').forEach(el => { el.innerText = APP_VERSION; });
-    const splashTimer = new Promise(resolve => setTimeout(resolve, 2200));
-    await waitForFirebase();
-    try {
-        CONFIG = await loadConfig();
-    } catch (e) {
-        document.getElementById('cloud-loading').innerHTML =
-            '<div style="text-align:center;padding:20px;color:#f85149;">⚠️ No se pudo conectar con Firebase.<br><span style="font-size:11px;color:#8b949e;">Revisa que Firestore esté activado y que las reglas permitan lectura/escritura.</span></div>';
-        await splashTimer;
-        document.getElementById('splash-screen').classList.add('fade-out');
-        return;
-    }
-    history.replaceState({screen:'main-screen'}, '', '');
-    document.getElementById('cloud-loading').style.display = 'none';
+    try{document.querySelectorAll('#app-version-label, #admin-version-label').forEach(function(el){if(el)el.innerText=APP_VERSION;});}catch(e){}
+    var splashTimer=new Promise(function(r){setTimeout(r,1200);});
+    var hardTimeout=setTimeout(function(){forceHideSplash();},5000);
+    try{await waitForFirebase();}catch(e){}
+    try{CONFIG=await loadConfig();}catch(e){CONFIG=defaultConfig();}
+    try{history.replaceState({screen:'main-screen'},'','');}catch(e){}
+    var cloud=document.getElementById('cloud-loading'); if(cloud)cloud.style.display='none';
     await splashTimer;
-    document.getElementById('splash-screen').classList.add('fade-out');
-    await tryAutoLogin();
-    try{ renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner(); }catch(e){}
-    checkForAppUpdate();
+    forceHideSplash();
+    clearTimeout(hardTimeout);
+    try{await tryAutoLogin();}catch(e){var l=document.getElementById('login-screen');if(l)l.classList.add('active');}
+    try{checkForAppUpdate();}catch(e){}
+    var nav=document.getElementById('bottom-nav'); if(nav&&state)nav.style.display='flex';
 });
 </script>
-<script>(function(){ const wrap=()=>{ if(typeof renderPetScreen!=='function') return setTimeout(wrap,500); const origF=renderPetScreen; renderPetScreen=function(tab){ const r=origF(tab); try{ if(tab==='progreso'){ const el=document.getElementById('pet-content'); if(el && !el.innerHTML.includes('pet-battle-arena')) el.innerHTML+=renderPetBattleExtras(); } }catch(e){} return r; }; }; wrap(); })();</script></body>
+</body>
 </html>
