@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v3.5 FULL - torneo, patrones, fuego, mascota habilidad, duelo, misión secreta + fix carga tienda con oferta relámpago y cofre de mejor valor, indicador de riesgo/retorno y recarga inmediata) -->
+<!-- Súper Bingo Rey — v2.5 (Bloque 2: tienda con oferta relámpago y cofre de mejor valor, indicador de riesgo/retorno y recarga inmediata) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Súper Bingo Rey v3.5</title>
+    <title>Súper Bingo Rey</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0d1117; color: #fff; padding-bottom: 75px; user-select: none; }
@@ -564,57 +564,26 @@
         .ph-surprise-obj { position:absolute; z-index:3; font-size:20px; cursor:pointer; animation:petSurprisePulse 1.4s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,0.5)); }
         @keyframes petSurprisePulse { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
     
-        /* ========== v3.5 MEJORAS ========== */
-        .tournament-banner { background: linear-gradient(135deg,#7c3aed,#db2777,#f59e0b); border:1px solid #fbbf24; border-radius:14px; padding:14px; margin-bottom:14px; position:relative; overflow:hidden; animation: tourPulse 2s infinite; }
-        @keyframes tourPulse {0%,100%{box-shadow:0 0 15px rgba(251,191,36,.4)}50%{box-shadow:0 0 30px rgba(251,191,36,.8)}}
+        #splash-screen.fade-out{opacity:0; pointer-events:none; transition: opacity .6s ease;}
+        .tournament-banner { background: linear-gradient(135deg,#7c3aed,#db2777,#f59e0b); border:1px solid #fbbf24; border-radius:14px; padding:14px; margin-bottom:14px; animation: tourPulse 2s infinite; cursor:pointer; }
+        @keyframes tourPulse {0%,100%{box-shadow:0 0 12px rgba(251,191,36,.4)}50%{box-shadow:0 0 28px rgba(251,191,36,.8)}}
         .tour-top { display:flex; justify-content:space-between; align-items:center; }
-        .tour-pot { font-size:18px; font-weight:bold; color:#fff; }
-        .tour-timer { background:#0006; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; }
-        .pattern-selector { display:flex; gap:8px; overflow-x:auto; padding:8px 0; }
-        .pattern-chip { flex:0 0 auto; background:#21262d; border:1px solid #30363d; border-radius:10px; padding:8px 12px; font-size:11px; text-align:center; cursor:pointer; }
-        .pattern-chip.active { border-color:#fbbf24; background:#2a2305; color:#ffd866; box-shadow:0 0 10px rgba(251,191,36,.3); }
-        .pattern-chip b { display:block; font-size:16px; }
-        .fire-ball { position:fixed; top:60px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; padding:8px 16px; border-radius:20px; font-weight:bold; z-index:500; display:none; animation: fireShake .3s infinite; }
+        .tour-pot { font-size:16px; font-weight:bold; color:#fff; }
+        .tour-timer { background:#0006; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; color:#fff; }
+        .pattern-selector { display:flex; gap:8px; overflow-x:auto; padding:8px 0; margin-bottom:8px; }
+        .pattern-chip { flex:0 0 auto; background:#21262d; border:1px solid #30363d; border-radius:10px; padding:8px 12px; font-size:11px; text-align:center; cursor:pointer; min-width:65px; }
+        .pattern-chip.active { border-color:#fbbf24; background:#2a2305; color:#ffd866; }
+        .pattern-chip b { display:block; font-size:18px; }
+        .fire-ball { position:fixed; top:70px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; padding:10px 18px; border-radius:20px; font-weight:bold; z-index:6000; display:none; border:1px solid #fbbf24; }
         .fire-ball.active { display:block; }
-        @keyframes fireShake {0%,100%{transform:translateX(-50%) rotate(-1deg)}50%{transform:translateX(-50%) rotate(1deg)}}
         .secret-mission { background:linear-gradient(135deg,#064e3b,#065f46); border:1px solid #10b981; border-radius:12px; padding:12px; margin-bottom:12px; }
         .secret-dot { width:12px; height:12px; border-radius:50%; background:#30363d; display:inline-block; margin-right:4px; }
         .secret-dot.done { background:#10b981; box-shadow:0 0 8px #10b981; }
-        .chat-emotes { display:flex; gap:6px; margin:10px 0; }
-        .emote-btn { background:#21262d; border:1px solid #30363d; border-radius:20px; padding:6px 10px; cursor:pointer; font-size:14px; }
-        .emote-bubble { position:absolute; background:#fff; color:#000; padding:6px 10px; border-radius:14px; font-size:12px; animation: bubbleUp 2.5s forwards; pointer-events:none; }
-        @keyframes bubbleUp {0%{opacity:1; transform:translateY(0)}100%{opacity:0; transform:translateY(-60px)}}
-        .pet-battle-arena { background:radial-gradient(circle at 50% 30%,#1e1b4b,#0d1117); border:1px solid #4f46e5; border-radius:12px; padding:16px; text-align:center; }
-        .duel-banner { background:linear-gradient(135deg,#991b1b,#7f1d1d); border:1px solid #f87171; border-radius:14px; padding:14px; text-align:center; margin-bottom:12px; }
-        .lucky-card-badge { background:linear-gradient(135deg,#10b981,#34d399); color:#000; font-size:10px; font-weight:bold; padding:3px 8px; border-radius:6px; position:absolute; top:-6px; left:8px; }
-        .streak-save-modal { background:#161b22; border:1px solid #f59e0b; border-radius:14px; padding:20px; text-align:center; }
-        .vip-fomo { background:linear-gradient(90deg,#2a2305,#3a2a06); border:1px solid #fbbf24; border-radius:10px; padding:10px; margin-bottom:12px; }
-
-
-        /* ====== v3.5 MEJORAS VISUALES ====== */
-        .tournament-banner { background: linear-gradient(135deg,#7c3aed,#db2777,#f59e0b); border:1px solid #fbbf24; border-radius:14px; padding:14px; margin-bottom:14px; position:relative; overflow:hidden; animation: tourPulse 2s infinite; cursor:pointer; }
-        @keyframes tourPulse {0%,100%{box-shadow:0 0 12px rgba(251,191,36,.4)}50%{box-shadow:0 0 28px rgba(251,191,36,.8)}}
-        .tour-top { display:flex; justify-content:space-between; align-items:center; }
-        .tour-pot { font-size:17px; font-weight:bold; color:#fff; }
-        .tour-timer { background:#0006; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; color:#fff; }
-        .pattern-selector { display:flex; gap:8px; overflow-x:auto; padding:8px 0; margin-bottom:10px; }
-        .pattern-chip { flex:0 0 auto; background:#21262d; border:1px solid #30363d; border-radius:10px; padding:8px 12px; font-size:11px; text-align:center; cursor:pointer; min-width:70px; }
-        .pattern-chip.active { border-color:#fbbf24; background:#2a2305; color:#ffd866; box-shadow:0 0 10px rgba(251,191,36,.3); }
-        .pattern-chip b { display:block; font-size:18px; }
-        .fire-ball { position:fixed; top:70px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; padding:10px 18px; border-radius:20px; font-weight:bold; z-index:6000; display:none; animation: fireShake .3s infinite; border:1px solid #fbbf24; }
-        .fire-ball.active { display:block; }
-        @keyframes fireShake {0%,100%{transform:translateX(-50%) rotate(-1deg)}50%{transform:translateX(-50%) rotate(1deg)}}
-        .secret-mission { background:linear-gradient(135deg,#064e3b,#065f46); border:1px solid #10b981; border-radius:12px; padding:12px; margin-bottom:12px; }
-        .secret-dot { width:12px; height:12px; border-radius:50%; background:#30363d; display:inline-block; margin-right:4px; border:1px solid #10b981; }
-        .secret-dot.done { background:#10b981; box-shadow:0 0 8px #10b981; }
-        .chat-emotes { display:flex; gap:6px; margin:10px 0; overflow-x:auto; padding-bottom:4px; }
-        .emote-btn { background:#21262d; border:1px solid #30363d; border-radius:20px; padding:6px 12px; cursor:pointer; font-size:13px; color:#fff; flex:0 0 auto; }
-        .emote-bubble { position:fixed; background:#fff; color:#000; padding:8px 12px; border-radius:16px; font-size:12px; font-weight:bold; animation: bubbleUp 2.5s forwards; z-index:6500; box-shadow:0 4px 12px rgba(0,0,0,.4); }
+        .chat-emotes { display:flex; gap:6px; margin:10px 0; overflow-x:auto; }
+        .emote-btn { background:#21262d; border:1px solid #30363d; border-radius:20px; padding:6px 12px; cursor:pointer; font-size:12px; color:#fff; flex:0 0 auto; }
+        .emote-bubble { position:fixed; background:#fff; color:#000; padding:8px 12px; border-radius:16px; font-size:12px; font-weight:bold; animation: bubbleUp 2.5s forwards; z-index:6500; }
         @keyframes bubbleUp {0%{opacity:1; transform:translateY(0)}100%{opacity:0; transform:translateY(-80px)}}
         .pet-battle-arena { background:radial-gradient(circle at 50% 30%,#1e1b4b,#0d1117); border:1px solid #4f46e5; border-radius:12px; padding:16px; text-align:center; margin-top:12px; }
-        .duel-banner { background:linear-gradient(135deg,#991b1b,#7f1d1d); border:1px solid #f87171; border-radius:14px; padding:14px; text-align:center; margin-bottom:12px; }
-        .streak-save-overlay { position:fixed; inset:0; background:#000a; z-index:7000; display:none; align-items:center; justify-content:center; }
-        .streak-save-overlay.active { display:flex; }
 
 </style>
 </head>
@@ -622,29 +591,6 @@
 
 <div id="fire-ball-indicator" class="fire-ball">🔥 BOLA DE FUEGO x2 ACTIVA!</div>
 <div id="chat-bubbles-layer"></div>
-<div id="streak-save-overlay" class="streak-save-overlay">
-  <div style="background:#161b22; border:1px solid #f59e0b; border-radius:14px; padding:20px; text-align:center; width:90%; max-width:340px;">
-    <h3 style="color:#fbbf24;">⚠️ ¡Perderás tu racha!</h3>
-    <p style="font-size:12px; color:#8b949e; margin:10px 0;">Paga 10 💎 para salvarla.</p>
-    <button class="vip-buy-btn" style="width:100%; margin-bottom:8px;" onclick="saveStreakWithGems()">Salvar racha por 10 💎</button>
-    <button class="logout-btn" style="width:100%;" onclick="document.getElementById('streak-save-overlay').classList.remove('active')">Perder racha</button>
-  </div>
-</div>
-
-
-    <!-- v3.5 NUEVOS OVERLAYS -->
-    <div id="fire-ball-indicator" class="fire-ball">🔥 BOLA DE FUEGO x2 ACTIVA!</div>
-    <div id="chat-bubbles-layer" style="position:fixed; top:70px; left:0; right:0; pointer-events:none; z-index:600;"></div>
-
-    <!-- Modal racha -->
-    <div id="streak-save-overlay" style="display:none; position:fixed; inset:0; background:#0009; z-index:3000; align-items:center; justify-content:center;">
-      <div class="streak-save-modal" style="width:90%; max-width:340px;">
-        <h3 style="color:#fbbf24;">⚠️ ¡Perderás tu racha de 5 días!</h3>
-        <p style="font-size:12px; color:#8b949e; margin:10px 0;">Paga 10 💎 para salvarla y mantener tus recompensas.</p>
-        <button class="vip-buy-btn" style="width:100%; margin-bottom:8px;" onclick="saveStreakWithGems()">Salvar racha por 10 💎</button>
-        <button class="logout-btn" style="width:100%;" onclick="document.getElementById('streak-save-overlay').style.display='none'">Perder racha</button>
-      </div>
-    </div>
 
 
     <!-- SPLASH / PORTADA -->
@@ -754,9 +700,7 @@
             <div class="rooms-grid" id="rooms-grid"></div>
         </div>
 
-                <div style="margin-bottom:12px;"><strong style="font-size:13px; color:#fbbf24;">🎯 Elige patrón ganador (v3.5)</strong><div id="pattern-selector" class="pattern-selector"></div></div>
-    <div style="margin-bottom:12px;"><strong style="font-size:13px; color:#fbbf24;">🎯 Elige patrón ganador (v3.5)</strong><div id="pattern-selector" class="pattern-selector"></div></div>
-    <div id="lobby-modal"  style="display:none;">
+        <div style="margin-bottom:10px;"><strong style="font-size:13px; color:#fbbf24;">🎯 Patrón ganador v3.5</strong><div id="pattern-selector" class="pattern-selector"></div></div><div id="lobby-modal" style="display:none;">
             <p style="font-size:11px;"><span style="cursor:pointer;color:#58a6ff;" onclick="backToRoomSelect()">⬅ Cambiar de sala</span></p>
             <h3 style="color: #d29922; margin: 6px 0;">Selecciona tus Cartones</h3>
             <p style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
@@ -838,7 +782,7 @@
 
             <div class="card-tabs-strip" id="card-tabs-strip"></div>
 
-            <div id="emotes-bar" class="chat-emotes" style="flex-wrap:wrap;"></div><div class="pet-help-widget" id="pet-help-widget" style="display:none;">
+            <div class="pet-help-widget" id="pet-help-widget" style="display:none;">
                 <button class="pet-help-btn" id="pet-help-btn" onclick="activatePetHelp()">🐾 Activar ayuda de Mascota (<span id="pet-help-uses">0</span>)</button>
                 <button class="pet-help-btn" id="pet-help-buy-btn" style="margin-left:6px;background:linear-gradient(135deg,#8957e5,#6e40c9);" onclick="buyPetHelpExtra()">💎 Comprar ayuda extra</button>
             </div>
@@ -1303,37 +1247,29 @@
         Conectando con la nube...
     </div>
 
-    <script>window.__firebaseReady=false; setTimeout(()=>{ if(!window.__firebaseReady){ console.warn('Firebase timeout offline'); window.__firebaseReady=true; window.dispatchEvent(new Event('firebase-ready')); } }, 4000);</script>
-    <!-- SDK de Firebase (modular, vía CDN) -->
+    
+<script>window.__firebaseReady=false; window.__firebaseFailed=false; setTimeout(()=>{ if(!window.__firebaseReady){ window.__firebaseFailed=true; window.__firebaseReady=true; window.dispatchEvent(new Event('firebase-ready')); }}, 2500);</script>
+    <!-- SDK de Firebase -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import {
-            getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-        import {
-            getStorage, ref, uploadBytes, getDownloadURL
-        } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCjPIi-Ce-S0s9tUtS444AKnKUU_XWmMwo",
-            authDomain: "baseregistro-dee82.firebaseapp.com",
-            projectId: "baseregistro-dee82",
-            storageBucket: "baseregistro-dee82.firebasestorage.app",
-            messagingSenderId: "907337162019",
-            appId: "1:907337162019:web:4a10b4425d9c5166390096",
-            measurementId: "G-NBGEEWM2M8"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const storage = getStorage(app);
-
-        // Se exponen en window para que el script clásico (no-módulo) los use
-        window.db = db;
-        window.fs = { doc, getDoc, setDoc, deleteDoc, collection, getDocs };
-        window.storageRefs = { storage, ref, uploadBytes, getDownloadURL };
-        window.__firebaseReady = true;
-        window.dispatchEvent(new Event('firebase-ready'));
+        try {
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+            import { getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+            import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+            const firebaseConfig = {
+                apiKey: "AIzaSyCjPIi-Ce-S0s9tUtS444AKnKUU_XWmMwo",
+                authDomain: "baseregistro-dee82.firebaseapp.com",
+                projectId: "baseregistro-dee82",
+                storageBucket: "baseregistro-dee82.firebasestorage.app",
+                messagingSenderId: "907337162019",
+                appId: "1:907337162019:web:4a10b4425d9c5166390096"
+            };
+            const app = initializeApp(firebaseConfig);
+            window.db = getFirestore(app);
+            window.fs = { doc, getDoc, setDoc, deleteDoc, collection, getDocs };
+            window.storageRefs = { storage: getStorage(app), ref, uploadBytes, getDownloadURL };
+            window.__firebaseReady = true; window.__firebaseFailed=false;
+            window.dispatchEvent(new Event('firebase-ready'));
+        } catch(e){ window.__firebaseFailed=true; window.__firebaseReady=true; window.dispatchEvent(new Event('firebase-ready')); }
     </script>
 
 <script>
@@ -1351,7 +1287,7 @@ const SESSION_KEY = SAVE_PREFIX + 'session';
 const ADMIN_SESSION_KEY = SAVE_PREFIX + 'admin_session';
 const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]]; // B I N G O
 const LETTERS = ['B','I','N','G','O'];
-const APP_VERSION = 'v2.5';
+const APP_VERSION = 'v3.5';
 const COLORS = ['rojo','azul','verde','amarillo'];
 const PRODUCTS_PER_PAGE = 2;
 
@@ -1442,40 +1378,12 @@ let selectedFrame = null;
 let roundLuckyNumber = null;
 let roundWinPattern = null;
 
-function renderPetProgresoContent_TEMP(){ 
-  // fallback content if original not extracted
-  return `<div class="card-widget"><strong>📈 Progreso</strong><p style="font-size:12px; color:#8b949e;">Nivel mascota, XP, etc.</p><p>Nivel: ${state?.nivel||1} | Oro: ${state?.gold||0}</p></div>`;
-}
-const _origRenderPetScreen = renderPetScreen;
-renderPetScreen = function(tab){
-  if(tab==='progreso'){
-    _origRenderPetScreen(tab);
-    const content = document.getElementById('pet-content');
-    if(content) content.innerHTML += renderPetBattleExtras();
-    return;
-  }
-  _origRenderPetScreen(tab);
-}
-
-
 function todayStr() { return new Date().toISOString().slice(0,10); }
 function escapeHtml(str) { const d = document.createElement('div'); d.innerText = String(str); return d.innerHTML; }
 
 /* ---------- Helpers de Firestore ---------- */
-function waitForFirebase() {
-    return new Promise(resolve => {
-        if (window.__firebaseReady) return resolve();
-        window.addEventListener('firebase-ready', () => resolve(), { once: true });
-        setTimeout(()=> resolve(), 3500);
-    });
-}
-function forceHideSplash(){
-    const splash=document.getElementById('splash-screen');
-    const cloud=document.getElementById('cloud-loading');
-    if(cloud) cloud.style.display='none';
-    if(splash){ splash.classList.add('fade-out'); setTimeout(()=>{ splash.style.display='none'; }, 600); }
-}
-window.addEventListener('error', (e)=>{ console.log('JS Error:', e.message); forceHideSplash(); });
+function waitForFirebase(){return new Promise(resolve=>{ if(window.__firebaseReady) return resolve(); window.addEventListener('firebase-ready', ()=>resolve(), {once:true}); setTimeout(()=>resolve(),3000); });}
+function forceHideSplash(){ const s=document.getElementById('splash-screen'); const c=document.getElementById('cloud-loading'); if(c) c.style.display='none'; if(s){ s.classList.add('fade-out'); setTimeout(()=>s.style.display='none',700);} }
 async function fsGet(col, id) {
     const ref = window.fs.doc(window.db, col, id);
     const snap = await window.fs.getDoc(ref);
@@ -2851,7 +2759,7 @@ async function closeAdminPanel() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const savedUser = localStorage.getItem(SESSION_KEY);
     if (savedUser) {
-        try{ renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner(); }catch(e){ console.error('v3.5 init', e); } await tryAutoLogin(); renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner();
+        await tryAutoLogin();
     } else {
         document.getElementById('bottom-nav').style.display = 'none';
         document.getElementById('login-screen').classList.add('active');
@@ -3695,10 +3603,6 @@ function petCelebrateIfUnlocked() {
     }
 }
 
-function renderPetBattleExtras(){ return `<div class='pet-battle-arena'><h4>⚔️ Arena de Mascotas</h4><p style='font-size:11px; color:#8b949e; margin:6px 0;'>Tu mascota vs rival aleatorio</p><div style='display:flex; gap:8px;'><button class='game-action-btn' onclick='petBattle()'>Batallar (Gratis)</button><button class='game-action-btn' style='background:#d29922; color:#000;' onclick='fusePets()'>Fusionar 2 adultas (10k 🪙)</button></div><button class='pet-help-btn' style='margin-top:8px; width:100%;' onclick='usePetAbility()'>✨ Usar Habilidad de Mascota</button><button class='pet-help-btn' style='margin-top:8px; width:100%; background:#10b981;' onclick='claimLuckyCard()'>🍀 Reclamar Cartón Suerte x2</button></div>`; }
-function renderPetScreenOriginalWrapper(tab){}
-function __origRenderPetScreenPlaceholder(tab){}
-const _origRenderPetScreenRef = null;
 function renderPetScreen(tab) {
     currentPetTab = tab || currentPetTab || 'adoptar';
     if (currentPetTab !== 'habitat') stopHabitatAutoWalk();
@@ -5243,424 +5147,50 @@ setInterval(checkForAppUpdate, 5 * 60 * 1000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) checkForAppUpdate(); });
 
 
-/* ========== v3.5 TODAS LAS MEJORAS ========== */
+/* ===== v3.5 LOGIC ===== */
 const WIN_PATTERNS = {
-  linea: { name:'Línea', icon:'➖', desc:'Cualquier fila completa', check: (marks)=> marks.some(row=> row.every(Boolean)) },
-  esquinas: { name:'Esquinas', icon:'🔲', desc:'Las 4 esquinas', check: (m)=> m[0][0] && m[0][4] && m[4][0] && m[4][4] },
-  x: { name:'X', icon:'❌', desc:'Las dos diagonales', check: (m)=> [0,1,2,3,4].every(i=> m[i][i] && m[i][4-i]) },
-  t: { name:'T', icon:'T', desc:'Fila superior + columna central', check: (m)=> m[0].every(Boolean) && m.every(r=> r[2]) },
-  diamante: { name:'Diamante', icon:'♦️', desc:'Rombo central', check: (m)=> m[1][2] && m[2][1] && m[2][3] && m[3][2] },
-  full: { name:'Cartón lleno', icon:'🏆', desc:'Todo el cartón', check: (m)=> m.flat().every(Boolean) }
+  linea: { name:'Línea', icon:'➖', check: m=> m.some(row=> row.every(Boolean)) },
+  esquinas: { name:'Esquinas', icon:'🔲', check: m=> m[0][0] && m[0][4] && m[4][0] && m[4][4] },
+  x: { name:'X', icon:'❌', check: m=> [0,1,2,3,4].every(i=> m[i][i] && m[i][4-i]) },
+  t: { name:'T', icon:'T', check: m=> m[0].every(Boolean) && m.every(r=> r[2]) },
+  diamante: { name:'Diamante', icon:'♦️', check: m=> m[1][2] && m[2][1] && m[2][3] && m[3][2] },
+  full: { name:'Lleno', icon:'🏆', check: m=> m.flat().every(Boolean) }
 };
-let selectedPattern = 'full';
-let fireBallActive = false;
-let fireBallCount = 0;
-let secretGoldenNumber = null;
-let tournamentPot = 15750;
-let tournamentEndsAt = Date.now() + 3*3600*1000;
-let duelMode = false;
-let luckyFreeCard = false;
-
-const PET_ABILITIES = {
-  gallo: { name:'Canto', cooldown:120, effect:()=>{ autoMarkRandomNumber(); showToast('🐓 ¡Gallo cantó y marcó un número!','achievement'); }},
-  gato_domestico: { name:'Sigilo', cooldown:90, effect:()=>{ petHelpUsesLeft+=1; showToast('🐱 Sigilo: +1 ayuda de mascota','freespin'); }},
-  gato_siames: { name:'Suerte felina', cooldown:100, effect:()=>{ fireBallActive=true; setTimeout(()=>fireBallActive=false,15000); showToast('😼 Suerte felina: 15s de bola de fuego','vip'); }},
-  bulldog: { name:'Mordida', cooldown:110, effect:()=>{ rivalProgress=Math.max(0,rivalProgress-15); showToast('🐶 Bulldog frenó al rival -15%','achievement'); }},
-  pastor_aleman: { name:'Guardia', cooldown:80, effect:()=>{ state.gold+= Math.floor(selectedRoom.baseWinReward*0.1); showToast('🐕 Guardia: +10% oro asegurado','achievement'); }},
-  husky: { name:'Ventisca', cooldown:130, effect:()=>{ if(bingoInterval){ clearInterval(bingoInterval); setTimeout(()=> startBingoLoop(),5000); showToast('🐺 Ventisca: rival congelado 5s ❄️','freespin'); } }},
-  aguila: { name:'Visión', cooldown:60, effect:()=>{ const remaining= drawnNumbers.length; const next= rivalCardNumbers.flat().filter(n=>!drawnNumbers.includes(n))[0]; if(next) showToast('🦅 Visión: próximo rival posible '+next,'vip'); }}
-};
-
-function renderTournamentBanner(){
-  const el = document.getElementById('tournament-banner');
-  if(!el) return;
-  const diff = Math.max(0, tournamentEndsAt - Date.now());
-  const m = Math.floor(diff/60000); const s = Math.floor((diff%60000)/1000);
-  el.querySelector('.tour-pot').innerText = '🏆 Bote: '+tournamentPot.toLocaleString()+' 🪙';
-  el.querySelector('.tour-timer').innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  if(diff<=0){ tournamentEndsAt = Date.now()+3*3600*1000; tournamentPot=5000+Math.floor(Math.random()*10000); }
-}
+let selectedPattern='full', fireBallActive=false, fireBallCount=0, secretGoldenNumber=42, tournamentPot=15750, tournamentEndsAt=Date.now()+3*3600*1000, duelMode=false, luckyFreeCard=false;
+const PET_ABILITIES={ gallo:{name:'Canto',cooldown:60,effect:()=>{ autoMarkRandomNumber(); showToast('🐓 ¡Gallo marcó!','achievement'); }}, gato_domestico:{name:'Sigilo',cooldown:45,effect:()=>{ petHelpUsesLeft+=1; showToast('🐱 +1 ayuda','freespin'); }}, gato_siames:{name:'Suerte',cooldown:50,effect:()=>{ fireBallActive=true; document.getElementById('fire-ball-indicator').classList.add('active'); setTimeout(()=>{fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active');},15000); showToast('😼 15s fuego','vip'); }}, bulldog:{name:'Mordida',cooldown:55,effect:()=>{ rivalProgress=Math.max(0,rivalProgress-15); showToast('🐶 Rival -15%','achievement'); }}, pastor_aleman:{name:'Guardia',cooldown:40,effect:()=>{ state.gold+=Math.floor((selectedRoom?.baseWinReward||500)*0.1); showToast('🐕 +10% oro','achievement'); saveState(); refreshAllUI(); }}, husky:{name:'Ventisca',cooldown:65,effect:()=>{ if(bingoInterval){ clearInterval(bingoInterval); bingoInterval=null; showToast('🐺 Congelado 5s','freespin'); setTimeout(()=>{ if(drawnNumbers.length<75) startBingoLoop(); },5000); } }}, aguila:{name:'Visión',cooldown:30,effect:()=>{ const next=rivalCardNumbers.flat().filter(n=>!drawnNumbers.includes(n))[0]; if(next) showToast('🦅 Próximo: '+next,'vip'); }} };
+function renderTournamentBanner(){ const potEl=document.querySelector('.tour-pot'); const timerEl=document.getElementById('tour-timer'); if(!potEl||!timerEl) return; const diff=Math.max(0,tournamentEndsAt-Date.now()); const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000); potEl.innerText='🏆 Bote: '+tournamentPot.toLocaleString()+' 🪙'; timerEl.innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; if(diff<=0){ tournamentEndsAt=Date.now()+3*3600000; tournamentPot=5000+Math.floor(Math.random()*15000); } }
 setInterval(renderTournamentBanner,1000);
-
-function renderPatternSelector(){
-  const wrap = document.getElementById('pattern-selector');
-  if(!wrap) return;
-  wrap.innerHTML='';
-  Object.entries(WIN_PATTERNS).forEach(([id,p])=>{
-    const d=document.createElement('div');
-    d.className='pattern-chip'+(id===selectedPattern?' active':'');
-    d.innerHTML=`<b>${p.icon}</b>${p.name}<br><span style="font-size:9px;color:#8b949e">${p.desc}</span>`;
-    d.onclick=()=>{ selectedPattern=id; renderPatternSelector(); showToast('Patrón: '+p.name+' - '+p.desc,'achievement'); };
-    wrap.appendChild(d);
-  });
-}
-
-function maybeTriggerFireBall(){
-  fireBallCount++;
-  if(fireBallCount%10===0){
-    fireBallActive=true;
-    document.getElementById('fire-ball-indicator').classList.add('active');
-    showToast('🔥 ¡BOLA DE FUEGO! Próximo bingo x2 durante 15s','freespin');
-    setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000);
-  }
-}
-function autoMarkRandomNumber(){
-  for(let c of playerCardData){ for(let cell of c.cells.flat()){ if(!cell.marked){ cell.marked=true; refreshBingoUI(); return; } } }
-}
-
-function initSecretMission(){
-  secretGoldenNumber = 10+Math.floor(Math.random()*65);
-  if(state) {
-    state.secretMissionNumber = secretGoldenNumber;
-    state.secretMissionProgress = state.secretMissionProgress||0;
-  }
-}
-function checkSecretMission(num){
-  if(num===secretGoldenNumber){
-    state.secretMissionProgress = (state.secretMissionProgress||0)+1;
-    showToast(`🥚 ¡Número dorado ${num}! Progreso secreto ${state.secretMissionProgress}/3`,'achievement');
-    if(state.secretMissionProgress>=3){
-      state.huevosMascota.comun+=1;
-      state.secretMissionProgress=0;
-      showToast('🎉 ¡Misión secreta completada! +1 Huevo Común','vip');
-      initSecretMission();
-    }
-    saveState();
-  }
-}
-
-// Chat rápido
-const QUICK_EMOTES = ['¡Casi! 😅','BINGO! 🎉','🔥🔥🔥','😂','¡Vamos!','😭','GG 👏','¡Nooo!'];
-function sendQuickEmote(txt){
-  const layer=document.getElementById('chat-bubbles-layer');
-  const b=document.createElement('div');
-  b.className='emote-bubble';
-  b.style.left=(10+Math.random()*70)+'vw';
-  b.style.top=(20+Math.random()*50)+'px';
-  b.innerText= state.username+': '+txt;
-  layer.appendChild(b);
-  setTimeout(()=>b.remove(),2500);
-  if(Math.random()>0.6){ setTimeout(()=>{ const rb=document.createElement('div'); rb.className='emote-bubble'; rb.style.left=(10+Math.random()*70)+'vw'; rb.style.top=(30+Math.random()*40)+'px'; rb.innerText='Rival: '+QUICK_EMOTES[Math.floor(Math.random()*QUICK_EMOTES.length)]; layer.appendChild(rb); setTimeout(()=>rb.remove(),2500); },800); }
-}
-function renderEmotesBar(){
-  const bar=document.getElementById('emotes-bar');
-  if(!bar) return;
-  bar.innerHTML='';
-  QUICK_EMOTES.forEach(e=>{
-    const btn=document.createElement('button');
-    btn.className='emote-btn'; btn.innerText=e; btn.onclick=()=>sendQuickEmote(e);
-    bar.appendChild(btn);
-  });
-}
-
-// Mascota batalla y fusión
-function petBattle(){
-  if(!state || (state.mascotas||[]).length===0){ showToast('Necesitas una mascota adulta para batallar'); return; }
-  const power = (state.nivel||1)*10 + Math.floor(Math.random()*50);
-  const rivalPower = Math.floor(Math.random()*100);
-  if(power>rivalPower){ const reward=500+Math.floor(Math.random()*500); state.gold+=reward; state.bayasComunes+=2; showToast(`🏆 ¡Ganaste batalla mascota! +${reward} 🪙 +2 🍇`,'achievement'); }
-  else { showToast('💔 Perdiste la batalla, tu mascota necesita más nivel',''); }
-  saveState(); refreshAllUI();
-}
-function fusePets(){
-  if((state.mascotas||[]).filter(m=>m.etapa==='adulto').length<2){ showToast('Necesitas 2 mascotas adultas para fusionar'); return; }
-  if(state.gold<10000){ showToast('Necesitas 10,000 🪙 para fusionar'); return; }
-  state.gold-=10000;
-  state.huevosMascota.comun+=1; state.bayasRaras+=2;
-  showToast('✨ ¡Fusión exitosa! +1 Huevo Común +2 Bayas Raras','vip');
-  saveState(); refreshAllUI(); renderPetScreen('progreso');
-}
-function usePetAbility(){
-  if(!state || !state.mascotaActiva) { showToast('Activa una mascota en Hábitat'); return; }
-  const type = state.mascotas.find(m=>m.id===state.mascotaActiva)?.tipoId;
-  const ab = PET_ABILITIES[type];
-  if(!ab){ showToast('Esta mascota no tiene habilidad aún'); return; }
-  if(Date.now() - (state.lastPetAbilityAt||0) < ab.cooldown*1000){ showToast(`⏳ Habilidad en enfriamiento: ${Math.ceil((ab.cooldown*1000 - (Date.now()-state.lastPetAbilityAt))/1000)}s`); return; }
-  state.lastPetAbilityAt=Date.now();
-  ab.effect();
-  saveState();
-}
-function saveStreakWithGems(){
-  if(state.gems<10){ showToast('No tienes 10 💎'); return; }
-  state.gems-=10;
-  document.getElementById('streak-save-overlay').style.display='none';
-  showToast('✅ Racha salvada por 10 💎','achievement');
-  saveState(); refreshAllUI();
-}
-function claimLuckyCard(){
-  if(luckyFreeCard) return;
-  luckyFreeCard=true;
-  chosenCardCount = Math.min(4, chosenCardCount+1);
-  showToast('🍀 Cartón de la suerte x2 activado!','freespin');
-  renderLobbyModal();
-}
-
-// Duelo 1vs1
-function startDuelMode(){
-  duelMode=true;
-  const bet = (selectedRoom?.cardCosts[chosenCardCount]||10)*2;
-  if(state.gold<bet){ showToast('Necesitas '+bet+' 🪙 para duelo 1vs1'); return; }
-  state.gold-=bet;
-  tournamentPot+=bet;
-  showToast('⚔️ Duelo 1vs1 iniciado - Bote: '+(bet*2)+' 🪙','vip');
-  startBingoGame();
-}
-
-// Patch check bingo to use patterns and fireball and secret mission
-const originalCheckBingoWin = window.checkBingoWin || null;
-function checkBingoWinPatched(){
-  const pattern = WIN_PATTERNS[selectedPattern];
-  if(!pattern) return false;
-  for(let card of playerCardData){
-    const marks = card.cells.map(row=> row.map(c=> c.marked));
-    if(pattern.check(marks)){
-      let reward = selectedRoom.baseWinReward || 500;
-      if(fireBallActive) reward*=2;
-      if(luckyFreeCard) reward*=2;
-      if(duelMode) reward*=2;
-      state.gold+=reward; state.totalWins+=1;
-      if(fireBallActive) showToast('🔥 ¡BINGO x2 por Bola de Fuego! +'+reward,'vip');
-      saveState(); refreshAllUI(); return true;
-    }
-  }
-  return false;
-}
-
-// Hook into draw
-const origDraw = window.drawNextBall || null;
-
-
-/* ====== v3.5 LÓGICA COMPLETA ====== */
-const WIN_PATTERNS = {
-  linea: { name:'Línea', icon:'➖', desc:'Cualquier fila', check: (m)=> m.some(row=> row.every(Boolean)) },
-  esquinas: { name:'Esquinas', icon:'🔲', desc:'4 esquinas', check: (m)=> m[0][0] && m[0][4] && m[4][0] && m[4][4] },
-  x: { name:'X', icon:'❌', desc:'Dos diagonales', check: (m)=> [0,1,2,3,4].every(i=> m[i][i] && m[i][4-i]) },
-  t: { name:'T', icon:'T', desc:'Arriba + centro', check: (m)=> m[0].every(Boolean) && m.every(r=> r[2]) },
-  diamante: { name:'Diamante', icon:'♦️', desc:'Rombo centro', check: (m)=> m[1][2] && m[2][1] && m[2][3] && m[3][2] },
-  full: { name:'Cartón lleno', icon:'🏆', desc:'Todo', check: (m)=> m.flat().every(Boolean) }
-};
-let selectedPattern = 'full';
-let fireBallActive = false;
-let fireBallCount = 0;
-let secretGoldenNumber = 42;
-let tournamentPot = 15750;
-let tournamentEndsAt = Date.now() + 3*3600*1000;
-let duelMode = false;
-let luckyFreeCard = false;
-
-const PET_ABILITIES = {
-  gallo: { name:'Canto', cooldown:60, effect:()=>{ autoMarkRandomNumber(); showToast('🐓 ¡Gallo marcó un número!','achievement'); }},
-  gato_domestico: { name:'Sigilo', cooldown:45, effect:()=>{ petHelpUsesLeft+=1; showToast('🐱 +1 ayuda mascota','freespin'); }},
-  gato_siames: { name:'Suerte felina', cooldown:50, effect:()=>{ fireBallActive=true; document.getElementById('fire-ball-indicator').classList.add('active'); setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000); showToast('😼 15s de fuego','vip'); }},
-  bulldog: { name:'Mordida', cooldown:55, effect:()=>{ rivalProgress=Math.max(0,rivalProgress-15); showToast('🐶 Rival -15%','achievement'); }},
-  pastor_aleman: { name:'Guardia', cooldown:40, effect:()=>{ state.gold+=Math.floor((selectedRoom?.baseWinReward||500)*0.1); showToast('🐕 +10% oro','achievement'); saveState(); refreshAllUI(); }},
-  husky: { name:'Ventisca', cooldown:65, effect:()=>{ if(bingoInterval){ clearInterval(bingoInterval); bingoInterval=null; showToast('🐺 Rival congelado 5s ❄️','freespin'); setTimeout(()=>{ if(drawnNumbers.length<75) startBingoLoop(); },5000); } }},
-  aguila: { name:'Visión', cooldown:30, effect:()=>{ const next= rivalCardNumbers.flat().filter(n=>!drawnNumbers.includes(n))[0]; if(next) showToast('🦅 Próximo rival: '+next,'vip'); }}
-};
-
-function renderTournamentBanner(){
-  const potEl = document.querySelector('.tour-pot');
-  const timerEl = document.getElementById('tour-timer');
-  if(!potEl || !timerEl) return;
-  const diff = Math.max(0, tournamentEndsAt - Date.now());
-  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
-  potEl.innerText='🏆 Bote: '+tournamentPot.toLocaleString()+' 🪙';
-  timerEl.innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-  if(diff<=0){ tournamentEndsAt=Date.now()+3*3600000; tournamentPot=5000+Math.floor(Math.random()*15000); showToast('🏆 Nuevo torneo relámpago iniciado!','vip'); }
-}
-setInterval(renderTournamentBanner,1000);
-
-function renderPatternSelector(){
-  const wrap=document.getElementById('pattern-selector'); if(!wrap) return;
-  wrap.innerHTML='';
-  Object.entries(WIN_PATTERNS).forEach(([id,p])=>{
-    const d=document.createElement('div'); d.className='pattern-chip'+(id===selectedPattern?' active':'');
-    d.innerHTML=`<b>${p.icon}</b>${p.name}`;
-    d.title=p.desc; d.onclick=()=>{ selectedPattern=id; renderPatternSelector(); showToast('Patrón: '+p.name+' - '+p.desc,'achievement'); };
-    wrap.appendChild(d);
-  });
-}
-
-function maybeTriggerFireBall(){
-  fireBallCount++;
-  if(fireBallCount%10===0){
-    fireBallActive=true;
-    document.getElementById('fire-ball-indicator').classList.add('active');
-    showToast('🔥 ¡BOLA DE FUEGO x2! 15s','freespin');
-    setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000);
-  }
-}
-function autoMarkRandomNumber(){
-  for(let card of playerCardData){ for(let row of card.cells){ for(let cell of row){ if(!cell.marked){ cell.marked=true; if(typeof refreshBingoUI==='function') refreshBingoUI(); return; } } } }
-}
-
-function initSecretMission(){
-  secretGoldenNumber = 10+Math.floor(Math.random()*65);
-  const el=document.getElementById('secret-golden-num'); if(el) el.innerText=secretGoldenNumber;
-  updateSecretDots();
-}
-function updateSecretDots(){
-  const wrap=document.getElementById('secret-dots'); if(!wrap) return;
-  const prog=state?.secretMissionProgress||0;
-  wrap.innerHTML='';
-  for(let i=0;i<3;i++){ const dot=document.createElement('span'); dot.className='secret-dot'+(i<prog?' done':''); wrap.appendChild(dot); }
-}
-function checkSecretMission(num){
-  if(!state) return;
-  if(num===secretGoldenNumber){
-    state.secretMissionProgress=(state.secretMissionProgress||0)+1;
-    updateSecretDots();
-    showToast(`🥚 ¡Número dorado ${num}! ${state.secretMissionProgress}/3`,'achievement');
-    if(state.secretMissionProgress>=3){
-      state.huevosMascota.comun=(state.huevosMascota.comun||0)+1;
-      state.secretMissionProgress=0;
-      showToast('🎉 ¡Misión secreta! +1 Huevo','vip');
-      initSecretMission();
-    }
-    saveState();
-  }
-}
-
-const QUICK_EMOTES = ['¡Casi! 😅','BINGO! 🎉','🔥🔥🔥','😂','¡Vamos!','😭','GG 👏','¡Nooo!'];
-function sendQuickEmote(txt){
-  const layer=document.getElementById('chat-bubbles-layer');
-  const b=document.createElement('div'); b.className='emote-bubble';
-  b.style.left=(10+Math.random()*70)+'vw'; b.style.top=(15+Math.random()*50)+'vh';
-  b.innerText=(state?.username||'Tú')+': '+txt; layer.appendChild(b); setTimeout(()=>b.remove(),2500);
-  if(Math.random()>0.5){ setTimeout(()=>{ const rb=document.createElement('div'); rb.className='emote-bubble'; rb.style.left=(10+Math.random()*70)+'vw'; rb.style.top=(20+Math.random()*50)+'vh'; rb.innerText='Rival: '+QUICK_EMOTES[Math.floor(Math.random()*QUICK_EMOTES.length)]; layer.appendChild(rb); setTimeout(()=>rb.remove(),2500); },600); }
-}
-function renderEmotesBar(){
-  let bar=document.getElementById('emotes-bar');
-  if(!bar){
-    const gameScreen=document.getElementById('game-screen');
-    if(gameScreen){ bar=document.createElement('div'); bar.id='emotes-bar'; bar.className='chat-emotes'; gameScreen.insertBefore(bar, gameScreen.firstChild); }
-  }
-  if(!bar) return;
-  bar.innerHTML='';
-  QUICK_EMOTES.forEach(e=>{ const btn=document.createElement('button'); btn.className='emote-btn'; btn.innerText=e; btn.onclick=()=>sendQuickEmote(e); bar.appendChild(btn); });
-}
-
-function petBattle(){
-  if(!state || (state.mascotas||[]).length===0){ showToast('Necesitas mascota'); return; }
-  const power=(state.nivel||1)*10+Math.floor(Math.random()*50);
-  const rival=Math.floor(Math.random()*100);
-  if(power>rival){ const reward=500+Math.floor(Math.random()*500); state.gold+=reward; state.bayasComunes=(state.bayasComunes||0)+2; showToast(`🏆 ¡Ganaste! +${reward} 🪙`,'achievement'); }
-  else { showToast('💔 Perdiste batalla',''); }
-  saveState(); refreshAllUI();
-}
-function fusePets(){
-  const adultas=(state?.mascotas||[]).filter(m=>m.etapa==='adulto').length;
-  if(adultas<2){ showToast('Necesitas 2 adultas'); return; }
-  if(state.gold<10000){ showToast('Necesitas 10k 🪙'); return; }
-  state.gold-=10000; state.huevosMascota.comun+=1; state.bayasRaras=(state.bayasRaras||0)+2;
-  showToast('✨ Fusión: +1 Huevo +2 Raras','vip'); saveState(); refreshAllUI();
-}
-function usePetAbility(){
-  if(!state?.mascotaActiva){ showToast('Activa mascota en Hábitat'); return; }
-  const masc=state.mascotas.find(m=>m.id===state.mascotaActiva);
-  const ab=PET_ABILITIES[masc?.tipoId]; if(!ab){ showToast('Sin habilidad'); return; }
-  if(Date.now()-(state.lastPetAbilityAt||0) < ab.cooldown*1000){ showToast(`⏳ Espera ${Math.ceil((ab.cooldown*1000-(Date.now()-state.lastPetAbilityAt))/1000)}s`); return; }
-  state.lastPetAbilityAt=Date.now(); ab.effect(); saveState();
-}
-function saveStreakWithGems(){
-  if(!state) return;
-  if(state.gems<10){ showToast('No tienes 10 💎'); return; }
-  state.gems-=10; document.getElementById('streak-save-overlay').classList.remove('active');
-  showToast('✅ Racha salvada','achievement'); saveState(); refreshAllUI();
-}
-function claimLuckyCard(){
-  if(luckyFreeCard){ showToast('Ya reclamaste'); return; }
-  luckyFreeCard=true; showToast('🍀 Cartón suerte x2 activado!','freespin');
-}
-function startDuelMode(){
-  duelMode=true;
-  const cost=selectedRoom?.cardCosts?.[chosenCardCount]||10;
-  const bet=cost*2;
-  if(!state){ showToast('Inicia sesión'); return; }
-  if(state.gold<bet){ showToast('Necesitas '+bet+' 🪙 para duelo'); return; }
-  state.gold-=bet; tournamentPot+=bet;
-  showToast('⚔️ Duelo 1vs1 - Bote '+(bet*2)+' 🪙','vip');
-  saveState(); refreshAllUI();
-  if(typeof openLobby==='function') openLobby();
-}
-
-function checkBingoWinPatched(){
-  const pattern=WIN_PATTERNS[selectedPattern];
-  if(!pattern) return false;
-  for(let card of playerCardData){
-    const marks=card.cells.map(row=> row.map(c=> c.marked));
-    if(pattern.check(marks)){
-      let reward=selectedRoom?.baseWinReward||500;
-      if(fireBallActive) reward*=2;
-      if(luckyFreeCard) reward*=2;
-      if(duelMode) reward*=2;
-      state.gold+=reward; state.totalWins=(state.totalWins||0)+1;
-      if(duelMode){ reward+=tournamentPot; state.gold+=tournamentPot; tournamentPot=5000; showToast('⚔️ ¡Ganaste duelo! Bote reclamado','vip'); duelMode=false; }
-      if(fireBallActive) showToast('🔥 BINGO x2! +'+reward,'vip'); else showToast('🎉 BINGO '+pattern.name+'! +'+reward,'achievement');
-      saveState(); refreshAllUI(); return true;
-    }
-  }
-  return false;
-}
-
-function renderPetBattleExtras(){
-  return `<div class='pet-battle-arena'><h4 style='color:#a5b4fc;'>⚔️ Arena + Habilidades v3.5</h4>
-  <p style='font-size:11px; color:#8b949e; margin:6px 0;'>Usa la habilidad de tu mascota en partida</p>
-  <div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'>
-    <button class='game-action-btn' onclick='petBattle()'>⚔️ Batallar</button>
-    <button class='game-action-btn' style='background:#d29922; color:#000;' onclick='fusePets()'>✨ Fusionar</button>
-  </div>
-  <button class='pet-help-btn' style='margin-top:8px; width:100%;' onclick='usePetAbility()'>✨ Usar Habilidad</button>
-  <button class='pet-help-btn' style='margin-top:8px; width:100%; background:#10b981;' onclick='claimLuckyCard()'>🍀 Cartón Suerte x2</button></div>`;
-}
-
-// Hook original functions
-const __origCheckBingoWin = window.checkBingoWin;
-window.checkBingoWin = checkBingoWinPatched;
-
+function renderPatternSelector(){ const wrap=document.getElementById('pattern-selector'); if(!wrap) return; wrap.innerHTML=''; Object.entries(WIN_PATTERNS).forEach(([id,p])=>{ const d=document.createElement('div'); d.className='pattern-chip'+(id===selectedPattern?' active':''); d.innerHTML=`<b>${p.icon}</b>${p.name}`; d.onclick=()=>{ selectedPattern=id; renderPatternSelector(); }; wrap.appendChild(d); }); }
+function maybeTriggerFireBall(){ fireBallCount++; if(fireBallCount%10===0){ fireBallActive=true; document.getElementById('fire-ball-indicator').classList.add('active'); showToast('🔥 ¡BOLA DE FUEGO x2!','freespin'); setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000); } }
+function autoMarkRandomNumber(){ for(let card of playerCardData){ for(let row of card.cells){ for(let cell of row){ if(!cell.marked){ cell.marked=true; refreshBingoUI(); return; } } } } }
+function initSecretMission(){ secretGoldenNumber=10+Math.floor(Math.random()*65); const el=document.getElementById('secret-golden-num'); if(el) el.innerText=secretGoldenNumber; updateSecretDots(); }
+function updateSecretDots(){ const wrap=document.getElementById('secret-dots'); if(!wrap) return; const prog=state?.secretMissionProgress||0; wrap.innerHTML=''; for(let i=0;i<3;i++){ const d=document.createElement('span'); d.className='secret-dot'+(i<prog?' done':''); wrap.appendChild(d); } }
+function checkSecretMission(num){ if(!state) return; if(num===secretGoldenNumber){ state.secretMissionProgress=(state.secretMissionProgress||0)+1; updateSecretDots(); showToast(`🥚 ¡Dorado ${num}! ${state.secretMissionProgress}/3`,'achievement'); if(state.secretMissionProgress>=3){ state.huevosMascota.comun=(state.huevosMascota.comun||0)+1; state.secretMissionProgress=0; showToast('🎉 ¡Huevo ganado!','vip'); initSecretMission(); } saveState(); } }
+const QUICK_EMOTES=['¡Casi! 😅','BINGO! 🎉','🔥🔥🔥','😂','¡Vamos!','GG 👏'];
+function sendQuickEmote(txt){ const layer=document.getElementById('chat-bubbles-layer'); const b=document.createElement('div'); b.className='emote-bubble'; b.style.left=(10+Math.random()*70)+'vw'; b.style.top=(15+Math.random()*50)+'vh'; b.innerText=(state?.username||'Tú')+': '+txt; layer.appendChild(b); setTimeout(()=>b.remove(),2500); }
+function renderEmotesBar(){ let bar=document.getElementById('emotes-bar'); if(!bar){ const gs=document.getElementById('game-screen'); if(gs){ bar=document.createElement('div'); bar.id='emotes-bar'; bar.className='chat-emotes'; gs.prepend(bar); } } if(!bar) return; bar.innerHTML=''; QUICK_EMOTES.forEach(e=>{ const btn=document.createElement('button'); btn.className='emote-btn'; btn.innerText=e; btn.onclick=()=>sendQuickEmote(e); bar.appendChild(btn); }); }
+function petBattle(){ if(!state?.mascotas?.length){ showToast('Necesitas mascota'); return; } const win=Math.random()>0.5; if(win){ const r=500+Math.floor(Math.random()*500); state.gold+=r; showToast(`🏆 ¡Ganaste! +${r} 🪙`,'achievement'); } else showToast('💔 Perdiste',''); saveState(); refreshAllUI(); }
+function fusePets(){ if((state?.mascotas||[]).filter(m=>m.etapa==='adulto').length<2){ showToast('Necesitas 2 adultas'); return; } if(state.gold<10000){ showToast('10k 🪙 necesarios'); return; } state.gold-=10000; state.huevosMascota.comun+=1; showToast('✨ Fusión ok','vip'); saveState(); refreshAllUI(); }
+function usePetAbility(){ if(!state?.mascotaActiva){ showToast('Activa mascota'); return; } const masc=state.mascotas.find(m=>m.id===state.mascotaActiva); const ab=PET_ABILITIES[masc?.tipoId]; if(!ab){ showToast('Sin habilidad'); return; } if(Date.now()-(state.lastPetAbilityAt||0) < ab.cooldown*1000){ showToast('Enfriamiento'); return; } state.lastPetAbilityAt=Date.now(); ab.effect(); saveState(); }
+function startDuelMode(){ duelMode=true; const cost=selectedRoom?.cardCosts?.[chosenCardCount]||10; const bet=cost*2; if(!state){ showToast('Login primero'); return; } if(state.gold<bet){ showToast('Necesitas '+bet+' 🪙'); return; } state.gold-=bet; tournamentPot+=bet; showToast('⚔️ Duelo bote '+(bet*2),'vip'); saveState(); refreshAllUI(); openLobby(); }
+function checkBingoWinPatched(){ const pat=WIN_PATTERNS[selectedPattern]; if(!pat) return false; for(let card of playerCardData){ const marks=card.cells.map(r=>r.map(c=>c.marked)); if(pat.check(marks)){ let reward=selectedRoom?.baseWinReward||500; if(fireBallActive) reward*=2; if(luckyFreeCard) reward*=2; if(duelMode){ reward+=tournamentPot; tournamentPot=5000; duelMode=false; } state.gold+=reward; state.totalWins=(state.totalWins||0)+1; showToast('🎉 BINGO '+pat.name+' +'+reward,'achievement'); saveState(); refreshAllUI(); return true; } } return false; }
+function renderPetBattleExtras(){ return `<div class='pet-battle-arena'><h4>⚔️ Arena v3.5</h4><div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'><button class='game-action-btn' onclick='petBattle()'>Batallar</button><button class='game-action-btn' style='background:#d29922; color:#000;' onclick='fusePets()'>Fusionar</button></div><button class='pet-help-btn' style='margin-top:8px; width:100%;' onclick='usePetAbility()'>✨ Habilidad</button></div>`; }
 
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
-    document.querySelectorAll('#app-version-label, #admin-version-label').forEach(el => { el.innerText = APP_VERSION; });
-    const splashTimer = new Promise(resolve => setTimeout(resolve, 2200));
+    document.querySelectorAll('#app-version-label, #admin-version-label').forEach(el=>{ if(el) el.innerText=APP_VERSION; });
+    const splashTimer = new Promise(r=>setTimeout(r,1500));
+    const hardTimeout = setTimeout(()=> forceHideSplash(), 4500);
     await waitForFirebase();
-    try {
-        CONFIG = await loadConfig();
-    } catch (e) {
-        document.getElementById('cloud-loading').innerHTML =
-            '<div style="text-align:center;padding:20px;color:#f85149;">⚠️ No se pudo conectar con Firebase.<br><span style="font-size:11px;color:#8b949e;">Revisa que Firestore esté activado y que las reglas permitan lectura/escritura.</span></div>';
-        await splashTimer;
-        document.getElementById('splash-screen').classList.add('fade-out');
-        return;
-    }
-    history.replaceState({screen:'main-screen'}, '', '');
-    document.getElementById('cloud-loading').style.display = 'none';
+    try { CONFIG = await loadConfig(); } catch(e){ CONFIG = defaultConfig(); console.warn('offline config'); }
+    try { history.replaceState({screen:'main-screen'}, '', ''); } catch(e){}
+    const cloud=document.getElementById('cloud-loading'); if(cloud) cloud.style.display='none';
     await splashTimer;
-    document.getElementById('splash-screen').classList.add('fade-out');
-    try{ renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner(); }catch(e){ console.error('v3.5 init', e); } await tryAutoLogin(); renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner();
-    checkForAppUpdate();
+    forceHideSplash(); clearTimeout(hardTimeout);
+    try { await tryAutoLogin(); } catch(e){ showScreen('login-screen'); }
+    try { if(typeof renderPatternSelector==='function') renderPatternSelector(); if(typeof renderEmotesBar==='function') renderEmotesBar(); if(typeof initSecretMission==='function') initSecretMission(); if(typeof renderTournamentBanner==='function') renderTournamentBanner(); } catch(e){}
+    try { checkForAppUpdate(); } catch(e){}
 });
 </script>
-<script>
-    (function(){
-        const tryWrap = ()=>{
-            if(typeof renderPetScreen !== 'function') return setTimeout(tryWrap, 500);
-            const orig = renderPetScreen;
-            renderPetScreen = function(tab){
-                const res = orig(tab);
-                try{
-                    if(tab==='progreso'){
-                        const el=document.getElementById('pet-content');
-                        if(el && !el.innerHTML.includes('pet-battle-arena')){
-                            el.innerHTML += renderPetBattleExtras();
-                        }
-                    }
-                }catch(e){}
-                return res;
-            };
-        };
-        tryWrap();
-    })();
-    </script>
-    </body>
+<script>(function(){ const wrap=()=>{ if(typeof renderPetScreen!=='function') return setTimeout(wrap,500); const orig=renderPetScreen; renderPetScreen=function(tab){ const r=orig(tab); try{ if(tab==='progreso'){ const el=document.getElementById('pet-content'); if(el && !el.innerHTML.includes('pet-battle-arena')) el.innerHTML+=renderPetBattleExtras(); } }catch(e){} return r; }; }; wrap(); })();</script></body>
 </html>
