@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.2 (Cerrar panel admin sin logout + navegación por pestañas sin acumular historial + auto-actualización) -->
+<!-- Súper Bingo Rey — v2.5 (Bloque 2: tienda con oferta relámpago y cofre de mejor valor, indicador de riesgo/retorno y recarga inmediata) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -22,16 +22,26 @@
         .login-box button:hover { background: #2ea043; }
         .login-error { color: #f85149; font-size: 12px; min-height: 16px; margin-bottom: 6px; }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 10px 15px; border-bottom: 1px solid #30363d; font-size: 13px; }
-        .user-badge { background: linear-gradient(135deg, #d29922, #bc8c22); padding: 4px 12px; border-radius: 20px; font-weight: bold; color: #0d1117; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; background: #161b22; padding: 10px 15px; border-bottom: 1px solid #30363d; font-size: 13px; box-shadow: 0 3px 10px rgba(0,0,0,0.35); position: relative; z-index: 5; }
+        .user-badge { background: linear-gradient(135deg, #d29922, #bc8c22); padding: 4px 12px; border-radius: 20px; font-weight: bold; color: #0d1117; box-shadow: 0 2px 6px rgba(210,153,34,0.35); }
         .resources { display: flex; gap: 8px; font-size: 12px; align-items: center; }
-        .logout-btn { background: none; border: 1px solid #30363d; color: #8b949e; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+        .logout-btn { background: none; border: 1px solid #30363d; color: #8b949e; font-size: 11px; padding: 4px 8px; border-radius: 6px; cursor: pointer; transition: border-color .15s ease, color .15s ease; }
+        .logout-btn:hover { border-color: #f85149; color: #f85149; }
 
-        .play-banner { background: linear-gradient(135deg, #b91c1c, #d29922); color: white; padding: 18px; border-radius: 12px; text-align: center; margin: 15px 0; cursor: pointer; font-size: 17px; font-weight: bold; box-shadow: 0 4px 15px rgba(210,153,34,0.4); border: 1px solid #f0c040; }
+        .play-banner { background: linear-gradient(135deg, #b91c1c, #d29922); color: white; padding: 18px; border-radius: 14px; text-align: center; margin: 15px 0; cursor: pointer; font-size: 17px; font-weight: bold; box-shadow: 0 6px 18px rgba(210,153,34,0.4); border: 1px solid #f0c040; transition: transform .18s ease, box-shadow .18s ease; position: relative; overflow: hidden; }
+        .play-banner::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.35), transparent); transform: skewX(-20deg); animation: bannerShine 3.2s ease-in-out infinite; }
+        .play-banner:hover { transform: translateY(-2px) scale(1.015); box-shadow: 0 10px 26px rgba(210,153,34,0.55); }
+        .play-banner:active { transform: scale(0.98); }
+        @keyframes bannerShine { 0%, 25% { left: -60%; } 55%, 100% { left: 130%; } }
 
-        .card-widget { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .progress-container { background: #30363d; border-radius: 10px; height: 12px; overflow: hidden; margin-top: 8px; }
+        .card-widget { background: linear-gradient(145deg, #161b22, #12161c); border: 1px solid #30363d; border-radius: 14px; padding: 15px; margin-bottom: 15px; box-shadow: 0 3px 12px rgba(0,0,0,0.4); transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+        .card-widget:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.5); border-color: #3d4552; }
+        .progress-container { background: #30363d; border-radius: 10px; height: 12px; overflow: hidden; margin-top: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.5); }
         .progress-bar { background: linear-gradient(90deg, #58a6ff, #1f6feb); height: 100%; width: 0%; transition: width .3s; }
+
+        .widget-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; }
+        .widget-icon-badge { width: 28px; height: 28px; flex-shrink: 0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; background: linear-gradient(135deg, #d29922, #8957e5); box-shadow: 0 2px 8px rgba(137,87,229,0.45); }
+        .widget-title-text { font-weight: bold; font-size: 14px; letter-spacing: .2px; }
 
         .store-header-box { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
         .store-vip-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
@@ -47,7 +57,26 @@
         .page-tab.active { background: #8957e5; color: #fff; border-color: #a371f7; font-weight: bold; }
 
         .products-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .product-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
+        .product-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+        .product-card.best-value { border-color: #d29922; box-shadow: 0 0 14px rgba(210,153,34,0.35); }
+        .best-value-badge { position: absolute; top: -8px; right: 8px; background: linear-gradient(135deg, #d29922, #bc8c22); color: #0d1117; font-size: 9px; font-weight: bold; padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+
+        /* ---- M09: banner de oferta relámpago con temporizador ---- */
+        .flash-offer-banner { position: relative; overflow: hidden; background: linear-gradient(135deg, #7a1f16, #b91c1c, #d29922); border: 1px solid #f0c040; border-radius: 14px; padding: 14px; margin-bottom: 15px; box-shadow: 0 6px 20px rgba(217,48,37,0.4); }
+        .flash-offer-banner::after { content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent); transform: skewX(-20deg); animation: bannerShine 2.6s ease-in-out infinite; }
+        .flash-offer-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .flash-offer-tag { background: rgba(0,0,0,0.35); color: #ffe58a; font-size: 11px; font-weight: bold; padding: 3px 10px; border-radius: 20px; letter-spacing: .3px; }
+        .flash-offer-timer { background: rgba(0,0,0,0.45); color: #fff; font-size: 12px; font-weight: bold; padding: 4px 10px; border-radius: 8px; font-variant-numeric: tabular-nums; }
+        .flash-offer-body { display: flex; align-items: center; gap: 12px; }
+        .flash-offer-icon { width: 56px; height: 56px; flex-shrink: 0; border-radius: 10px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .flash-offer-info { flex: 1; color: #fff; }
+        .flash-offer-name { font-weight: bold; font-size: 14px; }
+        .flash-offer-prices { font-size: 12px; margin-top: 2px; }
+        .flash-offer-prices .old-price { text-decoration: line-through; color: rgba(255,255,255,0.6); margin-right: 6px; }
+        .flash-offer-prices .new-price-flash { color: #ffe58a; font-weight: bold; }
+        .flash-offer-buy-btn { background: #0d1117; color: #ffe58a; border: 1px solid #ffe58a; font-weight: bold; padding: 8px 14px; border-radius: 8px; cursor: pointer; white-space: nowrap; transition: transform .12s ease; }
+        .flash-offer-buy-btn:hover { transform: scale(1.05); }
+        .flash-offer-buy-btn:active { transform: scale(0.95); }
         .product-img-box { background: #21262d; border: 1px solid #30363d; border-radius: 8px; height: 90px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
         .product-img-box .default-icon { font-size: 32px; }
 
@@ -65,15 +94,52 @@
 
         #lobby-modal { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px; }
         .cards-options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
-        .card-opt-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px; color: #fff; cursor: pointer; font-weight: bold; font-size: 14px; text-align: center; }
+        .card-opt-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 12px; color: #fff; cursor: pointer; font-weight: bold; font-size: 14px; text-align: center; transition: transform .12s ease, background .15s ease; }
         .card-opt-btn:hover, .card-opt-btn.selected { background: #1f6feb; border-color: #58a6ff; }
+        .card-opt-btn:active { transform: scale(0.95); }
         .card-opt-btn span { display: block; font-size: 10px; color: #d29922; margin-top: 4px; }
+
+        /* ---- Panel rápido de apuesta: slider + accesos rápidos (M04) ---- */
+        .quick-bet-panel { background: #0d1117; border: 1px solid #30363d; border-radius: 12px; padding: 12px; margin: 12px 0; }
+        .quick-bet-slider-row { display: flex; align-items: center; gap: 10px; }
+        .quick-bet-slider-row input[type=range] { flex: 1; -webkit-appearance: none; height: 6px; border-radius: 4px; background: linear-gradient(90deg, #1f6feb, #58a6ff); outline: none; }
+        .quick-bet-slider-row input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffe58a, #d29922); border: 2px solid #fff3c4; cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,0.5); }
+        .quick-bet-slider-row input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffe58a, #d29922); border: 2px solid #fff3c4; cursor: pointer; }
+        .quick-bet-slider-label { min-width: 78px; text-align: center; font-size: 12px; font-weight: bold; color: #d29922; background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 6px 4px; }
+        .quick-bet-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .quick-bet-actions button { flex: 1; background: linear-gradient(135deg, #8957e5, #6e40c9); border: none; color: #fff; font-weight: bold; font-size: 12px; padding: 10px 6px; border-radius: 8px; cursor: pointer; transition: transform .12s ease, filter .15s ease; }
+        .quick-bet-actions button:hover { filter: brightness(1.1); }
+        .quick-bet-actions button:active { transform: scale(0.95); }
+        .quick-bet-actions button.qb-max { background: linear-gradient(135deg, #d29922, #bc8c22); color: #0d1117; }
+
+        /* ---- M10: indicador de riesgo/retorno y modal de recarga inmediata ---- */
+        .risk-return-box { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+        .risk-return-item { background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 10px; text-align: center; }
+        .risk-return-item.cost-item { border-color: #f85149; }
+        .risk-return-item.reward-item { border-color: #3fb950; }
+        .risk-return-label { font-size: 10px; color: #8b949e; text-transform: uppercase; letter-spacing: .3px; }
+        .risk-return-value { font-size: 16px; font-weight: bold; margin-top: 2px; }
+        .risk-return-item.cost-item .risk-return-value { color: #f85149; }
+        .risk-return-item.reward-item .risk-return-value { color: #3fb950; }
+
+        #low-balance-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:4750; align-items:center; justify-content:center; background:rgba(8,5,20,0.85); }
+        #low-balance-overlay.active { display:flex; }
+        .low-balance-box { background:linear-gradient(160deg,#1f2937,#0d1117); border:2px solid #f85149; border-radius:16px; padding:24px 20px; width:86%; max-width:320px; text-align:center; box-shadow:0 0 40px rgba(248,81,73,0.4); animation:welcomeBoxPop .3s ease; }
+        .low-balance-box .lb-icon { font-size: 38px; margin-bottom: 8px; }
+        .low-balance-box h3 { color: #f85149; margin-bottom: 6px; }
+        .low-balance-box p { color: #c9d1d9; font-size: 13px; margin-bottom: 16px; }
+        .low-balance-actions { display: flex; gap: 8px; }
+        .low-balance-actions button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .low-balance-cancel { background: #21262d; color: #8b949e; }
+        .low-balance-recharge { background: linear-gradient(135deg, #d29922, #bc8c22); color: #0d1117; }
 
         .battle-status { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
         .player-card-hud { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 8px; text-align: center; font-size: 12px; }
 
         .ball-callout-container { display: flex; align-items: center; justify-content: center; gap: 12px; background: #161b22; border: 1px solid #30363d; padding: 12px; border-radius: 10px; margin-bottom: 6px; }
         .bingo-ball { width: 50px; height: 50px; background: radial-gradient(circle at 30% 30%, #58a6ff, #1f6feb); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: bold; color: white; box-shadow: inset -3px -3px 8px rgba(0,0,0,0.5), 0 4px 10px rgba(31,111,235,0.4); border: 2px solid #8cb4ff; }
+        .bingo-ball.newNumberPop { animation: newNumberPop 0.4s ease-out; }
+        @keyframes newNumberPop { 0% { transform: scale(0.6); } 60% { transform: scale(1.25); box-shadow: 0 0 16px 6px rgba(255,229,138,0.7); } 100% { transform: scale(1); } }
         .ball-text-info { font-size: 13px; font-weight: bold; color: #c9d1d9; }
         .drawn-history { font-size: 10px; color: #6e7681; margin-bottom: 12px; text-align: center; word-break: break-all; }
 
@@ -110,7 +176,16 @@
         .mission-claim-btn { background: #d29922; color: #0d1117; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; margin-top: 8px; }
         .mission-claim-btn:disabled { background: #30363d; color: #6e7681; cursor: not-allowed; }
 
-        .toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #3fb950; color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 3000; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: center; max-width: 90%; }
+        .toast { position: relative; background: #161b22; border: 1px solid #3fb950; color: #fff; padding: 10px 14px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-align: left; max-width: 100%; display:flex; align-items:center; gap:8px; animation: toastSlideIn .35s ease-out; }
+        .toast.toast-out { animation: toastSlideOut .3s ease-in forwards; }
+        @keyframes toastSlideIn { from { transform: translateX(120%); opacity:0; } to { transform: translateX(0); opacity:1; } }
+        @keyframes toastSlideOut { from { transform: translateX(0); opacity:1; max-height:80px; margin-bottom:8px; } to { transform: translateX(120%); opacity:0; max-height:0; margin-bottom:0; padding-top:0; padding-bottom:0; } }
+        #toast-container { position: fixed; top: 15px; right: 12px; left: 12px; z-index: 3000; display:flex; flex-direction:column; align-items:flex-end; gap:8px; pointer-events:none; }
+        #toast-container .toast { pointer-events:auto; width:auto; max-width:340px; }
+        .toast-icon { font-size:18px; flex-shrink:0; }
+        .toast.toast-achievement { border-color:#d29922; background:linear-gradient(135deg,#2a2106,#161b22); }
+        .toast.toast-freespin { border-color:#58a6ff; background:linear-gradient(135deg,#0d2340,#161b22); }
+        .toast.toast-friend { border-color:#bc8cff; background:linear-gradient(135deg,#241338,#161b22); }
 
         /* ---- Splash / portada ---- */
         #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; z-index: 6000; background:#0d1117; display:flex; align-items:center; justify-content:center; transition: opacity .6s ease; }
@@ -119,6 +194,34 @@
 
         /* ---- Racha / logros / ranking ---- */
         .streak-badge { display:inline-flex; align-items:center; gap:4px; background: linear-gradient(135deg,#da3633,#9e2f2c); color:#fff; padding:4px 10px; border-radius: 20px; font-size:12px; font-weight:bold; }
+        .daily-rewards-btn { background:linear-gradient(135deg,#1f6feb,#1158c7); color:#fff; border:none; border-radius:20px; padding:4px 10px; font-size:12px; font-weight:bold; cursor:pointer; margin-left:6px; }
+        .daily-rewards-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; }
+        .daily-rewards-overlay.active { display:flex; }
+        .daily-rewards-box { background:#161b22; border:1px solid #30363d; border-radius:16px; padding:18px; max-width:420px; width:100%; max-height:85vh; overflow-y:auto; }
+        .daily-rewards-box h3 { color:#58a6ff; margin-bottom:4px; text-align:center; }
+        .daily-rewards-sub { text-align:center; color:#8b949e; font-size:12px; margin-bottom:12px; }
+        .daily-cal-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
+        .daily-cal-day { background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:8px 4px; text-align:center; font-size:11px; color:#8b949e; }
+        .daily-cal-day.done { border-color:#3fb950; color:#3fb950; opacity:.7; }
+        .daily-cal-day.today { border-color:#58a6ff; box-shadow:0 0 0 1px #58a6ff; color:#c9d1d9; }
+        .daily-cal-day.grand { border-color:#d29922; }
+        .daily-cal-day .cal-day-num { display:block; font-weight:bold; margin-bottom:4px; }
+        .daily-cal-day .cal-day-icon { font-size:20px; display:block; margin-bottom:2px; }
+        .daily-claim-btn, .daily-roulette-btn { width:100%; background:linear-gradient(135deg,#238636,#1a6b2a); color:#fff; border:none; border-radius:10px; padding:12px; font-weight:bold; cursor:pointer; margin-top:6px; }
+        .daily-claim-btn:disabled, .daily-roulette-btn:disabled { background:#30363d; color:#8b949e; cursor:not-allowed; }
+        .daily-roulette-box { border-top:1px dashed #30363d; margin-top:14px; padding-top:12px; text-align:center; }
+        .daily-roulette-btn { background:linear-gradient(135deg,#8957e5,#6b3fc4); }
+        .daily-rewards-close { display:block; margin:12px auto 0; background:none; border:1px solid #30363d; color:#8b949e; border-radius:8px; padding:8px 16px; cursor:pointer; }
+        /* M13: vista previa interactiva de contenido en la tienda */
+        .store-preview-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; }
+        .store-preview-overlay.active { display:flex; }
+        .store-preview-box { background:#161b22; border:1px solid #d29922; border-radius:16px; padding:20px; max-width:360px; width:100%; text-align:center; }
+        .store-preview-icon { font-size:52px; margin:6px 0; animation: previewPop .5s ease-out; }
+        @keyframes previewPop { 0% { transform:scale(0.3) rotate(-10deg); opacity:0; } 60% { transform:scale(1.15) rotate(4deg); opacity:1; } 100% { transform:scale(1) rotate(0); } }
+        .store-preview-title { color:#ffd866; font-weight:bold; font-size:16px; margin-bottom:4px; }
+        .store-preview-contents { background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:10px; margin:12px 0; font-size:13px; text-align:left; display:flex; flex-direction:column; gap:6px; }
+        .store-preview-contents .content-row { display:flex; justify-content:space-between; }
+        .store-preview-close { display:block; margin:10px auto 0; background:none; border:1px solid #30363d; color:#8b949e; border-radius:8px; padding:8px 16px; cursor:pointer; width:100%; }
         .achievements-grid { display:grid; grid-template-columns: repeat(5, 1fr); gap:8px; margin-top:10px; }
         .achv-item { background:#0d1117; border:1px solid #30363d; border-radius:8px; padding:8px 4px; text-align:center; font-size:18px; opacity:0.35; }
         .achv-item.unlocked { opacity:1; border-color:#d29922; box-shadow:0 0 8px rgba(210,153,34,0.5); }
@@ -174,13 +277,21 @@
         .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
         .admin-table th, .admin-table td { border-bottom: 1px solid #30363d; padding: 8px 4px; text-align: left; }
         .admin-table button { font-size: 10px; padding: 4px 6px; margin: 2px; border-radius: 5px; border: none; cursor: pointer; }
+
+        /* ---- Grupos/secciones del panel admin ---- */
+        .admin-group { background: #0d1117; border: 1px solid #30363d; border-radius: 10px; padding: 14px 14px 6px; margin-bottom: 16px; }
+        .admin-group-title { display: flex; align-items: center; gap: 8px; color: #d29922; font-weight: bold; font-size: 13px; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #30363d; }
+        .admin-group-hint { font-size: 11px; color: #8b949e; margin: -6px 0 10px; }
+        .coin-ic, .gem-ic { display: inline-block; margin-right: 3px; }
         .btn-give { background: #1f6feb; color: #fff; }
         .btn-reset { background: #d29922; color: #0d1117; }
         .btn-delete { background: #da3633; color: #fff; }
 
         /* ================= SALAS TEMÁTICAS ================= */
         .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0 15px; }
-        .room-card { position: relative; border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; border: 2px solid #30363d; overflow: hidden; }
+        .room-card { position: relative; border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; border: 2px solid #30363d; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
+        .room-card:hover:not(.locked) { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 20px rgba(0,0,0,0.45); }
+        .room-card:active:not(.locked) { transform: scale(0.97); }
         .room-card .room-icon { font-size: 26px; display: block; margin-bottom: 4px; }
         .room-card .room-name { font-weight: bold; font-size: 14px; }
         .room-card .room-meta { font-size: 10px; color: #c9d1d9; margin-top: 4px; }
@@ -209,10 +320,31 @@
         .jackpot-banner { background: linear-gradient(135deg,#3b2c05,#1a1400); border: 1px solid #d29922; border-radius: 10px; padding: 10px; margin-bottom: 12px; font-size: 13px; color: #ffe58a; font-weight: bold; text-align:center; }
 
         /* ================= TÓMBOLA ================= */
-        .tombola-wrap { display:flex; align-items:center; justify-content:center; margin-bottom:6px; }
+        .tombola-wrap { display:flex; align-items:center; justify-content:center; margin-bottom:6px; position: relative; }
         .tombola { font-size: 34px; display:inline-block; }
+        .tombola.shaking { animation: tombolaShake 0.35s ease-in-out; }
         .tombola.spinning { animation: tombolaSpin 0.5s linear; }
+        @keyframes tombolaShake { 0%, 100% { transform: rotate(0deg); } 20% { transform: rotate(-8deg); } 40% { transform: rotate(7deg); } 60% { transform: rotate(-5deg); } 80% { transform: rotate(4deg); } }
         @keyframes tombolaSpin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(200deg) scale(1.15); } 100% { transform: rotate(360deg) scale(1); } }
+
+        /* ---- Bola voladora con trayectoria curva (M03) ---- */
+        .flying-ball { position: fixed; width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #ffe58a, #d29922); box-shadow: 0 4px 12px rgba(0,0,0,0.55), 0 0 10px rgba(255,229,138,0.6); z-index: 2600; pointer-events: none; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #3a2a00; will-change: transform, opacity; }
+        @keyframes ballFlight { 0% { transform: translate(var(--sx), var(--sy)) scale(0.5) rotate(0deg); opacity: 0.5; } 45% { transform: translate(var(--mx), var(--my)) scale(1.25) rotate(190deg); opacity: 1; } 100% { transform: translate(var(--ex), var(--ey)) scale(1) rotate(360deg); opacity: 0; } }
+
+        /* ---- Tira de pestañas/miniaturas para gestionar hasta 16 cartones (M02) ---- */
+        .card-tabs-strip { display: flex; gap: 6px; overflow-x: auto; padding: 4px 2px 12px; margin-bottom: 2px; scroll-behavior: smooth; }
+        .card-tab-chip { flex-shrink: 0; width: 56px; padding: 6px 4px; border-radius: 10px; background: #161b22; border: 2px solid #30363d; text-align: center; cursor: pointer; font-size: 10px; color: #c9d1d9; transition: transform .12s ease, border-color .15s ease, box-shadow .15s ease; }
+        .card-tab-chip:active { transform: scale(0.92); }
+        .card-tab-chip .tab-num { font-weight: bold; font-size: 12px; display: block; }
+        .card-tab-chip .tab-progress { display: block; margin-top: 2px; font-size: 9px; color: #8b949e; }
+        .card-tab-chip.tab-rojo { border-color: #da3633; }
+        .card-tab-chip.tab-azul { border-color: #1f6feb; }
+        .card-tab-chip.tab-verde { border-color: #238636; }
+        .card-tab-chip.tab-amarillo { border-color: #9e6a03; }
+        .card-tab-chip.tab-done { border-color: #3fb950; box-shadow: 0 0 10px rgba(63,185,80,0.55); background: #132318; }
+        .card-tab-chip.tab-active-focus { box-shadow: 0 0 0 2px #ffe58a; }
+        .bingo-card.card-focus-pulse { animation: cardFocusPulse 1s ease; }
+        @keyframes cardFocusPulse { 0% { box-shadow: 0 0 0 4px rgba(255,229,138,0.9); } 100% { box-shadow: 0 0 0 4px rgba(255,229,138,0); } }
 
         /* ================= HISTORIAL GRANDE ================= */
         .history-strip { display:flex; gap:6px; overflow-x:auto; padding: 6px 0 12px; }
@@ -341,7 +473,17 @@
         .vip-daily-gift-btn:disabled, .vip-scratch-btn:disabled { background:#30363d; color:#8b949e; cursor:not-allowed; }
         .vip-locked-note { font-size:11px; color:#f85149; margin-top:6px; }
         .vip-fav-card-box { background:#161b22; border:1px dashed #30363d; border-radius:8px; padding:10px; font-size:12px; color:#8b949e; }
-        .toast.vip-toast { background:linear-gradient(135deg,#3a2a06,#1a1300); border:1px solid #d29922; color:#ffd866; }
+        .toast.toast-vip { background:linear-gradient(135deg,#3a2a06,#1a1300); border:1px solid #d29922; color:#ffd866; }
+        .vip-m11-row { display:grid; grid-template-columns:34px 1fr 1fr; gap:6px; align-items:center; background:#161b22; border:1px solid #30363d; border-radius:8px; padding:8px; margin-bottom:6px; font-size:11px; }
+        .vip-m11-row.current { border-color:#3fb950; box-shadow:0 0 0 1px #3fb950; }
+        .vip-m11-lvl { font-weight:bold; color:#c9d1d9; text-align:center; font-size:13px; }
+        .vip-m11-cell { border-radius:6px; padding:6px; line-height:1.35; }
+        .vip-m11-cell.free { background:#0d1117; color:#8b949e; }
+        .vip-m11-cell.gold { background:#1a1300; color:#e6c67a; border:1px solid #3a2a06; }
+        .vip-m11-cell.claimed { opacity:.55; }
+        .vip-m11-cell.locked-gold { color:#6e5a2a; }
+        .vip-m11-inv-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px 10px; font-size:12px; }
+        .vip-m11-buff { color:#3fb950; font-size:11px; margin-top:4px; }
 
         /* ================= AYUDA DE MASCOTA EN JUEGO ================= */
         .pet-help-widget { text-align:center; margin:4px 0 10px; }
@@ -394,11 +536,14 @@
         </div>
 
         <div class="card-widget">
-            <div style="display: flex; justify-content: space-between; align-items:center; font-size: 13px;">
-                <span>Bingos ganados en total</span>
-                <span id="stat-total-wins">0</span>
+            <div class="widget-title-row" style="margin-bottom:8px;">
+                <span class="widget-icon-badge">🎯</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; flex:1;">
+                    <span class="widget-title-text">Bingos ganados en total</span>
+                    <span id="stat-total-wins" style="font-weight:bold; color:#d29922;">0</span>
+                </div>
             </div>
-            <div style="margin-top:8px;"><span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span></div>
+            <div><span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span> <button class="daily-rewards-btn" onclick="openDailyRewardsModal()">📅 Recompensas Diarias</button></div>
         </div>
 
         <div class="card-widget userlvl-widget" id="userlvl-widget-card">
@@ -416,20 +561,29 @@
         </div>
 
         <div class="card-widget">
-            <strong>🏆 Salón de Trofeos</strong>
+            <div class="widget-title-row">
+                <span class="widget-icon-badge">🏆</span>
+                <span class="widget-title-text">Salón de Trofeos</span>
+            </div>
             <div class="achievements-grid" id="achievements-grid"></div>
         </div>
 
         <div class="card-widget">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <strong>👑 Top Jugadores</strong>
+            <div class="widget-title-row" style="justify-content:space-between;">
+                <div class="widget-title-row" style="margin-bottom:0;">
+                    <span class="widget-icon-badge">👑</span>
+                    <span class="widget-title-text">Top Jugadores</span>
+                </div>
                 <span style="color:#58a6ff; font-size:12px; cursor:pointer;" onclick="goToScreen('rankings-screen')">Ver Rankings ➜</span>
             </div>
             <div id="leaderboard-list" style="margin-top:6px; font-size:12px; color:#8b949e;">Cargando...</div>
         </div>
 
         <div class="card-widget">
-            <strong>📜 Misión diaria: Completa cartones de Bingo</strong>
+            <div class="widget-title-row">
+                <span class="widget-icon-badge">📜</span>
+                <span class="widget-title-text">Misión diaria: Completa cartones de Bingo</span>
+            </div>
             <div class="progress-container">
                 <div class="progress-bar" id="mission-progress-bar"></div>
             </div>
@@ -466,6 +620,28 @@
                 <div class="card-opt-btn" onclick="selectCardCount(8, this)">8 Cartones<span id="cost-label-8">Premio x8</span></div>
                 <div class="card-opt-btn" onclick="selectCardCount(12, this)">12 Cartones<span id="cost-label-12">Premio x12</span></div>
                 <div class="card-opt-btn" onclick="selectCardCount(16, this)">16 Cartones<span id="cost-label-16">Premio x16 (¡Máximo!)</span></div>
+            </div>
+
+            <div class="quick-bet-panel">
+                <div class="quick-bet-slider-row">
+                    <input type="range" id="quick-card-slider" min="0" max="5" step="1" value="0" oninput="onQuickCardSlider(this.value)">
+                    <span class="quick-bet-slider-label" id="quick-card-slider-label">1 Cartón</span>
+                </div>
+                <div class="quick-bet-actions">
+                    <button onclick="quickDuplicateBet()">🔄 Duplicar apuesta</button>
+                    <button class="qb-max" onclick="quickMaxCards()">⚡ Máx. Cartones (16)</button>
+                </div>
+            </div>
+
+            <div class="risk-return-box" id="risk-return-box">
+                <div class="risk-return-item cost-item">
+                    <div class="risk-return-label">🪙 Costo total de entrada</div>
+                    <div class="risk-return-value" id="risk-cost-value">0</div>
+                </div>
+                <div class="risk-return-item reward-item">
+                    <div class="risk-return-label">🏆 Premio potencial estimado</div>
+                    <div class="risk-return-value" id="risk-reward-value">0</div>
+                </div>
             </div>
 
             <div class="option-group">
@@ -509,6 +685,8 @@
 
             <div class="history-strip" id="history-strip"></div>
 
+            <div class="card-tabs-strip" id="card-tabs-strip"></div>
+
             <div class="pet-help-widget" id="pet-help-widget" style="display:none;">
                 <button class="pet-help-btn" id="pet-help-btn" onclick="activatePetHelp()">🐾 Activar ayuda de Mascota (<span id="pet-help-uses">0</span>)</button>
                 <button class="pet-help-btn" id="pet-help-buy-btn" style="margin-left:6px;background:linear-gradient(135deg,#8957e5,#6e40c9);" onclick="buyPetHelpExtra()">💎 Comprar ayuda extra</button>
@@ -536,6 +714,46 @@
         <div class="countdown-label" id="countdown-label">Siguiente partida...</div>
     </div>
     <div id="bingo-flash"><span id="bingo-flash-text">¡BINGO!</span></div>
+
+    <!-- SALDO INSUFICIENTE: recarga inmediata (M10) -->
+    <div id="low-balance-overlay">
+        <div class="low-balance-box">
+            <div class="lb-icon">🪙</div>
+            <h3>¡Saldo insuficiente!</h3>
+            <p id="low-balance-text">Te falta oro para entrar con esta configuración.</p>
+            <div class="low-balance-actions">
+                <button class="low-balance-cancel" onclick="closeLowBalanceModal()">Ajustar</button>
+                <button class="low-balance-recharge" onclick="goRechargeFromLowBalance()">🛒 Recargar ahora</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- M12: RECOMPENSAS DIARIAS — Calendario de 7 días + Ruleta de Conexión -->
+    <div id="daily-rewards-overlay" class="daily-rewards-overlay">
+        <div class="daily-rewards-box">
+            <h3>📅 Recompensas Diarias</h3>
+            <div class="daily-rewards-sub" id="daily-rewards-sub">Conéctate cada día para premios crecientes.</div>
+            <div class="daily-cal-grid" id="daily-cal-grid"></div>
+            <button class="daily-claim-btn" id="daily-claim-btn" onclick="claimDailyCalendarReward()">Reclamar recompensa de hoy</button>
+            <div class="daily-roulette-box">
+                <div style="font-size:13px; color:#bc8cff; font-weight:bold; margin-bottom:6px;">🎰 Ruleta de Conexión (gratis, 1 vez al día)</div>
+                <div id="daily-roulette-desc" style="font-size:11px; color:#8b949e; margin-bottom:6px;">Gira sin costo por conectarte hoy.</div>
+                <button class="daily-roulette-btn" id="daily-roulette-btn" onclick="spinDailyConnectionRoulette()">Girar gratis</button>
+            </div>
+            <button class="daily-rewards-close" onclick="closeDailyRewardsModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- M13: VISTA PREVIA INTERACTIVA EN LA TIENDA ("Qué vas a obtener") -->
+    <div id="store-preview-overlay" class="store-preview-overlay">
+        <div class="store-preview-box">
+            <div class="store-preview-icon" id="store-preview-icon">🎁</div>
+            <div class="store-preview-title" id="store-preview-title">Paquete</div>
+            <div class="store-preview-contents" id="store-preview-contents"></div>
+            <button class="buy-product-btn" id="store-preview-buy-btn" style="width:100%;">COMPRAR</button>
+            <button class="store-preview-close" onclick="closeStorePreview()">Cerrar</button>
+        </div>
+    </div>
 
     <!-- BONO DE BIENVENIDA (solo cuentas nuevas) -->
     <div id="welcome-bonus-overlay">
@@ -596,6 +814,24 @@
     <!-- PANTALLA TIENDA -->
     <div id="store-screen" class="screen">
         <h2 style="color: #d29922; margin-bottom: 12px;">🛒 Tienda de Recompensas</h2>
+
+        <div class="flash-offer-banner" id="flash-offer-banner" onclick="openStorePreview('flash')" style="cursor:pointer;">
+            <div class="flash-offer-top">
+                <span class="flash-offer-tag">⚡ OFERTA RELÁMPAGO</span>
+                <span class="flash-offer-timer" id="flash-offer-timer">--:--</span>
+            </div>
+            <div class="flash-offer-body">
+                <div class="flash-offer-icon" id="flash-offer-icon">🎁</div>
+                <div class="flash-offer-info">
+                    <div class="flash-offer-name" id="flash-offer-name">Cargando...</div>
+                    <div class="flash-offer-prices">
+                        <span class="old-price" id="flash-offer-old-price"></span>
+                        <span class="new-price-flash" id="flash-offer-new-price"></span>
+                    </div>
+                </div>
+                <button class="flash-offer-buy-btn" onclick="event.stopPropagation(); buyFlashOffer()">Comprar</button>
+            </div>
+        </div>
 
         <div class="store-header-box">
             <div class="store-vip-row">
@@ -694,8 +930,14 @@
             <button class="vip-buy-pass-btn" id="vip-buy-btn2" onclick="buyVipPass()">Activar Pase VIP</button>
         </div>
 
+        <div class="vip-section-title">🎒 Inventario de la economía del Pase (M11)</div>
+        <div class="vip-fav-card-box" id="vip-m11-inventory"></div>
+
         <div class="vip-section-title">🎁 Ruta de recompensas (cofre cada varios niveles)</div>
         <div class="vip-track-scroll" id="vip-track-scroll"></div>
+
+        <div class="vip-section-title">📊 Matriz de Recompensas — Carril Gratuito vs. Carril Dorado (1-30)</div>
+        <div id="vip-m11-matrix"></div>
 
         <div class="vip-section-title">🎖️ Título de perfil</div>
         <div class="vip-pick-grid" id="vip-titles-grid"></div>
@@ -723,7 +965,7 @@
     <!-- PANEL DE ADMINISTRADOR -->
     <div id="admin-screen" class="screen">
         <div class="admin-top">
-            <strong>⚙️ Panel de Administrador <span style="color:#8b949e; font-weight:normal; font-size:11px;" id="admin-version-label">v2.1 — Apuestas + Popup</span></strong>
+            <strong>⚙️ Panel de Administrador <span style="color:#8b949e; font-weight:normal; font-size:11px;" id="admin-version-label">v2.3 — Panel reorganizado</span></strong>
             <div style="display:flex; gap:6px;">
                 <button class="logout-btn" style="background:#30363d;" onclick="closeAdminPanel()">✕ Cerrar</button>
                 <button class="logout-btn" onclick="logout()">Salir</button>
@@ -739,47 +981,80 @@
         <div class="admin-body">
 
             <div class="admin-section active" id="admin-general">
-                <div class="admin-field"><label>Meta de la misión diaria (cartones a completar)</label><input type="number" id="cfg-missionTarget" min="1"></div>
-                <div class="admin-field"><label>Recompensa de misión — Oro</label><input type="number" id="cfg-missionRewardGold" min="0"></div>
-                <div class="admin-field"><label>Recompensa de misión — Gemas</label><input type="number" id="cfg-missionRewardGems" min="0"></div>
-                <div class="admin-field"><label>Premio base por Bingo ganado (con 1 cartón)</label><input type="number" id="cfg-baseWinReward" min="0"></div>
-                <div class="admin-field"><label>Bonus VIP por tarjeta (%, ej. 5 = +5% por tarjeta)</label><input type="number" id="cfg-vipBonusPerCard" min="0" step="0.1"></div>
-                <div class="admin-field"><label>Costo de Tarjeta VIP (gemas)</label><input type="number" id="cfg-vipCardCost" min="0"></div>
-                <div class="admin-field"><label>Costo de girar la ruleta (gemas)</label><input type="number" id="cfg-rouletteCost" min="0"></div>
-                <div class="admin-field"><label>Costo de ayuda extra de Mascota en juego (gemas)</label><input type="number" id="cfg-petHelpExtraCostGems" min="0"></div>
-                <div class="admin-field"><label>Bono de Bienvenida (cuenta nueva) — Oro</label><input type="number" id="cfg-welcomeBonusPopupGold" min="0"></div>
-                <div class="admin-field"><label>Bono de Bienvenida (cuenta nueva) — Gemas</label><input type="number" id="cfg-welcomeBonusPopupGems" min="0"></div>
-                <div class="admin-field"><label>Giros de ruleta disponibles por día</label><input type="number" id="cfg-rouletteSpinsPerDay" min="0"></div>
-                <div class="admin-field"><label>Velocidad de sorteo de balotas (segundos)</label><input type="number" id="cfg-ballIntervalSec" min="1" step="0.5"></div>
 
-                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🎫 Pase VIP</div>
-                <div class="admin-field"><label>Costo de activar el Pase VIP (gemas)</label><input type="number" id="cfg-vipPassCostGems" min="0"></div>
-                <div class="admin-field"><label>XP necesaria por nivel</label><input type="number" id="cfg-vipPassXPPerLevel" min="1"></div>
-                <div class="admin-field"><label>Niveles por ciclo (luego reinicia temporada)</label><input type="number" id="cfg-vipPassLevelsPerCycle" min="1"></div>
-                <div class="admin-field"><label>XP ganada por Bingo ganado</label><input type="number" id="cfg-vipPassXPPerWin" min="0"></div>
-                <div class="admin-field"><label>Cofre sorpresa cada cuántos niveles</label><input type="number" id="cfg-vipPassChestEvery" min="1"></div>
-                <div class="admin-field"><label>Descuento en tienda para Pase VIP (%)</label><input type="number" id="cfg-vipPassStoreDiscount" min="0" max="90"></div>
-                <div class="admin-field"><label>Regalo diario VIP — Oro</label><input type="number" id="cfg-vipPassDailyGiftGold" min="0"></div>
-                <div class="admin-field"><label>Regalo diario VIP — Gemas</label><input type="number" id="cfg-vipPassDailyGiftGems" min="0"></div>
-                <div class="admin-field"><label>Rasca y Gana VIP — Oro mínimo</label><input type="number" id="cfg-vipPassScratchMinGold" min="0"></div>
-                <div class="admin-field"><label>Rasca y Gana VIP — Oro máximo</label><input type="number" id="cfg-vipPassScratchMaxGold" min="0"></div>
+                <div class="admin-group">
+                    <div class="admin-group-title">📜 Misión Diaria</div>
+                    <div class="admin-field"><label>Meta de la misión diaria (cartones a completar)</label><input type="number" id="cfg-missionTarget" min="1"></div>
+                    <div class="admin-field"><label><span class="coin-ic">🪙</span>Recompensa de misión — Oro</label><input type="number" id="cfg-missionRewardGold" min="0"></div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Recompensa de misión — Gemas</label><input type="number" id="cfg-missionRewardGems" min="0"></div>
+                </div>
 
-                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🏆 Premios de Ranking (oro para 1°, 2° y 3° lugar)</div>
-                <div class="admin-field"><label>Premios Semanales (separados por coma)</label><input type="text" id="cfg-weeklyPrizesGold" placeholder="1500,800,400"></div>
-                <div class="admin-field"><label>Premios Mensuales (separados por coma)</label><input type="text" id="cfg-monthlyPrizesGold" placeholder="6000,3000,1500"></div>
+                <div class="admin-group">
+                    <div class="admin-group-title">🎯 Premios del Bingo</div>
+                    <div class="admin-field"><label><span class="coin-ic">🪙</span>Premio base por Bingo ganado (con 1 cartón)</label><input type="number" id="cfg-baseWinReward" min="0"></div>
+                    <div class="admin-field"><label>Bonus VIP por tarjeta (%, ej. 5 = +5% por tarjeta)</label><input type="number" id="cfg-vipBonusPerCard" min="0" step="0.1"></div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Costo de Tarjeta VIP (gemas)</label><input type="number" id="cfg-vipCardCost" min="0"></div>
+                </div>
 
-                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">💰 Niveles de Apuesta previa al juego</div>
-                <p style="font-size:11px;color:#8b949e;margin-bottom:6px;">Formato por línea: Nombre,CostoOro,Multiplicador</p>
-                <textarea id="cfg-betTiers" rows="4" style="width:100%; background:#0d1117; color:#fff; border:1px solid #30363d; border-radius:8px; padding:8px; font-size:12px;" placeholder="Sencillo,10,1.2"></textarea>
+                <div class="admin-group">
+                    <div class="admin-group-title">🎡 Ruleta</div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Costo de girar la ruleta (gemas)</label><input type="number" id="cfg-rouletteCost" min="0"></div>
+                    <div class="admin-field"><label>Giros de ruleta disponibles por día</label><input type="number" id="cfg-rouletteSpinsPerDay" min="0"></div>
+                    <div class="admin-field"><label>Velocidad de sorteo de balotas (segundos)</label><input type="number" id="cfg-ballIntervalSec" min="1" step="0.5"></div>
+                </div>
 
-                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🖼️ Imágenes de Salas</div>
-                <div id="admin-room-images"></div>
+                <div class="admin-group">
+                    <div class="admin-group-title">🐾 Mascota</div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Costo de ayuda extra de Mascota en juego (gemas)</label><input type="number" id="cfg-petHelpExtraCostGems" min="0"></div>
+                </div>
 
-                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">🧑 Imágenes de Avatares VIP</div>
-                <div id="admin-vip-avatar-images"></div>
+                <div class="admin-group">
+                    <div class="admin-group-title">🎁 Bono de Bienvenida (cuenta nueva)</div>
+                    <div class="admin-field"><label><span class="coin-ic">🪙</span>Oro</label><input type="number" id="cfg-welcomeBonusPopupGold" min="0"></div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Gemas</label><input type="number" id="cfg-welcomeBonusPopupGems" min="0"></div>
+                </div>
 
-                <div style="color:#d29922;font-weight:bold;margin:14px 0 4px;">⏳ Imágenes de Íconos de Carga VIP</div>
-                <div id="admin-vip-icon-images"></div>
+                <div class="admin-group">
+                    <div class="admin-group-title">🎫 Pase VIP</div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Costo de activar el Pase VIP (gemas)</label><input type="number" id="cfg-vipPassCostGems" min="0"></div>
+                    <div class="admin-field"><label>XP necesaria por nivel</label><input type="number" id="cfg-vipPassXPPerLevel" min="1"></div>
+                    <div class="admin-field"><label>Niveles por ciclo (luego reinicia temporada)</label><input type="number" id="cfg-vipPassLevelsPerCycle" min="1"></div>
+                    <div class="admin-field"><label>XP ganada por Bingo ganado</label><input type="number" id="cfg-vipPassXPPerWin" min="0"></div>
+                    <div class="admin-field"><label>Cofre sorpresa cada cuántos niveles</label><input type="number" id="cfg-vipPassChestEvery" min="1"></div>
+                    <div class="admin-field"><label>Descuento en tienda para Pase VIP (%)</label><input type="number" id="cfg-vipPassStoreDiscount" min="0" max="90"></div>
+                    <div class="admin-field"><label><span class="coin-ic">🪙</span>Regalo diario VIP — Oro</label><input type="number" id="cfg-vipPassDailyGiftGold" min="0"></div>
+                    <div class="admin-field"><label><span class="gem-ic">💎</span>Regalo diario VIP — Gemas</label><input type="number" id="cfg-vipPassDailyGiftGems" min="0"></div>
+                    <div class="admin-field"><label><span class="coin-ic">🪙</span>Rasca y Gana VIP — Oro mínimo</label><input type="number" id="cfg-vipPassScratchMinGold" min="0"></div>
+                    <div class="admin-field"><label><span class="coin-ic">🪙</span>Rasca y Gana VIP — Oro máximo</label><input type="number" id="cfg-vipPassScratchMaxGold" min="0"></div>
+                </div>
+
+                <div class="admin-group">
+                    <div class="admin-group-title">🏆 Premios de Ranking</div>
+                    <p class="admin-group-hint"><span class="coin-ic">🪙</span>Oro para 1°, 2° y 3° lugar</p>
+                    <div class="admin-field"><label>Premios Semanales (separados por coma)</label><input type="text" id="cfg-weeklyPrizesGold" placeholder="1500,800,400"></div>
+                    <div class="admin-field"><label>Premios Mensuales (separados por coma)</label><input type="text" id="cfg-monthlyPrizesGold" placeholder="6000,3000,1500"></div>
+                </div>
+
+                <div class="admin-group">
+                    <div class="admin-group-title">💰 Niveles de Apuesta previa al juego</div>
+                    <p class="admin-group-hint">Formato por línea: Nombre,CostoOro,Multiplicador</p>
+                    <textarea id="cfg-betTiers" rows="4" style="width:100%; background:#0d1117; color:#fff; border:1px solid #30363d; border-radius:8px; padding:8px; font-size:12px; margin-bottom:10px;" placeholder="Sencillo,10,1.2"></textarea>
+                </div>
+
+                <div class="admin-group">
+                    <div class="admin-group-title">🖼️ Imágenes de Salas</div>
+                    <div id="admin-room-images"></div>
+                </div>
+
+                <div class="admin-group">
+                    <div class="admin-group-title">🧑 Imágenes de Avatares VIP</div>
+                    <div id="admin-vip-avatar-images"></div>
+                </div>
+
+                <div class="admin-group">
+                    <div class="admin-group-title">⏳ Imágenes de Íconos de Carga VIP</div>
+                    <div id="admin-vip-icon-images"></div>
+                </div>
 
                 <button class="admin-save-btn" onclick="saveAdminGeneral()">💾 Guardar configuración general</button>
             </div>
@@ -891,7 +1166,7 @@ const SESSION_KEY = SAVE_PREFIX + 'session';
 const ADMIN_SESSION_KEY = SAVE_PREFIX + 'admin_session';
 const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]]; // B I N G O
 const LETTERS = ['B','I','N','G','O'];
-const APP_VERSION = 'v2.2';
+const APP_VERSION = 'v2.5';
 const COLORS = ['rojo','azul','verde','amarillo'];
 const PRODUCTS_PER_PAGE = 2;
 
@@ -1085,6 +1360,20 @@ function defaultState(username) {
         vipPassXP: 0,
         vipPassCycle: 0,
         vipPassClaimedLevels: [],
+        vipPassGoldClaimedLevels: [],
+        dailyCalendarClaimedDate: null,
+        dailyConnectionRouletteDate: null,
+        bayasComunes: 0,
+        bayasRaras: 0,
+        huevosMascota: { comun: 0, raro: 0, epico: 0, legendario: 0 },
+        fragmentosMascota: { rara: 0, epica: 0, legendaria: 0 },
+        mascotasExclusivasVIP: [],
+        escudoAnimoUntil: null,
+        multiplicadorVelocidadUntil: null,
+        potenciadorXPUntil: null,
+        potenciadorXPMult: 1,
+        dobleRanuraHabitat: false,
+        marcoPerfilVIP: false,
         vipPassLastRecoveryDate: null,
         vipPassDailyGiftDate: null,
         vipPassScratchDate: null,
@@ -1290,6 +1579,20 @@ function ensurePlayerDefaults(p) {
     if (p.vipPassXP === undefined) p.vipPassXP = 0;
     if (p.vipPassCycle === undefined) p.vipPassCycle = 0;
     if (p.vipPassClaimedLevels === undefined) p.vipPassClaimedLevels = [];
+    if (p.vipPassGoldClaimedLevels === undefined) p.vipPassGoldClaimedLevels = [];
+    if (p.dailyCalendarClaimedDate === undefined) p.dailyCalendarClaimedDate = null;
+    if (p.dailyConnectionRouletteDate === undefined) p.dailyConnectionRouletteDate = null;
+    if (p.bayasComunes === undefined) p.bayasComunes = 0;
+    if (p.bayasRaras === undefined) p.bayasRaras = 0;
+    if (p.huevosMascota === undefined) p.huevosMascota = { comun: 0, raro: 0, epico: 0, legendario: 0 };
+    if (p.fragmentosMascota === undefined) p.fragmentosMascota = { rara: 0, epica: 0, legendaria: 0 };
+    if (p.mascotasExclusivasVIP === undefined) p.mascotasExclusivasVIP = [];
+    if (p.escudoAnimoUntil === undefined) p.escudoAnimoUntil = null;
+    if (p.multiplicadorVelocidadUntil === undefined) p.multiplicadorVelocidadUntil = null;
+    if (p.potenciadorXPUntil === undefined) p.potenciadorXPUntil = null;
+    if (p.potenciadorXPMult === undefined) p.potenciadorXPMult = 1;
+    if (p.dobleRanuraHabitat === undefined) p.dobleRanuraHabitat = false;
+    if (p.marcoPerfilVIP === undefined) p.marcoPerfilVIP = false;
     if (p.vipPassLastRecoveryDate === undefined) p.vipPassLastRecoveryDate = null;
     if (p.vipPassDailyGiftDate === undefined) p.vipPassDailyGiftDate = null;
     if (p.vipPassScratchDate === undefined) p.vipPassScratchDate = null;
@@ -1505,6 +1808,94 @@ function applyLoginStreak(p) {
     return bonus;
 }
 
+/* ================= M12: CALENDARIO DE RECOMPENSAS DIARIAS (7 DÍAS) + RULETA DE CONEXIÓN ================= */
+const DAILY_CALENDAR_REWARDS = [
+    { day:1, icon:'🪙', label:'+500 🪙', apply: () => { state.gold += 500; } },
+    { day:2, icon:'🪙', label:'+800 🪙', apply: () => { state.gold += 800; } },
+    { day:3, icon:'🍇', label:'+1,000 🪙 + 1x Baya Común', apply: () => { state.gold += 1000; state.bayasComunes += 1; } },
+    { day:4, icon:'💎', label:'+1,500 🪙 + 3 💎', apply: () => { state.gold += 1500; state.gems += 3; } },
+    { day:5, icon:'🃏', label:'+2,000 🪙 + 1x Cartón Bonus', apply: () => { state.gold += 2000; state.freeExtraBalls = (state.freeExtraBalls||0) + 1; } },
+    { day:6, icon:'💎', label:'+2,500 🪙 + 5 💎', apply: () => { state.gold += 2500; state.gems += 5; } },
+    { day:7, icon:'🥚', label:'¡Gran Premio! +5,000 🪙 + 15 💎 + 1x Huevo Común', apply: () => { state.gold += 5000; state.gems += 15; state.huevosMascota.comun += 1; } },
+];
+
+function dailyCalendarDayIndex() { return ((Math.max(1, state.loginStreak || 1) - 1) % 7) + 1; }
+
+function openDailyRewardsModal() {
+    if (!state) return;
+    renderDailyRewardsModal();
+    document.getElementById('daily-rewards-overlay').classList.add('active');
+}
+function closeDailyRewardsModal() {
+    document.getElementById('daily-rewards-overlay').classList.remove('active');
+}
+
+function renderDailyRewardsModal() {
+    if (!state) return;
+    const todayIdx = dailyCalendarDayIndex();
+    const claimedToday = state.dailyCalendarClaimedDate === todayStr();
+    document.getElementById('daily-rewards-sub').innerText = `Racha actual: ${state.loginStreak || 0} días · Día ${todayIdx} del ciclo semanal`;
+
+    const grid = document.getElementById('daily-cal-grid');
+    grid.innerHTML = '';
+    DAILY_CALENDAR_REWARDS.forEach(r => {
+        const isPast = r.day < todayIdx || (r.day === todayIdx && claimedToday);
+        const isToday = r.day === todayIdx && !claimedToday;
+        const cell = document.createElement('div');
+        cell.className = 'daily-cal-day' + (isPast ? ' done' : '') + (isToday ? ' today' : '') + (r.day === 7 ? ' grand' : '');
+        cell.innerHTML = `<span class="cal-day-num">Día ${r.day}</span><span class="cal-day-icon">${isPast ? '✅' : r.icon}</span>${r.label}`;
+        grid.appendChild(cell);
+    });
+
+    const claimBtn = document.getElementById('daily-claim-btn');
+    claimBtn.disabled = claimedToday;
+    claimBtn.innerText = claimedToday ? `✅ Ya reclamaste el Día ${todayIdx} hoy` : `Reclamar Día ${todayIdx}: ${DAILY_CALENDAR_REWARDS[todayIdx-1].label}`;
+
+    const spunToday = state.dailyConnectionRouletteDate === todayStr();
+    const rouletteBtn = document.getElementById('daily-roulette-btn');
+    rouletteBtn.disabled = spunToday;
+    rouletteBtn.innerText = spunToday ? '✅ Ya giraste hoy' : 'Girar gratis';
+    document.getElementById('daily-roulette-desc').innerText = spunToday ? 'Vuelve mañana para un nuevo giro gratuito.' : 'Gira sin costo por conectarte hoy. Premios sorpresa en monedas, gemas, comida para mascota y potenciadores.';
+}
+
+function claimDailyCalendarReward() {
+    if (!state) return;
+    const today = todayStr();
+    if (state.dailyCalendarClaimedDate === today) { showToast('Ya reclamaste tu recompensa diaria de hoy.'); return; }
+    const idx = dailyCalendarDayIndex();
+    const reward = DAILY_CALENDAR_REWARDS[idx - 1];
+    reward.apply();
+    state.dailyCalendarClaimedDate = today;
+    saveState(); refreshAllUI(); renderDailyRewardsModal();
+    showToast(`Recompensa del Día ${idx} reclamada: ${reward.label}`, 'achievement');
+}
+
+function spinDailyConnectionRoulette() {
+    if (!state) return;
+    const today = todayStr();
+    if (state.dailyConnectionRouletteDate === today) { showToast('Ya giraste la Ruleta de Conexión hoy.'); return; }
+    state.dailyConnectionRouletteDate = today;
+    const pool = [
+        () => { const g = 200 + Math.floor(Math.random()*600); state.gold += g; return `+${g} 🪙`; },
+        () => { const g = 2 + Math.floor(Math.random()*8); state.gems += g; return `+${g} 💎`; },
+        () => { state.bayasComunes += 3; return '+3 🍇 Bayas Comunes (comida de mascota)'; },
+        () => { state.bayasRaras += 1; return '+1 🍓 Baya Rara (comida de mascota)'; },
+        () => { const until = Date.now() + 12*3600000; state.potenciadorXPUntil = Math.max(state.potenciadorXPUntil||0, until); state.potenciadorXPMult = Math.max(state.potenciadorXPMult||1, 1.5); return '✨ Potenciador x1.5 XP (12h)'; },
+    ];
+    const desc = pool[Math.floor(Math.random()*pool.length)]();
+    saveState(); refreshAllUI(); renderDailyRewardsModal();
+    showToast(`🎰 Ruleta de Conexión: ${desc}`, 'freespin');
+}
+
+// Se llama una vez por login: si el jugador aún no reclamó nada hoy, abre el modal automáticamente
+function maybeAutoOpenDailyRewards() {
+    if (!state) return;
+    const today = todayStr();
+    if (state.dailyCalendarClaimedDate !== today || state.dailyConnectionRouletteDate !== today) {
+        setTimeout(() => openDailyRewardsModal(), 900);
+    }
+}
+
 function checkAchievements(p) {
     const unlocked = [];
     ACHIEVEMENTS.forEach(a => {
@@ -1578,6 +1969,38 @@ function closeWinPopup() {
     stopWinCoinRain();
 }
 
+/* ---------- M08: música/SFX adaptativa — tensión ascendente cuando hay cartones "a punto" de BINGO ---------- */
+let tensionInterval = null;
+let tensionRate = null;
+function playTensionTick(intensity) {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = 300 + intensity * 220; // más agudo = más tensión
+        gain.gain.setValueAtTime(0.05 + intensity * 0.05, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.18);
+    } catch(e) { /* audio no soportado */ }
+}
+function updateTensionAudio() {
+    if (!playerCardData || !playerCardData.length) { stopTensionPulse(); return; }
+    const aboutToWinCount = playerCardData.filter(c => !c.completed && c.closestMissingCell !== null && c.closestMissingCell !== undefined).length;
+    if (aboutToWinCount === 0) { stopTensionPulse(); return; }
+    const intensity = Math.min(1, aboutToWinCount / 3); // más cartones "a punto" simultáneos = más intenso
+    const rateMs = Math.max(280, 900 - intensity * 600); // el tempo sube (intervalo baja) cerca del BINGO
+    if (tensionRate === rateMs) return; // ya suena al ritmo correcto, no reiniciar
+    stopTensionPulse();
+    tensionRate = rateMs;
+    tensionInterval = setInterval(() => playTensionTick(intensity), rateMs);
+}
+function stopTensionPulse() {
+    if (tensionInterval) { clearInterval(tensionInterval); tensionInterval = null; }
+    tensionRate = null;
+}
+
 function playWinSound() {
     try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1615,11 +2038,27 @@ async function loadOrCreatePlayer(username, password) {
 }
 async function saveState() { if (state) await fsSet('players', state.username.toLowerCase(), state); }
 
-function showToast(msg) {
+function ensureToastContainer() {
+    let c = document.getElementById('toast-container');
+    if (!c) { c = document.createElement('div'); c.id = 'toast-container'; document.body.appendChild(c); }
+    return c;
+}
+
+/* M06: sistema de notificaciones tipo Toast, apiladas y animadas, sin bloquear la partida.
+   type: 'info' (default), 'achievement', 'freespin', 'friend', 'vip' */
+function showToast(msg, type) {
+    const container = ensureToastContainer();
+    const icons = { info:'ℹ️', achievement:'🏆', freespin:'🎟️', friend:'💬', vip:'🎫' };
     const t = document.createElement('div');
-    t.className = 'toast'; t.innerText = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2600);
+    t.className = 'toast' + (type && type !== 'info' ? ` toast-${type}` : '');
+    t.innerHTML = `<span class="toast-icon">${icons[type] || icons.info}</span><span>${msg}</span>`;
+    container.appendChild(t);
+    // límite de 4 visibles a la vez para no saturar la pantalla
+    while (container.children.length > 4) container.removeChild(container.firstChild);
+    setTimeout(() => {
+        t.classList.add('toast-out');
+        setTimeout(() => t.remove(), 320);
+    }, 3600);
 }
 
 /* ---------- LOGIN / LOGOUT ---------- */
@@ -1647,11 +2086,13 @@ async function login() {
     refreshAllUI();
     goToScreen('main-screen', true);
     saveState();
-    if (streakBonus > 0) showToast(`🔥 Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
+    if (streakBonus > 0) showToast(`Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
     if (result.isNew && !state.welcomeBonusPopupClaimed) {
         setTimeout(() => showWelcomeBonusPopup(), 400);
     } else if (!state.tutorialCompleted) {
         setTimeout(() => startTutorial(), 400);
+    } else {
+        maybeAutoOpenDailyRewards(); // M12: calendario de 7 días + ruleta de conexión, una vez por sesión si falta reclamar algo hoy
     }
 }
 
@@ -1828,7 +2269,8 @@ function goToScreen(screenId, isReplace) {
     if (map[screenId]) document.getElementById(map[screenId]).classList.add('active');
 
     if (screenId === 'game-screen') { openBingoLobby(); renderVipChatEmotes(); }
-    if (screenId === 'store-screen') renderStore(currentStorePage);
+    stopFlashOfferTimer();
+    if (screenId === 'store-screen') { renderStore(currentStorePage); startFlashOfferTimer(); }
     if (screenId === 'missions-screen' || screenId === 'main-screen') refreshMissionUI();
     if (screenId === 'pet-screen') renderPetScreen(currentPetTab);
     if (screenId === 'campaign-screen') refreshRouletteUI();
@@ -1943,12 +2385,47 @@ function renderLobbyOptions() {
 }
 
 /* ---------- BINGO ---------- */
+const QUICK_CARD_STEPS = [1, 2, 4, 8, 12, 16];
+
 function selectCardCount(count, element) {
     chosenCardCount = count;
     document.querySelectorAll('.card-opt-btn').forEach(btn => btn.classList.remove('selected'));
-    element.classList.add('selected');
+    if (element) element.classList.add('selected');
     refreshCardCostLabels();
     renderUserLevelWidget();
+    syncQuickCardSlider();
+    updateRiskReturnBox();
+}
+
+/* ---- M04: panel rápido de apuesta (slider + accesos directos) ---- */
+function syncQuickCardSlider() {
+    const slider = document.getElementById('quick-card-slider');
+    const label = document.getElementById('quick-card-slider-label');
+    if (!slider || !label) return;
+    const idx = QUICK_CARD_STEPS.indexOf(chosenCardCount);
+    slider.value = idx >= 0 ? idx : 0;
+    label.innerText = `${chosenCardCount} Cartón${chosenCardCount > 1 ? 'es' : ''}`;
+}
+function onQuickCardSlider(rawIdx) {
+    const count = QUICK_CARD_STEPS[parseInt(rawIdx)] || 1;
+    const btns = document.querySelectorAll('.cards-options-grid .card-opt-btn');
+    const targetBtn = Array.from(btns).find(b => b.getAttribute('onclick') === `selectCardCount(${count}, this)`);
+    selectCardCount(count, targetBtn);
+    document.getElementById('quick-card-slider-label').innerText = `${count} Cartón${count > 1 ? 'es' : ''}`;
+}
+function quickMaxCards() {
+    const slider = document.getElementById('quick-card-slider');
+    if (slider) slider.value = QUICK_CARD_STEPS.length - 1;
+    onQuickCardSlider(QUICK_CARD_STEPS.length - 1);
+    showToast('⚡ Cartones al máximo (16).');
+}
+function quickDuplicateBet() {
+    const tiers = CONFIG.betTiers || [];
+    if (!tiers.length) return;
+    const nextIndex = (selectedBetTierIndex + 1) % tiers.length;
+    const el = document.querySelectorAll('#bet-tier-options .card-opt-btn')[nextIndex];
+    selectBetTier(nextIndex, el);
+    showToast(`🔄 Apuesta cambiada a "${tiers[nextIndex].label}" (x${tiers[nextIndex].mult}).`);
 }
 
 function refreshCardCostLabels() {
@@ -1986,6 +2463,22 @@ function updateBonusSummary() {
     const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
     const el = document.getElementById('bonus-summary');
     if (el) el.innerText = `Bonus VIP: x${vipBonus.toFixed(2)} · 🐾 Mascota Nv.${state.petLevel || 0}/20: +${((petBonus - 1) * 100).toFixed(0)}% · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'} · Apuesta: ${tier.label} (x${tier.mult}${tier.cost > 0 ? ', costo 🪙' + tier.cost : ''})`;
+    updateRiskReturnBox();
+}
+
+/* ---- M10: indicador claro de riesgo (costo) vs retorno (premio potencial) ---- */
+function updateRiskReturnBox() {
+    const costEl = document.getElementById('risk-cost-value');
+    const rewardEl = document.getElementById('risk-reward-value');
+    if (!costEl || !rewardEl || !selectedRoom) return;
+    const entryCost = currentCardEntryCost();
+    const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
+    const totalCost = entryCost + (tier.cost || 0);
+    const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
+    const roomBaseReward = (selectedRoom && selectedRoom.baseWinReward) || CONFIG.baseWinReward;
+    const estimatedReward = Math.round(roomBaseReward * chosenCardCount * vipBonus * petBonusMultiplier() * (pendingMultiplier > 1 ? pendingMultiplier : 1) * (tier.mult || 1));
+    costEl.innerText = `🪙 ${totalCost.toLocaleString('es')}`;
+    rewardEl.innerText = `🪙 ${estimatedReward.toLocaleString('es')}+`;
 }
 
 function openBingoLobby() {
@@ -2039,6 +2532,7 @@ function generateAllCards() {
         const colorName = COLORS[c % COLORS.length];
         const numbers = (c === 0 && state.useFavoriteCard && state.favoriteCard) ? state.favoriteCard.slice() : generateCardNumbers();
         const cardDiv = document.createElement('div');
+        cardDiv.id = `bingo-card-${c}`;
         cardDiv.className = `bingo-card card-${colorName}` + (selectedFrame ? ' ' + selectedFrame : '');
         const titleHTML = `<div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;margin-bottom:2px;">
             <strong>#${c + 1} (${colorName.toUpperCase()})</strong>
@@ -2068,6 +2562,44 @@ function generateAllCards() {
         container.appendChild(cardDiv);
         playerCardData.push({ cardIndex: c, cells: singleCardCells, completed: false, closestMissingCell: null, winPattern: null });
     }
+    renderCardTabs();
+}
+
+/* ---- M02: tira de pestañas/miniaturas para ubicar cada cartón entre los 16 ---- */
+function renderCardTabs() {
+    const strip = document.getElementById('card-tabs-strip');
+    if (!strip) return;
+    if (chosenCardCount <= 1) { strip.innerHTML = ''; return; }
+    strip.innerHTML = playerCardData.map((cardObj, c) => {
+        const colorName = COLORS[c % COLORS.length];
+        const marked = cardObj.cells.filter(cell => cell.classList.contains('marked')).length;
+        const done = cardObj.completed;
+        return `<div class="card-tab-chip tab-${colorName}${done ? ' tab-done' : ''}" id="card-tab-${c}" onclick="focusCard(${c})">
+            <span class="tab-num">#${c + 1}</span>
+            <span class="tab-progress">${done ? '✅' : marked + '/25'}</span>
+        </div>`;
+    }).join('');
+}
+function updateCardTabsProgress() {
+    playerCardData.forEach((cardObj, c) => {
+        const chip = document.getElementById(`card-tab-${c}`);
+        if (!chip) return;
+        const marked = cardObj.cells.filter(cell => cell.classList.contains('marked')).length;
+        const progressEl = chip.querySelector('.tab-progress');
+        if (cardObj.completed) { chip.classList.add('tab-done'); if (progressEl) progressEl.innerText = '✅'; }
+        else if (progressEl) progressEl.innerText = `${marked}/25`;
+    });
+}
+function focusCard(c) {
+    const card = document.getElementById(`bingo-card-${c}`);
+    if (!card) return;
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    card.classList.remove('card-focus-pulse');
+    void card.offsetWidth;
+    card.classList.add('card-focus-pulse');
+    document.querySelectorAll('.card-tab-chip').forEach(chip => chip.classList.remove('tab-active-focus'));
+    const chip = document.getElementById(`card-tab-${c}`);
+    if (chip) chip.classList.add('tab-active-focus');
 }
 
 function letterForNumber(n) { if (n<=15) return 'B'; if (n<=30) return 'I'; if (n<=45) return 'N'; if (n<=60) return 'G'; return 'O'; }
@@ -2117,6 +2649,36 @@ function triggerTombolaSpin() {
     icon.classList.remove('spinning');
     void icon.offsetWidth;
     icon.classList.add('spinning');
+}
+function triggerTombolaShake() {
+    const icon = document.getElementById('tombola-icon');
+    if (!icon) return;
+    icon.classList.remove('shaking');
+    void icon.offsetWidth;
+    icon.classList.add('shaking');
+}
+/* ---- M03: bola con trayectoria curva flotante desde el bombo hasta el panel central ---- */
+function spawnFlyingBall(letter, drawn) {
+    const tombola = document.getElementById('tombola-icon');
+    const target = document.getElementById('current-ball-num');
+    if (!tombola || !target) return;
+    const startRect = tombola.getBoundingClientRect();
+    const endRect = target.getBoundingClientRect();
+    const sx = startRect.left + startRect.width / 2 - 18, sy = startRect.top + startRect.height / 2 - 18;
+    const ex = endRect.left + endRect.width / 2 - 18, ey = endRect.top + endRect.height / 2 - 18;
+    const mx = (sx + ex) / 2 + (Math.random() > 0.5 ? 40 : -40);
+    const my = Math.min(sy, ey) - 55;
+
+    const ball = document.createElement('div');
+    ball.className = 'flying-ball';
+    ball.style.setProperty('--sx', sx + 'px'); ball.style.setProperty('--sy', sy + 'px');
+    ball.style.setProperty('--mx', mx + 'px'); ball.style.setProperty('--my', my + 'px');
+    ball.style.setProperty('--ex', ex + 'px'); ball.style.setProperty('--ey', ey + 'px');
+    ball.style.transform = `translate(${sx}px, ${sy}px)`;
+    ball.style.animation = 'ballFlight 0.55s ease-in-out forwards';
+    ball.innerText = letter + drawn;
+    document.body.appendChild(ball);
+    setTimeout(() => ball.remove(), 600);
 }
 function renderHistoryStrip() {
     const strip = document.getElementById('history-strip');
@@ -2212,7 +2774,7 @@ function buyExtraBall(cardIndex) {
     if (useFree) { state.freeExtraBalls -= 1; } else { state.gems -= cost; }
     cardObj.cells[cardObj.closestMissingCell].classList.add('marked');
     saveState(); refreshAllUI();
-    showToast(useFree ? `🎫 Bola Extra gratis (Pase VIP) usada en cartón #${cardIndex + 1}.` : `🃏 Bola Extra usada en cartón #${cardIndex + 1}.`);
+    showToast(useFree ? `Bola Extra gratis (Pase VIP) usada en cartón #${cardIndex + 1}.` : `Bola Extra usada en cartón #${cardIndex + 1}.`, useFree ? 'freespin' : 'info');
 
     const winPattern = evaluateCardPatterns(cardObj);
     if (winPattern) { roundWinPattern = winPattern; endRound(true); }
@@ -2460,6 +3022,20 @@ function vipCardCostDiscount() {
     return 0.05;
 }
 
+/* ---- M10: modal de recarga inmediata al quedarse sin saldo ---- */
+function showLowBalanceModal(missingGold) {
+    const textEl = document.getElementById('low-balance-text');
+    if (textEl) textEl.innerText = `Te faltan 🪙 ${missingGold.toLocaleString('es')} para entrar con esta configuración. ¡Recarga y no pierdas la racha!`;
+    document.getElementById('low-balance-overlay').classList.add('active');
+}
+function closeLowBalanceModal() {
+    document.getElementById('low-balance-overlay').classList.remove('active');
+}
+function goRechargeFromLowBalance() {
+    closeLowBalanceModal();
+    navTabTo('store-screen');
+}
+
 function currentCardEntryCost() {
     const baseCost = (selectedRoom && selectedRoom.cardCosts) ? (selectedRoom.cardCosts[chosenCardCount] || 0) : 0;
     return Math.round(baseCost * (1 - vipCardCostDiscount()));
@@ -2467,13 +3043,10 @@ function currentCardEntryCost() {
 
 function startBingoGame() {
     const entryCost = currentCardEntryCost();
-    if (entryCost > state.gold) {
-        showToast(`❌ No tienes suficiente oro para entrar con ${chosenCardCount} cartón(es) en esta sala (🪙 ${entryCost}).`);
-        return;
-    }
     const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
-    if ((tier.cost || 0) > state.gold - entryCost) {
-        showToast(`❌ No tienes suficiente oro para la apuesta "${tier.label}" (🪙 ${tier.cost}).`);
+    const totalCost = entryCost + (tier.cost || 0);
+    if (totalCost > state.gold) {
+        showLowBalanceModal(totalCost - state.gold);
         return;
     }
     state.gold -= entryCost;
@@ -2503,16 +3076,26 @@ function startBingoGame() {
 function runAutoBingoLoop() {
     if (bingoInterval) clearInterval(bingoInterval);
     const speedFactors = { lento: 1.6, normal: 1, rapido: 0.5 };
-    const interval = Math.max(400, 3000 * (speedFactors[ballSpeedMode] || 1));
+    const velocidadBuff = (typeof m11IsVelocidadActive === 'function' && m11IsVelocidadActive()) ? 0.5 : 1; // Multiplicador de Velocidad x2 del Pase VIP (M11 nivel 9)
+    const interval = Math.max(400, 3000 * (speedFactors[ballSpeedMode] || 1) * velocidadBuff);
     bingoInterval = setInterval(() => { handleBallDraw(); }, interval);
 }
 
 function handleBallDraw() {
     const drawn = drawNextNumber();
     if (drawn === null) { stopAutoBingo(); return; }
-    triggerTombolaSpin();
     const letter = letterForNumber(drawn);
-    document.getElementById('current-ball-num').innerText = letter + drawn;
+    triggerTombolaShake();
+    setTimeout(() => {
+        triggerTombolaSpin();
+        spawnFlyingBall(letter, drawn);
+    }, 150);
+    setTimeout(() => {
+        document.getElementById('current-ball-num').innerText = letter + drawn;
+        document.getElementById('current-ball-num').classList.remove('newNumberPop');
+        void document.getElementById('current-ball-num').offsetWidth;
+        document.getElementById('current-ball-num').classList.add('newNumberPop');
+    }, 480);
     document.getElementById('current-ball-text').innerText = 'Bola cantada — ¡marca tus cartones!';
     playBallSound(letter);
     renderHistoryStrip();
@@ -2542,6 +3125,8 @@ function handleBallDraw() {
     if (justMarkedCells.length) {
         justMarkedCells.forEach(cell => cell.classList.add('flash-new'));
     }
+    updateCardTabsProgress();
+    updateTensionAudio(); // M08: sube el tempo del pulso sonoro si hay cartones "a punto"
 
     if (rivalCardNumbers.includes(drawn)) {
         rivalProgress += 1;
@@ -2624,7 +3209,7 @@ function endRound(won) {
             betLabel: betMult > 1 ? activeBetLabel : null,
         });
         newAchievements.forEach((a, i) => {
-            setTimeout(() => showToast(`🏆 Logro desbloqueado: ${a.label}`), 600 + i * 1400);
+            setTimeout(() => showToast(`Logro desbloqueado: ${a.label}`, 'achievement'), 600 + i * 1400);
         });
     } else {
         state.winStreak = 0;
@@ -2635,11 +3220,51 @@ function endRound(won) {
     activeBetMultiplier = 1; activeBetLabel = 'Sencillo'; selectedBetTierIndex = 0;
     startRoundCountdown();
 }
-function stopAutoBingo() { if (bingoInterval) { clearInterval(bingoInterval); bingoInterval = null; } }
+function stopAutoBingo() { if (bingoInterval) { clearInterval(bingoInterval); bingoInterval = null; } stopTensionPulse(); }
 
 /* ---------- TIENDA (jugador) ---------- */
+/* ================= M13: VISTA PREVIA INTERACTIVA EN LA TIENDA ("Qué vas a obtener") ================= */
+function storePreviewContentsHtml(prod, finalCost) {
+    const rows = [];
+    rows.push(`<div class="content-row"><span>💎 Costo</span><span>${finalCost}</span></div>`);
+    if (prod.isCosmetic) {
+        rows.push(`<div class="content-row"><span>🖼️ Contenido</span><span>Marco de cartón "${prod.name}"</span></div>`);
+    } else {
+        rows.push(`<div class="content-row"><span>🪙 Oro incluido</span><span>+${prod.goldReward.toLocaleString('es-ES')}</span></div>`);
+    }
+    if (prod.discount) rows.push(`<div class="content-row"><span>🏷️ Bono</span><span>${prod.discount}</span></div>`);
+    return rows.join('');
+}
+
+function openStorePreview(kind, id) {
+    const prod = kind === 'flash' ? getFlashOfferProduct() : CONFIG.products.find(p => p.id === id);
+    if (!prod || !state) return;
+    const vipDiscount = state.vipPassActive ? (CONFIG.vipPassStoreDiscount || 0) / 100 : 0;
+    let finalCost;
+    if (kind === 'flash') finalCost = Math.max(1, Math.round(prod.gemCost * (1 - FLASH_OFFER_DISCOUNT) * (1 - vipDiscount)));
+    else finalCost = Math.max(0, Math.round(prod.gemCost * (1 - vipDiscount)));
+
+    const icon = document.getElementById('store-preview-icon');
+    icon.innerHTML = prod.imageUrl ? `<img src="${prod.imageUrl}" style="width:64px;height:64px;object-fit:cover;border-radius:10px;">` : (prod.isCosmetic ? '🖼️' : (kind === 'flash' ? '⚡🎁' : '🛍️'));
+    icon.classList.remove('store-preview-icon'); void icon.offsetWidth; icon.classList.add('store-preview-icon'); // reinicia animación de apertura
+
+    document.getElementById('store-preview-title').innerText = (kind === 'flash' ? '⚡ Oferta Relámpago: ' : '') + prod.name;
+    document.getElementById('store-preview-contents').innerHTML = storePreviewContentsHtml(prod, finalCost);
+
+    const buyBtn = document.getElementById('store-preview-buy-btn');
+    buyBtn.innerText = prod.isCosmetic ? `DESBLOQUEAR (💎 ${finalCost})` : `COMPRAR (💎 ${finalCost})`;
+    buyBtn.disabled = state.gems < finalCost;
+    buyBtn.onclick = () => { closeStorePreview(); if (kind === 'flash') buyFlashOffer(); else buyProduct(prod.id); };
+
+    document.getElementById('store-preview-overlay').classList.add('active');
+}
+function closeStorePreview() {
+    document.getElementById('store-preview-overlay').classList.remove('active');
+}
+
 function renderStore(page) {
     currentStorePage = page;
+    renderFlashOffer();
     const totalPages = Math.max(1, Math.ceil(CONFIG.products.length / PRODUCTS_PER_PAGE));
     const pagesWrap = document.getElementById('store-pages');
     pagesWrap.innerHTML = '';
@@ -2655,11 +3280,15 @@ function renderStore(page) {
     grid.innerHTML = '';
     const items = CONFIG.products.slice(page * PRODUCTS_PER_PAGE, page * PRODUCTS_PER_PAGE + PRODUCTS_PER_PAGE);
     const vipDiscount = state.vipPassActive ? (CONFIG.vipPassStoreDiscount || 0) : 0;
+    const bestValueId = bestValueProductId();
     items.forEach(prod => {
         const finalCost = Math.max(0, Math.round(prod.gemCost * (1 - vipDiscount / 100)));
         const card = document.createElement('div');
-        card.className = 'product-card';
+        card.className = 'product-card' + (prod.id === bestValueId ? ' best-value' : '');
+        card.style.cursor = 'pointer';
+        card.onclick = () => openStorePreview('product', prod.id);
         card.innerHTML = `
+            ${prod.id === bestValueId ? '<span class="best-value-badge">⭐ MEJOR VALOR</span>' : ''}
             <div class="product-img-box">${prod.imageUrl ? `<img src="${prod.imageUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">` : `<span class="default-icon">${prod.isCosmetic ? '🖼️' : '🛍️'}</span>`}</div>
             <div class="product-title">${prod.name}</div>
             <div class="product-pricing">
@@ -2667,7 +3296,7 @@ function renderStore(page) {
                 ${prod.discount ? `<span class="discount-tag">${prod.discount}</span>` : ''}
                 ${vipDiscount > 0 ? `<span class="discount-tag" style="background:#d29922;">🎫 -${vipDiscount}%</span>` : ''}
             </div>
-            <button class="buy-product-btn" ${state.gems < finalCost ? 'disabled' : ''} onclick="buyProduct(${prod.id})">
+            <button class="buy-product-btn" ${state.gems < finalCost ? 'disabled' : ''} onclick="event.stopPropagation(); buyProduct(${prod.id})">
                 ${prod.isCosmetic ? 'DESBLOQUEAR' : 'COMPRAR'}
             </button>`;
         grid.appendChild(card);
@@ -2686,6 +3315,73 @@ function renderStore(page) {
     document.getElementById('store-vip-count').innerText = state.vipCards;
     document.getElementById('store-vip-bonus').innerText = `x${(1 + state.vipCards * (CONFIG.vipBonusPerCard/100)).toFixed(2)}`;
     document.getElementById('vip-buy-btn').innerText = `Comprar VIP (💎 ${CONFIG.vipCardCost})`;
+}
+
+/* ---- M09: cofre destacado de mejor valor percibido (mayor oro por gema) ---- */
+function bestValueProductId() {
+    const candidates = CONFIG.products.filter(p => !p.isCosmetic && p.gemCost > 0 && p.goldReward > 0);
+    if (!candidates.length) return null;
+    return candidates.reduce((best, p) => (p.goldReward / p.gemCost > best.goldReward / best.gemCost ? p : best), candidates[0]).id;
+}
+
+/* ---- M09: oferta relámpago con temporizador (ciclo determinístico compartido por todos) ---- */
+const FLASH_OFFER_DURATION_MS = 3 * 60 * 60 * 1000; // 3 horas por ciclo
+const FLASH_OFFER_DISCOUNT = 0.30; // 30% extra sobre el precio base
+let flashOfferInterval = null;
+
+function getFlashOfferProduct() {
+    if (!CONFIG.products || !CONFIG.products.length) return null;
+    const cycleIndex = Math.floor(Date.now() / FLASH_OFFER_DURATION_MS);
+    return CONFIG.products[cycleIndex % CONFIG.products.length];
+}
+function flashOfferMsRemaining() {
+    const cycleIndex = Math.floor(Date.now() / FLASH_OFFER_DURATION_MS);
+    const nextBoundary = (cycleIndex + 1) * FLASH_OFFER_DURATION_MS;
+    return Math.max(0, nextBoundary - Date.now());
+}
+function renderFlashOffer() {
+    const prod = getFlashOfferProduct();
+    if (!prod) return;
+    const vipDiscount = state.vipPassActive ? (CONFIG.vipPassStoreDiscount || 0) / 100 : 0;
+    const finalCost = Math.max(1, Math.round(prod.gemCost * (1 - FLASH_OFFER_DISCOUNT) * (1 - vipDiscount)));
+    document.getElementById('flash-offer-icon').innerText = prod.imageUrl ? '🎁' : (prod.isCosmetic ? '🖼️' : '🛍️');
+    document.getElementById('flash-offer-name').innerText = prod.name;
+    document.getElementById('flash-offer-old-price').innerText = `💎 ${prod.gemCost}`;
+    document.getElementById('flash-offer-new-price').innerText = `💎 ${finalCost} · 🪙 ${prod.goldReward}`;
+    updateFlashOfferTimerLabel();
+}
+function updateFlashOfferTimerLabel() {
+    const el = document.getElementById('flash-offer-timer');
+    if (!el) return;
+    const ms = flashOfferMsRemaining();
+    const totalSec = Math.floor(ms / 1000);
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = totalSec % 60;
+    el.innerText = `⏳ ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function startFlashOfferTimer() {
+    stopFlashOfferTimer();
+    flashOfferInterval = setInterval(() => {
+        updateFlashOfferTimerLabel();
+        if (flashOfferMsRemaining() > FLASH_OFFER_DURATION_MS - 1000) renderFlashOffer(); // cambió de ciclo
+    }, 1000);
+}
+function stopFlashOfferTimer() { if (flashOfferInterval) { clearInterval(flashOfferInterval); flashOfferInterval = null; } }
+function buyFlashOffer() {
+    const prod = getFlashOfferProduct();
+    if (!prod) return;
+    const vipDiscount = state.vipPassActive ? (CONFIG.vipPassStoreDiscount || 0) / 100 : 0;
+    const finalCost = Math.max(1, Math.round(prod.gemCost * (1 - FLASH_OFFER_DISCOUNT) * (1 - vipDiscount)));
+    if (state.gems < finalCost) { showToast('❌ No tienes suficientes gemas para la oferta relámpago.'); return; }
+    state.gems -= finalCost;
+    state.gold += prod.goldReward;
+    if (prod.isCosmetic) {
+        const frame = FRAMES.find(f => f.productName === prod.name);
+        if (frame && !state.ownedFrames.includes(frame.id)) state.ownedFrames.push(frame.id);
+    }
+    saveState(); refreshAllUI(); renderStore(currentStorePage);
+    showToast(`⚡ ¡Oferta relámpago canjeada! +${prod.goldReward} 🪙`);
 }
 
 function buyProduct(id) {
@@ -2779,18 +3475,130 @@ const VIP_ICONS = [
     { level:19, icon:'🎆' }, { level:24, icon:'🌠' },
 ];
 
+// ================= M11: MATRIZ DEL PASE VIP (30 NIVELES, CARRIL GRATIS VS. CARRIL DORADO) =================
+const M11_MATRIX = [
+    { lvl:1,  free:{ gold:5000 },                                   vip:{ bayaRara:3, gold:20000 } },
+    { lvl:2,  free:{ bayaComun:1 },                                  vip:{ potenciadorXP:{ mult:1.5, horas:24 } } },
+    { lvl:3,  free:{ gold:8000 },                                   vip:{ huevo:'comun' } },
+    { lvl:4,  free:{ cartonBonus:1 },                               vip:{ gold:40000, bayaRara:5 } },
+    { lvl:5,  free:{ bayaComun:2 },                                  vip:{ escudo:{ horas:48 }, gold:50000 } },
+    { lvl:6,  free:{ gold:10000 },                                  vip:{ fragmento:{ tipo:'rara', cantidad:5 } } },
+    { lvl:7,  free:{ cartonBonus:2 },                               vip:{ bayaRara:8, gold:60000 } },
+    { lvl:8,  free:{ gold:12000 },                                  vip:{ huevo:'raro' } },
+    { lvl:9,  free:{ bayaComun:3 },                                  vip:{ multVelocidad:{ mult:2, dias:3 } } },
+    { lvl:10, free:{ gold:20000 },                                  vip:{ mascotaExclusiva:'mini_dragon', gold:100000 } },
+    { lvl:11, free:{ gold:15000 },                                  vip:{ bayaRara:10 } },
+    { lvl:12, free:{ cartonBonus:1 },                               vip:{ fragmento:{ tipo:'rara', cantidad:10 } } },
+    { lvl:13, free:{ bayaComun:4 },                                  vip:{ gold:120000, escudo:{ dias:3 } } },
+    { lvl:14, free:{ gold:18000 },                                  vip:{ huevo:'epico' } },
+    { lvl:15, free:{ gold:25000 },                                  vip:{ dobleRanuraHabitat:true, gold:150000 } },
+    { lvl:16, free:{ bayaComun:5 },                                  vip:{ bayaRara:15 } },
+    { lvl:17, free:{ gold:20000 },                                  vip:{ potenciadorXP:{ mult:2, horas:48 } } },
+    { lvl:18, free:{ cartonBonus:2 },                               vip:{ gold:180000 } },
+    { lvl:19, free:{ gold:22000 },                                  vip:{ huevo:'epico' } },
+    { lvl:20, free:{ gold:35000 },                                  vip:{ mascotaExclusiva:'zorro_mistico', gold:250000 } },
+    { lvl:21, free:{ bayaComun:6 },                                  vip:{ bayaRara:20, gold:200000 } },
+    { lvl:22, free:{ gold:25000 },                                  vip:{ fragmento:{ tipo:'epica', cantidad:15 } } },
+    { lvl:23, free:{ cartonBonus:3 },                               vip:{ escudo:{ permanent:true } } },
+    { lvl:24, free:{ gold:30000 },                                  vip:{ gold:300000 } },
+    { lvl:25, free:{ bayaComun:8 },                                  vip:{ huevo:'legendario', gold:350000 } },
+    { lvl:26, free:{ gold:35000 },                                  vip:{ fragmento:{ tipo:'legendaria', cantidad:20 } } },
+    { lvl:27, free:{ cartonBonus:3 },                               vip:{ bayaRara:30, gold:400000 } },
+    { lvl:28, free:{ gold:40000 },                                  vip:{ gold:450000, potenciadorXP:{ mult:3, horas:72 } } },
+    { lvl:29, free:{ bayaComun:10 },                                 vip:{ huevo:'legendario', gold:500000 } },
+    { lvl:30, free:{ gold:75000, cartonBonus:5 },                   vip:{ mascotaExclusiva:'fenix_celestial', gold:1000000, marcoPerfilVIP:true } },
+];
+
+const M11_EXCLUSIVE_PETS = {
+    mini_dragon:     { label:'Mini Dragón de Fuego', emoji:'🐲', etapa:'Cría' },
+    zorro_mistico:   { label:'Zorro Místico',         emoji:'🦊', etapa:'Cría' },
+    fenix_celestial: { label:'Fénix Celestial',       emoji:'🔥🐦', etapa:'Nivel Máximo' },
+};
+
+function m11RewardText(r) {
+    if (!r) return '—';
+    const parts = [];
+    if (r.gold) parts.push(`+${r.gold.toLocaleString('es-ES')} 🪙`);
+    if (r.gems) parts.push(`+${r.gems} 💎`);
+    if (r.bayaComun) parts.push(`${r.bayaComun}x 🍇 Baya Común`);
+    if (r.bayaRara) parts.push(`${r.bayaRara}x 🍓 Baya Rara`);
+    if (r.cartonBonus) parts.push(`${r.cartonBonus}x 🃏 Cartón Bonus`);
+    if (r.huevo) parts.push(`1x 🥚 Huevo ${r.huevo.charAt(0).toUpperCase()+r.huevo.slice(1)} de Mascota`);
+    if (r.fragmento) parts.push(`${r.fragmento.cantidad}x ✨ Fragmento de Mascota ${r.fragmento.tipo.charAt(0).toUpperCase()+r.fragmento.tipo.slice(1)}`);
+    if (r.escudo) parts.push(r.escudo.permanent ? '🛡️ Escudo de Ánimo Permanente (Temporada)' : `🛡️ Escudo de Ánimo (${r.escudo.horas ? r.escudo.horas + 'h' : r.escudo.dias + 'd'})`);
+    if (r.multVelocidad) parts.push(`⚡ Multiplicador de Velocidad x${r.multVelocidad.mult} (${r.multVelocidad.dias}d)`);
+    if (r.potenciadorXP) parts.push(`✨ Potenciador x${r.potenciadorXP.mult} XP (${r.potenciadorXP.horas}h)`);
+    if (r.dobleRanuraHabitat) parts.push('🏠 Doble Ranura de Hábitat');
+    if (r.marcoPerfilVIP) parts.push('🖼️ Marco VIP de Perfil');
+    if (r.mascotaExclusiva) { const p = M11_EXCLUSIVE_PETS[r.mascotaExclusiva]; parts.push(`${p.emoji} Mascota Exclusiva "${p.label}" (${p.etapa})`); }
+    return parts.join(' + ');
+}
+
+function grantM11Reward(r) {
+    if (!r) return;
+    if (r.gold) state.gold += r.gold;
+    if (r.gems) state.gems += r.gems;
+    if (r.bayaComun) state.bayasComunes += r.bayaComun;
+    if (r.bayaRara) state.bayasRaras += r.bayaRara;
+    if (r.cartonBonus) state.freeExtraBalls = (state.freeExtraBalls || 0) + r.cartonBonus;
+    if (r.huevo) state.huevosMascota[r.huevo] = (state.huevosMascota[r.huevo] || 0) + 1;
+    if (r.fragmento) state.fragmentosMascota[r.fragmento.tipo] = (state.fragmentosMascota[r.fragmento.tipo] || 0) + r.fragmento.cantidad;
+    if (r.escudo) {
+        if (r.escudo.permanent) { state.escudoAnimoUntil = 'permanent'; }
+        else {
+            const horas = r.escudo.horas || (r.escudo.dias * 24);
+            const until = Date.now() + horas * 3600000;
+            if (state.escudoAnimoUntil !== 'permanent') state.escudoAnimoUntil = Math.max(state.escudoAnimoUntil || 0, until);
+        }
+    }
+    if (r.multVelocidad) { const until = Date.now() + r.multVelocidad.dias * 86400000; state.multiplicadorVelocidadUntil = Math.max(state.multiplicadorVelocidadUntil || 0, until); }
+    if (r.potenciadorXP) { const until = Date.now() + r.potenciadorXP.horas * 3600000; state.potenciadorXPUntil = Math.max(state.potenciadorXPUntil || 0, until); state.potenciadorXPMult = Math.max(state.potenciadorXPMult || 1, r.potenciadorXP.mult); }
+    if (r.dobleRanuraHabitat) state.dobleRanuraHabitat = true;
+    if (r.marcoPerfilVIP) state.marcoPerfilVIP = true;
+    if (r.mascotaExclusiva && !state.mascotasExclusivasVIP.includes(r.mascotaExclusiva)) state.mascotasExclusivasVIP.push(r.mascotaExclusiva);
+}
+
+// Otorga automáticamente la recompensa del Carril Gratuito de un nivel del M11 (llamado al subir de nivel)
+function grantM11FreeForLevel(lvl) {
+    const entry = M11_MATRIX.find(e => e.lvl === lvl);
+    if (!entry) return;
+    grantM11Reward(entry.free);
+    vipToast(`🎁 Nivel ${lvl} · Carril Gratuito: ${m11RewardText(entry.free)}`);
+    if (state.vipPassActive) grantM11GoldForLevel(lvl, true);
+}
+
+// Otorga la recompensa del Carril Dorado de un nivel si el Pase VIP está activo y aún no se reclamó
+function grantM11GoldForLevel(lvl, silent) {
+    if (!state.vipPassActive) return;
+    if (state.vipPassGoldClaimedLevels.includes(lvl)) return;
+    const entry = M11_MATRIX.find(e => e.lvl === lvl);
+    if (!entry) return;
+    grantM11Reward(entry.vip);
+    state.vipPassGoldClaimedLevels.push(lvl);
+    if (!silent) vipToast(`👑 Nivel ${lvl} · Carril Dorado VIP: ${m11RewardText(entry.vip)}`);
+    else vipToast(`👑 Carril Dorado VIP: ${m11RewardText(entry.vip)}`);
+}
+
+// Al activar el Pase VIP, desbloquea de inmediato las recompensas doradas de todos los niveles ya alcanzados
+function unlockM11GoldRetroactive() {
+    for (let l = 1; l <= state.vipPassLevel; l++) grantM11GoldForLevel(l, true);
+}
+
+function m11IsEscudoActive() { return state.escudoAnimoUntil === 'permanent' || (state.escudoAnimoUntil && Date.now() < state.escudoAnimoUntil); }
+function m11IsVelocidadActive() { return state.multiplicadorVelocidadUntil && Date.now() < state.multiplicadorVelocidadUntil; }
+function m11IsPotenciadorXPActive() { return state.potenciadorXPUntil && Date.now() < state.potenciadorXPUntil; }
+function m11TimeLeft(ts) { if (!ts || ts === 'permanent') return ''; const ms = ts - Date.now(); if (ms <= 0) return 'expirado'; const h = Math.floor(ms/3600000); return h >= 24 ? `${Math.floor(h/24)}d ${h%24}h restantes` : `${h}h restantes`; }
+
 function vipXPNeeded() { return CONFIG.vipPassXPPerLevel; }
 
 function vipToast(msg) {
-    const t = document.createElement('div');
-    t.className = 'toast vip-toast'; t.innerText = msg;
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 3200);
+    showToast(msg, 'vip');
 }
 
 function gainVipXP(baseAmount) {
     if (!state || baseAmount <= 0) return 0;
-    const amount = state.vipPassActive ? Math.round(baseAmount * 1.5) : baseAmount; // +50% XP pasivo con pase activo
+    let amount = state.vipPassActive ? Math.round(baseAmount * 1.5) : baseAmount; // +50% XP pasivo con pase activo
+    if (m11IsPotenciadorXPActive()) amount = Math.round(amount * state.potenciadorXPMult); // Potenciador XP del M11 (x1.5/x2/x3 temporal)
     state.vipPassXP += amount;
     let leveledUp = false;
     let guard = 0;
@@ -2813,7 +3621,7 @@ function levelUpVipPass() {
     if (!state.vipPassClaimedLevels.includes(state.vipPassLevel)) state.vipPassClaimedLevels.push(state.vipPassLevel);
     vipToast(`🎫 ¡Nivel de Pase VIP ${state.vipPassLevel}! +${goldReward} 🪙${state.vipPassActive ? ' (recompensa doble)' : ''}`);
 
-    state.freeExtraBalls = (state.freeExtraBalls || 0) + 1; // paquete de comodín gratis por subir de nivel
+    grantM11FreeForLevel(state.vipPassLevel); // M11: recompensa de la matriz de 30 niveles (bayas, huevos, fichas, etc.)
 
     if (state.vipPassLevel % CONFIG.vipPassChestEvery === 0) openVipChest();
 
@@ -2828,6 +3636,8 @@ function levelUpVipPass() {
         state.vipPassCycle += 1;
         state.vipPassLevel = 1;
         state.vipPassClaimedLevels = [];
+        state.vipPassGoldClaimedLevels = [];
+        if (state.escudoAnimoUntil !== 'permanent') state.escudoAnimoUntil = null; // el escudo permanente dura toda la temporada, se reinicia en la nueva
         vipToast(`🔁 ¡Reinicio de Temporada! Ciclo ${state.vipPassCycle} completado. Premio final: +${finalReward} 🪙. Los niveles vuelven a empezar con recompensas renovadas.`);
     }
 }
@@ -2848,6 +3658,7 @@ function buyVipPass() {
     if (state.gems < cost) { showToast('❌ No tienes suficientes gemas para el Pase VIP.'); return; }
     state.gems -= cost;
     state.vipPassActive = true;
+    unlockM11GoldRetroactive(); // desbloquea de inmediato el Carril Dorado de todos los niveles ya alcanzados
     saveState(); refreshAllUI(); renderVipPassScreen();
     vipToast('🎫 ¡Pase VIP activado! Recompensas de nivel dobles, +50% XP, descuentos y más beneficios desbloqueados.');
 }
@@ -2942,6 +3753,46 @@ function renderVipPassScreen() {
         node.className = 'vip-track-node' + (claimed ? ' claimed' : '') + (isChest ? ' chest' : '');
         node.innerHTML = `<span class="lvl-num">${lvl}</span>${isChest ? '🎁' : (claimed ? '✅' : '🔒')}`;
         track.appendChild(node);
+    }
+
+    // M11: inventario de la economía del pase
+    const inv = document.getElementById('vip-m11-inventory');
+    if (inv) {
+        const h = state.huevosMascota, f = state.fragmentosMascota;
+        inv.innerHTML = `
+            <div class="vip-m11-inv-grid">
+                <div>🍇 Bayas Comunes: <strong>${state.bayasComunes}</strong></div>
+                <div>🍓 Bayas Raras: <strong>${state.bayasRaras}</strong></div>
+                <div>🥚 Huevos Común/Raro: <strong>${h.comun}/${h.raro}</strong></div>
+                <div>🥚 Huevos Épico/Legendario: <strong>${h.epico}/${h.legendario}</strong></div>
+                <div>✨ Fragmentos Rara/Épica: <strong>${f.rara}/${f.epica}</strong></div>
+                <div>✨ Fragmentos Legendaria: <strong>${f.legendaria}</strong></div>
+                <div>🏠 Doble Ranura Hábitat: <strong>${state.dobleRanuraHabitat ? 'Sí' : 'No'}</strong></div>
+                <div>🖼️ Marco VIP de Perfil: <strong>${state.marcoPerfilVIP ? 'Sí' : 'No'}</strong></div>
+            </div>
+            <div>🐾 Mascotas exclusivas: ${state.mascotasExclusivasVIP.length ? state.mascotasExclusivasVIP.map(id => M11_EXCLUSIVE_PETS[id].emoji + ' ' + M11_EXCLUSIVE_PETS[id].label).join(', ') : 'Ninguna aún'}</div>
+            ${m11IsEscudoActive() ? `<div class="vip-m11-buff">🛡️ Escudo de Ánimo activo ${state.escudoAnimoUntil === 'permanent' ? '(toda la temporada)' : '(' + m11TimeLeft(state.escudoAnimoUntil) + ')'}</div>` : ''}
+            ${m11IsVelocidadActive() ? `<div class="vip-m11-buff">⚡ Multiplicador de Velocidad activo (${m11TimeLeft(state.multiplicadorVelocidadUntil)})</div>` : ''}
+            ${m11IsPotenciadorXPActive() ? `<div class="vip-m11-buff">✨ Potenciador x${state.potenciadorXPMult} XP activo (${m11TimeLeft(state.potenciadorXPUntil)})</div>` : ''}
+        `;
+    }
+
+    // M11: matriz completa 30 niveles, carril gratis vs. dorado
+    const matrixBox = document.getElementById('vip-m11-matrix');
+    if (matrixBox) {
+        matrixBox.innerHTML = '';
+        M11_MATRIX.forEach(entry => {
+            const reached = state.vipPassLevel >= entry.lvl || state.vipPassClaimedLevels.includes(entry.lvl);
+            const goldClaimed = state.vipPassGoldClaimedLevels.includes(entry.lvl);
+            const row = document.createElement('div');
+            row.className = 'vip-m11-row' + (state.vipPassLevel === entry.lvl ? ' current' : '');
+            row.innerHTML = `
+                <div class="vip-m11-lvl">${entry.lvl}</div>
+                <div class="vip-m11-cell free${reached ? ' claimed' : ''}">${reached ? '✅ ' : '🔒 '}${m11RewardText(entry.free)}</div>
+                <div class="vip-m11-cell gold${!active ? ' locked-gold' : (goldClaimed ? ' claimed' : '')}">${!active ? '🔒 (requiere Pase VIP) ' : (goldClaimed ? '✅ ' : (reached ? '⏳ ' : '🔒 '))}${m11RewardText(entry.vip)}</div>
+            `;
+            matrixBox.appendChild(row);
+        });
     }
 
     // títulos
@@ -3261,8 +4112,8 @@ function renderAdminProducts() {
         row.innerHTML = `
             <div class="row-grid">
                 <input type="text" value="${p.name}" data-field="name" placeholder="Nombre">
-                <input type="number" value="${p.gemCost}" data-field="gemCost" placeholder="Costo en gemas">
-                <input type="number" value="${p.goldReward}" data-field="goldReward" placeholder="Recompensa en oro">
+                <input type="number" value="${p.gemCost}" data-field="gemCost" placeholder="💎 Costo en gemas">
+                <input type="number" value="${p.goldReward}" data-field="goldReward" placeholder="🪙 Recompensa en oro">
                 <input type="text" value="${p.discount || ''}" data-field="discount" placeholder="Etiqueta (opcional)">
             </div>
             <label style="font-size:11px;color:#8b949e;"><input type="checkbox" data-field="isCosmetic" ${p.isCosmetic ? 'checked' : ''}> Es cosmético (no da oro)</label>
@@ -3320,8 +4171,8 @@ function renderAdminRoulette() {
         row.innerHTML = `
             <div class="row-grid">
                 <input type="text" value="${prize.label}" data-field="label" placeholder="Texto del premio">
-                <input type="number" value="${prize.gold}" data-field="gold" placeholder="Oro">
-                <input type="number" value="${prize.gems}" data-field="gems" placeholder="Gemas">
+                <input type="number" value="${prize.gold}" data-field="gold" placeholder="🪙 Oro">
+                <input type="number" value="${prize.gems}" data-field="gems" placeholder="💎 Gemas">
             </div>
             <div style="text-align:right;"><button class="admin-del-btn" onclick="removeRouletteRow(${idx})">Eliminar</button></div>
         `;
@@ -3354,7 +4205,7 @@ function renderAdminMultipliers() {
         row.innerHTML = `
             <div class="row-grid">
                 <input type="number" value="${m.mult}" data-field="mult" placeholder="Multiplicador (ej. 3)">
-                <input type="number" value="${m.cost}" data-field="cost" placeholder="Costo en gemas">
+                <input type="number" value="${m.cost}" data-field="cost" placeholder="💎 Costo en gemas">
             </div>
         `;
         row.dataset.index = idx;
