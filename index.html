@@ -496,14 +496,31 @@
         .admin-img-preview img { width:100%; height:100%; object-fit:cover; }
 
         /* ================= M14/M15: MASCOT ROOM / EVOLUCIÓN ================= */
-        .pet-habitat-scene { position:relative; overflow:hidden; background:radial-gradient(circle at 50% 20%,#1c2333,#0d1117 70%); border:1px solid #30363d; padding:18px 12px 14px; transition:background 1s ease; }
-        .pet-habitat-stage-tag { display:inline-block; background:#1a1300; color:#e6c67a; border:1px solid #3a2a06; border-radius:12px; padding:2px 10px; font-size:11px; font-weight:bold; position:relative; z-index:3; }
-        .pet-habitat-sprite { line-height:1.2; margin:10px 0 4px; transition:transform .2s ease; position:relative; z-index:3; cursor:grab; touch-action:none; user-select:none; display:inline-block; }
+        .pet-habitat-scene { position:relative; overflow:hidden; background:radial-gradient(circle at 50% 20%,#1c2333,#0d1117 70%); border:1px solid #30363d; padding:0; min-height:190px; transition:background 1s ease; }
+        .pet-habitat-stage-tag { display:inline-block; background:#1a1300; color:#e6c67a; border:1px solid #3a2a06; border-radius:12px; padding:2px 10px; font-size:11px; font-weight:bold; }
+        .pet-habitat-sprite { line-height:1.2; position:absolute; left:50%; bottom:10%; transform:translateX(-50%); transition:transform .2s ease; z-index:3; cursor:grab; touch-action:none; user-select:none; display:inline-block; }
         .pet-habitat-sprite.dragging { cursor:grabbing; }
+        .pet-idle-breathe { display:inline-block; animation:petBreathe 3.6s ease-in-out infinite; transform-origin:center bottom; }
+        @keyframes petBreathe { 0%,100%{ transform:scale(1) translateY(0) rotate(0deg); } 45%{ transform:scale(1.03) translateY(-2px) rotate(-1deg); } 75%{ transform:scale(0.99) translateY(1px) rotate(1deg); } }
         .pet-habitat-glow { border-color:#e3b341; box-shadow:0 0 18px rgba(227,179,65,0.35), inset 0 0 24px rgba(227,179,65,0.08); }
         .pet-habitat-glow .pet-habitat-sprite { filter:drop-shadow(0 0 10px rgba(227,179,65,0.75)); }
-        @keyframes petJump { 0%{ transform:translateY(0) scale(1); } 30%{ transform:translateY(-16px) scale(1.05); } 55%{ transform:translateY(0) scale(0.96); } 75%{ transform:translateY(-6px) scale(1.02); } 100%{ transform:translateY(0) scale(1); } }
-        .pet-jump { animation:petJump .6s ease; }
+        @keyframes petJump { 0%{ transform:translateY(0) scale(1); } 30%{ transform:translateY(-14px) scale(1.04); } 55%{ transform:translateY(0) scale(0.97); } 75%{ transform:translateY(-5px) scale(1.01); } 100%{ transform:translateY(0) scale(1); } }
+        .pet-jump { animation:petJump 1.1s ease; }
+        /* --- Vida propia: caminar, aletear, picotear/comer (velocidad pausada, sin movimientos bruscos) --- */
+        @keyframes petWalkBob { 0%,100%{ transform:scale(1) translateY(0) rotate(0deg); } 25%{ transform:scale(1.01,0.99) translateY(-3px) rotate(-2deg); } 75%{ transform:scale(1.01,0.99) translateY(-3px) rotate(2deg); } }
+        .pet-idle-breathe.pet-anim-walk { animation:petWalkBob 1.6s ease-in-out infinite; }
+        @keyframes petFlap { 0%,100%{ transform:scale(1,1) rotate(0deg); } 30%{ transform:scale(1.06,0.94) rotate(-4deg); } 60%{ transform:scale(0.96,1.05) rotate(4deg); } }
+        .pet-idle-breathe.pet-anim-flap { animation:petFlap 1.2s ease-in-out 3; }
+        @keyframes petPeck { 0%,100%{ transform:translateY(0) rotate(0deg); } 35%{ transform:translateY(5px) rotate(6deg); } 60%{ transform:translateY(0) rotate(0deg); } }
+        .pet-idle-breathe.pet-anim-peck { animation:petPeck 1.3s ease-in-out 2; }
+        /* --- Imagen real de la mascota (reemplaza al emoji cuando hay URL cargada en PET_IMAGES) --- */
+        .pet-sprite-img { width:1em; height:1em; object-fit:contain; pointer-events:none; -webkit-user-drag:none; vertical-align:bottom; }
+        .pet-aura-spark { display:inline-block; animation:petAuraSpark 2.4s ease-in-out infinite; }
+        @keyframes petAuraSpark { 0%,100%{ opacity:.7; transform:scale(1); } 50%{ opacity:1; transform:scale(1.15); } }
+        /* --- Franja de información debajo de la escena (sin tapar el hábitat) --- */
+        .ph-info-bar { text-align:center; padding:8px 6px 2px; }
+        .ph-info-bar .ph-breed { font-weight:bold; font-size:14px; margin-top:4px; }
+        .ph-info-bar .ph-desc { font-size:11px; color:#8b949e; margin-bottom:2px; }
 
         /* --- Ciclo día/noche --- */
         .pet-habitat-scene.ph-day.theme-domestica { background:linear-gradient(180deg,#7ec8e3 0%,#bfe6a8 55%,#5a8f3c 100%); }
@@ -535,10 +552,13 @@
         /* --- Suciedad --- */
         .ph-dirt-spot { position:absolute; z-index:2; font-size:13px; opacity:.85; pointer-events:none; }
 
-        .pet-habitat-scene.has-custom-bg { background-color:#0d1117; }
+        .pet-habitat-scene.has-custom-bg { background-color:#0d1117; background-size:cover !important; background-repeat:no-repeat; background-position:center; animation:phBgPan 22s ease-in-out infinite alternate; }
+        @keyframes phBgPan { 0%{ background-position:38% 42%; } 100%{ background-position:62% 58%; } }
         .ph-night-tint { position:absolute; inset:0; z-index:1; pointer-events:none; background:rgba(10,14,30,0); transition:background 1s ease; }
         .pet-habitat-scene.has-custom-bg.ph-dusk .ph-night-tint { background:rgba(120,60,30,0.18); }
         .pet-habitat-scene.has-custom-bg.ph-night .ph-night-tint { background:rgba(6,10,30,0.5); }
+        .ph-tag-corner { position:absolute; top:8px; left:8px; z-index:3; }
+        .pet-world-sprite-active .pet-idle-breathe { filter:drop-shadow(0 0 9px rgba(227,179,65,0.9)); }
 
         /* --- Objeto sorpresa --- */
         .ph-surprise-obj { position:absolute; z-index:3; font-size:20px; cursor:pointer; animation:petSurprisePulse 1.4s ease-in-out infinite; filter:drop-shadow(0 0 6px rgba(255,255,255,0.5)); }
@@ -1059,6 +1079,12 @@
                 </div>
 
                 <div class="admin-group">
+                    <div class="admin-group-title">🐾 Sprites de Mascota (imagen por etapa)</div>
+                    <p style="font-size:11px;color:#8b949e;margin:0 0 8px;">Sube una foto/imagen para cada mascota en cada etapa (Cría / Joven / Adulto). Se sube desde el teléfono (galería o cámara), se guarda en la nube y se sincroniza para todos los usuarios, reemplazando el emoji por defecto.</p>
+                    <div id="admin-pet-sprite-images"></div>
+                </div>
+
+                <div class="admin-group">
                     <div class="admin-group-title">🏠 Fondos del Hábitat de Mascota (imagen ilustrada)</div>
                     <p style="font-size:11px;color:#8b949e;margin:0 0 8px;">Sube una imagen de fondo para cada tipo de hábitat (como jardín, desierto, cumbre, etc.). Se sincroniza para todos los usuarios y reemplaza el fondo animado por defecto; los efectos (partículas, arrastre, sorpresas) se mantienen encima.</p>
                     <div id="admin-pet-habitat-images"></div>
@@ -1165,8 +1191,28 @@
         <button class="nav-item" id="nav-juego" onclick="navTabTo('game-screen')">🎯<br>Bingo</button>
         <button class="nav-item" id="nav-campaña" onclick="navTabTo('campaign-screen')">🗺️<br>Campaña</button>
         <button class="nav-item" id="nav-missions" onclick="navTabTo('missions-screen')">📜<br>Misiones</button>
-        <button class="nav-item" id="nav-pet" onclick="navTabTo('pet-screen')">🐾<br>Mascota</button>
+        <button class="nav-item" id="nav-pet" onclick="openPetWorld()">🐾<br>Mascota</button>
         <button class="nav-item" id="nav-vippass" onclick="navTabTo('vippass-screen')">🎫<br>Pase VIP</button>
+    </div>
+
+    <!-- Mundo de Mascotas: ambiente inmersivo aparte, con zonas/hábitats navegables -->
+    <div id="pet-world-overlay" style="position:fixed;inset:0;background:#05070d;z-index:4200;display:none;flex-direction:column;">
+        <div id="pet-world-loading" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#e6c67a;">
+            <div style="font-size:44px;margin-bottom:14px;">🐾</div>
+            <div style="font-size:13px;color:#8b949e;margin-bottom:14px;">Cargando hábitat...</div>
+            <div style="width:70%;max-width:260px;height:10px;background:#161b22;border:1px solid #30363d;border-radius:6px;overflow:hidden;">
+                <div id="pet-world-progress-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#e3b341,#f0d478);"></div>
+            </div>
+        </div>
+        <div id="pet-world-content" style="display:none;flex:1;flex-direction:column;min-height:0;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 10px;border-bottom:1px solid #21262d;flex-shrink:0;">
+                <button onclick="closePetWorld()" style="background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:8px;padding:7px 12px;font-size:12px;font-weight:bold;flex-shrink:0;">✕ Salir</button>
+                <div id="pet-world-zone-tabs" style="display:flex;gap:6px;overflow-x:auto;"></div>
+                <button onclick="openPetCareTabs()" style="background:#21262d;color:#e6edf3;border:1px solid #30363d;border-radius:8px;padding:7px 10px;font-size:12px;font-weight:bold;flex-shrink:0;">🎒 Cuidados</button>
+            </div>
+            <div id="pet-world-zone-scene" style="flex:1;position:relative;overflow:hidden;min-height:0;"></div>
+            <div id="pet-world-pet-panel" style="display:none;flex-shrink:0;"></div>
+        </div>
     </div>
 
     <!-- Pantalla de carga mientras conecta con Firebase -->
@@ -1244,6 +1290,7 @@ function defaultConfig() {
         roomJackpots: { clasica: 825, oro: 1575, neon: 2500, fuego: 4000, espacial: 6000, aurora: 8000 },
         roomImages: {},
         petHabitatImages: {},
+        petSpriteImages: {},
         vipPassCostGems: 60,
         vipPassXPPerLevel: 100,
         vipPassLevelsPerCycle: 30,
@@ -1485,6 +1532,43 @@ const PET_TYPES = [
     { id:'husky',         tipo:'Perro',  raza:'Husky Siberiano',           icon:'🐺', costGold:0,     costGems:60,  desc:'Raza de alta gama (Exclusiva)' },
     { id:'aguila',        tipo:'Águila', raza:'Águila Real / Imperial',    icon:'🦅', costGold:0,     costGems:100, desc:'Mascota de nivel máximo (Prestigio)' },
 ];
+
+/* =====================================================================
+   IMÁGENES DE MASCOTAS — pegar aquí las URLs de cada imagen
+   Cada mascota tiene 3 etapas (bebé / joven / adulto), igual que
+   PET_EVOLUTION_STAGES más abajo (cria=bebé, joven=joven, adulto=adulto).
+   Dejá '' vacío en la etapa que todavía no tengas: mientras esté vacío,
+   se sigue mostrando el emoji de esa mascota como respaldo automático.
+   Ejemplo: gato_domestico: { cria: 'https://.../gato_bebe.png', joven: '', adulto: '' }
+===================================================================== */
+const PET_IMAGES = {
+    gallo:          { cria: '', joven: '', adulto: '' },
+    gato_domestico: { cria: '', joven: '', adulto: '' },
+    gato_siames:    { cria: '', joven: '', adulto: '' },
+    bulldog:        { cria: '', joven: '', adulto: '' },
+    pastor_aleman:  { cria: '', joven: '', adulto: '' },
+    husky:          { cria: '', joven: '', adulto: '' },
+    aguila:         { cria: '', joven: '', adulto: '' },
+};
+// Devuelve la URL de imagen para esa mascota+etapa, o null si aún no fue cargada (usa emoji de respaldo)
+// Prioridad: 1) imagen subida desde el teléfono en el panel Admin (CONFIG.petSpriteImages, sincronizada por Firebase),
+// 2) URL pegada a mano en PET_IMAGES más arriba, 3) emoji de respaldo.
+function getPetImage(typeId, stageId) {
+    const uploaded = ((CONFIG.petSpriteImages || {})[typeId] || {})[stageId];
+    if (uploaded && uploaded.trim()) return uploaded.trim();
+    const entry = PET_IMAGES[typeId];
+    const url = entry ? entry[stageId] : '';
+    return url && url.trim() ? url.trim() : null;
+}
+// Arma el HTML del sprite: <img> animado si hay imagen cargada para esa etapa, si no el emoji de siempre
+function petSpriteInnerHTML(typeId, stageId, icon, extraClass) {
+    const img = getPetImage(typeId, stageId);
+    const cls = 'pet-idle-breathe' + (extraClass ? ' ' + extraClass : '');
+    if (img) {
+        return `<img src="${img}" class="${cls} pet-sprite-img" alt="mascota" draggable="false">`;
+    }
+    return `<span class="${cls}">${icon}</span>`;
+}
 const PET_FOOD_PACKS = [
     { id:'saco_pequeno',        name:'Saco Pequeño',        raciones:2000,   costGold:500,   desc:'Permite cubrir con soltura los primeros niveles de crecimiento.' },
     { id:'saco_mediano',        name:'Saco Mediano',        raciones:10000,  costGold:2200,  desc:'Ideal para abastecer el crecimiento intermedio y avanzar varios niveles.' },
@@ -1534,25 +1618,247 @@ function petEvolutionStage(lvl) {
     lvl = lvl || 0;
     return PET_EVOLUTION_STAGES.find(s => lvl >= s.minLevel && lvl <= s.maxLevel) || PET_EVOLUTION_STAGES[0];
 }
+/* ---------- M16: Multi-mascota — cada mascota comprada es una instancia propia con su nivel/ánimo ---------- */
+function hasAnyPet() { return !!(state.pets && state.pets.length); }
+function getActivePet() {
+    if (!state.pets || !state.pets.length) return null;
+    let inst = state.pets.find(x => x.id === state.activePetId);
+    if (!inst) { inst = state.pets[0]; state.activePetId = inst.id; }
+    return inst;
+}
+function activePetTypeData() {
+    const inst = getActivePet();
+    return inst ? PET_TYPES.find(t => t.id === inst.typeId) : null;
+}
+function setActivePet(instanceId) {
+    if (!state.pets || !state.pets.find(x => x.id === instanceId)) return;
+    state.activePetId = instanceId;
+    saveState(); refreshAllUI();
+    renderPetScreen(currentPetTab);
+}
+
+/* ---------- M17: Mundo de Mascotas — ambiente aparte con zonas/hábitats navegables ---------- */
+const PET_WORLD_ZONES = [
+    { id: 'domestica', label: '🏡 Granja' },
+    { id: 'rapaz',     label: '🏔️ Cumbres' }
+];
+let currentPetWorldZone = null;
+let petWorldWalkTimers = [];
+let petWorldLoadTimer = null;
+
+function ownedThemesSet() {
+    const set = new Set();
+    (state.pets || []).forEach(inst => {
+        const t = PET_TYPES.find(x => x.id === inst.typeId);
+        if (t) set.add(petHabitatTheme(t));
+    });
+    return set;
+}
+
+function openPetWorld() {
+    const overlay = document.getElementById('pet-world-overlay');
+    const loading = document.getElementById('pet-world-loading');
+    const content = document.getElementById('pet-world-content');
+    const bar = document.getElementById('pet-world-progress-bar');
+    if (!overlay) return;
+    stopHabitatAutoWalk();
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('nav-pet').classList.add('active');
+    overlay.style.display = 'flex';
+    loading.style.display = 'flex';
+    content.style.display = 'none';
+    if (bar) bar.style.width = '0%';
+    let pct = 0;
+    if (petWorldLoadTimer) clearInterval(petWorldLoadTimer);
+    petWorldLoadTimer = setInterval(() => {
+        pct += 9 + Math.random() * 12;
+        if (pct >= 100) {
+            pct = 100;
+            clearInterval(petWorldLoadTimer);
+            petWorldLoadTimer = null;
+            if (bar) bar.style.width = '100%';
+            setTimeout(() => {
+                loading.style.display = 'none';
+                content.style.display = 'flex';
+                applyPetMoodDecay();
+                const themes = [...ownedThemesSet()];
+                const activeT = getActivePet() ? PET_TYPES.find(t => t.id === getActivePet().typeId) : null;
+                currentPetWorldZone = activeT ? petHabitatTheme(activeT) : (themes[0] || 'domestica');
+                renderPetWorldZoneTabs();
+                renderPetWorldZone(currentPetWorldZone);
+            }, 220);
+        }
+        if (bar) bar.style.width = pct + '%';
+    }, 110);
+}
+
+function closePetWorld() {
+    stopPetWorldWalk();
+    if (petWorldLoadTimer) { clearInterval(petWorldLoadTimer); petWorldLoadTimer = null; }
+    const overlay = document.getElementById('pet-world-overlay');
+    if (overlay) overlay.style.display = 'none';
+    navTabTo('main-screen');
+}
+
+function openPetCareTabs() {
+    stopPetWorldWalk();
+    if (petWorldLoadTimer) { clearInterval(petWorldLoadTimer); petWorldLoadTimer = null; }
+    const overlay = document.getElementById('pet-world-overlay');
+    if (overlay) overlay.style.display = 'none';
+    navTabTo('pet-screen');
+}
+
+function renderPetWorldZoneTabs() {
+    const wrap = document.getElementById('pet-world-zone-tabs');
+    if (!wrap) return;
+    const owned = ownedThemesSet();
+    wrap.innerHTML = PET_WORLD_ZONES.map(z => `
+        <button onclick="switchPetWorldZone('${z.id}')" style="background:${currentPetWorldZone === z.id ? '#e3b341' : '#161b22'};color:${currentPetWorldZone === z.id ? '#1a1300' : '#8b949e'};border:1px solid ${currentPetWorldZone === z.id ? '#e3b341' : '#30363d'};border-radius:14px;padding:6px 12px;font-size:11px;font-weight:bold;white-space:nowrap;opacity:${owned.has(z.id) ? 1 : 0.5};">${z.label}</button>
+    `).join('');
+}
+
+function switchPetWorldZone(zoneId) {
+    currentPetWorldZone = zoneId;
+    renderPetWorldZoneTabs();
+    renderPetWorldZone(zoneId);
+}
+
+function stopPetWorldWalk() {
+    petWorldWalkTimers.forEach(t => clearInterval(t));
+    petWorldWalkTimers = [];
+}
+
+function renderPetWorldZone(theme) {
+    stopPetWorldWalk();
+    const scene = document.getElementById('pet-world-zone-scene');
+    const panel = document.getElementById('pet-world-pet-panel');
+    if (!scene) return;
+    const phase = dayNightPhase();
+    const habitatImgUrl = (CONFIG.petHabitatImages || {})[theme];
+    const petsHere = (state.pets || []).filter(inst => {
+        const t = PET_TYPES.find(x => x.id === inst.typeId);
+        return t && petHabitatTheme(t) === theme;
+    });
+    // El "escenario" ahora es una isla de proporción fija, centrada, sin estirarse ni repetirse en mosaico
+    scene.style.cssText = 'flex:1;position:relative;overflow:hidden;min-height:0;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 30%,#111a2e,#05070d 75%);padding:10px;';
+    if (!petsHere.length) {
+        scene.innerHTML = `<div style="text-align:center;color:#8b949e;font-size:13px;padding:20px;">Aún no tienes mascotas en esta zona.<br>Adóptalas desde 🎒 Cuidados → Adoptar.</div>`;
+        panel.style.display = 'none';
+        return;
+    }
+    // Zona segura donde caminan las mascotas: solo dentro del "corral" visible de la isla, nunca fuera del marco
+    scene.innerHTML = `
+        <div id="pw-island" class="pet-habitat-scene ${habitatImgUrl ? 'has-custom-bg' : ''} theme-${theme} ${phase.cls}" style="position:relative;width:100%;max-width:480px;aspect-ratio:4/3;max-height:100%;border-radius:14px;${habitatImgUrl ? `background-image:url('${habitatImgUrl}');` : ''}">
+            <div class="ph-stars"></div>
+            <span class="ph-sun-moon">${phase.icon}</span>
+            ${habitatImgUrl ? `<div class="ph-night-tint"></div>` : `<div class="ph-parallax-far"></div><div class="ph-ground"></div>`}
+            <div class="ph-particle-layer">${petParticlesHTML(theme)}${petCloudsHTML(theme)}</div>
+            <div id="pw-safe-zone" style="position:absolute;left:18%;right:18%;bottom:14%;top:42%;">
+                ${petsHere.map((inst, i) => {
+                    const t = PET_TYPES.find(x => x.id === inst.typeId);
+                    const stageInfo = petEvolutionStage(inst.level || 0);
+                    const active = inst.id === state.activePetId;
+                    const leftPct = petsHere.length > 1 ? (i * (100 / (petsHere.length - 1))) : 50;
+                    return `<div class="pet-world-sprite ${active ? 'pet-world-sprite-active' : ''}" id="pw-sprite-${inst.id}" onclick="selectPetWorldPet('${inst.id}')" style="position:absolute;bottom:${10 + (i % 3) * 22}%;left:${Math.min(96, Math.max(4, leftPct))}%;font-size:${Math.round(30 * stageInfo.scale)}px;transform:translateX(-50%);z-index:3;cursor:pointer;line-height:1.2;">
+                        ${t ? petSpriteInnerHTML(t.id, stageInfo.id, t.icon) : `<span class="pet-idle-breathe">🐾</span>`}${inst.auraUnlocked ? ' <span class="pet-aura-spark">✨</span>' : ''}
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    `;
+    startPetWorldWalk(petsHere.map(p => p.id));
+    if (state.activePetId && petsHere.find(p => p.id === state.activePetId)) {
+        renderPetWorldPanel(state.activePetId);
+    } else {
+        panel.style.display = 'none';
+    }
+}
+
+function startPetWorldWalk(instanceIds) {
+    instanceIds.forEach((id, idx) => {
+        const timer = setInterval(() => {
+            const el = document.getElementById('pw-sprite-' + id);
+            if (!el) return;
+            const inner = el.querySelector('.pet-idle-breathe');
+            const minLeft = 4, maxLeft = 96, minBottom = 4, maxBottom = 88;
+            const roll = Math.random();
+            if (roll < 0.6) {
+                const newLeftPct = minLeft + Math.random() * (maxLeft - minLeft);
+                const newBottomPct = minBottom + Math.random() * (maxBottom - minBottom);
+                const curLeft = parseFloat(el.style.left) || 50;
+                const facingLeft = newLeftPct < curLeft;
+                el.style.transition = 'left 1.7s ease-in-out, bottom 1.7s ease-in-out';
+                el.style.left = newLeftPct + '%';
+                el.style.bottom = newBottomPct + '%';
+                el.style.transform = `translateX(-50%) scaleX(${facingLeft ? -1 : 1})`;
+                if (inner) { inner.classList.remove('pet-anim-flap', 'pet-anim-peck'); void inner.offsetWidth; inner.classList.add('pet-anim-walk'); }
+            } else if (roll < 0.82) {
+                if (inner) { inner.classList.remove('pet-anim-walk', 'pet-anim-peck'); void inner.offsetWidth; inner.classList.add('pet-anim-flap'); }
+            } else {
+                if (inner) { inner.classList.remove('pet-anim-walk', 'pet-anim-flap'); void inner.offsetWidth; inner.classList.add('pet-anim-peck'); }
+            }
+        }, 2100 + idx * 380); // desfasadas para que no se muevan todas igual
+        petWorldWalkTimers.push(timer);
+    });
+}
+
+function selectPetWorldPet(instanceId) {
+    if (!state.pets || !state.pets.find(x => x.id === instanceId)) return;
+    state.activePetId = instanceId;
+    saveState();
+    document.querySelectorAll('.pet-world-sprite').forEach(el => el.classList.remove('pet-world-sprite-active'));
+    const el = document.getElementById('pw-sprite-' + instanceId);
+    if (el) el.classList.add('pet-world-sprite-active');
+    renderPetWorldPanel(instanceId);
+}
+
+function renderPetWorldPanel(instanceId) {
+    const panel = document.getElementById('pet-world-pet-panel');
+    if (!panel) return;
+    const inst = (state.pets || []).find(x => x.id === instanceId);
+    const t = inst ? PET_TYPES.find(x => x.id === inst.typeId) : null;
+    if (!inst || !t) { panel.style.display = 'none'; return; }
+    const mood = inst.mood || { hambre: 100, felicidad: 100, higiene: 100 };
+    panel.style.cssText = 'display:block;flex-shrink:0;padding:10px 12px 14px;border-top:1px solid #21262d;background:#0d1117;';
+    const bar = (icon, val, color) => `
+        <div style="flex:1;">
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:#8b949e;"><span>${icon}</span><span>${Math.round(val)}%</span></div>
+            <div class="progress-container" style="height:6px;"><div class="progress-bar" style="width:${val}%;background:${color};height:6px;"></div></div>
+        </div>`;
+    panel.innerHTML = `
+        <div style="font-weight:bold;font-size:13px;margin-bottom:6px;">${t.icon} ${t.raza} — Nv.${inst.level || 0}</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+            ${bar('🍗', mood.hambre, '#e3b341')}
+            ${bar('💗', mood.felicidad, '#f778ba')}
+            ${bar('🧼', mood.higiene, '#58a6ff')}
+        </div>
+        <div style="display:flex;gap:6px;">
+            <button class="game-action-btn" style="flex:1;padding:8px 4px;font-size:11px;" onclick="habitatFeed(); renderPetWorldPanel('${inst.id}')">🍇 Alimentar</button>
+            <button class="game-action-btn" style="flex:1;padding:8px 4px;font-size:11px;" onclick="habitatPlay(); renderPetWorldPanel('${inst.id}')">🎾 Jugar</button>
+            <button class="game-action-btn" style="flex:1;padding:8px 4px;font-size:11px;" onclick="habitatGroom(); renderPetWorldPanel('${inst.id}')">🛁 Bañar</button>
+        </div>`;
+}
 // Mood del "Mascot Room": decae con el tiempo y se restaura con Alimentar/Jugar/Higiene
 const PET_MOOD_DECAY_PER_HOUR = 4; // puntos que baja cada stat por hora transcurrida
 function applyPetMoodDecay() {
-    if (!state || !state.petOwned) return;
-    if (!state.petMood) state.petMood = { hambre: 100, felicidad: 100, higiene: 100 };
+    const inst = getActivePet();
+    if (!state || !inst) return;
+    if (!inst.mood) inst.mood = { hambre: 100, felicidad: 100, higiene: 100 };
     const now = Date.now();
-    if (!state.petLastMoodTs) { state.petLastMoodTs = now; return; }
-    const hours = (now - state.petLastMoodTs) / 3600000;
+    if (!inst.lastMoodTs) { inst.lastMoodTs = now; return; }
+    const hours = (now - inst.lastMoodTs) / 3600000;
     if (hours < 0.02) return; // evita recalcular en cada click
     const drop = Math.min(100, hours * PET_MOOD_DECAY_PER_HOUR);
-    state.petMood.hambre = Math.max(0, state.petMood.hambre - drop);
-    state.petMood.felicidad = Math.max(0, state.petMood.felicidad - drop);
-    state.petMood.higiene = Math.max(0, state.petMood.higiene - drop * 0.7);
-    state.petLastMoodTs = now;
+    inst.mood.hambre = Math.max(0, inst.mood.hambre - drop);
+    inst.mood.felicidad = Math.max(0, inst.mood.felicidad - drop);
+    inst.mood.higiene = Math.max(0, inst.mood.higiene - drop * 0.7);
+    inst.lastMoodTs = now;
     saveState();
 }
 function petMoodAverage() {
-    if (!state.petMood) return 100;
-    const m = state.petMood;
+    const inst = getActivePet();
+    if (!inst || !inst.mood) return 100;
+    const m = inst.mood;
     return Math.round((m.hambre + m.felicidad + m.higiene) / 3);
 }
 
@@ -1610,8 +1916,9 @@ function maybeSpawnHabitatSurprise(theme) {
     if (Math.random() < 0.35) habitatSurprise = { icon: theme === 'rapaz' ? '🐇' : '🦋', top: 18 + Math.random() * 22, left: 15 + Math.random() * 60 };
 }
 function collectHabitatSurprise() {
-    if (!habitatSurprise || !state.petOwned) return;
-    state.petMood.felicidad = Math.min(100, state.petMood.felicidad + 8);
+    const inst = getActivePet();
+    if (!habitatSurprise || !inst) return;
+    inst.mood.felicidad = Math.min(100, inst.mood.felicidad + 8);
     habitatSurprise = null;
     petPlaySound(880); petVibrate(20);
     saveState(); refreshAllUI();
@@ -1621,31 +1928,83 @@ function collectHabitatSurprise() {
 function attachPetDragHandlers() {
     const sprite = document.getElementById('habitat-pet-sprite');
     if (!sprite) return;
-    let dragging = false, startX = 0, startY = 0;
+    let dragging = false, startX = 0, startY = 0, baseX = 0;
     sprite.onpointerdown = (e) => {
         dragging = true;
+        stopHabitatAutoWalk();
+        habitatPlayIdleAnim(null);
         sprite.classList.add('dragging');
+        sprite.style.transition = 'none';
         try { sprite.setPointerCapture(e.pointerId); } catch (err) {}
+        baseX = habitatSpriteX;
         startX = e.clientX; startY = e.clientY;
         petVibrate(15);
     };
     sprite.onpointermove = (e) => {
         if (!dragging) return;
-        const dx = Math.max(-70, Math.min(70, e.clientX - startX));
-        const dy = Math.max(-40, Math.min(40, e.clientY - startY));
-        sprite.style.transform = `translate(${dx}px, ${dy}px)`;
+        const wrapEl = document.getElementById('habitat-scene-wrap');
+        const maxOffset = wrapEl ? wrapEl.clientWidth * 0.42 : 90;
+        const dx = Math.max(-maxOffset, Math.min(maxOffset, baseX + (e.clientX - startX)));
+        const dy = Math.max(-30, Math.min(30, e.clientY - startY));
+        sprite.style.transform = `translateX(calc(-50% + ${dx}px)) translateY(${dy}px)`;
     };
     const endDrag = () => {
         if (!dragging) return;
         dragging = false;
         sprite.classList.remove('dragging');
+        sprite.style.transition = '';
         sprite.style.transform = '';
+        habitatSpriteX = 0;
         petPlaySound(520);
         showToast('😮 ¡Tu mascota se sorprende cuando la tomas y la mueves!');
+        startHabitatAutoWalk();
     };
     sprite.onpointerup = endDrag;
     sprite.onpointercancel = endDrag;
     sprite.onpointerleave = () => { if (dragging) endDrag(); };
+}
+
+/* ---------- Movimiento propio de la mascota en su hábitat (vida autónoma) ---------- */
+let habitatAutoWalkTimer = null;
+let habitatSpriteX = 0;
+function stopHabitatAutoWalk() {
+    if (habitatAutoWalkTimer) { clearInterval(habitatAutoWalkTimer); habitatAutoWalkTimer = null; }
+}
+function habitatPlayIdleAnim(kind) {
+    const sprite = document.getElementById('habitat-pet-sprite');
+    const inner = sprite ? sprite.querySelector('.pet-idle-breathe') : null;
+    if (!inner) return;
+    inner.classList.remove('pet-anim-walk', 'pet-anim-flap', 'pet-anim-peck');
+    void inner.offsetWidth;
+    if (kind) inner.classList.add(kind);
+}
+function startHabitatAutoWalk() {
+    stopHabitatAutoWalk();
+    habitatSpriteX = 0;
+    // Ciclo corto: la mascota siempre está "viva" — camina de un lado a otro del hábitat,
+    // y de vez en cuando aletea o picotea/come en el sitio, en vez de quedarse estática.
+    habitatAutoWalkTimer = setInterval(() => {
+        const wrapEl = document.getElementById('habitat-scene-wrap');
+        const sprite = document.getElementById('habitat-pet-sprite');
+        if (!sprite || !wrapEl) { stopHabitatAutoWalk(); return; }
+        if (sprite.classList.contains('dragging')) return;
+        const roll = Math.random();
+        if (roll < 0.62) {
+            // Caminar a otro punto del hábitat (pisando de un lado a otro)
+            const maxOffset = Math.max(40, wrapEl.clientWidth * 0.32);
+            let newX = Math.round((Math.random() * 2 - 1) * maxOffset);
+            if (Math.abs(newX - habitatSpriteX) < 20) newX = newX + (newX >= 0 ? 20 : -20);
+            const facingLeft = newX < habitatSpriteX;
+            habitatSpriteX = newX;
+            sprite.style.transition = 'transform 1.6s ease-in-out';
+            sprite.style.transform = `translateX(calc(-50% + ${newX}px)) scaleX(${facingLeft ? -1 : 1})`;
+            habitatPlayIdleAnim('pet-anim-walk');
+        } else if (roll < 0.82) {
+            habitatPlayIdleAnim('pet-anim-flap'); // mueve/agita las alas
+        } else {
+            habitatPlayIdleAnim('pet-anim-peck'); // picotea/come algo del hábitat
+        }
+    }, 2200);
 }
 
 function playerLevel(p) { return 1 + Math.floor((p.totalWins || 0) / 5); }
@@ -1692,7 +2051,8 @@ function vipRankXPBonusPercent() {
     return rank > 0 ? VIP_RANK_XP_BONUS[rank - 1] : 0;
 }
 function petXPBonusPercent() {
-    const lvl = Math.min(state.petLevel || 0, PET_XP_BONUS.length);
+    const inst = getActivePet();
+    const lvl = Math.min((inst && inst.level) || 0, PET_XP_BONUS.length);
     return lvl > 0 ? PET_XP_BONUS[lvl - 1] : 0;
 }
 function xpBonusMultiplier() {
@@ -1810,6 +2170,23 @@ function ensurePlayerDefaults(p) {
     if (p.petStage === undefined) p.petStage = 0;
     if (p.petUnlockedReactions === undefined) p.petUnlockedReactions = [];
     if (p.unlockedRooms === undefined) p.unlockedRooms = ['clasica'];
+    // Migración: de "una sola mascota" a lista de mascotas (compra múltiple sin límite, M16)
+    if (p.pets === undefined) p.pets = [];
+    if (p.activePetId === undefined) p.activePetId = null;
+    if ((!p.pets || p.pets.length === 0) && p.petOwned) {
+        const legacyId = 'legacy_' + p.petOwned;
+        p.pets = [{
+            id: legacyId,
+            typeId: p.petOwned,
+            level: p.petLevel || 0,
+            stage: p.petStage || 0,
+            mood: p.petMood || { hambre: 100, felicidad: 100, higiene: 100 },
+            lastMoodTs: p.petLastMoodTs || null,
+            auraUnlocked: !!p.petAuraUnlocked
+        }];
+        p.activePetId = legacyId;
+    }
+    if (!p.activePetId && p.pets && p.pets.length) p.activePetId = p.pets[0].id;
     return p;
 }
 
@@ -2450,6 +2827,7 @@ function navTabTo(screenId) {
 }
 function goToScreen(screenId, isReplace) {
     stopAutoBingo();
+    stopHabitatAutoWalk();
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
 
@@ -2651,7 +3029,7 @@ function updateBonusSummary() {
     const petBonus = petBonusMultiplier();
     const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { label: 'Sencillo', cost: 0, mult: 1 };
     const el = document.getElementById('bonus-summary');
-    if (el) el.innerText = `Bonus VIP: x${vipBonus.toFixed(2)} · 🐾 Mascota Nv.${state.petLevel || 0}/20: +${((petBonus - 1) * 100).toFixed(0)}% · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'} · Apuesta: ${tier.label} (x${tier.mult}${tier.cost > 0 ? ', costo 🪙' + tier.cost : ''})`;
+    if (el) el.innerText = `Bonus VIP: x${vipBonus.toFixed(2)} · 🐾 Mascota Nv.${(getActivePet() && getActivePet().level) || 0}/20: +${((petBonus - 1) * 100).toFixed(0)}% · Multiplicador extra: ${pendingMultiplier > 1 ? 'x' + pendingMultiplier : 'Ninguno'} · Apuesta: ${tier.label} (x${tier.mult}${tier.cost > 0 ? ', costo 🪙' + tier.cost : ''})`;
     updateRiskReturnBox();
 }
 
@@ -2970,8 +3348,9 @@ function buyExtraBall(cardIndex) {
 }
 
 function petHelpMaxUses() {
-    if (!state || !state.petOwned) return 0;
-    return 1 + Math.floor((state.petLevel || 0) / 5); // 1 uso base, +1 cada 5 niveles de mascota
+    const inst = getActivePet();
+    if (!state || !inst) return 0;
+    return 1 + Math.floor((inst.level || 0) / 5); // 1 uso base, +1 cada 5 niveles de mascota
 }
 
 function renderPetHelpButton() {
@@ -2980,7 +3359,7 @@ function renderPetHelpButton() {
     const usesEl = document.getElementById('pet-help-uses');
     const buyBtn = document.getElementById('pet-help-buy-btn');
     if (!widget || !btn || !usesEl || !state) return;
-    if (!state.petOwned) { widget.style.display = 'none'; return; }
+    if (!hasAnyPet()) { widget.style.display = 'none'; return; }
     widget.style.display = 'block';
     usesEl.innerText = petHelpUsesLeft;
     btn.disabled = petHelpUsesLeft <= 0;
@@ -2991,7 +3370,7 @@ function renderPetHelpButton() {
 }
 
 function buyPetHelpExtra() {
-    if (!state || !state.petOwned) { showToast('❌ Necesitas una mascota para comprar ayuda extra.'); return; }
+    if (!state || !hasAnyPet()) { showToast('❌ Necesitas una mascota para comprar ayuda extra.'); return; }
     const cost = CONFIG.petHelpExtraCostGems || 0;
     if (state.gems < cost) { showToast(`❌ No tienes suficientes gemas para la ayuda extra (💎 ${cost}).`); return; }
     state.gems -= cost;
@@ -3002,7 +3381,7 @@ function buyPetHelpExtra() {
 }
 
 function activatePetHelp() {
-    if (!state || !state.petOwned) { showToast('❌ Necesitas una mascota para usar esta ayuda.'); return; }
+    if (!state || !hasAnyPet()) { showToast('❌ Necesitas una mascota para usar esta ayuda.'); return; }
     if (petHelpUsesLeft <= 0) { showToast('🐾 Tu mascota ya usó su ayuda en esta ronda.'); return; }
 
     // Prioriza el cartón más cerca de ganar; si no hay ninguno "a punto", marca una casilla libre de un cartón activo
@@ -3028,21 +3407,29 @@ function activatePetHelp() {
 }
 
 function petBonusMultiplier() {
-    const lvl = Math.min(state.petLevel || 0, 20);
+    const inst = getActivePet();
+    const lvl = Math.min((inst && inst.level) || 0, 20);
     return 1 + 0.01 * lvl;
 }
 
 function buyPetType(petId) {
     const pet = PET_TYPES.find(p => p.id === petId);
     if (!pet) return;
-    if (state.petOwned) { showToast('❌ Ya tienes una mascota. Vende o cambia primero desde soporte.'); return; }
     if (pet.costGold > 0 && state.gold < pet.costGold) { showToast(`❌ Necesitas 🪙 ${pet.costGold} para adoptar a ${pet.raza}.`); return; }
     if (pet.costGems > 0 && state.gems < pet.costGems) { showToast(`❌ Necesitas 💎 ${pet.costGems} para adoptar a ${pet.raza}.`); return; }
     if (pet.costGold > 0) state.gold -= pet.costGold;
     if (pet.costGems > 0) state.gems -= pet.costGems;
-    state.petOwned = petId;
-    state.petLevel = 0;
-    state.petStage = 0;
+    const newPet = {
+        id: 'p_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
+        typeId: petId,
+        level: 0,
+        stage: 0,
+        mood: { hambre: 100, felicidad: 100, higiene: 100 },
+        lastMoodTs: Date.now(),
+        auraUnlocked: false
+    };
+    state.pets.push(newPet);
+    state.activePetId = newPet.id; // la recién comprada pasa a ser la activa
     saveState(); refreshAllUI();
     showToast(`🐾 ¡Adoptaste a tu ${pet.raza}!`);
     renderPetScreen('adoptar');
@@ -3060,18 +3447,19 @@ function buyFoodPack(packId) {
 }
 
 function feedPetStage() {
-    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
-    if ((state.petLevel || 0) >= 20) { showToast('🐾 Tu mascota ya está en el nivel máximo (20).'); return; }
-    const levelData = PET_LEVELS[state.petLevel];
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota.'); return; }
+    if ((inst.level || 0) >= 20) { showToast('🐾 Tu mascota ya está en el nivel máximo (20).'); return; }
+    const levelData = PET_LEVELS[inst.level];
     if (state.petRations < levelData.etapaCost) { showToast(`❌ Necesitas ${levelData.etapaCost.toLocaleString('es')} raciones para alimentar esta etapa.`); return; }
     state.petRations -= levelData.etapaCost;
-    state.petStage = (state.petStage || 0) + 1;
-    if (state.petStage >= 5) {
-        state.petStage = 0;
-        state.petLevel += 1;
-        showToast(`🐾 ¡Tu mascota subió a nivel ${state.petLevel}! Bono: +${PET_LEVELS[state.petLevel - 1].bonusPercent}% monedas.`);
+    inst.stage = (inst.stage || 0) + 1;
+    if (inst.stage >= 5) {
+        inst.stage = 0;
+        inst.level += 1;
+        showToast(`🐾 ¡Tu mascota subió a nivel ${inst.level}! Bono: +${PET_LEVELS[inst.level - 1].bonusPercent}% monedas.`);
     } else {
-        showToast(`🍽️ Etapa alimentada (${state.petStage}/5).`);
+        showToast(`🍽️ Etapa alimentada (${inst.stage}/5).`);
     }
     saveState(); refreshAllUI();
     renderPetScreen('progreso');
@@ -3079,22 +3467,25 @@ function feedPetStage() {
 
 /* ---------- M14: "Mascot Room" — hábitat, alimentación, juego y aseo ---------- */
 function habitatFeed() {
-    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota.'); return; }
     applyPetMoodDecay();
     if ((state.bayasComunes || 0) < 1 && (state.bayasRaras || 0) < 1) { showToast('❌ Necesitas 🍇 Bayas para alimentar a tu mascota (consíguelas en la Ruleta Diaria o el Pase VIP).'); return; }
-    if (state.bayasComunes > 0) { state.bayasComunes -= 1; state.petMood.hambre = Math.min(100, state.petMood.hambre + 15); }
-    else { state.bayasRaras -= 1; state.petMood.hambre = Math.min(100, state.petMood.hambre + 35); state.petMood.felicidad = Math.min(100, state.petMood.felicidad + 5); }
-    state.petLastMoodTs = Date.now();
+    if (state.bayasComunes > 0) { state.bayasComunes -= 1; inst.mood.hambre = Math.min(100, inst.mood.hambre + 15); }
+    else { state.bayasRaras -= 1; inst.mood.hambre = Math.min(100, inst.mood.hambre + 35); inst.mood.felicidad = Math.min(100, inst.mood.felicidad + 5); }
+    inst.lastMoodTs = Date.now();
     petPlaySound(440); petVibrate(15);
     saveState(); refreshAllUI();
     showToast('🍇 ¡Le diste de comer a tu mascota!');
     renderPetScreen('habitat');
+    habitatPlayIdleAnim('pet-anim-peck');
 }
 function habitatPlay() {
-    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota.'); return; }
     applyPetMoodDecay();
-    state.petMood.felicidad = Math.min(100, state.petMood.felicidad + 15);
-    state.petLastMoodTs = Date.now();
+    inst.mood.felicidad = Math.min(100, inst.mood.felicidad + 15);
+    inst.lastMoodTs = Date.now();
     petPlaySound(740); petVibrate(20);
     saveState(); refreshAllUI();
     const el = document.getElementById('habitat-pet-sprite');
@@ -3103,10 +3494,11 @@ function habitatPlay() {
     renderPetScreen('habitat');
 }
 function habitatGroom() {
-    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota.'); return; }
     applyPetMoodDecay();
-    state.petMood.higiene = Math.min(100, state.petMood.higiene + 25);
-    state.petLastMoodTs = Date.now();
+    inst.mood.higiene = Math.min(100, inst.mood.higiene + 25);
+    inst.lastMoodTs = Date.now();
     petPlaySound(330); petVibrate(15);
     saveState(); refreshAllUI();
     showToast('🛁 ¡Tu mascota quedó limpia e higiénica!');
@@ -3115,15 +3507,16 @@ function habitatGroom() {
 // Incubar huevos del Pase VIP (M11) para convertirlos en raciones + progreso de nivel de mascota
 const PET_EGG_VALUE = { comun: { raciones:300, xpEtapas:1 }, raro: { raciones:900, xpEtapas:2 }, epico: { raciones:2200, xpEtapas:3 }, legendario: { raciones:5000, xpEtapas:5 } };
 function incubarHuevo(tipo) {
-    if (!state.petOwned) { showToast('❌ Primero adopta una mascota para incubar huevos.'); return; }
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota para incubar huevos.'); return; }
     if (!state.huevosMascota || (state.huevosMascota[tipo] || 0) <= 0) { showToast('❌ No tienes huevos de ese tipo.'); return; }
     const val = PET_EGG_VALUE[tipo];
     state.huevosMascota[tipo] -= 1;
     state.petRations = (state.petRations || 0) + val.raciones;
     for (let i = 0; i < val.xpEtapas; i++) {
-        if ((state.petLevel || 0) >= 20) break;
-        state.petStage = (state.petStage || 0) + 1;
-        if (state.petStage >= 5) { state.petStage = 0; state.petLevel += 1; }
+        if ((inst.level || 0) >= 20) break;
+        inst.stage = (inst.stage || 0) + 1;
+        if (inst.stage >= 5) { inst.stage = 0; inst.level += 1; }
     }
     saveState(); refreshAllUI();
     showToast(`🥚 ¡Incubaste un huevo ${tipo}! +${val.raciones.toLocaleString('es')} raciones.`);
@@ -3135,7 +3528,9 @@ function totalFragmentosMascota() {
     return (f.rara || 0) + (f.epica || 0) + (f.legendaria || 0);
 }
 function canjearFragmentosAura() {
-    if (state.petAuraUnlocked) { showToast('✅ Ya tienes el Aura Legendaria desbloqueada.'); return; }
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota.'); return; }
+    if (inst.auraUnlocked) { showToast('✅ Ya tienes el Aura Legendaria desbloqueada.'); return; }
     if (totalFragmentosMascota() < 10) { showToast('❌ Necesitas 10 fragmentos de mascota en total para el Aura.'); return; }
     let restante = 10;
     ['rara','epica','legendaria'].forEach(k => {
@@ -3143,7 +3538,7 @@ function canjearFragmentosAura() {
         state.fragmentosMascota[k] -= use;
         restante -= use;
     });
-    state.petAuraUnlocked = true;
+    inst.auraUnlocked = true;
     saveState(); refreshAllUI();
     showToast('✨ ¡Desbloqueaste el Aura Legendaria para tu mascota!');
     renderPetScreen('habitat');
@@ -3152,7 +3547,8 @@ function canjearFragmentosAura() {
 function buyReaction(reactionId) {
     const reaction = PET_REACTIONS.find(r => r.id === reactionId);
     if (!reaction) return;
-    if (!state.petOwned) { showToast('❌ Primero adopta una mascota.'); return; }
+    const inst = getActivePet();
+    if (!inst) { showToast('❌ Primero adopta una mascota.'); return; }
     if (reaction.type === 'permanent') {
         if ((state.petUnlockedReactions || []).includes(reactionId)) { showToast('✅ Ya tienes esta reacción desbloqueada.'); return; }
         if (state.gold < reaction.costGold) { showToast(`❌ Necesitas 🪙 ${reaction.costGold} para desbloquear "${reaction.name}".`); return; }
@@ -3168,15 +3564,14 @@ function buyReaction(reactionId) {
     if (state.gold < reaction.costGold) { showToast(`❌ Necesitas 🪙 ${reaction.costGold} para usar "${reaction.name}".`); return; }
     state.gold -= reaction.costGold;
     if (reactionId === 'golosina') {
-        if (!state.petOwned) { saveState(); refreshAllUI(); return; }
-        if ((state.petLevel || 0) >= 20) { showToast('🐾 Tu mascota ya está en el nivel máximo (20).'); saveState(); refreshAllUI(); return; }
-        state.petStage = (state.petStage || 0) + 1;
-        if (state.petStage >= 5) {
-            state.petStage = 0;
-            state.petLevel += 1;
-            showToast(`🍬 ¡Golosina! Tu mascota subió a nivel ${state.petLevel}.`);
+        if ((inst.level || 0) >= 20) { showToast('🐾 Tu mascota ya está en el nivel máximo (20).'); saveState(); refreshAllUI(); return; }
+        inst.stage = (inst.stage || 0) + 1;
+        if (inst.stage >= 5) {
+            inst.stage = 0;
+            inst.level += 1;
+            showToast(`🍬 ¡Golosina! Tu mascota subió a nivel ${inst.level}.`);
         } else {
-            showToast(`🍬 Golosina dada — etapa (${state.petStage}/5) avanzada sin gastar raciones.`);
+            showToast(`🍬 Golosina dada — etapa (${inst.stage}/5) avanzada sin gastar raciones.`);
         }
     } else if (reactionId === 'acariciar') {
         showToast('💗 Tu mascota se ve muy feliz.');
@@ -3188,31 +3583,56 @@ function buyReaction(reactionId) {
 }
 
 function petCelebrateIfUnlocked() {
-    if ((state.petUnlockedReactions || []).includes('baile_victoria') && state.petOwned) {
+    if ((state.petUnlockedReactions || []).includes('baile_victoria') && hasAnyPet()) {
         showToast('🎉 ¡Tu mascota celebra tu Bingo con un baile de victoria!');
     }
 }
 
 function renderPetScreen(tab) {
     currentPetTab = tab || currentPetTab || 'adoptar';
+    if (currentPetTab !== 'habitat') stopHabitatAutoWalk();
     document.querySelectorAll('.pet-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === currentPetTab));
     const wrap = document.getElementById('pet-content');
     if (!wrap) return;
-    const ownedPet = state.petOwned ? PET_TYPES.find(p => p.id === state.petOwned) : null;
+    const activeInst = getActivePet();
+    const ownedPet = activeInst ? PET_TYPES.find(p => p.id === activeInst.typeId) : null;
+    const petSelectorHTML = (label) => (state.pets && state.pets.length > 1) ? `
+        <div class="card-widget" style="margin-bottom:10px;">
+            <strong style="font-size:12px;color:#8b949e;">🐾 ${label} (toca para activar):</strong>
+            <div style="display:flex;gap:8px;overflow-x:auto;margin-top:8px;padding-bottom:2px;">
+                ${state.pets.map(inst => {
+                    const t = PET_TYPES.find(x => x.id === inst.typeId);
+                    const active = inst.id === state.activePetId;
+                    const miniStage = petEvolutionStage(inst.level || 0);
+                    const miniImg = t ? getPetImage(t.id, miniStage.id) : null;
+                    return `<div onclick="setActivePet('${inst.id}')" style="flex:0 0 auto;text-align:center;cursor:pointer;padding:6px 10px;border-radius:10px;border:1px solid ${active ? '#e3b341' : '#30363d'};background:${active ? 'rgba(227,179,65,0.12)' : 'transparent'};">
+                        <div style="font-size:22px;">${miniImg ? `<img src="${miniImg}" style="width:22px;height:22px;object-fit:contain;vertical-align:middle;" alt="">` : (t ? t.icon : '🐾')}</div>
+                        <div style="font-size:10px;color:${active ? '#e3b341' : '#8b949e'};">Nv.${inst.level || 0}</div>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>` : '';
 
     if (currentPetTab === 'adoptar') {
-        wrap.innerHTML = `<p style="font-size:12px;color:#8b949e;margin-bottom:10px;">Compra única. Elige una mascota para empezar a alimentarla y ganar su bono pasivo de monedas.</p>` +
-            PET_TYPES.map(pet => `
+        const countByType = {};
+        (state.pets || []).forEach(p => { countByType[p.typeId] = (countByType[p.typeId] || 0) + 1; });
+        wrap.innerHTML = petSelectorHTML('Mis mascotas') +
+            `<p style="font-size:12px;color:#8b949e;margin-bottom:10px;">Puedes adoptar todas las mascotas que quieras, sin límite. Cada una tiene su propio nivel y ánimo, pero solo la que tengas activa aporta su bono de monedas.</p>` +
+            PET_TYPES.map(pet => {
+                const count = countByType[pet.id] || 0;
+                const shopImg = getPetImage(pet.id, 'cria');
+                return `
                 <div class="card-widget" style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-                    <span style="font-size:28px;">${pet.icon}</span>
+                    <span style="font-size:28px;">${shopImg ? `<img src="${shopImg}" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;" alt="">` : pet.icon}</span>
                     <div style="flex:1;">
-                        <div style="font-weight:bold;">${pet.tipo} — ${pet.raza}</div>
+                        <div style="font-weight:bold;">${pet.tipo} — ${pet.raza}${count > 0 ? ` <span style="color:#3fb950;font-size:11px;">(tienes ${count})</span>` : ''}</div>
                         <div style="font-size:11px;color:#8b949e;">${pet.desc}</div>
                     </div>
-                    <button class="buy-product-btn" style="width:auto;padding:8px 12px;" ${state.petOwned === pet.id ? 'disabled' : ''} onclick="buyPetType('${pet.id}')">
-                        ${state.petOwned === pet.id ? '✅ Tuya' : (pet.costGems > 0 ? `💎 ${pet.costGems}` : `🪙 ${pet.costGold.toLocaleString('es')}`)}
+                    <button class="buy-product-btn" style="width:auto;padding:8px 12px;" onclick="buyPetType('${pet.id}')">
+                        ${pet.costGems > 0 ? `💎 ${pet.costGems}` : `🪙 ${pet.costGold.toLocaleString('es')}`}
                     </button>
-                </div>`).join('');
+                </div>`;
+            }).join('');
     } else if (currentPetTab === 'alimentos') {
         wrap.innerHTML = `<p style="font-size:12px;color:#d29922;margin-bottom:10px;">🌾 Raciones en inventario: <strong>${(state.petRations || 0).toLocaleString('es')}</strong></p>` +
             PET_FOOD_PACKS.map(pack => `
@@ -3241,9 +3661,9 @@ function renderPetScreen(tab) {
         if (!ownedPet) {
             wrap.innerHTML = `<p style="font-size:13px;color:#8b949e;">Aún no tienes una mascota. Ve a la pestaña "Adoptar" para elegir una.</p>`;
         } else {
-            const lvl = state.petLevel || 0;
+            const lvl = activeInst.level || 0;
             const stageInfo = petEvolutionStage(lvl);
-            const mood = state.petMood || { hambre:100, felicidad:100, higiene:100 };
+            const mood = activeInst.mood || { hambre:100, felicidad:100, higiene:100 };
             const theme = petHabitatTheme(ownedPet);
             const phase = dayNightPhase();
             const habitatImgUrl = (CONFIG.petHabitatImages || {})[theme];
@@ -3254,29 +3674,33 @@ function renderPetScreen(tab) {
                     <div class="progress-container" style="height:8px;"><div class="progress-bar" style="width:${val}%;background:${color};height:8px;"></div></div>
                 </div>`;
             const h = state.huevosMascota || {}, f = state.fragmentosMascota || {};
-            wrap.innerHTML = `
-                <div id="habitat-scene-wrap" class="card-widget pet-habitat-scene ${habitatImgUrl ? 'has-custom-bg' : ''} theme-${theme} ${phase.cls} ${stageInfo.glow ? 'pet-habitat-glow' : ''}" style="text-align:center;${habitatImgUrl ? `background-image:url('${habitatImgUrl}');background-size:cover;background-position:center;` : ''}">
-                    <div class="ph-stars"></div>
-                    <span class="ph-sun-moon">${phase.icon}</span>
-                    ${habitatImgUrl ? `<div class="ph-night-tint"></div>` : `<div class="ph-parallax-far"></div><div class="ph-ground"></div>`}
-                    <div class="ph-particle-layer">${petParticlesHTML(theme)}${petCloudsHTML(theme)}</div>
-                    ${petDirtSpotsHTML(mood.higiene)}
-                    ${habitatSurprise ? `<span class="ph-surprise-obj" style="top:${habitatSurprise.top}%;left:${habitatSurprise.left}%;" onclick="collectHabitatSurprise()">${habitatSurprise.icon}</span>` : ''}
-                    <div class="pet-habitat-stage-tag">${stageInfo.name} · ${theme === 'rapaz' ? '🏔️ Cumbres' : '🏡 Jardín'}</div>
-                    <div id="habitat-pet-sprite" class="pet-habitat-sprite" style="font-size:${Math.round(40 * stageInfo.scale)}px;">${ownedPet.icon}${state.petAuraUnlocked ? ' ✨' : ''}</div>
-                    <div style="font-weight:bold;font-size:14px;margin-top:2px;position:relative;z-index:3;">${ownedPet.raza}</div>
-                    <div style="font-size:11px;color:#8b949e;margin-bottom:8px;position:relative;z-index:3;">${stageInfo.desc} <span style="opacity:.8;">(arrástrala con el dedo/cursor)</span></div>
-                    <div style="position:relative;z-index:3;">
-                        ${moodBar('Hambre', '🍗', mood.hambre, '#e3b341')}
-                        ${moodBar('Felicidad', '💗', mood.felicidad, '#f778ba')}
-                        ${moodBar('Higiene', '🧼', mood.higiene, '#58a6ff')}
-                        <div style="display:flex;gap:6px;margin-top:12px;">
-                            <button class="game-action-btn" style="flex:1;padding:10px 4px;font-size:12px;" onclick="habitatFeed()">🍇 Alimentar</button>
-                            <button class="game-action-btn" style="flex:1;padding:10px 4px;font-size:12px;" onclick="habitatPlay()">🎾 Jugar</button>
-                            <button class="game-action-btn" style="flex:1;padding:10px 4px;font-size:12px;" onclick="habitatGroom()">🛁 Bañar</button>
-                        </div>
-                        <div style="font-size:11px;color:#8b949e;margin-top:8px;">🍇 Bayas comunes: ${state.bayasComunes || 0} · 🍓 Bayas raras: ${state.bayasRaras || 0}</div>
+            wrap.innerHTML = petSelectorHTML('Mis mascotas') + `
+                <div class="card-widget" style="padding:0;overflow:hidden;">
+                    <div id="habitat-scene-wrap" class="pet-habitat-scene ${habitatImgUrl ? 'has-custom-bg' : ''} theme-${theme} ${phase.cls} ${stageInfo.glow ? 'pet-habitat-glow' : ''}" style="${habitatImgUrl ? `background-image:url('${habitatImgUrl}');background-position:50% 50%;` : ''}">
+                        <div class="ph-stars"></div>
+                        <span class="ph-sun-moon">${phase.icon}</span>
+                        ${habitatImgUrl ? `<div class="ph-night-tint"></div>` : `<div class="ph-parallax-far"></div><div class="ph-ground"></div>`}
+                        <div class="ph-particle-layer">${petParticlesHTML(theme)}${petCloudsHTML(theme)}</div>
+                        ${petDirtSpotsHTML(mood.higiene)}
+                        ${habitatSurprise ? `<span class="ph-surprise-obj" style="top:${habitatSurprise.top}%;left:${habitatSurprise.left}%;" onclick="collectHabitatSurprise()">${habitatSurprise.icon}</span>` : ''}
+                        <div class="ph-tag-corner"><span class="pet-habitat-stage-tag">${stageInfo.name} · ${theme === 'rapaz' ? '🏔️ Cumbres' : '🏡 Jardín'}</span></div>
+                        <div id="habitat-pet-sprite" class="pet-habitat-sprite" style="font-size:${Math.round(40 * stageInfo.scale)}px;">${petSpriteInnerHTML(ownedPet.id, stageInfo.id, ownedPet.icon)}${activeInst.auraUnlocked ? ' <span class="pet-aura-spark">✨</span>' : ''}</div>
                     </div>
+                    <div class="ph-info-bar">
+                        <div class="ph-breed">${ownedPet.raza}</div>
+                        <div class="ph-desc">${stageInfo.desc} <span style="opacity:.8;">(arrástrala con el dedo/cursor)</span></div>
+                    </div>
+                </div>
+                <div class="card-widget">
+                    ${moodBar('Hambre', '🍗', mood.hambre, '#e3b341')}
+                    ${moodBar('Felicidad', '💗', mood.felicidad, '#f778ba')}
+                    ${moodBar('Higiene', '🧼', mood.higiene, '#58a6ff')}
+                    <div style="display:flex;gap:6px;margin-top:12px;">
+                        <button class="game-action-btn" style="flex:1;padding:10px 4px;font-size:12px;" onclick="habitatFeed()">🍇 Alimentar</button>
+                        <button class="game-action-btn" style="flex:1;padding:10px 4px;font-size:12px;" onclick="habitatPlay()">🎾 Jugar</button>
+                        <button class="game-action-btn" style="flex:1;padding:10px 4px;font-size:12px;" onclick="habitatGroom()">🛁 Bañar</button>
+                    </div>
+                    <div style="font-size:11px;color:#8b949e;margin-top:8px;text-align:center;">🍇 Bayas comunes: ${state.bayasComunes || 0} · 🍓 Bayas raras: ${state.bayasRaras || 0}</div>
                 </div>
                 <div class="card-widget">
                     <strong style="font-size:13px;">🥚 Huevos del Pase VIP — incubar para raciones y progreso</strong>
@@ -3291,23 +3715,24 @@ function renderPetScreen(tab) {
                 <div class="card-widget">
                     <strong style="font-size:13px;">✨ Fragmentos de Mascota — Aura Legendaria</strong>
                     <div style="font-size:12px;color:#8b949e;margin:6px 0;">Fragmentos totales: ${totalFragmentosMascota()}/10 (rara: ${f.rara||0}, épica: ${f.epica||0}, legendaria: ${f.legendaria||0})</div>
-                    ${state.petAuraUnlocked ? `<div style="font-size:12px;color:#3fb950;">✅ Aura Legendaria activa en tu mascota.</div>` :
+                    ${activeInst.auraUnlocked ? `<div style="font-size:12px;color:#3fb950;">✅ Aura Legendaria activa en tu mascota.</div>` :
                     `<button class="game-action-btn" ${totalFragmentosMascota() < 10 ? 'disabled' : ''} onclick="canjearFragmentosAura()">✨ Canjear 10 fragmentos por el Aura</button>`}
                 </div>`;
             attachPetDragHandlers();
+            startHabitatAutoWalk();
         }
     } else if (currentPetTab === 'progreso') {
         if (!ownedPet) {
             wrap.innerHTML = `<p style="font-size:13px;color:#8b949e;">Aún no tienes una mascota. Ve a la pestaña "Adoptar" para elegir una.</p>`;
         } else {
-            const lvl = state.petLevel || 0;
-            const stage = state.petStage || 0;
+            const lvl = activeInst.level || 0;
+            const stage = activeInst.stage || 0;
             const maxed = lvl >= 20;
             const levelData = maxed ? PET_LEVELS[19] : PET_LEVELS[lvl];
             const stageInfo = petEvolutionStage(lvl);
-            wrap.innerHTML = `
+            wrap.innerHTML = petSelectorHTML('Mis mascotas') + `
                 <div class="card-widget" style="text-align:center;">
-                    <span style="font-size:40px;">${ownedPet.icon}</span>
+                    <span style="font-size:40px;">${(() => { const pimg = getPetImage(ownedPet.id, stageInfo.id); return pimg ? `<img src="${pimg}" style="width:40px;height:40px;object-fit:contain;vertical-align:middle;" alt="">` : ownedPet.icon; })()}</span>
                     <div style="font-weight:bold;font-size:15px;margin-top:4px;">${ownedPet.raza}</div>
                     <div class="pet-habitat-stage-tag" style="margin:4px auto;">${stageInfo.name}</div>
                     <div style="color:#d29922;margin:6px 0;">Nivel ${lvl} / 20 · Etapa ${stage}/5</div>
@@ -4306,6 +4731,54 @@ function fillAdminGeneralForm() {
     renderAdminRoomImages();
     renderAdminVipImages();
     renderAdminPetHabitatImages();
+    renderAdminPetSpriteImages();
+}
+const PET_STAGE_LABELS = { cria: 'Cría', joven: 'Joven', adulto: 'Adulto' };
+function renderAdminPetSpriteImages() {
+    const wrap = document.getElementById('admin-pet-sprite-images');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    PET_TYPES.forEach(pt => {
+        const group = document.createElement('div');
+        group.style.marginBottom = '10px';
+        group.innerHTML = `<div style="font-size:12px;color:#c9d1d9;margin:6px 0 4px;">${pt.icon} ${pt.raza}</div>`;
+        wrap.appendChild(group);
+        ['cria', 'joven', 'adulto'].forEach(stageId => {
+            const url = ((CONFIG.petSpriteImages || {})[pt.id] || {})[stageId];
+            const row = document.createElement('div');
+            row.className = 'admin-img-row';
+            row.innerHTML = `
+                <div class="admin-img-preview">${url ? `<img src="${url}">` : pt.icon}</div>
+                <div style="flex:1;font-size:12px;">${PET_STAGE_LABELS[stageId]}</div>
+                <input type="file" accept="image/*" onchange="uploadPetSpriteImage('${pt.id}', '${stageId}', this)">
+                ${url ? `<button class="logout-btn" style="background:#30363d;padding:6px 10px;font-size:11px;" onclick="clearPetSpriteImage('${pt.id}', '${stageId}')">✕</button>` : ''}
+            `;
+            wrap.appendChild(row);
+        });
+    });
+}
+async function uploadPetSpriteImage(typeId, stageId, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    showToast('⏳ Subiendo imagen...');
+    try {
+        const url = await uploadImageToStorage(file, 'pet-sprites');
+        if (!CONFIG.petSpriteImages) CONFIG.petSpriteImages = {};
+        if (!CONFIG.petSpriteImages[typeId]) CONFIG.petSpriteImages[typeId] = {};
+        CONFIG.petSpriteImages[typeId][stageId] = url;
+        await saveConfig();
+        renderAdminPetSpriteImages();
+        refreshAllUI();
+        showToast('✅ Imagen de mascota guardada en la nube.');
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa la subida de imágenes')); }
+}
+async function clearPetSpriteImage(typeId, stageId) {
+    if (!CONFIG.petSpriteImages || !CONFIG.petSpriteImages[typeId]) return;
+    delete CONFIG.petSpriteImages[typeId][stageId];
+    await saveConfig();
+    renderAdminPetSpriteImages();
+    refreshAllUI();
+    showToast('🗑️ Imagen de mascota quitada (vuelve al emoji por defecto).');
 }
 const PET_HABITAT_THEMES = [
     { id:'domestica', name:'Doméstica (jardín/casa)', icon:'🏡' },
