@@ -270,6 +270,17 @@
         .win-popup-extra { font-size:12px; color:#7a5a00; min-height:16px; margin-top:4px; }
         @keyframes bingoFlashPop { 0% { transform: scale(0.3) rotate(-8deg); opacity:0; } 30% { transform: scale(1.25) rotate(3deg); opacity:1; } 55% { transform: scale(1) rotate(0deg); } 100% { transform: scale(1) rotate(0deg); opacity:0; } }
 
+        /* ================= NIVEL DE USUARIO (XP) ================= */
+        .userlvl-widget { background: linear-gradient(135deg,#1a2130,#11151d); border:1px solid #2b3444; }
+        .userlvl-top-row { display:flex; justify-content:space-between; align-items:center; font-size:13px; margin-bottom:8px; }
+        .userlvl-badge { font-weight:bold; color:#ffd866; }
+        .userlvl-xp-text { font-size:11px; color:#8b949e; }
+        .userlvl-bar-bg { position:relative; background:#21262d; border-radius:12px; height:16px; overflow:visible; border:1px solid #30363d; }
+        .userlvl-bar-fill { height:100%; border-radius:12px 0 0 12px; background:linear-gradient(90deg,#8a5a06,#d29922,#ffd866); transition:width .4s ease; position:relative; }
+        .userlvl-bar-star { position:absolute; top:50%; right:-9px; transform:translateY(-50%); font-size:16px; filter:drop-shadow(0 0 3px #ffd86699); animation:userlvlStarPulse 1.6s ease-in-out infinite; }
+        @keyframes userlvlStarPulse { 0%,100% { transform:translateY(-50%) scale(1); } 50% { transform:translateY(-50%) scale(1.22); } }
+        .userlvl-max-tag { color:#3fb950; font-size:11px; font-weight:bold; margin-top:4px; }
+
         /* ================= NIVEL Y RACHA ================= */
         .level-badge { background:#21262d; border:1px solid #30363d; border-radius:20px; padding:2px 8px; font-size:10px; color:#c9d1d9; }
 
@@ -356,6 +367,20 @@
                 <span id="stat-total-wins">0</span>
             </div>
             <div style="margin-top:8px;"><span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span></div>
+        </div>
+
+        <div class="card-widget userlvl-widget">
+            <div class="userlvl-top-row">
+                <span class="userlvl-badge">⭐ Nivel de Usuario <span id="userlvl-num">1</span></span>
+                <span class="userlvl-xp-text" id="userlvl-xp-text">0 / 1,000 XP</span>
+            </div>
+            <div class="userlvl-bar-bg">
+                <div class="userlvl-bar-fill" id="userlvl-bar-fill" style="width:0%;">
+                    <span class="userlvl-bar-star" id="userlvl-bar-star">⭐</span>
+                </div>
+            </div>
+            <div class="userlvl-max-tag" id="userlvl-max-tag" style="display:none;">🌟 ¡Nivel máximo alcanzado!</div>
+            <div class="userlvl-xp-text" id="userlvl-bonus-text" style="margin-top:4px;"></div>
         </div>
 
         <div class="card-widget">
@@ -962,6 +987,8 @@ function defaultState(username) {
         gems: 100,
         vipCards: 0,
         totalWins: 0,
+        userLevel: 1,
+        userXP: 0,
         missionDate: todayStr(),
         missionProgress: 0,
         missionClaimed: false,
@@ -1067,7 +1094,112 @@ const PET_LEVELS = [
 ];
 
 function playerLevel(p) { return 1 + Math.floor((p.totalWins || 0) / 5); }
+
+/* ---------- NIVEL DE USUARIO (XP) — tabla oficial 1-100 ---------- */
+const USER_LEVEL_XP_TABLE = [
+    1000,1100,1300,1500,1700,2000,2300,2700,3100,3500,
+    4000,4600,5300,6100,7100,8100,9300,10700,12300,14200,
+    16300,18800,21600,24800,28500,32800,37800,43400,49900,57400,
+    66000,75900,87300,100400,115500,132800,152700,175600,202000,232300,
+    267100,307200,353300,406300,467200,537300,617900,710500,817100,939700,
+    1100000,1200000,1400000,1600000,1900000,2200000,2500000,2900000,3300000,3800000,
+    4400000,5000000,5800000,6600000,7600000,8800000,10100000,11600000,13400000,15400000,
+    17700000,20300000,23400000,26900000,30900000,35600000,40900000,47000000,54100000,62200000,
+    71600000,82300000,94600000,108800000,125100000,143900000,165500000,190300000,218900000,251700000,
+    289500000,332900000,382800000,440200000,506300000,582200000,669500000,770000000,885500000,1018300000
+];
+const USER_LEVEL_MAX = USER_LEVEL_XP_TABLE.length; // 100
+
+function userLevelXPNeeded(level) {
+    return USER_LEVEL_XP_TABLE[Math.min(level, USER_LEVEL_MAX) - 1];
+}
+
+/* ---------- Bonos EXTRA de XP (tabla oficial) — VIP 1-50 y Mascota 1-20 ---------- */
+const VIP_RANK_XP_BONUS = [
+    10.0,14.9,19.8,24.7,29.6,34.5,39.4,44.3,49.2,54.1,
+    59.0,63.9,68.8,73.7,78.6,83.5,88.4,93.3,98.2,103.1,
+    108.0,112.9,117.8,122.7,127.6,132.5,137.4,142.3,147.2,152.1,
+    157.0,161.9,166.8,171.7,176.6,181.5,186.4,191.3,196.2,201.1,
+    206.0,210.9,215.8,220.7,225.6,230.5,235.4,240.3,245.2,250.1
+];
+const PET_XP_BONUS = [2,4,6,8,10,13,15,18,21,24,26,29,32,35,38,40,43,45,48,50];
+// 16 Cartas modificadoras: bono de XP según con cuántos cartones juega el usuario (1..16)
+const CARD_XP_BONUS = [5,7,10,12,15,17,20,20,22,25,28,32,35,40,45,50];
+
+function cardXPBonusPercent() {
+    const count = chosenCardCount || 1;
+    if (count < 1 || count > CARD_XP_BONUS.length) return 0;
+    return CARD_XP_BONUS[Math.round(count) - 1];
+}
+
+function vipRankXPBonusPercent() {
+    const rank = Math.min(state.vipCards || 0, VIP_RANK_XP_BONUS.length);
+    return rank > 0 ? VIP_RANK_XP_BONUS[rank - 1] : 0;
+}
+function petXPBonusPercent() {
+    const lvl = Math.min(state.petLevel || 0, PET_XP_BONUS.length);
+    return lvl > 0 ? PET_XP_BONUS[lvl - 1] : 0;
+}
+function xpBonusMultiplier() {
+    return (1 + vipRankXPBonusPercent() / 100) * (1 + petXPBonusPercent() / 100) * (1 + cardXPBonusPercent() / 100);
+}
+
+function gainUserXP(amount) {
+    if (!state || !amount) return 0;
+    if (state.userLevel === undefined) state.userLevel = 1;
+    if (state.userXP === undefined) state.userXP = 0;
+    if (state.userLevel >= USER_LEVEL_MAX) return 0;
+    amount = Math.round(amount * xpBonusMultiplier());
+    state.userXP += amount;
+    let guard = 0;
+    while (state.userLevel < USER_LEVEL_MAX && state.userXP >= userLevelXPNeeded(state.userLevel) && guard < 200) {
+        state.userXP -= userLevelXPNeeded(state.userLevel);
+        state.userLevel += 1;
+        guard++;
+        if (state.userLevel >= USER_LEVEL_MAX) { state.userXP = 0; break; }
+    }
+    return amount;
+}
+
+function formatXPShort(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return String(n);
+}
+
+function renderUserLevelWidget() {
+    if (!state) return;
+    const numEl = document.getElementById('userlvl-num');
+    const txtEl = document.getElementById('userlvl-xp-text');
+    const fillEl = document.getElementById('userlvl-bar-fill');
+    const maxTag = document.getElementById('userlvl-max-tag');
+    if (!numEl || !fillEl) return;
+    const lvl = state.userLevel || 1;
+    const xp = state.userXP || 0;
+    numEl.innerText = lvl;
+    if (lvl >= USER_LEVEL_MAX) {
+        txtEl.innerText = `${formatXPShort(userLevelXPNeeded(USER_LEVEL_MAX))} XP (MÁX)`;
+        fillEl.style.width = '100%';
+        if (maxTag) maxTag.style.display = 'block';
+    } else {
+        const needed = userLevelXPNeeded(lvl);
+        txtEl.innerText = `${formatXPShort(xp)} / ${formatXPShort(needed)} XP`;
+        fillEl.style.width = Math.min(100, (xp / needed) * 100) + '%';
+        if (maxTag) maxTag.style.display = 'none';
+    }
+    const bonusEl = document.getElementById('userlvl-bonus-text');
+    if (bonusEl) {
+        const vB = vipRankXPBonusPercent(), pB = petXPBonusPercent(), cB = cardXPBonusPercent();
+        if (vB > 0 || pB > 0 || cB > 0) {
+            bonusEl.innerText = `⚡ Bono XP: 👑 VIP +${vB.toFixed(1)}% · 🐾 Mascota +${pB}% · 🃏 Cartones +${cB}%`;
+        } else {
+            bonusEl.innerText = '';
+        }
+    }
+}
 function ensurePlayerDefaults(p) {
+    if (p.userLevel === undefined) p.userLevel = 1;
+    if (p.userXP === undefined) p.userXP = 0;
     if (p.winStreak === undefined) p.winStreak = 0;
     if (p.ownedFrames === undefined) p.ownedFrames = [];
     if (p.claimedWelcomeBonuses === undefined) p.claimedWelcomeBonuses = [];
@@ -1653,6 +1785,7 @@ function selectCardCount(count, element) {
     document.querySelectorAll('.card-opt-btn').forEach(btn => btn.classList.remove('selected'));
     element.classList.add('selected');
     refreshCardCostLabels();
+    renderUserLevelWidget();
 }
 
 function refreshCardCostLabels() {
@@ -2254,6 +2387,7 @@ function endRound(won) {
         state.monthlyGold = (state.monthlyGold || 0) + reward;
         state.missionProgress = Math.min(state.missionProgress + 1, CONFIG.missionTarget);
         const xpGained = gainVipXP(CONFIG.vipPassXPPerWin);
+        gainUserXP(CONFIG.vipPassXPPerWin);
         petCelebrateIfUnlocked();
         const newAchievements = checkAchievements(state);
         saveState(); refreshAllUI();
@@ -2689,6 +2823,7 @@ function refreshAllUI() {
     const streakEl = document.getElementById('streak-badge');
     if (streakEl) streakEl.innerText = `🔥 Racha: ${state.loginStreak || 0} días`;
     renderAchievements();
+    renderUserLevelWidget();
     refreshMissionUI(); refreshRouletteUI();
     if (document.getElementById('vippass-screen') && document.getElementById('vippass-screen').classList.contains('active')) renderVipPassScreen();
 }
