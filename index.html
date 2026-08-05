@@ -1217,9 +1217,20 @@
 
     <div id="cloud-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0d1117;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8b949e;font-size:13px;">
         <div style="font-size:32px;margin-bottom:10px;">☁️</div>
-        <span id="cloud-text">Conectando...</span>
+        <span id="cloud-text">Conectando con la base de datos...</span>
     </div>
-    <script>window.__firebaseReady=false;window.__firebaseFailed=false;window.__fbT=setTimeout(function(){if(!window.__firebaseReady){window.__firebaseFailed=true;window.__firebaseReady=true;var t=document.getElementById('cloud-text');if(t)t.textContent='Offline';window.dispatchEvent(new Event('firebase-ready'));}},3500);</script>
+    <script>
+    window.__firebaseReady=false; window.__firebaseFailed=false;
+    // Esperamos hasta 8s para Firebase porque la DB de usuarios necesita tiempo
+    window.__fbT=setTimeout(function(){
+        if(!window.__firebaseReady){
+            console.warn('Firebase lento - entrando pero intentando reconectar');
+            window.__firebaseFailed=false; // No marcamos como failed, seguimos intentando
+            window.__firebaseReady=true;
+            window.dispatchEvent(new Event('firebase-ready'));
+        }
+    }, 8000);
+    </script>
     <script type="module">
         try{
             import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -1230,8 +1241,17 @@
             window.db=getFirestore(app);
             window.fs={doc,getDoc,setDoc,deleteDoc,collection,getDocs};
             window.storageRefs={storage:getStorage(app),ref,uploadBytes,getDownloadURL};
-            clearTimeout(window.__fbT);window.__firebaseReady=true;window.__firebaseFailed=false;window.dispatchEvent(new Event('firebase-ready'));
-        }catch(e){window.__firebaseFailed=true;window.__firebaseReady=true;window.dispatchEvent(new Event('firebase-ready'));}
+            clearTimeout(window.__fbT);
+            window.__firebaseReady=true;
+            window.__firebaseFailed=false;
+            var t=document.getElementById('cloud-text'); if(t) t.textContent='Base conectada ✓';
+            window.dispatchEvent(new Event('firebase-ready'));
+        }catch(e){
+            console.error('Firebase fail',e);
+            window.__firebaseFailed=true;
+            window.__firebaseReady=true;
+            window.dispatchEvent(new Event('firebase-ready'));
+        }
     </script>
 
 <script>
@@ -1344,12 +1364,20 @@ function todayStr() { return new Date().toISOString().slice(0,10); }
 function escapeHtml(str) { const d = document.createElement('div'); d.innerText = String(str); return d.innerHTML; }
 
 /* ---------- Helpers de Firestore ---------- */
-function waitForFirebase(){return new Promise(function(r){if(window.__firebaseReady)return r();window.addEventListener('firebase-ready',function(){r();},{once:true});setTimeout(function(){r();},3500);});}
-function forceHideSplash(){try{var s=document.getElementById('splash-screen');var c=document.getElementById('cloud-loading');if(c)c.style.display='none';if(s){s.style.opacity='0';s.style.pointerEvents='none';setTimeout(function(){s.style.display='none';},500);}}catch(e){}}
-async function fsGet(col,id){try{if(!window.db||!window.fs)return null;var ref=window.fs.doc(window.db,col,id);var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},2000);});var snap=await Promise.race([window.fs.getDoc(ref),to]);return snap.exists()?snap.data():null;}catch(e){console.warn('fsGet',e.message);return null;}}
-async function fsSet(col,id,data){try{if(!window.db||!window.fs)return;var ref=window.fs.doc(window.db,col,id);var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},2500);});await Promise.race([window.fs.setDoc(ref,data),to]);}catch(e){console.warn('fsSet',e.message);}}
-async function fsDelete(col,id){try{if(!window.db||!window.fs)return;var ref=window.fs.doc(window.db,col,id);await window.fs.deleteDoc(ref);}catch(e){}}
-async function fsGetAll(col){try{if(!window.db||!window.fs)return [];var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},3000);});var snap=await Promise.race([window.fs.getDocs(window.fs.collection(window.db,col)),to]);var out=[];snap.forEach(function(d){out.push(Object.assign({id:d.id},d.data()));});return out;}catch(e){return [];}}
+function waitForFirebase(){return new Promise(function(r){if(window.__firebaseReady)return r();window.addEventListener('firebase-ready',function(){r();},{once:true});setTimeout(function(){r();},8500);});}
+function forceHideSplash(){try{var s=document.getElementById('splash-screen');var c=document.getElementById('cloud-loading');if(c)c.style.display='none';if(s){s.style.opacity='0';s.style.pointerEvents='none';setTimeout(function(){s.style.display='none';},600);}}catch(e){}}
+async function fsGet(col,id){try{if(!window.db||!window.fs)return null;var ref=window.fs.doc(window.db,col,id);var timeoutMs=(col==='players'?6000:3000);var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('fsGet timeout '+col));},timeoutMs);});var snap=await Promise.race([window.fs.getDoc(ref),to]);return snap.exists()?snap.data():null;}catch(e){console.warn('fsGet fail',col,id,e.message); if(col==='players') throw e; return null;}}
+async function fsSet(col,id,data){try{if(!window.db||!window.fs)return;var ref=window.fs.doc(window.db,col,id);var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('fsSet timeout'));},4000);});await Promise.race([window.fs.setDoc(ref,data),to]);}catch(e){console.warn('fsSet fail',col,e.message); if(col!=='players') throw e;}}
+async function fsDelete(col, id) {
+    const ref = window.fs.doc(window.db, col, id);
+    await window.fs.deleteDoc(ref);
+}
+async function fsGetAll(col) {
+    const snap = await window.fs.getDocs(window.fs.collection(window.db, col));
+    const out = [];
+    snap.forEach(d => out.push(Object.assign({ id: d.id }, d.data())));
+    return out;
+}
 
 /* ---------- Subida de imágenes a Cloudinary ---------- */
 const CLOUDINARY_CLOUD_NAME = 'ine4lwjf';
@@ -1384,7 +1412,19 @@ function iconHtml(icon) {
     return icon;
 }
 
-async function loadConfig(){if(window.__firebaseFailed)return defaultConfig();var def=defaultConfig();try{var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('t'));},2500);});var cfg=await Promise.race([fsGet('config','main'),to]);if(!cfg){cfg=def;try{await fsSet('config','main',cfg);}catch(e){}}else{cfg=Object.assign({},def,cfg);}return cfg;}catch(e){return def;}}
+async function loadConfig(){
+    var def=defaultConfig();
+    try{
+        var to=new Promise(function(_,rej){setTimeout(function(){rej(new Error('config timeout'));},3000);});
+        var cfg=await Promise.race([fsGet('config','main'),to]);
+        if(!cfg){cfg=def; try{await fsSet('config','main',cfg);}catch(e){}}
+        else{cfg=Object.assign({},def,cfg);}
+        return cfg;
+    }catch(e){
+        console.warn('loadConfig usando default por timeout',e.message);
+        return def;
+    }
+}
 async function saveConfig() { await fsSet('config', 'main', CONFIG); }
 
 async function getAdminPassword() {
@@ -2592,13 +2632,13 @@ async function login() {
     if (!username) { errorBox.innerText = 'Escribe un nombre de usuario.'; return; }
     if (!password) { errorBox.innerText = 'Escribe una contraseña.'; return; }
 
-    errorBox.innerText = 'Conectando...';
-    var loginTimeout=setTimeout(function(){ errorBox.innerText='Servidor lento, reintenta...'; }, 4000);
+    errorBox.innerText = 'Conectando con base de datos...';
+    var loginTimer=setTimeout(function(){ errorBox.innerText='Conexión lenta, espera 5s más...'; }, 3000);
     try{
         const result = await loadOrCreatePlayer(username, password);
-        clearTimeout(loginTimeout);
-    if (result.wrongPass) { clearTimeout(loginTimeout); errorBox.innerText = 'Contraseña incorrecta para ese usuario.'; return; }
-    clearTimeout(loginTimeout); errorBox.innerText = '';
+        clearTimeout(loginTimer);
+    if (result.wrongPass) { clearTimeout(loginTimer); errorBox.innerText = 'Contraseña incorrecta para ese usuario.'; return; }
+    clearTimeout(loginTimer); errorBox.innerText = '';
 
     state = result.player;
     checkVipMissionRecovery();
@@ -2612,7 +2652,7 @@ async function login() {
     goToScreen('main-screen', true);
     saveState();
     if (streakBonus > 0) showToast(`Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
-    } catch(e){ clearTimeout(loginTimeout); console.error('login fail',e); errorBox.innerText='Error de conexión, pero entrando offline...'; state=defaultState(username); currentUser=username; localStorage.setItem(SESSION_KEY, username); document.getElementById('login-screen').classList.remove('active'); document.getElementById('bottom-nav').style.display='flex'; refreshAllUI(); goToScreen('main-screen', true); return; }
+    }catch(e){ clearTimeout(loginTimer); console.error('login error',e); errorBox.innerText='Error de base de datos: '+e.message+' - revisa Firestore'; return; }
     if (result.isNew && !state.welcomeBonusPopupClaimed) {
         setTimeout(() => showWelcomeBonusPopup(), 400);
     } else if (!state.tutorialCompleted) {
@@ -5094,14 +5134,14 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) chec
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
     try{document.querySelectorAll('#app-version-label, #admin-version-label').forEach(function(el){if(el)el.innerText=APP_VERSION;});}catch(e){}
-    var splashTimer=new Promise(function(r){setTimeout(r,1200);});
-    var hard=setTimeout(function(){forceHideSplash();},5000);
+    var splashTimer=new Promise(function(r){setTimeout(r,1800);});
+    var hard=setTimeout(function(){forceHideSplash();},9000);
     try{await waitForFirebase();}catch(e){}
     try{CONFIG=await loadConfig();}catch(e){CONFIG=defaultConfig();}
     try{history.replaceState({screen:'main-screen'},'','');}catch(e){}
     var c=document.getElementById('cloud-loading'); if(c)c.style.display='none';
     await splashTimer; forceHideSplash(); clearTimeout(hard);
-    try{await tryAutoLogin();}catch(e){var l=document.getElementById('login-screen'); if(l)l.classList.add('active');}
+    try{await tryAutoLogin();}catch(e){console.error('autoLogin',e); var l=document.getElementById('login-screen'); if(l)l.classList.add('active');}
     try{checkForAppUpdate();}catch(e){}
 });
 </script>
