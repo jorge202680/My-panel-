@@ -258,6 +258,33 @@
         #win-coin-rain { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
         .win-coin-piece { position:absolute; top:-40px; font-size:26px; animation: winCoinFall linear forwards; }
         @keyframes winCoinFall { to { transform: translateY(115vh) rotate(360deg); } }
+
+        /* ================= BONO DE BIENVENIDA ================= */
+        #welcome-bonus-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:4700; align-items:center; justify-content:center; background:rgba(8,5,20,0.85); }
+        #welcome-bonus-overlay.active { display:flex; }
+        .welcome-bonus-box { background:linear-gradient(160deg,#1f2937,#0d1117); border:2px solid #d29922; border-radius:16px; padding:26px 20px 20px; width:86%; max-width:340px; text-align:center; box-shadow:0 0 40px rgba(210,153,34,0.45); position:relative; animation:welcomeBoxPop .4s ease; }
+        @keyframes welcomeBoxPop { 0% { transform:scale(0.7); opacity:0; } 100% { transform:scale(1); opacity:1; } }
+        .welcome-bonus-banner { background:linear-gradient(90deg,#da3633,#f85149); color:#fff; font-weight:bold; font-size:17px; padding:8px 14px; border-radius:10px 10px 0 0; margin:-26px -20px 16px; }
+        .welcome-bonus-host { font-size:44px; margin-bottom:4px; }
+        .welcome-bonus-sub { font-size:12px; color:#8b949e; margin-bottom:6px; }
+        .welcome-bonus-rewards { display:flex; justify-content:center; gap:26px; margin:16px 0; }
+        .welcome-bonus-reward-item { text-align:center; }
+        .welcome-bonus-reward-icon { font-size:36px; }
+        .welcome-bonus-reward-value { font-weight:bold; color:#ffd866; font-size:17px; margin-top:2px; }
+        .welcome-bonus-collect-btn { background:linear-gradient(135deg,#238636,#2ea043); color:#fff; border:none; border-radius:10px; padding:12px 20px; font-weight:bold; font-size:15px; width:100%; cursor:pointer; margin-top:8px; }
+
+        /* ================= GUÍA / TUTORIAL ================= */
+        .tutorial-spot-ring { display:none; position:fixed; border:3px solid #ffd866; border-radius:16px; box-shadow:0 0 0 9999px rgba(6,9,16,0.78), 0 0 18px 4px rgba(255,216,102,0.6); z-index:4650; pointer-events:none; transition:top .35s ease, left .35s ease, width .35s ease, height .35s ease; }
+        .tutorial-spot-ring.active { display:block; }
+        #tutorial-bubble { display:none; position:fixed; left:50%; bottom:100px; transform:translateX(-50%); width:88%; max-width:360px; background:linear-gradient(160deg,#1f2937,#0d1117); border:2px solid #58a6ff; border-radius:14px; padding:14px 16px; z-index:4660; box-shadow:0 0 25px rgba(88,166,255,0.35); }
+        #tutorial-bubble.active { display:block; }
+        .tutorial-host-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+        .tutorial-host-avatar { font-size:34px; }
+        .tutorial-host-name { color:#58a6ff; font-weight:bold; font-size:13px; }
+        .tutorial-text { font-size:13px; color:#c9d1d9; line-height:1.4; margin-bottom:12px; }
+        .tutorial-btn-row { display:flex; justify-content:space-between; gap:8px; }
+        .tutorial-skip-btn { background:transparent; border:1px solid #30363d; color:#8b949e; border-radius:8px; padding:8px 12px; font-size:12px; cursor:pointer; }
+        .tutorial-next-btn { background:linear-gradient(135deg,#1f6feb,#388bfd); border:none; color:#fff; border-radius:8px; padding:8px 16px; font-weight:bold; font-size:13px; cursor:pointer; flex:1; }
         .win-popup-box { position:relative; width:88%; max-width:360px; background:linear-gradient(180deg,#fdf3d8,#f7e2a8); border:4px solid #d29922; border-radius:18px; padding:26px 18px 20px; text-align:center; box-shadow:0 0 40px rgba(210,153,34,0.6); animation: winPopupPop 0.4s ease; }
         @keyframes winPopupPop { from { transform: scale(0.7); opacity:0; } to { transform: scale(1); opacity:1; } }
         .win-popup-banner { position:absolute; top:-20px; left:50%; transform:translateX(-50%); background:linear-gradient(90deg,#da3633,#f0433a); color:#fff; font-weight:900; font-size:20px; padding:8px 26px; border-radius:24px; box-shadow:0 4px 10px rgba(0,0,0,0.3); white-space:nowrap; }
@@ -315,6 +342,11 @@
         .vip-locked-note { font-size:11px; color:#f85149; margin-top:6px; }
         .vip-fav-card-box { background:#161b22; border:1px dashed #30363d; border-radius:8px; padding:10px; font-size:12px; color:#8b949e; }
         .toast.vip-toast { background:linear-gradient(135deg,#3a2a06,#1a1300); border:1px solid #d29922; color:#ffd866; }
+
+        /* ================= AYUDA DE MASCOTA EN JUEGO ================= */
+        .pet-help-widget { text-align:center; margin:4px 0 10px; }
+        .pet-help-btn { background:linear-gradient(135deg,#238636,#2ea043); color:#fff; border:none; border-radius:20px; padding:10px 18px; font-weight:bold; font-size:13px; cursor:pointer; box-shadow:0 0 10px rgba(46,160,67,0.35); }
+        .pet-help-btn:disabled { background:#30363d; color:#8b949e; cursor:not-allowed; box-shadow:none; }
         .room-aurora { background:linear-gradient(135deg,#2d1b4e,#5c1f8a); }
         .theme-aurora { background:linear-gradient(160deg,#1c1033,#2d1b4e); }
         .admin-img-row { display:flex; align-items:center; gap:10px; margin-top:8px; }
@@ -349,7 +381,7 @@
     <div id="main-screen" class="screen">
         <div class="top-bar">
             <div class="user-badge" id="display-user">Jugador</div>
-            <div class="resources">
+            <div class="resources" id="resources-bar">
                 <span>🪙 <span id="res-gold">0</span></span>
                 <span>💎 <span id="res-gem">0</span></span>
                 <button class="logout-btn" onclick="logout()">Salir</button>
@@ -369,7 +401,7 @@
             <div style="margin-top:8px;"><span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span></div>
         </div>
 
-        <div class="card-widget userlvl-widget">
+        <div class="card-widget userlvl-widget" id="userlvl-widget-card">
             <div class="userlvl-top-row">
                 <span class="userlvl-badge">⭐ Nivel de Usuario <span id="userlvl-num">1</span></span>
                 <span class="userlvl-xp-text" id="userlvl-xp-text">0 / 1,000 XP</span>
@@ -477,6 +509,11 @@
 
             <div class="history-strip" id="history-strip"></div>
 
+            <div class="pet-help-widget" id="pet-help-widget" style="display:none;">
+                <button class="pet-help-btn" id="pet-help-btn" onclick="activatePetHelp()">🐾 Activar ayuda de Mascota (<span id="pet-help-uses">0</span>)</button>
+                <button class="pet-help-btn" id="pet-help-buy-btn" style="margin-left:6px;background:linear-gradient(135deg,#8957e5,#6e40c9);" onclick="buyPetHelpExtra()">💎 Comprar ayuda extra</button>
+            </div>
+
             <div class="cards-container" id="cards-container-grid"></div>
 
             <div class="chat-panel">
@@ -499,6 +536,40 @@
         <div class="countdown-label" id="countdown-label">Siguiente partida...</div>
     </div>
     <div id="bingo-flash"><span id="bingo-flash-text">¡BINGO!</span></div>
+
+    <!-- BONO DE BIENVENIDA (solo cuentas nuevas) -->
+    <div id="welcome-bonus-overlay">
+        <div class="welcome-bonus-box">
+            <div class="welcome-bonus-banner">🎁 Bono de Bienvenida</div>
+            <div class="welcome-bonus-host">🎩</div>
+            <div class="welcome-bonus-sub">¡Un regalo para empezar con el pie derecho!</div>
+            <div class="welcome-bonus-rewards">
+                <div class="welcome-bonus-reward-item">
+                    <div class="welcome-bonus-reward-icon">🪙</div>
+                    <div class="welcome-bonus-reward-value" id="welcome-bonus-gold">+0</div>
+                </div>
+                <div class="welcome-bonus-reward-item">
+                    <div class="welcome-bonus-reward-icon">💎</div>
+                    <div class="welcome-bonus-reward-value" id="welcome-bonus-gems">+0</div>
+                </div>
+            </div>
+            <button class="welcome-bonus-collect-btn" onclick="claimWelcomeBonusPopup()">Recoger</button>
+        </div>
+    </div>
+
+    <!-- GUÍA / TUTORIAL PARA NUEVOS JUGADORES -->
+    <div class="tutorial-spot-ring" id="tutorial-spot-ring"></div>
+    <div id="tutorial-bubble">
+        <div class="tutorial-host-row">
+            <span class="tutorial-host-avatar">🎩</span>
+            <span class="tutorial-host-name">Tu Guía</span>
+        </div>
+        <div class="tutorial-text" id="tutorial-text"></div>
+        <div class="tutorial-btn-row">
+            <button class="tutorial-skip-btn" onclick="skipTutorial()">Saltar</button>
+            <button class="tutorial-next-btn" id="tutorial-next-btn" onclick="nextTutorialStep()">Siguiente</button>
+        </div>
+    </div>
 
     <!-- POPUP DE VICTORIA ESTILO "¡TÚ GANAS!" -->
     <div id="win-popup-overlay">
@@ -675,6 +746,9 @@
                 <div class="admin-field"><label>Bonus VIP por tarjeta (%, ej. 5 = +5% por tarjeta)</label><input type="number" id="cfg-vipBonusPerCard" min="0" step="0.1"></div>
                 <div class="admin-field"><label>Costo de Tarjeta VIP (gemas)</label><input type="number" id="cfg-vipCardCost" min="0"></div>
                 <div class="admin-field"><label>Costo de girar la ruleta (gemas)</label><input type="number" id="cfg-rouletteCost" min="0"></div>
+                <div class="admin-field"><label>Costo de ayuda extra de Mascota en juego (gemas)</label><input type="number" id="cfg-petHelpExtraCostGems" min="0"></div>
+                <div class="admin-field"><label>Bono de Bienvenida (cuenta nueva) — Oro</label><input type="number" id="cfg-welcomeBonusPopupGold" min="0"></div>
+                <div class="admin-field"><label>Bono de Bienvenida (cuenta nueva) — Gemas</label><input type="number" id="cfg-welcomeBonusPopupGems" min="0"></div>
                 <div class="admin-field"><label>Giros de ruleta disponibles por día</label><input type="number" id="cfg-rouletteSpinsPerDay" min="0"></div>
                 <div class="admin-field"><label>Velocidad de sorteo de balotas (segundos)</label><input type="number" id="cfg-ballIntervalSec" min="1" step="0.5"></div>
 
@@ -833,6 +907,9 @@ function defaultConfig() {
         rouletteSpinsPerDay: 3,
         ballIntervalMs: 3000,
         extraBallCost: 8,
+        petHelpExtraCostGems: 6,
+        welcomeBonusPopupGold: 600,
+        welcomeBonusPopupGems: 72,
         roomJackpots: { clasica: 825, oro: 1575, neon: 2500, fuego: 4000, espacial: 6000, aurora: 8000 },
         roomImages: {},
         vipPassCostGems: 60,
@@ -894,6 +971,7 @@ let pendingMultiplier = 1;
 let selectedBetTierIndex = 0;
 let activeBetMultiplier = 1;
 let activeBetLabel = 'Sencillo';
+let petHelpUsesLeft = 0;
 let historyStack = ['main-screen'];
 let selectedRoom = null;
 let ballSpeedMode = 'normal';
@@ -989,6 +1067,8 @@ function defaultState(username) {
         totalWins: 0,
         userLevel: 1,
         userXP: 0,
+        welcomeBonusPopupClaimed: false,
+        tutorialCompleted: false,
         missionDate: todayStr(),
         missionProgress: 0,
         missionClaimed: false,
@@ -1200,6 +1280,8 @@ function renderUserLevelWidget() {
 function ensurePlayerDefaults(p) {
     if (p.userLevel === undefined) p.userLevel = 1;
     if (p.userXP === undefined) p.userXP = 0;
+    if (p.welcomeBonusPopupClaimed === undefined) p.welcomeBonusPopupClaimed = true;
+    if (p.tutorialCompleted === undefined) p.tutorialCompleted = true;
     if (p.winStreak === undefined) p.winStreak = 0;
     if (p.ownedFrames === undefined) p.ownedFrames = [];
     if (p.claimedWelcomeBonuses === undefined) p.claimedWelcomeBonuses = [];
@@ -1566,6 +1648,87 @@ async function login() {
     goToScreen('main-screen', true);
     saveState();
     if (streakBonus > 0) showToast(`🔥 Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
+    if (result.isNew && !state.welcomeBonusPopupClaimed) {
+        setTimeout(() => showWelcomeBonusPopup(), 400);
+    } else if (!state.tutorialCompleted) {
+        setTimeout(() => startTutorial(), 400);
+    }
+}
+
+/* ---------- BONO DE BIENVENIDA (cuenta nueva) ---------- */
+function showWelcomeBonusPopup() {
+    if (!state) return;
+    document.getElementById('welcome-bonus-gold').innerText = `+${CONFIG.welcomeBonusPopupGold || 0}`;
+    document.getElementById('welcome-bonus-gems').innerText = `+${CONFIG.welcomeBonusPopupGems || 0}`;
+    document.getElementById('welcome-bonus-overlay').classList.add('active');
+}
+
+function claimWelcomeBonusPopup() {
+    if (!state) return;
+    state.gold += (CONFIG.welcomeBonusPopupGold || 0);
+    state.gems += (CONFIG.welcomeBonusPopupGems || 0);
+    state.welcomeBonusPopupClaimed = true;
+    saveState(); refreshAllUI();
+    document.getElementById('welcome-bonus-overlay').classList.remove('active');
+    showToast(`🎁 ¡Bono de bienvenida recogido! +${CONFIG.welcomeBonusPopupGold || 0} 🪙 +${CONFIG.welcomeBonusPopupGems || 0} 💎`);
+    if (!state.tutorialCompleted) {
+        setTimeout(() => startTutorial(), 350);
+    }
+}
+
+/* ---------- GUÍA / TUTORIAL PARA NUEVOS JUGADORES ---------- */
+const TUTORIAL_STEPS = [
+    { text: '¡Hola! Soy tu guía 🎩. Te muestro rápido lo esencial para empezar a ganar.', target: null },
+    { text: 'Aquí ves tus monedas 🪙 y gemas 💎. Las usas para jugar, comprar en la Tienda y más.', target: 'resources-bar' },
+    { text: 'Este es tu Nivel de Usuario. Ganas XP jugando Bingo y subes de nivel poco a poco.', target: 'userlvl-widget-card' },
+    { screen: 'main-screen', text: 'Toca "Bingo" para entrar a la sala y jugar tu primera partida automática.', target: 'nav-juego' },
+    { screen: 'main-screen', text: 'En "Tienda" puedes comprar cartas, mascotas y mejoras.', target: 'nav-tienda' },
+    { screen: 'main-screen', text: 'Adopta una Mascota aquí: sube de nivel y te ayudará a marcar casillas mientras juegas.', target: 'nav-pet' },
+    { screen: 'main-screen', text: 'El Pase VIP te da recompensas exclusivas por cada nivel que subas.', target: 'nav-vippass' },
+    { text: '¡Eso es todo! Ahora sí, buena suerte y que disfrutes tu Bingo. 🍀', target: null },
+];
+let tutorialStepIndex = 0;
+
+function startTutorial() {
+    if (!state || document.getElementById('welcome-bonus-overlay').classList.contains('active')) return;
+    tutorialStepIndex = 0;
+    document.getElementById('tutorial-bubble').classList.add('active');
+    showTutorialStep(0);
+}
+
+function showTutorialStep(i) {
+    const step = TUTORIAL_STEPS[i];
+    if (!step) { endTutorial(); return; }
+    if (step.screen) goToScreen(step.screen, true);
+    document.getElementById('tutorial-text').innerText = step.text;
+    document.getElementById('tutorial-next-btn').innerText = (i === TUTORIAL_STEPS.length - 1) ? '¡Entendido!' : 'Siguiente';
+    positionTutorialRing(step.target);
+}
+
+function positionTutorialRing(targetId) {
+    const ring = document.getElementById('tutorial-spot-ring');
+    const el = targetId ? document.getElementById(targetId) : null;
+    if (!el) { ring.classList.remove('active'); return; }
+    const r = el.getBoundingClientRect();
+    const pad = 6;
+    ring.style.top = (r.top - pad) + 'px';
+    ring.style.left = (r.left - pad) + 'px';
+    ring.style.width = (r.width + pad * 2) + 'px';
+    ring.style.height = (r.height + pad * 2) + 'px';
+    ring.classList.add('active');
+}
+
+function nextTutorialStep() {
+    tutorialStepIndex += 1;
+    showTutorialStep(tutorialStepIndex);
+}
+
+function skipTutorial() { endTutorial(); }
+
+function endTutorial() {
+    document.getElementById('tutorial-bubble').classList.remove('active');
+    document.getElementById('tutorial-spot-ring').classList.remove('active');
+    if (state) { state.tutorialCompleted = true; saveState(); }
 }
 
 async function closeAdminPanel() {
@@ -2055,6 +2218,64 @@ function buyExtraBall(cardIndex) {
     if (winPattern) { roundWinPattern = winPattern; endRound(true); }
 }
 
+function petHelpMaxUses() {
+    if (!state || !state.petOwned) return 0;
+    return 1 + Math.floor((state.petLevel || 0) / 5); // 1 uso base, +1 cada 5 niveles de mascota
+}
+
+function renderPetHelpButton() {
+    const widget = document.getElementById('pet-help-widget');
+    const btn = document.getElementById('pet-help-btn');
+    const usesEl = document.getElementById('pet-help-uses');
+    const buyBtn = document.getElementById('pet-help-buy-btn');
+    if (!widget || !btn || !usesEl || !state) return;
+    if (!state.petOwned) { widget.style.display = 'none'; return; }
+    widget.style.display = 'block';
+    usesEl.innerText = petHelpUsesLeft;
+    btn.disabled = petHelpUsesLeft <= 0;
+    btn.innerHTML = petHelpUsesLeft > 0
+        ? `🐾 Activar ayuda de Mascota (<span id="pet-help-uses">${petHelpUsesLeft}</span>)`
+        : `🐾 Mascota ya ayudó esta ronda`;
+    if (buyBtn) buyBtn.innerText = `💎 Comprar ayuda extra (${CONFIG.petHelpExtraCostGems || 0})`;
+}
+
+function buyPetHelpExtra() {
+    if (!state || !state.petOwned) { showToast('❌ Necesitas una mascota para comprar ayuda extra.'); return; }
+    const cost = CONFIG.petHelpExtraCostGems || 0;
+    if (state.gems < cost) { showToast(`❌ No tienes suficientes gemas para la ayuda extra (💎 ${cost}).`); return; }
+    state.gems -= cost;
+    petHelpUsesLeft += 1;
+    renderPetHelpButton();
+    saveState(); refreshAllUI();
+    showToast(`💎 ¡Compraste una ayuda extra de Mascota! Usos disponibles: ${petHelpUsesLeft}.`);
+}
+
+function activatePetHelp() {
+    if (!state || !state.petOwned) { showToast('❌ Necesitas una mascota para usar esta ayuda.'); return; }
+    if (petHelpUsesLeft <= 0) { showToast('🐾 Tu mascota ya usó su ayuda en esta ronda.'); return; }
+
+    // Prioriza el cartón más cerca de ganar; si no hay ninguno "a punto", marca una casilla libre de un cartón activo
+    let target = playerCardData.find(c => !c.completed && c.closestMissingCell !== null && c.closestMissingCell !== undefined);
+    if (!target) {
+        target = playerCardData.find(c => !c.completed && c.cells.some(cell => !cell.classList.contains('marked')));
+    }
+    if (!target) { showToast('🐾 No hay casillas pendientes para que tu mascota marque.'); return; }
+
+    let cellIndex = target.closestMissingCell;
+    if (cellIndex === null || cellIndex === undefined) {
+        const missingIdx = target.cells.map((cell, i) => cell.classList.contains('marked') ? -1 : i).filter(i => i >= 0);
+        cellIndex = missingIdx[Math.floor(Math.random() * missingIdx.length)];
+    }
+    target.cells[cellIndex].classList.add('marked', 'flash-new');
+    petHelpUsesLeft -= 1;
+    renderPetHelpButton();
+    saveState(); refreshAllUI();
+    showToast('🐾 ¡Tu mascota te ayudó a marcar una casilla!');
+
+    const winPattern = evaluateCardPatterns(target);
+    if (winPattern) { roundWinPattern = winPattern; endRound(true); }
+}
+
 function petBonusMultiplier() {
     const lvl = Math.min(state.petLevel || 0, 20);
     return 1 + 0.01 * lvl;
@@ -2270,6 +2491,8 @@ function startBingoGame() {
     document.getElementById('chat-log').innerHTML = '';
     roundLuckyNumber = Math.floor(Math.random() * 75) + 1;
     generateAllCards();
+    petHelpUsesLeft = petHelpMaxUses();
+    renderPetHelpButton();
 
     CONFIG.roomJackpots[selectedRoom.id] = (CONFIG.roomJackpots[selectedRoom.id] || 0) + 25;
     saveConfig();
@@ -2888,6 +3111,9 @@ function fillAdminGeneralForm() {
     document.getElementById('cfg-vipBonusPerCard').value = CONFIG.vipBonusPerCard;
     document.getElementById('cfg-vipCardCost').value = CONFIG.vipCardCost;
     document.getElementById('cfg-rouletteCost').value = CONFIG.rouletteCost;
+    document.getElementById('cfg-petHelpExtraCostGems').value = CONFIG.petHelpExtraCostGems;
+    document.getElementById('cfg-welcomeBonusPopupGold').value = CONFIG.welcomeBonusPopupGold;
+    document.getElementById('cfg-welcomeBonusPopupGems').value = CONFIG.welcomeBonusPopupGems;
     document.getElementById('cfg-rouletteSpinsPerDay').value = CONFIG.rouletteSpinsPerDay;
     document.getElementById('cfg-ballIntervalSec').value = CONFIG.ballIntervalMs / 1000;
     document.getElementById('cfg-vipPassCostGems').value = CONFIG.vipPassCostGems;
@@ -2998,6 +3224,9 @@ async function saveAdminGeneral() {
     CONFIG.vipBonusPerCard = parseFloat(document.getElementById('cfg-vipBonusPerCard').value) || 0;
     CONFIG.vipCardCost = parseInt(document.getElementById('cfg-vipCardCost').value) || 0;
     CONFIG.rouletteCost = parseInt(document.getElementById('cfg-rouletteCost').value) || 0;
+    CONFIG.petHelpExtraCostGems = parseInt(document.getElementById('cfg-petHelpExtraCostGems').value) || 0;
+    CONFIG.welcomeBonusPopupGold = parseInt(document.getElementById('cfg-welcomeBonusPopupGold').value) || 0;
+    CONFIG.welcomeBonusPopupGems = parseInt(document.getElementById('cfg-welcomeBonusPopupGems').value) || 0;
     CONFIG.rouletteSpinsPerDay = parseInt(document.getElementById('cfg-rouletteSpinsPerDay').value) || 0;
     CONFIG.ballIntervalMs = Math.max(500, (parseFloat(document.getElementById('cfg-ballIntervalSec').value) || 3) * 1000);
     CONFIG.vipPassCostGems = parseInt(document.getElementById('cfg-vipPassCostGems').value) || 0;
