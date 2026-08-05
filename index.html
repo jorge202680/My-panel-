@@ -1264,6 +1264,7 @@
         Conectando con la nube...
     </div>
 
+    <script>window.__firebaseReady=false; setTimeout(()=>{ if(!window.__firebaseReady){ console.warn('Firebase timeout offline'); window.__firebaseReady=true; window.dispatchEvent(new Event('firebase-ready')); } }, 4000);</script>
     <!-- SDK de Firebase (modular, vía CDN) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -1426,8 +1427,16 @@ function waitForFirebase() {
     return new Promise(resolve => {
         if (window.__firebaseReady) return resolve();
         window.addEventListener('firebase-ready', () => resolve(), { once: true });
+        setTimeout(()=> resolve(), 3500);
     });
 }
+function forceHideSplash(){
+    const splash=document.getElementById('splash-screen');
+    const cloud=document.getElementById('cloud-loading');
+    if(cloud) cloud.style.display='none';
+    if(splash){ splash.classList.add('fade-out'); setTimeout(()=>{ splash.style.display='none'; }, 600); }
+}
+window.addEventListener('error', (e)=>{ console.log('JS Error:', e.message); forceHideSplash(); });
 async function fsGet(col, id) {
     const ref = window.fs.doc(window.db, col, id);
     const snap = await window.fs.getDoc(ref);
