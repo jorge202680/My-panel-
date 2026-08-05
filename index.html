@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.5 (Bloque 2: tienda con oferta relámpago y cofre de mejor valor, indicador de riesgo/retorno y recarga inmediata) -->
+<!-- Súper Bingo Rey — v3.5 FULL - torneo, patrones, fuego, mascota habilidad, duelo, misión secreta + fix carga tienda con oferta relámpago y cofre de mejor valor, indicador de riesgo/retorno y recarga inmediata) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Súper Bingo Rey</title>
+    <title>Súper Bingo Rey v3.5</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0d1117; color: #fff; padding-bottom: 75px; user-select: none; }
@@ -590,9 +590,47 @@
         .streak-save-modal { background:#161b22; border:1px solid #f59e0b; border-radius:14px; padding:20px; text-align:center; }
         .vip-fomo { background:linear-gradient(90deg,#2a2305,#3a2a06); border:1px solid #fbbf24; border-radius:10px; padding:10px; margin-bottom:12px; }
 
+
+        /* ====== v3.5 MEJORAS VISUALES ====== */
+        .tournament-banner { background: linear-gradient(135deg,#7c3aed,#db2777,#f59e0b); border:1px solid #fbbf24; border-radius:14px; padding:14px; margin-bottom:14px; position:relative; overflow:hidden; animation: tourPulse 2s infinite; cursor:pointer; }
+        @keyframes tourPulse {0%,100%{box-shadow:0 0 12px rgba(251,191,36,.4)}50%{box-shadow:0 0 28px rgba(251,191,36,.8)}}
+        .tour-top { display:flex; justify-content:space-between; align-items:center; }
+        .tour-pot { font-size:17px; font-weight:bold; color:#fff; }
+        .tour-timer { background:#0006; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:bold; color:#fff; }
+        .pattern-selector { display:flex; gap:8px; overflow-x:auto; padding:8px 0; margin-bottom:10px; }
+        .pattern-chip { flex:0 0 auto; background:#21262d; border:1px solid #30363d; border-radius:10px; padding:8px 12px; font-size:11px; text-align:center; cursor:pointer; min-width:70px; }
+        .pattern-chip.active { border-color:#fbbf24; background:#2a2305; color:#ffd866; box-shadow:0 0 10px rgba(251,191,36,.3); }
+        .pattern-chip b { display:block; font-size:18px; }
+        .fire-ball { position:fixed; top:70px; left:50%; transform:translateX(-50%); background:linear-gradient(135deg,#ef4444,#f59e0b); color:#fff; padding:10px 18px; border-radius:20px; font-weight:bold; z-index:6000; display:none; animation: fireShake .3s infinite; border:1px solid #fbbf24; }
+        .fire-ball.active { display:block; }
+        @keyframes fireShake {0%,100%{transform:translateX(-50%) rotate(-1deg)}50%{transform:translateX(-50%) rotate(1deg)}}
+        .secret-mission { background:linear-gradient(135deg,#064e3b,#065f46); border:1px solid #10b981; border-radius:12px; padding:12px; margin-bottom:12px; }
+        .secret-dot { width:12px; height:12px; border-radius:50%; background:#30363d; display:inline-block; margin-right:4px; border:1px solid #10b981; }
+        .secret-dot.done { background:#10b981; box-shadow:0 0 8px #10b981; }
+        .chat-emotes { display:flex; gap:6px; margin:10px 0; overflow-x:auto; padding-bottom:4px; }
+        .emote-btn { background:#21262d; border:1px solid #30363d; border-radius:20px; padding:6px 12px; cursor:pointer; font-size:13px; color:#fff; flex:0 0 auto; }
+        .emote-bubble { position:fixed; background:#fff; color:#000; padding:8px 12px; border-radius:16px; font-size:12px; font-weight:bold; animation: bubbleUp 2.5s forwards; z-index:6500; box-shadow:0 4px 12px rgba(0,0,0,.4); }
+        @keyframes bubbleUp {0%{opacity:1; transform:translateY(0)}100%{opacity:0; transform:translateY(-80px)}}
+        .pet-battle-arena { background:radial-gradient(circle at 50% 30%,#1e1b4b,#0d1117); border:1px solid #4f46e5; border-radius:12px; padding:16px; text-align:center; margin-top:12px; }
+        .duel-banner { background:linear-gradient(135deg,#991b1b,#7f1d1d); border:1px solid #f87171; border-radius:14px; padding:14px; text-align:center; margin-bottom:12px; }
+        .streak-save-overlay { position:fixed; inset:0; background:#000a; z-index:7000; display:none; align-items:center; justify-content:center; }
+        .streak-save-overlay.active { display:flex; }
+
 </style>
 </head>
 <body>
+
+<div id="fire-ball-indicator" class="fire-ball">🔥 BOLA DE FUEGO x2 ACTIVA!</div>
+<div id="chat-bubbles-layer"></div>
+<div id="streak-save-overlay" class="streak-save-overlay">
+  <div style="background:#161b22; border:1px solid #f59e0b; border-radius:14px; padding:20px; text-align:center; width:90%; max-width:340px;">
+    <h3 style="color:#fbbf24;">⚠️ ¡Perderás tu racha!</h3>
+    <p style="font-size:12px; color:#8b949e; margin:10px 0;">Paga 10 💎 para salvarla.</p>
+    <button class="vip-buy-btn" style="width:100%; margin-bottom:8px;" onclick="saveStreakWithGems()">Salvar racha por 10 💎</button>
+    <button class="logout-btn" style="width:100%;" onclick="document.getElementById('streak-save-overlay').classList.remove('active')">Perder racha</button>
+  </div>
+</div>
+
 
     <!-- v3.5 NUEVOS OVERLAYS -->
     <div id="fire-ball-indicator" class="fire-ball">🔥 BOLA DE FUEGO x2 ACTIVA!</div>
@@ -717,7 +755,8 @@
         </div>
 
                 <div style="margin-bottom:12px;"><strong style="font-size:13px; color:#fbbf24;">🎯 Elige patrón ganador (v3.5)</strong><div id="pattern-selector" class="pattern-selector"></div></div>
-    <div id="lobby-modal" style="display:none;">
+    <div style="margin-bottom:12px;"><strong style="font-size:13px; color:#fbbf24;">🎯 Elige patrón ganador (v3.5)</strong><div id="pattern-selector" class="pattern-selector"></div></div>
+    <div id="lobby-modal"  style="display:none;">
             <p style="font-size:11px;"><span style="cursor:pointer;color:#58a6ff;" onclick="backToRoomSelect()">⬅ Cambiar de sala</span></p>
             <h3 style="color: #d29922; margin: 6px 0;">Selecciona tus Cartones</h3>
             <p style="font-size: 12px; color: #8b949e; margin-bottom: 4px;">Escoge hasta 16 tarjetas simultáneas. Cada tarjeta respeta las columnas B-I-N-G-O reales, sin números repetidos.</p>
@@ -1403,7 +1442,7 @@ let selectedFrame = null;
 let roundLuckyNumber = null;
 let roundWinPattern = null;
 
-function renderPetProgresoContent(){ 
+function renderPetProgresoContent_TEMP(){ 
   // fallback content if original not extracted
   return `<div class="card-widget"><strong>📈 Progreso</strong><p style="font-size:12px; color:#8b949e;">Nivel mascota, XP, etc.</p><p>Nivel: ${state?.nivel||1} | Oro: ${state?.gold||0}</p></div>`;
 }
@@ -2812,7 +2851,7 @@ async function closeAdminPanel() {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const savedUser = localStorage.getItem(SESSION_KEY);
     if (savedUser) {
-        await tryAutoLogin(); renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner();
+        try{ renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner(); }catch(e){ console.error('v3.5 init', e); } await tryAutoLogin(); renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner();
     } else {
         document.getElementById('bottom-nav').style.display = 'none';
         document.getElementById('login-screen').classList.add('active');
@@ -3658,6 +3697,8 @@ function petCelebrateIfUnlocked() {
 
 function renderPetBattleExtras(){ return `<div class='pet-battle-arena'><h4>⚔️ Arena de Mascotas</h4><p style='font-size:11px; color:#8b949e; margin:6px 0;'>Tu mascota vs rival aleatorio</p><div style='display:flex; gap:8px;'><button class='game-action-btn' onclick='petBattle()'>Batallar (Gratis)</button><button class='game-action-btn' style='background:#d29922; color:#000;' onclick='fusePets()'>Fusionar 2 adultas (10k 🪙)</button></div><button class='pet-help-btn' style='margin-top:8px; width:100%;' onclick='usePetAbility()'>✨ Usar Habilidad de Mascota</button><button class='pet-help-btn' style='margin-top:8px; width:100%; background:#10b981;' onclick='claimLuckyCard()'>🍀 Reclamar Cartón Suerte x2</button></div>`; }
 function renderPetScreenOriginalWrapper(tab){}
+function __origRenderPetScreenPlaceholder(tab){}
+const _origRenderPetScreenRef = null;
 function renderPetScreen(tab) {
     currentPetTab = tab || currentPetTab || 'adoptar';
     if (currentPetTab !== 'habitat') stopHabitatAutoWalk();
@@ -5388,6 +5429,196 @@ function checkBingoWinPatched(){
 // Hook into draw
 const origDraw = window.drawNextBall || null;
 
+
+/* ====== v3.5 LÓGICA COMPLETA ====== */
+const WIN_PATTERNS = {
+  linea: { name:'Línea', icon:'➖', desc:'Cualquier fila', check: (m)=> m.some(row=> row.every(Boolean)) },
+  esquinas: { name:'Esquinas', icon:'🔲', desc:'4 esquinas', check: (m)=> m[0][0] && m[0][4] && m[4][0] && m[4][4] },
+  x: { name:'X', icon:'❌', desc:'Dos diagonales', check: (m)=> [0,1,2,3,4].every(i=> m[i][i] && m[i][4-i]) },
+  t: { name:'T', icon:'T', desc:'Arriba + centro', check: (m)=> m[0].every(Boolean) && m.every(r=> r[2]) },
+  diamante: { name:'Diamante', icon:'♦️', desc:'Rombo centro', check: (m)=> m[1][2] && m[2][1] && m[2][3] && m[3][2] },
+  full: { name:'Cartón lleno', icon:'🏆', desc:'Todo', check: (m)=> m.flat().every(Boolean) }
+};
+let selectedPattern = 'full';
+let fireBallActive = false;
+let fireBallCount = 0;
+let secretGoldenNumber = 42;
+let tournamentPot = 15750;
+let tournamentEndsAt = Date.now() + 3*3600*1000;
+let duelMode = false;
+let luckyFreeCard = false;
+
+const PET_ABILITIES = {
+  gallo: { name:'Canto', cooldown:60, effect:()=>{ autoMarkRandomNumber(); showToast('🐓 ¡Gallo marcó un número!','achievement'); }},
+  gato_domestico: { name:'Sigilo', cooldown:45, effect:()=>{ petHelpUsesLeft+=1; showToast('🐱 +1 ayuda mascota','freespin'); }},
+  gato_siames: { name:'Suerte felina', cooldown:50, effect:()=>{ fireBallActive=true; document.getElementById('fire-ball-indicator').classList.add('active'); setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000); showToast('😼 15s de fuego','vip'); }},
+  bulldog: { name:'Mordida', cooldown:55, effect:()=>{ rivalProgress=Math.max(0,rivalProgress-15); showToast('🐶 Rival -15%','achievement'); }},
+  pastor_aleman: { name:'Guardia', cooldown:40, effect:()=>{ state.gold+=Math.floor((selectedRoom?.baseWinReward||500)*0.1); showToast('🐕 +10% oro','achievement'); saveState(); refreshAllUI(); }},
+  husky: { name:'Ventisca', cooldown:65, effect:()=>{ if(bingoInterval){ clearInterval(bingoInterval); bingoInterval=null; showToast('🐺 Rival congelado 5s ❄️','freespin'); setTimeout(()=>{ if(drawnNumbers.length<75) startBingoLoop(); },5000); } }},
+  aguila: { name:'Visión', cooldown:30, effect:()=>{ const next= rivalCardNumbers.flat().filter(n=>!drawnNumbers.includes(n))[0]; if(next) showToast('🦅 Próximo rival: '+next,'vip'); }}
+};
+
+function renderTournamentBanner(){
+  const potEl = document.querySelector('.tour-pot');
+  const timerEl = document.getElementById('tour-timer');
+  if(!potEl || !timerEl) return;
+  const diff = Math.max(0, tournamentEndsAt - Date.now());
+  const h=Math.floor(diff/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  potEl.innerText='🏆 Bote: '+tournamentPot.toLocaleString()+' 🪙';
+  timerEl.innerText=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if(diff<=0){ tournamentEndsAt=Date.now()+3*3600000; tournamentPot=5000+Math.floor(Math.random()*15000); showToast('🏆 Nuevo torneo relámpago iniciado!','vip'); }
+}
+setInterval(renderTournamentBanner,1000);
+
+function renderPatternSelector(){
+  const wrap=document.getElementById('pattern-selector'); if(!wrap) return;
+  wrap.innerHTML='';
+  Object.entries(WIN_PATTERNS).forEach(([id,p])=>{
+    const d=document.createElement('div'); d.className='pattern-chip'+(id===selectedPattern?' active':'');
+    d.innerHTML=`<b>${p.icon}</b>${p.name}`;
+    d.title=p.desc; d.onclick=()=>{ selectedPattern=id; renderPatternSelector(); showToast('Patrón: '+p.name+' - '+p.desc,'achievement'); };
+    wrap.appendChild(d);
+  });
+}
+
+function maybeTriggerFireBall(){
+  fireBallCount++;
+  if(fireBallCount%10===0){
+    fireBallActive=true;
+    document.getElementById('fire-ball-indicator').classList.add('active');
+    showToast('🔥 ¡BOLA DE FUEGO x2! 15s','freespin');
+    setTimeout(()=>{ fireBallActive=false; document.getElementById('fire-ball-indicator').classList.remove('active'); },15000);
+  }
+}
+function autoMarkRandomNumber(){
+  for(let card of playerCardData){ for(let row of card.cells){ for(let cell of row){ if(!cell.marked){ cell.marked=true; if(typeof refreshBingoUI==='function') refreshBingoUI(); return; } } } }
+}
+
+function initSecretMission(){
+  secretGoldenNumber = 10+Math.floor(Math.random()*65);
+  const el=document.getElementById('secret-golden-num'); if(el) el.innerText=secretGoldenNumber;
+  updateSecretDots();
+}
+function updateSecretDots(){
+  const wrap=document.getElementById('secret-dots'); if(!wrap) return;
+  const prog=state?.secretMissionProgress||0;
+  wrap.innerHTML='';
+  for(let i=0;i<3;i++){ const dot=document.createElement('span'); dot.className='secret-dot'+(i<prog?' done':''); wrap.appendChild(dot); }
+}
+function checkSecretMission(num){
+  if(!state) return;
+  if(num===secretGoldenNumber){
+    state.secretMissionProgress=(state.secretMissionProgress||0)+1;
+    updateSecretDots();
+    showToast(`🥚 ¡Número dorado ${num}! ${state.secretMissionProgress}/3`,'achievement');
+    if(state.secretMissionProgress>=3){
+      state.huevosMascota.comun=(state.huevosMascota.comun||0)+1;
+      state.secretMissionProgress=0;
+      showToast('🎉 ¡Misión secreta! +1 Huevo','vip');
+      initSecretMission();
+    }
+    saveState();
+  }
+}
+
+const QUICK_EMOTES = ['¡Casi! 😅','BINGO! 🎉','🔥🔥🔥','😂','¡Vamos!','😭','GG 👏','¡Nooo!'];
+function sendQuickEmote(txt){
+  const layer=document.getElementById('chat-bubbles-layer');
+  const b=document.createElement('div'); b.className='emote-bubble';
+  b.style.left=(10+Math.random()*70)+'vw'; b.style.top=(15+Math.random()*50)+'vh';
+  b.innerText=(state?.username||'Tú')+': '+txt; layer.appendChild(b); setTimeout(()=>b.remove(),2500);
+  if(Math.random()>0.5){ setTimeout(()=>{ const rb=document.createElement('div'); rb.className='emote-bubble'; rb.style.left=(10+Math.random()*70)+'vw'; rb.style.top=(20+Math.random()*50)+'vh'; rb.innerText='Rival: '+QUICK_EMOTES[Math.floor(Math.random()*QUICK_EMOTES.length)]; layer.appendChild(rb); setTimeout(()=>rb.remove(),2500); },600); }
+}
+function renderEmotesBar(){
+  let bar=document.getElementById('emotes-bar');
+  if(!bar){
+    const gameScreen=document.getElementById('game-screen');
+    if(gameScreen){ bar=document.createElement('div'); bar.id='emotes-bar'; bar.className='chat-emotes'; gameScreen.insertBefore(bar, gameScreen.firstChild); }
+  }
+  if(!bar) return;
+  bar.innerHTML='';
+  QUICK_EMOTES.forEach(e=>{ const btn=document.createElement('button'); btn.className='emote-btn'; btn.innerText=e; btn.onclick=()=>sendQuickEmote(e); bar.appendChild(btn); });
+}
+
+function petBattle(){
+  if(!state || (state.mascotas||[]).length===0){ showToast('Necesitas mascota'); return; }
+  const power=(state.nivel||1)*10+Math.floor(Math.random()*50);
+  const rival=Math.floor(Math.random()*100);
+  if(power>rival){ const reward=500+Math.floor(Math.random()*500); state.gold+=reward; state.bayasComunes=(state.bayasComunes||0)+2; showToast(`🏆 ¡Ganaste! +${reward} 🪙`,'achievement'); }
+  else { showToast('💔 Perdiste batalla',''); }
+  saveState(); refreshAllUI();
+}
+function fusePets(){
+  const adultas=(state?.mascotas||[]).filter(m=>m.etapa==='adulto').length;
+  if(adultas<2){ showToast('Necesitas 2 adultas'); return; }
+  if(state.gold<10000){ showToast('Necesitas 10k 🪙'); return; }
+  state.gold-=10000; state.huevosMascota.comun+=1; state.bayasRaras=(state.bayasRaras||0)+2;
+  showToast('✨ Fusión: +1 Huevo +2 Raras','vip'); saveState(); refreshAllUI();
+}
+function usePetAbility(){
+  if(!state?.mascotaActiva){ showToast('Activa mascota en Hábitat'); return; }
+  const masc=state.mascotas.find(m=>m.id===state.mascotaActiva);
+  const ab=PET_ABILITIES[masc?.tipoId]; if(!ab){ showToast('Sin habilidad'); return; }
+  if(Date.now()-(state.lastPetAbilityAt||0) < ab.cooldown*1000){ showToast(`⏳ Espera ${Math.ceil((ab.cooldown*1000-(Date.now()-state.lastPetAbilityAt))/1000)}s`); return; }
+  state.lastPetAbilityAt=Date.now(); ab.effect(); saveState();
+}
+function saveStreakWithGems(){
+  if(!state) return;
+  if(state.gems<10){ showToast('No tienes 10 💎'); return; }
+  state.gems-=10; document.getElementById('streak-save-overlay').classList.remove('active');
+  showToast('✅ Racha salvada','achievement'); saveState(); refreshAllUI();
+}
+function claimLuckyCard(){
+  if(luckyFreeCard){ showToast('Ya reclamaste'); return; }
+  luckyFreeCard=true; showToast('🍀 Cartón suerte x2 activado!','freespin');
+}
+function startDuelMode(){
+  duelMode=true;
+  const cost=selectedRoom?.cardCosts?.[chosenCardCount]||10;
+  const bet=cost*2;
+  if(!state){ showToast('Inicia sesión'); return; }
+  if(state.gold<bet){ showToast('Necesitas '+bet+' 🪙 para duelo'); return; }
+  state.gold-=bet; tournamentPot+=bet;
+  showToast('⚔️ Duelo 1vs1 - Bote '+(bet*2)+' 🪙','vip');
+  saveState(); refreshAllUI();
+  if(typeof openLobby==='function') openLobby();
+}
+
+function checkBingoWinPatched(){
+  const pattern=WIN_PATTERNS[selectedPattern];
+  if(!pattern) return false;
+  for(let card of playerCardData){
+    const marks=card.cells.map(row=> row.map(c=> c.marked));
+    if(pattern.check(marks)){
+      let reward=selectedRoom?.baseWinReward||500;
+      if(fireBallActive) reward*=2;
+      if(luckyFreeCard) reward*=2;
+      if(duelMode) reward*=2;
+      state.gold+=reward; state.totalWins=(state.totalWins||0)+1;
+      if(duelMode){ reward+=tournamentPot; state.gold+=tournamentPot; tournamentPot=5000; showToast('⚔️ ¡Ganaste duelo! Bote reclamado','vip'); duelMode=false; }
+      if(fireBallActive) showToast('🔥 BINGO x2! +'+reward,'vip'); else showToast('🎉 BINGO '+pattern.name+'! +'+reward,'achievement');
+      saveState(); refreshAllUI(); return true;
+    }
+  }
+  return false;
+}
+
+function renderPetBattleExtras(){
+  return `<div class='pet-battle-arena'><h4 style='color:#a5b4fc;'>⚔️ Arena + Habilidades v3.5</h4>
+  <p style='font-size:11px; color:#8b949e; margin:6px 0;'>Usa la habilidad de tu mascota en partida</p>
+  <div style='display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:8px;'>
+    <button class='game-action-btn' onclick='petBattle()'>⚔️ Batallar</button>
+    <button class='game-action-btn' style='background:#d29922; color:#000;' onclick='fusePets()'>✨ Fusionar</button>
+  </div>
+  <button class='pet-help-btn' style='margin-top:8px; width:100%;' onclick='usePetAbility()'>✨ Usar Habilidad</button>
+  <button class='pet-help-btn' style='margin-top:8px; width:100%; background:#10b981;' onclick='claimLuckyCard()'>🍀 Cartón Suerte x2</button></div>`;
+}
+
+// Hook original functions
+const __origCheckBingoWin = window.checkBingoWin;
+window.checkBingoWin = checkBingoWinPatched;
+
+
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
     document.querySelectorAll('#app-version-label, #admin-version-label').forEach(el => { el.innerText = APP_VERSION; });
@@ -5406,9 +5637,30 @@ window.addEventListener('load', async () => {
     document.getElementById('cloud-loading').style.display = 'none';
     await splashTimer;
     document.getElementById('splash-screen').classList.add('fade-out');
-    await tryAutoLogin(); renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner();
+    try{ renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner(); }catch(e){ console.error('v3.5 init', e); } await tryAutoLogin(); renderPatternSelector(); renderEmotesBar(); initSecretMission(); renderTournamentBanner();
     checkForAppUpdate();
 });
 </script>
-</body>
+<script>
+    (function(){
+        const tryWrap = ()=>{
+            if(typeof renderPetScreen !== 'function') return setTimeout(tryWrap, 500);
+            const orig = renderPetScreen;
+            renderPetScreen = function(tab){
+                const res = orig(tab);
+                try{
+                    if(tab==='progreso'){
+                        const el=document.getElementById('pet-content');
+                        if(el && !el.innerHTML.includes('pet-battle-arena')){
+                            el.innerHTML += renderPetBattleExtras();
+                        }
+                    }
+                }catch(e){}
+                return res;
+            };
+        };
+        tryWrap();
+    })();
+    </script>
+    </body>
 </html>
