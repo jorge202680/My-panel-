@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.5 (Bloque 2: tienda con oferta relámpago y cofre de mejor valor, indicador de riesgo/retorno y recarga inmediata) -->
+<!-- Súper Bingo Rey — v2.6 (Pantalla "Elige Tu Sala": barra de Modos de Juego + salas rediseñadas con escena visual, insignia de candado y nivel mínimo debajo) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -287,22 +287,48 @@
         .btn-reset { background: #d29922; color: #0d1117; }
         .btn-delete { background: #da3633; color: #fff; }
 
+        /* ================= MODOS DE JUEGO (barra superior estilo "Elige Tu Sala") ================= */
+        .modes-list { display: flex; flex-direction: column; gap: 10px; margin: 4px 0 16px; }
+        .mode-bar { position: relative; display: flex; align-items: center; gap: 12px; border-radius: 12px; padding: 14px 16px; cursor: pointer; border: 1px solid #30363d; overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
+        .mode-bar:hover:not(.mode-soon) { transform: translateY(-2px); box-shadow: 0 8px 18px rgba(0,0,0,0.4); }
+        .mode-bar:active:not(.mode-soon) { transform: scale(0.98); }
+        .mode-bar-icon { width: 34px; height: 34px; flex-shrink: 0; border-radius: 10px; background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: bold; }
+        .mode-bar-name { font-weight: bold; font-size: 15px; flex: 1; }
+        .mode-bar-cards { display: flex; gap: 4px; opacity: 0.9; flex-shrink: 0; }
+        .mode-bar-cards span { font-size: 18px; }
+        .mode-bar-soon-tag { position: absolute; top: 6px; right: 8px; background: rgba(0,0,0,0.45); color: #ffe58a; font-size: 9px; font-weight: bold; padding: 2px 7px; border-radius: 10px; letter-spacing: .3px; }
+        .mode-bar.mode-soon { opacity: 0.65; cursor: not-allowed; }
+        .mode-bar.mode-clasico { background: linear-gradient(135deg,#3a3f47,#20242b); border-color:#4a515c; }
+        .mode-bar.mode-supervivencia { background: linear-gradient(135deg,#7a1f16,#2b0b06); border-color:#c0392b; }
+        .mode-bar.mode-antibingo { background: linear-gradient(135deg,#4c1d7a,#1c0d33); border-color:#a371f7; }
+        .mode-bar.mode-fusion { background: linear-gradient(135deg,#0b3a63,#5c1f8a); border-color:#58a6ff; }
+
         /* ================= SALAS TEMÁTICAS ================= */
-        .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0 15px; }
-        .room-card { position: relative; border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; border: 2px solid #30363d; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; }
-        .room-card:hover:not(.locked) { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 20px rgba(0,0,0,0.45); }
+        .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0 15px; }
+        .room-card { position: relative; border-radius: 14px; height: 170px; text-align: left; cursor: pointer; border: 2px solid #30363d; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; display: flex; flex-direction: column; justify-content: flex-end; }
+        .room-card:hover:not(.locked) { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.45); }
         .room-card:active:not(.locked) { transform: scale(0.97); }
-        .room-card .room-icon { font-size: 26px; display: block; margin-bottom: 4px; }
-        .room-card .room-name { font-weight: bold; font-size: 14px; }
-        .room-card .room-meta { font-size: 10px; color: #c9d1d9; margin-top: 4px; }
-        .room-card .room-jackpot { font-size: 11px; color: #ffe58a; font-weight: bold; margin-top: 6px; }
-        .room-card.locked { opacity: 0.55; cursor: not-allowed; }
-        .room-card.locked::after { content: '🔒'; position: absolute; top: 8px; right: 8px; font-size: 14px; }
-        .room-card.room-clasica { background: linear-gradient(135deg,#21262d,#161b22); }
-        .room-card.room-oro { background: linear-gradient(135deg,#5c4413,#2b2100); border-color:#d29922; }
-        .room-card.room-neon { background: linear-gradient(135deg,#3b1660,#160d2e); border-color:#a371f7; box-shadow:0 0 12px rgba(163,113,247,0.35); }
-        .room-card.room-fuego { background: linear-gradient(135deg,#7a1f16,#2b0b06); border-color:#f85149; box-shadow:0 0 12px rgba(248,81,73,0.35); }
-        .room-card.room-espacial { background: linear-gradient(135deg,#0b1f4d,#05061a); border-color:#58a6ff; box-shadow:0 0 14px rgba(88,166,255,0.4); }
+        .room-card .room-scene { position: absolute; inset: 0; }
+        .room-card .room-name-row { position: relative; z-index: 2; display: flex; align-items: center; gap: 6px; padding: 10px 10px 4px; background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0)); }
+        .room-card .room-icon { font-size: 18px; flex-shrink: 0; }
+        .room-card .room-name { font-weight: bold; font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+        .room-card .room-meta-row { position: relative; z-index: 2; padding: 0 10px 10px; background: rgba(0,0,0,0.85); }
+        .room-card .room-meta { font-size: 10px; color: #c9d1d9; }
+        .room-card .room-jackpot { font-size: 11px; color: #ffe58a; font-weight: bold; margin-top: 2px; }
+        .room-card.locked .room-scene { filter: grayscale(0.4) brightness(0.55); }
+        .room-card.locked { cursor: not-allowed; }
+        .room-card.locked .room-lock-badge { display: flex; }
+        .room-lock-badge { display: none; position: absolute; z-index: 3; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.55); align-items: center; justify-content: center; font-size: 13px; }
+        .room-card.room-clasica .room-scene { background: linear-gradient(180deg,#7fa896 0%,#5c8a72 45%,#3d5c47 100%); }
+        .room-card.room-clasica .room-scene::before { content:''; position:absolute; inset:0; background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 26px), repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px); }
+        .room-card.room-oro .room-scene { background: radial-gradient(circle at 50% 35%, #f0c040 0%, #b8860b 30%, #5c4413 65%, #2b2100 100%); }
+        .room-card.room-oro .room-scene::before { content:''; position:absolute; inset:0; background: repeating-linear-gradient(0deg, rgba(255,215,0,0.12) 0 3px, transparent 3px 14px); }
+        .room-card.room-neon .room-scene { background: linear-gradient(180deg,#160d2e 0%,#3b1660 55%,#160d2e 100%); }
+        .room-card.room-neon .room-scene::before { content:''; position:absolute; inset:0; background-image: linear-gradient(90deg, transparent 46%, rgba(163,113,247,0.55) 47%, rgba(163,113,247,0.55) 48%, transparent 49%), linear-gradient(90deg, transparent 66%, rgba(88,166,255,0.4) 67%, rgba(88,166,255,0.4) 68%, transparent 69%); }
+        .room-card.room-fuego .room-scene { background: radial-gradient(circle at 50% 100%, #ffae42 0%, #d9302a 25%, #7a1f16 55%, #2b0b06 100%); }
+        .room-card.room-espacial .room-scene { background: radial-gradient(circle at 30% 20%, #58a6ff 0%, transparent 3%), radial-gradient(circle at 70% 40%, #fff 0%, transparent 2%), radial-gradient(circle at 50% 70%, #a371f7 0%, transparent 3%), linear-gradient(180deg,#0b1f4d 0%,#05061a 100%); }
+        .room-card.room-aurora .room-scene { background: linear-gradient(160deg,#0b1f2e 0%,#123b3a 40%,#1f6f5c 60%,#2d1b4e 100%); }
+        .room-card.room-aurora .room-scene::before { content:''; position:absolute; inset:0; background: linear-gradient(100deg, transparent 20%, rgba(63,185,80,0.35) 35%, transparent 50%, rgba(163,113,247,0.3) 65%, transparent 80%); }
         .room-lock-note { font-size: 9px; color: #f85149; margin-top: 3px; }
 
         /* Ambientación de la pantalla de juego según la sala activa */
@@ -603,6 +629,7 @@
 
         <!-- SELECCIÓN DE SALA TEMÁTICA -->
         <div id="room-select-view">
+            <div class="modes-list" id="modes-list"></div>
             <p style="font-size:12px;color:#8b949e;margin-bottom:6px;">Cada sala tiene su propio ambiente, bote acumulado y requisitos.</p>
             <div class="rooms-grid" id="rooms-grid"></div>
         </div>
@@ -1373,6 +1400,33 @@ function defaultState(username) {
 }
 
 /* ---------- SALAS TEMÁTICAS ---------- */
+/* ---------- MODOS DE JUEGO (barra superior de "Elige Tu Sala") ---------- */
+const GAME_MODES = [
+    { id:'clasico',       name:'Clásico',            cls:'mode-clasico',       icon:'🎮', cards:['🟢','🟡'], enabled:true },
+    { id:'supervivencia', name:'Supervivencia',      cls:'mode-supervivencia', icon:'🚫', cards:['🟠','🟣'], enabled:false },
+    { id:'antibingo',     name:'Anti-Bingo',         cls:'mode-antibingo',     icon:'INV', cards:['🟣','🔴'], enabled:false },
+    { id:'fusion',        name:'Fusión in Misterioso', cls:'mode-fusion',      icon:'🔀', cards:['🔵','🟠'], enabled:false },
+];
+function renderGameModes() {
+    const wrap = document.getElementById('modes-list');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    GAME_MODES.forEach(mode => {
+        const div = document.createElement('div');
+        div.className = 'mode-bar ' + mode.cls + (mode.enabled ? '' : ' mode-soon');
+        div.innerHTML = `
+            ${!mode.enabled ? '<span class="mode-bar-soon-tag">Próximamente</span>' : ''}
+            <span class="mode-bar-icon">${mode.icon}</span>
+            <span class="mode-bar-name">${mode.name}</span>
+            <span class="mode-bar-cards">${mode.cards.map(c => `<span>${c}</span>`).join('')}</span>
+        `;
+        div.onclick = () => {
+            if (!mode.enabled) { showToast('🔒 Modo "' + mode.name + '" próximamente.'); return; }
+        };
+        wrap.appendChild(div);
+    });
+}
+
 const ROOMS = [
     { id:'clasica',  name:'Clásica',  icon:'🎱', cls:'room-clasica',  theme:'theme-clasica',  minLevel:1,  minStreak:0, welcomeBonus:0,    baseWinReward:825,  unlockDiamonds:0,   cardCosts:{1:10,  2:20,  4:40,  8:80,  12:120, 16:160} },
     { id:'oro',      name:'Oro',      icon:'👑', cls:'room-oro',      theme:'theme-oro',      minLevel:10, minStreak:0, welcomeBonus:300,  baseWinReward:1575, unlockDiamonds:20,  cardCosts:{1:50,  2:100, 4:200, 8:400, 12:600, 16:800} },
@@ -2206,6 +2260,7 @@ window.addEventListener('popstate', () => {
 
 /* ---------- SALAS: selección y ambientación ---------- */
 function renderRoomSelect() {
+    renderGameModes();
     const grid = document.getElementById('rooms-grid');
     if (!grid || !state) return;
     grid.innerHTML = '';
@@ -2220,11 +2275,17 @@ function renderRoomSelect() {
         const div = document.createElement('div');
         div.className = 'room-card ' + room.cls + (locked || needsUnlock ? ' locked' : '');
         div.innerHTML = `
-            <span class="room-icon">${customImg ? `<img src="${customImg}" style="width:36px;height:36px;object-fit:cover;border-radius:8px;">` : room.icon}</span>
-            <div class="room-name">${room.name}${room.vipEarlyOnly ? ' 🎫' : ''}</div>
-            <div class="room-meta">Nivel mín. ${room.minLevel}${room.minStreak ? ' · Racha ' + room.minStreak + '+' : ''}</div>
-            <div class="room-jackpot">💰 ${jackpot.toLocaleString('es')} 🪙</div>
-            ${vipLocked ? `<div class="room-lock-note">🎫 Acceso anticipado — Requiere Pase VIP</div>` : (!levelOk ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : (needsUnlock ? `<button class="game-action-btn" style="padding:6px 10px;font-size:11px;margin-top:4px;" onclick="event.stopPropagation(); unlockRoomWithDiamonds('${room.id}')">🔓 Desbloquear (💎 ${room.unlockDiamonds})</button>` : ''))}
+            <div class="room-scene">${customImg ? `<img src="${customImg}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div>
+            <div class="room-lock-badge">🔒</div>
+            <div class="room-name-row">
+                <span class="room-icon">${room.icon}</span>
+                <span class="room-name">${room.name}${room.vipEarlyOnly ? ' 🎫' : ''}</span>
+            </div>
+            <div class="room-meta-row">
+                <div class="room-meta">Nivel mín. ${room.minLevel}${room.minStreak ? ' · Racha ' + room.minStreak + '+' : ''}</div>
+                <div class="room-jackpot">💰 ${jackpot.toLocaleString('es')} 🪙</div>
+                ${vipLocked ? `<div class="room-lock-note">🎫 Acceso anticipado — Requiere Pase VIP</div>` : (!levelOk ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : (needsUnlock ? `<button class="game-action-btn" style="padding:6px 10px;font-size:11px;margin-top:4px;" onclick="event.stopPropagation(); unlockRoomWithDiamonds('${room.id}')">🔓 Desbloquear (💎 ${room.unlockDiamonds})</button>` : ''))}
+            </div>
         `;
         if (levelOk && !vipLocked && !needsUnlock) div.onclick = () => chooseRoom(room.id);
         grid.appendChild(div);
