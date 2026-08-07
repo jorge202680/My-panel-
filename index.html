@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.8 (Inicio: ranking con medallas 🥇🥈🥉 y avatar circular por rango · Tienda: grid de accesos Suscripción/Mercado/Free-Roll + franja "Tus Tarjetas VIP") -->
+<!-- Súper Bingo Rey — v2.6 (Pantalla "Elige Tu Sala": barra de Modos de Juego + salas rediseñadas con escena visual, insignia de candado y nivel mínimo debajo) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -48,21 +48,6 @@
         .vip-buy-btn { background: linear-gradient(135deg, #d29922, #bc8c22); border: none; color: #0d1117; font-weight: bold; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
 
         .store-multipliers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-        .store-shortcuts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-        .store-shortcut-tile { border-radius: 12px; padding: 14px; cursor: pointer; border: 1px solid #30363d; display: flex; align-items: center; gap: 10px; transition: transform .15s ease; }
-        .store-shortcut-tile:hover { transform: translateY(-2px); }
-        .store-shortcut-tile:active { transform: scale(0.97); }
-        .store-shortcut-icon { font-size: 26px; flex-shrink: 0; }
-        .store-shortcut-title { font-weight: bold; font-size: 13px; }
-        .store-shortcut-sub { font-size: 10px; opacity: .85; margin-top: 2px; }
-        .shortcut-suscripcion { background: linear-gradient(135deg,#7a4a10,#3b2205); border-color:#d29922; }
-        .shortcut-mercado-a { background: linear-gradient(135deg,#0b3a63,#0d1117); border-color:#1f6feb; }
-        .shortcut-mercado-b { background: linear-gradient(135deg,#123b2e,#0d1117); border-color:#3fb950; }
-        .shortcut-freeroll { background: linear-gradient(135deg,#4c1d7a,#1c0d33); border-color:#a371f7; }
-        .vip-cards-strip-title { font-weight:bold; font-size:13px; margin:15px 0 8px; color:#d29922; }
-        .vip-cards-strip { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; }
-        .vip-card-tile { flex:0 0 auto; width:64px; height:80px; border-radius:10px; background:linear-gradient(160deg,#2b2100,#161b22); border:1px solid #d29922; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-size:20px; color:#d29922; }
-        .vip-card-tile span.vip-card-label { font-size:9px; color:#8b949e; }
         .mult-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 10px; text-align: center; color: #fff; cursor: pointer; font-size: 13px; }
         .mult-btn.active { border-color: #58a6ff; background: #1f2937; }
         .mult-btn span { display: block; font-size: 11px; color: #d29922; margin-top: 4px; }
@@ -202,12 +187,7 @@
         .toast.toast-freespin { border-color:#58a6ff; background:linear-gradient(135deg,#0d2340,#161b22); }
         .toast.toast-friend { border-color:#bc8cff; background:linear-gradient(135deg,#241338,#161b22); }
 
-        /* ---- Splash / portada ---- */
-        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; z-index: 6000; background:#0d1117; display:flex; align-items:center; justify-content:center; transition: opacity .6s ease; }
-        #splash-screen img { width: 100%; height: 100%; object-fit: cover; }
-        #splash-screen.fade-out { opacity: 0; pointer-events: none; }
-
-        /* ---- Racha / logros / ranking ---- */
+                /* ---- Racha / logros / ranking ---- */
         .streak-badge { display:inline-flex; align-items:center; gap:4px; background: linear-gradient(135deg,#da3633,#9e2f2c); color:#fff; padding:4px 10px; border-radius: 20px; font-size:12px; font-weight:bold; }
         .daily-rewards-btn { background:linear-gradient(135deg,#1f6feb,#1158c7); color:#fff; border:none; border-radius:20px; padding:4px 10px; font-size:12px; font-weight:bold; cursor:pointer; margin-left:6px; }
         .daily-rewards-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; }
@@ -243,15 +223,7 @@
         .achv-item .achv-label { display:block; font-size:8px; color:#8b949e; margin-top:2px; }
         .leaderboard-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #21262d; font-size:13px; }
         .leaderboard-row:last-child { border-bottom:none; }
-        .leaderboard-left { display:flex; align-items:center; gap:8px; }
-        .leaderboard-rank { color:#8b949e; font-weight:bold; width:20px; text-align:center; font-size:13px; flex-shrink:0; }
-        .leaderboard-rank.rank-1 { font-size:18px; }
-        .leaderboard-rank.rank-2 { font-size:18px; }
-        .leaderboard-rank.rank-3 { font-size:18px; }
-        .leaderboard-avatar { width:30px; height:30px; border-radius:50%; background:#21262d; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; border:2px solid #30363d; }
-        .leaderboard-avatar.rank-1 { border-color:#d29922; box-shadow:0 0 8px rgba(210,153,34,.5); }
-        .leaderboard-avatar.rank-2 { border-color:#c9d1d9; }
-        .leaderboard-avatar.rank-3 { border-color:#cd7f32; }
+        .leaderboard-rank { color:#d29922; font-weight:bold; width:26px; }
         .rank-medal { font-size:15px; margin-right:2px; }
 
         /* ---- Confeti de victoria ---- */
@@ -297,60 +269,8 @@
         .admin-row-card input[type=checkbox] { width: auto; margin-right: 6px; }
         .admin-del-btn { background: #da3633; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
         .admin-add-btn { background: #238636; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 12px; }
-        /* ================= PANEL ADMIN — TIENDA (selector de cofres) ================= */
-        .chest-selector-row { display:flex; gap:10px; margin-bottom:14px; overflow-x:auto; padding-bottom:4px; }
-        .chest-tab { flex:0 0 auto; width:76px; text-align:center; padding:10px 6px; border-radius:10px; border:2px solid #30363d; background:#161b22; cursor:pointer; }
-        .chest-tab.active { border-color:#d29922; box-shadow:0 0 10px rgba(210,153,34,.4); background:#1c1608; }
-        .chest-tab .chest-icon { font-size:24px; height:26px; display:flex; align-items:center; justify-content:center; }
-        .chest-tab .chest-label { font-size:9px; color:#8b949e; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-        .chest-tab.active .chest-label { color:#d29922; font-weight:bold; }
-        .chest-add-tab { border-style:dashed; }
-        .toggle-switch-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; font-size:13px; color:#c9d1d9; }
-        .toggle-switch { position:relative; width:42px; height:22px; background:#30363d; border-radius:20px; cursor:pointer; transition:background .2s; flex-shrink:0; }
-        .toggle-switch.on { background:#3fb950; }
-        .toggle-switch::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; background:#fff; border-radius:50%; transition:left .2s; }
-        .toggle-switch.on::after { left:22px; }
-        .admin-field-label { font-size:10px; color:#8b949e; margin-bottom:4px; display:block; letter-spacing:.5px; text-transform:uppercase; }
-        .dual-price-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-        .chest-form input[type=text], .chest-form input[type=number], .chest-form textarea { width:100%; background:#0d1117; border:1px solid #30363d; color:#fff; border-radius:8px; padding:9px; font-size:13px; margin-bottom:12px; }
-        .btn-guardar-magenta { background:linear-gradient(135deg,#e026e0,#a21caf); color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:bold; letter-spacing:.5px; cursor:pointer; margin-bottom:8px; box-shadow:0 4px 14px rgba(192,38,211,.4); }
-        .btn-eliminar-red { background:linear-gradient(135deg,#c0392b,#7f1d1d); color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:bold; letter-spacing:.5px; cursor:pointer; }
-
-        /* ================= PANEL ADMIN — RULETA ================= */
-        .ruleta-header-box { display:flex; align-items:center; gap:12px; background:#161b22; border:1px solid #30363d; border-radius:12px; padding:12px 14px; margin-bottom:14px; }
-        .ruleta-mini-wheel { width:46px; height:46px; border-radius:50%; background: conic-gradient(#d29922 0 25%, #8957e5 25% 50%, #3fb950 50% 75%, #f85149 75% 100%); flex-shrink:0; box-shadow:0 0 10px rgba(0,0,0,.5); border:2px solid #30363d; }
-        .ruleta-header-box b { font-size:13px; } .ruleta-header-box span { font-size:11px; color:#8b949e; display:block; }
-        .ruleta-table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
-        .ruleta-table th { text-align:left; color:#8b949e; font-size:9px; text-transform:uppercase; letter-spacing:.4px; padding:6px 4px; border-bottom:1px solid #30363d; }
-        .ruleta-table td { padding:8px 4px; border-bottom:1px solid #21262d; vertical-align:middle; }
-        .ruleta-table input { width:56px; background:#0d1117; border:1px solid #30363d; color:#fff; border-radius:6px; padding:5px; font-size:12px; }
-        .ruleta-table input.premio-label { width:100%; }
-        .ruleta-cost-speed-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
-        .ruleta-cost-speed-row .field-box { background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:10px; }
-        .ruleta-cost-speed-row input[type=range] { width:100%; }
-
-        /* ================= PANEL ADMIN — MULTIPLICADORES (Buffs y Eventos) ================= */
-        .buff-card { border-radius:12px; padding:14px; margin-bottom:12px; border:2px solid; }
-        .buff-card.buff-xp { border-color:#58a6ff; background:linear-gradient(135deg,#0d1b30,#0d1117); }
-        .buff-card.buff-gold { border-color:#d29922; background:linear-gradient(135deg,#332405,#0d1117); }
-        .buff-card.buff-peak { border-color:#8957e5; background:linear-gradient(135deg,#1f0f33,#0d1117); }
-        .buff-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-        .buff-card-title { font-weight:bold; font-size:13px; display:flex; align-items:center; gap:6px; }
-        .buff-card-value-input { background:transparent; border:none; color:#fff; font-size:26px; font-weight:bold; width:100%; margin-bottom:8px; padding:0; }
-        .buff-card input[type=range] { width:100%; }
-
-        /* ================= PANEL ADMIN — USUARIOS ================= */
-        .usuarios-search-row { display:flex; gap:8px; margin-bottom:14px; }
-        .usuarios-search-row input { flex:1; background:#161b22; border:1px solid #30363d; color:#fff; border-radius:10px; padding:10px 12px; font-size:13px; }
-        .usuarios-filter-btn { background:#161b22; border:1px solid #30363d; color:#8b949e; border-radius:10px; width:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; }
-        .user-card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:12px; margin-bottom:10px; }
-        .user-card-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-        .user-card-avatar { width:38px; height:38px; border-radius:50%; background:#21262d; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
-        .user-card-name { font-weight:bold; font-size:13px; flex-shrink:0; margin-right:6px; }
-        .user-card-stats { flex:1; display:flex; justify-content:space-around; font-size:9px; color:#8b949e; text-align:center; }
-        .user-card-stats b { display:block; font-size:13px; color:#fff; font-weight:bold; }
-        .user-card-actions { display:flex; gap:6px; flex-wrap:wrap; }
-        .user-card-actions button { flex:1; min-width:70px; font-size:11px; padding:7px 4px; border-radius:8px; border:none; cursor:pointer; font-weight:bold; color:#fff; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        .admin-table th, .admin-table td { border-bottom: 1px solid #30363d; padding: 8px 4px; text-align: left; }
         .admin-table button { font-size: 10px; padding: 4px 6px; margin: 2px; border-radius: 5px; border: none; cursor: pointer; }
 
         /* ---- Grupos/secciones del panel admin ---- */
@@ -597,13 +517,231 @@
 .admin-img-preview img{width:100%;height:100%;object-fit:contain}
 
 
-        </style>
+        
+/* VIP PREMIUM DEFINITIVO - REEMPLAZO DIRECTO */
+#vippass-screen{ background:#080e1f !important; background-image:radial-gradient(ellipse at center,#0d1b3a 0%,#080e1f 100%) !important; padding:12px !important }
+#vippass-screen .vip-section-title, #vippass-screen .vip-fav-card-box, #vippass-screen .vip-pick-grid, #vippass-screen .vip-daily-gift-btn, #vippass-screen .vip-scratch-btn, #vippass-screen #vip-locked-note, #vippass-screen .vip-track-scroll{ display:none !important }
+#vip-m11-matrix{ display:flex !important; flex-direction:column !important; gap:12px !important; margin-top:14px !important }
+.vipFila{display:flex; align-items:center; gap:8px}
+.vipFilaLabel{ width:70px; font-weight:900; font-size:11px; text-align:right; line-height:1; flex-shrink:0; text-transform:uppercase }
+.vipFilaLabel.free{color:#7CFC00; text-shadow:0 0 6px #7CFC00}
+.vipFilaLabel.vip{color:#FFD700; text-shadow:0 0 6px #FFD700}
+.vipFilaLabel.elite{color:#00BFFF; text-shadow:0 0 6px #00BFFF}
+.vipFilaLabel.maestro{color:#DA70D6; text-shadow:0 0 6px #DA70D6}
+.vipGrid{ flex:1; display:grid; grid-template-columns:repeat(10,1fr); gap:5px }
+.vipCell{ height:58px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; font-size:12px; border:2px solid rgba(255,255,255,.3); box-shadow:0 3px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.3) }
+.vipCell small{font-size:8px; font-weight:600; opacity:.9}
+.vipCell.free{background:linear-gradient(#8BC34A,#2E7D32); color:#fff; border-color:#AED581}
+.vipCell.vip{background:linear-gradient(#FFEB3B,#FF9800); color:#3E2723; border-color:#FFECB3; box-shadow:0 0 10px rgba(255,193,7,.6)}
+.vipCell.elite{background:linear-gradient(#64B5F6,#0D47A1); color:#E3F2FD; border-color:#90CAF9; box-shadow:0 0 10px rgba(33,150,243,.6)}
+.vipCell.maestro{background:linear-gradient(#BA68C8,#4A148C); color:#fff; border-color:#CE93D8; box-shadow:0 0 10px rgba(156,39,176,.6)}
+
+
+/* FIX 30 NIVELES - SCROLL SIN ROMPER */
+#vippass-screen{ overflow-x:hidden !important }
+.vipFila{ display:flex; align-items:center; gap:8px; width:100%; overflow:hidden }
+.vipGrid{
+  flex:1;
+  display:grid;
+  grid-auto-flow:column;
+  grid-auto-columns:58px;
+  grid-template-columns:none !important;
+  gap:6px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  padding-bottom:6px;
+  scrollbar-width:thin;
+  -webkit-overflow-scrolling:touch;
+}
+.vipGrid::-webkit-scrollbar{ height:6px }
+.vipGrid::-webkit-scrollbar-thumb{ background:#2a3441; border-radius:10px }
+.vipFilaLabel{ position:sticky; left:0; z-index:2; background:#080e1f; padding-right:6px }
+
+
+/* ===== NUEVA TIENDA VIP COMO FOTO - SALDO + PASSES + ORO + DIAMANTES ===== */
+#vippass-screen{
+  background:#f5f5f7 !important;
+  padding:12px !important;
+  color:#1d1d1f !important;
+}
+#vippass-screen .vip-header{display:none !important}
+#vippass-screen::before{display:none !important}
+
+.saldo-header{
+  display:flex; align-items:center; justify-content:space-between;
+  background:#fff; border-radius:16px; padding:14px 18px; margin-bottom:16px;
+  box-shadow:0 2px 12px rgba(0,0,0,.08); border:1px solid #e5e5e7;
+}
+.saldo-top{
+  display:flex; align-items:center; justify-content:space-between;
+  background:#f0f0f2; border-radius:16px; padding:14px 20px; margin-bottom:16px;
+}
+.saldo-item{display:flex; align-items:center; gap:10px; font-weight:800; font-size:20px}
+.saldo-item .ico{width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px}
+.saldo-item.gold .ico{background:linear-gradient(135deg,#FFD700,#FFA000)}
+.saldo-item.diamond .ico{background:linear-gradient(135deg,#E3F2FD,#90CAF9)}
+
+.passes-title{font-weight:900; font-size:16px; margin:12px 0 10px; color:#111; letter-spacing:.5px}
+.passes-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:18px; overflow-x:auto; padding-bottom:6px}
+.pass-card{
+  border-radius:16px; padding:14px 8px; text-align:center; color:#fff;
+  box-shadow:0 6px 16px rgba(0,0,0,.15); cursor:pointer; position:relative;
+  min-width:82px; transition:transform .15s;
+}
+.pass-card:hover{transform:translateY(-4px)}
+.pass-card .pass-icon{font-size:38px; margin:6px 0; filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))}
+.pass-card .pass-name{font-weight:900; font-size:12px; margin:6px 0}
+.pass-card .pass-price{font-weight:800; font-size:13px; margin:4px 0}
+.pass-card .pass-reward{font-size:11px; opacity:.95; display:flex; align-items:center; justify-content:center; gap:3px; margin:2px 0}
+.pass-card.free{background:linear-gradient(180deg,#8BC34A,#43A047)}
+.pass-card.vip{background:linear-gradient(180deg,#FFD54F,#FF8F00)}
+.pass-card.elite{background:linear-gradient(180deg,#64B5F6,#1976D2)}
+.pass-card.maestro{background:linear-gradient(180deg,#BA68C8,#7B1FA2)}
+
+.shop-box{
+  border-radius:20px; padding:16px; margin-bottom:16px;
+}
+.shop-box.goldBox{background:linear-gradient(180deg,#FFD180,#FFAB40); border:1px solid #FFB74D}
+.shop-box.diamondBox{background:linear-gradient(180deg,#64B5F6,#1976D2); border:1px solid #42A5F5}
+.shop-box-title{font-weight:900; font-size:14px; text-align:center; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:6px}
+.shop-box.goldBox .shop-box-title{color:#5D4037}
+.shop-box.diamondBox .shop-box-title{color:#fff}
+
+.shop-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+.shop-item{
+  background:rgba(255,255,255,.25); backdrop-filter:blur(10px);
+  border-radius:14px; padding:12px 6px; text-align:center; cursor:pointer;
+  border:1px solid rgba(255,255,255,.3); transition:transform .15s;
+}
+.shop-item:hover{transform:scale(1.04)}
+.shop-box.diamondBox .shop-item{background:rgba(255,255,255,.15)}
+.shop-item .sIcon{font-size:36px; width:54px; height:54px; margin:0 auto 8px; border-radius:50%; background:linear-gradient(135deg,#FFD700,#FFA000); display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,.2)}
+.shop-box.diamondBox .shop-item .sIcon{background:linear-gradient(135deg,#E3F2FD,#90CAF9)}
+.shop-item .sPrice{font-weight:800; font-size:11px; color:#3E2723}
+.shop-box.diamondBox .shop-item .sPrice{color:#fff}
+
+/* Mantener grilla 30 niveles abajo */
+#vip-m11-matrix{ background:#fff; border-radius:16px; padding:12px; box-shadow:0 2px 12px rgba(0,0,0,.08); margin-top:6px }
+.vipFila{ display:flex; align-items:center; gap:8px; width:100%; overflow:hidden; margin-bottom:8px }
+.vipGrid{ flex:1; display:grid; grid-auto-flow:column; grid-auto-columns:58px; gap:6px; overflow-x:auto; padding-bottom:4px }
+.vipFilaLabel{ width:70px; font-weight:900; font-size:10px; text-align:right; flex-shrink:0; position:sticky; left:0; background:#fff; z-index:2; padding-right:4px }
+.vipFilaLabel.free{color:#43A047} .vipFilaLabel.vip{color:#FF8F00} .vipFilaLabel.elite{color:#1976D2} .vipFilaLabel.maestro{color:#7B1FA2}
+.vipCell{ height:54px; border-radius:8px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-weight:800; font-size:11px; border:2px solid rgba(0,0,0,.1) }
+.vipCell.free{background:linear-gradient(#AED581,#66BB6A); color:#fff}
+.vipCell.vip{background:linear-gradient(#FFE082,#FFA000); color:#3E2723}
+.vipCell.elite{background:linear-gradient(#90CAF9,#1976D2); color:#fff}
+.vipCell.maestro{background:linear-gradient(#CE93D8,#8E24AA); color:#fff}
+
+
+/* MODAL COMPRAR PASE VIP - EXACTO COMO FOTO */
+#payModal{
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); backdrop-filter:blur(8px); z-index:9999; 
+  align-items:flex-end; justify-content:center; padding:0;
+}
+#payModal.show{display:flex}
+.payModalContent{
+  background:linear-gradient(180deg, rgba(0,0,0,.2) 0%, rgba(0,0,0,.6) 100%), url('https://i.imgur.com/8Km9tLL.jpg');
+  background-size:cover; background-position:center;
+  width:100%; max-width:420px; border-radius:24px 24px 0 0; padding:20px 16px 30px;
+  animation:slideUp .3s ease;
+}
+@keyframes slideUp{ from{transform:translateY(100%)} to{transform:translateY(0)} }
+.payTitle{ font-size:32px; font-weight:900; color:#fff; text-align:center; text-shadow:0 2px 10px rgba(0,0,0,.8); line-height:1.1; margin:10px 0 6px }
+.paySub{ font-size:18px; color:#fff; text-align:center; opacity:.9; margin-bottom:18px; text-shadow:0 1px 4px rgba(0,0,0,.6) }
+.payOption{
+  background:#fff; border-radius:18px; padding:12px; display:flex; align-items:center; gap:12px; margin-bottom:12px;
+  border:3px solid transparent; cursor:pointer; transition:all .15s; box-shadow:0 4px 12px rgba(0,0,0,.2);
+}
+.payOption.selected{ border-color:#00E676; box-shadow:0 0 0 2px #00E676, 0 6px 16px rgba(0,230,118,.4) }
+.payOption .payIconBox{ width:64px; height:64px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:32px; flex-shrink:0; background:#f5f5f7 }
+.payOption.diamantes{ background:linear-gradient(135deg,#42A5F5,#1976D2); color:#fff }
+.payOption.diamantes .payIconBox{ background:rgba(0,0,0,.15) }
+.payOption.oro{ background:linear-gradient(135deg,#FFD54F,#FF8F00); color:#3E2723 }
+.payOption.oro .payIconBox{ background:rgba(0,0,0,.1) }
+.payOptionInfo{ flex:1 }
+.payOptionLabel{ font-weight:800; font-size:13px; text-transform:uppercase; opacity:.8 }
+.payOptionPrice{ font-weight:900; font-size:28px; line-height:1; margin:4px 0 }
+.payOptionSaldo{ font-size:12px; opacity:.8; display:flex; align-items:center; gap:4px }
+.payActions{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:18px }
+.btnCancelar{ background:#9E9E9E; color:#000; border:none; padding:16px; border-radius:14px; font-weight:900; font-size:13px }
+.btnConfirmar{ background:#76FF03; color:#000; border:none; padding:16px; border-radius:14px; font-weight:900; font-size:13px; box-shadow:0 4px 12px rgba(118,255,3,.4) }
+
+
+/* SPLASH CARGA - OCULTA AL INICIO, SOLO DESPUES DE LOGIN */
+#splash-screen{ position:fixed !important; inset:0 !important; z-index:5000 !important; background:#020d2b !important; display:none !important; flex-direction:column; align-items:center; justify-content:center; }
+#splash-screen.show{ display:flex !important; }
+#welcome-screen{ position:fixed !important; inset:0 !important; z-index:4999 !important; background:radial-gradient(ellipse at center,#1a2a8a 0%, #0a0f4a 60%, #020420 100%) !important; display:none !important; flex-direction:column; align-items:center; padding:20px; overflow-y:auto; }
+#welcome-screen.show{ display:flex !important; }
+
+
+/* MASCOTAS v9.0 CLEAN */
+#mascota-screen, #mascota-detail-screen { background: radial-gradient(ellipse at center,#0a2a8c 0%, #061a4a 70%, #020418 100%); min-height:100vh; }
+.mascota-header { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; }
+.mascota-main-card { background: linear-gradient(135deg,#2a6bdb,#0d47a1); border-radius:20px; padding:16px; display:flex; gap:14px; align-items:center; margin:12px 15px; border:2px solid #4a90e2; min-height:90px; }
+.mascota-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; padding:12px; min-height:200px; }
+.mascota-item { background:rgba(255,255,255,.12); border:2px solid rgba(255,255,255,.2); border-radius:14px; padding:12px 6px; text-align:center; cursor:pointer; min-height:90px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.mascota-item.equipped { border-color:#FFD700; background:rgba(255,215,0,.25); }
+.mascota-btns { display:flex; gap:8px; padding:12px 15px; }
+.mascota-btn { flex:1; padding:14px 6px; border:none; border-radius:14px; font-weight:900; font-size:12px; cursor:pointer; color:#fff; }
+.mascota-item{ position:relative; }
+.mascota-rareza-badge{ position:absolute; top:4px; left:4px; font-size:13px; background:rgba(0,0,0,.45); border-radius:8px; padding:1px 5px; }
+.mascota-lvl-badge{ position:absolute; top:4px; right:4px; font-size:9px; font-weight:900; color:#fff; background:rgba(0,0,0,.45); border-radius:8px; padding:1px 5px; }
+.mascota-info-card{ background:rgba(255,255,255,.08); border-radius:14px; margin:10px 15px; padding:12px; border:1px solid rgba(255,255,255,.15); }
+.mascota-info-row{ display:flex; justify-content:space-between; font-size:12px; color:#cfe0ff; padding:5px 0; border-bottom:1px solid rgba(255,255,255,.08); }
+.mascota-info-row:last-child{ border-bottom:none; }
+.mascota-info-row b{ color:#fff; text-align:right; max-width:60%; }
+.mascota-evo-table{ margin:10px 15px; }
+.mascota-evo-row{ display:flex; gap:10px; align-items:center; background:rgba(255,255,255,.06); border-radius:10px; padding:8px 10px; margin-bottom:6px; border:1px solid rgba(255,255,255,.1); }
+.mascota-evo-row.current{ border-color:#FFD700; background:rgba(255,215,0,.15); }
+.mascota-evo-range{ font-size:10px; font-weight:900; color:#FFD700; min-width:52px; }
+.mascota-evo-name{ font-size:12px; font-weight:800; color:#fff; }
+.mascota-evo-aspect{ font-size:10px; color:#9db6e8; }
+.mascota-story-card{ background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,255,255,.05)); border:1px solid rgba(255,215,0,.35); border-radius:14px; margin:10px 15px; padding:14px; }
+.mascota-story-card p{ font-size:12.5px; color:#e6edff; font-style:italic; line-height:1.5; margin:0; }
+.mascota-story-locked{ font-size:12px; color:#8b9dc3; text-align:center; padding:6px 0; }
+#guia-mascotas-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(6px); z-index:6000; align-items:flex-end; justify-content:center; }
+#guia-mascotas-overlay.show{ display:flex; }
+.guia-mascotas-sheet{ background:#0a1a3f; width:100%; max-width:460px; max-height:88vh; overflow-y:auto; border-radius:22px 22px 0 0; padding:16px; }
+.guia-mascotas-sheet h3{ color:#FFD700; font-size:15px; margin:14px 0 8px; }
+.guia-tbl{ width:100%; border-collapse:collapse; font-size:10.5px; color:#dce6ff; }
+.guia-tbl th{ background:rgba(255,255,255,.12); padding:6px 4px; text-align:left; }
+.guia-tbl td{ padding:6px 4px; border-top:1px solid rgba(255,255,255,.08); }
+
+</style>
 </head>
 <body>
 
-    <!-- SPLASH / PORTADA -->
-    <div id="splash-screen">
-        <img src="portada.jpg" alt="Súper Bingo Rey">
+    
+    <!-- SPLASH CARGA - SOLO DESPUES DE INICIAR SESION -->
+    <div id="splash-screen" style="display:none">
+        <div style="position:relative; width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(ellipse at center,#0a1e5c 0%, #020d2b 100%);">
+            <div style="text-align:center; margin-bottom:40px">
+                <div style="font-size:80px; filter:drop-shadow(0 4px 12px gold)">👑</div>
+                <h1 style="font-weight:900; font-size:52px; color:#FFD700; text-shadow:0 0 20px #FFD700, 0 4px 0 #B8860B; line-height:.9; letter-spacing:1px">SUPER<br>BINGO<br>REY</h1>
+            </div>
+            <div style="width:80%; max-width:340px; height:38px; background:#1a0f00; border-radius:20px; border:3px solid #FFD700; padding:3px; box-shadow:0 0 20px rgba(255,215,0,.5); position:relative; overflow:hidden">
+                <div id="loading-bar" style="height:100%; width:0%; background:linear-gradient(180deg,#FFEB3B,#FFA000); border-radius:14px; transition:width .2s"></div>
+                <div id="loading-percent" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-weight:900; color:#000; font-size:16px">0%</div>
+            </div>
+            <div id="loading-text" style="margin-top:12px; color:#FFD700; font-weight:700; font-size:16px">Cargando... 0%</div>
+            <div style="position:absolute; bottom:30px; color:#fff; opacity:.7; font-size:12px; text-align:center">© Super Bingo Rey 2026 -<br>Todos los derechos reservados</div>
+        </div>
+    </div>
+
+    <!-- BIENVENIDA - SOLO DESPUES DE CARGA -->
+    <div id="welcome-screen" style="display:none">
+        <div style="display:flex; justify-content:space-between; width:100%; max-width:380px; margin-top:10px">
+            <div style="background:linear-gradient(135deg,#FFD700,#FF8F00); border-radius:24px; padding:6px 12px; display:flex; align-items:center; gap:6px; font-weight:900; color:#000"><span>🪙</span> <span id="welcome-gold">125,000</span></div>
+            <div style="font-size:20px; font-weight:900; color:#FFD700; text-align:center">👑<br><span style="font-size:12px; color:#fff">SUPER BINGO REY</span></div>
+            <div style="background:linear-gradient(135deg,#42A5F5,#0D47A1); border-radius:24px; padding:6px 12px; display:flex; align-items:center; gap:6px; font-weight:900; color:#fff"><span>💎</span> <span id="welcome-gems">650</span></div>
+        </div>
+        <div style="margin-top:30px; background:linear-gradient(180deg,#fff,#FFF8E1); border-radius:24px; padding:24px 20px; width:100%; max-width:360px; text-align:center; border:4px solid #FFD700; box-shadow:0 10px 30px rgba(0,0,0,.5)">
+            <h2 style="font-weight:900; font-size:28px; color:#5D4037; line-height:1.1">¡BIENVENIDO<br>DE NUEVO!</h2>
+            <div style="font-size:80px; margin:12px 0">🎁</div>
+            <div style="color:#5D4037; font-size:18px; font-weight:700">Recompensa diaria:</div>
+            <div style="font-size:26px; font-weight:900; color:#3E2723; margin:8px 0">+5,000 🪙 + 50 💎</div>
+            <button onclick="enterGameFromWelcome()" style="margin-top:16px; width:100%; background:linear-gradient(180deg,#FFD54F,#FF8F00); border:none; padding:16px; border-radius:16px; font-weight:900; font-size:20px; color:#3E2723; box-shadow:0 6px 0 #E65100; cursor:pointer">ENTRAR AL JUEGO</button>
+        </div>
     </div>
 
     <!-- Capa de confeti para la animación de victoria -->
@@ -943,28 +1081,6 @@
         <div class="store-pages" id="store-pages"></div>
 
         <div class="products-grid" id="products-grid"></div>
-
-        <div class="store-shortcuts-grid">
-            <div class="store-shortcut-tile shortcut-suscripcion" onclick="navTabTo('vippass-screen')">
-                <span class="store-shortcut-icon">🎫</span>
-                <div><div class="store-shortcut-title">Suscripción</div><div class="store-shortcut-sub">Pase VIP</div></div>
-            </div>
-            <div class="store-shortcut-tile shortcut-mercado-a" onclick="document.getElementById('products-grid').scrollIntoView({behavior:'smooth'})">
-                <span class="store-shortcut-icon">🏪</span>
-                <div><div class="store-shortcut-title">Mercado</div><div class="store-shortcut-sub">Comprar Oro</div></div>
-            </div>
-            <div class="store-shortcut-tile shortcut-mercado-b" onclick="document.getElementById('store-multipliers').scrollIntoView({behavior:'smooth'})">
-                <span class="store-shortcut-icon">💰</span>
-                <div><div class="store-shortcut-title">Mercado</div><div class="store-shortcut-sub">Multiplicadores</div></div>
-            </div>
-            <div class="store-shortcut-tile shortcut-freeroll" onclick="openDailyRewardsModal()">
-                <span class="store-shortcut-icon">🎰</span>
-                <div><div class="store-shortcut-title">Free-Roll</div><div class="store-shortcut-sub">Giro gratis diario</div></div>
-            </div>
-        </div>
-
-        <div class="vip-cards-strip-title">👑 Tus Tarjetas VIP</div>
-        <div class="vip-cards-strip" id="store-vip-cards-strip"></div>
     </div>
 
     <!-- PANTALLA CAMPAÑA -->
@@ -1071,7 +1187,52 @@
         <div id="vip-locked-note" class="vip-locked-note" style="display:none;">🔒 Activa el Pase VIP para desbloquear el regalo diario y el minijuego exclusivo.</div>
     </div>
 
+
+    <!-- MASCOTAS v9.0 CLEAN -->
+    <div id="mascota-screen" class="screen">
+        <div class="mascota-header">
+            <button onclick="navTabTo('main-screen')" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:20px; color:#fff">←</button>
+            <h2 style="color:#fff; font-weight:900">MIS COMPAÑEROS v9.0</h2>
+            <button onclick="abrirGuiaMascotas()" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:18px; color:#fff" title="Guía de mascotas">📖</button>
+        </div>
+        <div id="mascota-main-card" class="mascota-main-card">Cargando mascota...</div>
+        <div style="background:rgba(30,91,214,.4); border-radius:14px; margin:10px 15px; padding:10px; display:flex; justify-content:space-around; font-size:11px; color:#fff">
+            <span>🛡️ Bebé</span><span>→</span><span style="color:#FFD700">⭐ Joven</span><span>→</span><span>🔥 Adulto</span><span>→</span><span>🦅 Legendario</span>
+        </div>
+        <div id="mascota-grid" class="mascota-grid"></div>
+        <div class="mascota-btns">
+            <button class="mascota-btn" style="background:#42A5F5" onclick="equiparMascotaActual()">EQUIPAR</button>
+            <button class="mascota-btn" style="background:#FFB74D" onclick="alimentarMascotaActual()">ALIMENTAR</button>
+            <button class="mascota-btn" style="background:#FF8A65" onclick="evolucionarMascotaActual()">EVOLUCIONAR</button>
+        </div>
+    </div>
+
+    <div id="guia-mascotas-overlay">
+        <div class="guia-mascotas-sheet">
+            <div style="display:flex; justify-content:space-between; align-items:center">
+                <h2 style="color:#fff; font-weight:900; margin:0">📖 Guía de Mascotas</h2>
+                <button onclick="cerrarGuiaMascotas()" style="background:rgba(255,255,255,.15); border:none; width:34px; height:34px; border-radius:50%; color:#fff; font-size:16px">✕</button>
+            </div>
+            <div id="guia-mascotas-content"></div>
+        </div>
+    </div>
+
+    <div id="mascota-detail-screen" class="screen">
+        <div class="mascota-header">
+            <button onclick="navTabTo('mascota-screen')" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:20px; color:#fff">←</button>
+            <h2 id="mascota-detail-title" style="color:#fff; font-weight:900">DETALLE</h2>
+            <button style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:18px; color:#fff">📦</button>
+        </div>
+        <div id="mascota-detail-content"></div>
+        <div class="mascota-btns">
+            <button class="mascota-btn" style="background:#42A5F5" onclick="equiparMascotaActual()">EQUIPAR</button>
+            <button class="mascota-btn" style="background:#FFB74D" onclick="alimentarMascotaActual()">ALIMENTAR</button>
+            <button class="mascota-btn" style="background:#FF8A65" onclick="evolucionarMascotaActual()">EVOLUCIONAR</button>
+        </div>
+    </div>
+
     <!-- PANEL DE ADMINISTRADOR -->
+
     <div id="admin-screen" class="screen">
         <div class="admin-top">
             <strong>⚙️ Panel de Administrador <span style="color:#8b949e; font-weight:normal; font-size:11px;" id="admin-version-label">v2.3 — Panel reorganizado</span></strong>
@@ -1085,6 +1246,8 @@
             <div class="admin-tab" data-tab="tienda" onclick="switchAdminTab('tienda', this)">Tienda</div>
             <div class="admin-tab" data-tab="ruleta" onclick="switchAdminTab('ruleta', this)">Ruleta</div>
             <div class="admin-tab" data-tab="multiplicadores" onclick="switchAdminTab('multiplicadores', this)">Multiplicadores</div>
+            <div class="admin-tab" data-tab="pagos" onclick="switchAdminTab('pagos', this)">💳 Pagos</div>
+            <div class="admin-tab" data-tab="mascotas" onclick="switchAdminTab('mascotas', this)">🐾 Mascotas</div>
             <div class="admin-tab" data-tab="usuarios" onclick="switchAdminTab('usuarios', this)">Usuarios</div>
         </div>
         <div class="admin-body">
@@ -1164,73 +1327,61 @@
             </div>
 
             <div class="admin-section" id="admin-tienda">
-                <div class="chest-selector-row" id="chest-selector-row"></div>
-                <div class="chest-form" id="chest-form-wrap"></div>
+                <button class="admin-add-btn" onclick="addProductRow()">➕ Agregar producto</button>
+                <div id="admin-products-list"></div>
+                <button class="admin-save-btn" onclick="saveAdminProducts()">💾 Guardar tienda</button>
             </div>
 
             <div class="admin-section" id="admin-ruleta">
-                <div class="ruleta-header-box">
-                    <div class="ruleta-mini-wheel"></div>
-                    <div><b>🎡 Ruleta</b><span>Premios y Probabilidades</span></div>
-                </div>
-                <table class="ruleta-table">
-                    <thead><tr><th>Premio</th><th>Cantidad</th><th>Peso (%)</th><th></th></tr></thead>
-                    <tbody id="admin-roulette-list"></tbody>
-                </table>
                 <button class="admin-add-btn" onclick="addRouletteRow()">➕ Agregar premio</button>
-                <div class="ruleta-cost-speed-row" style="margin-top:14px;">
-                    <div class="field-box">
-                        <label class="admin-field-label">💎 Costo Giro</label>
-                        <input type="number" id="cfg-rouletteCostTab" min="0">
-                    </div>
-                    <div class="field-box">
-                        <label class="admin-field-label">Velocidad</label>
-                        <input type="range" id="cfg-rouletteSpinSpeed" min="1" max="10" step="1">
-                    </div>
-                </div>
+                <div id="admin-roulette-list"></div>
                 <button class="admin-save-btn" onclick="saveAdminRoulette()">💾 Guardar premios de ruleta</button>
             </div>
 
             <div class="admin-section" id="admin-multiplicadores">
-                <div class="buff-card buff-xp">
-                    <div class="buff-card-top">
-                        <span class="buff-card-title">✨ XP BOOST</span>
-                        <div class="toggle-switch" id="buff-xp-toggle"></div>
-                    </div>
-                    <input type="number" class="buff-card-value-input" id="buff-xp-value" min="0">
-                    <input type="range" id="buff-xp-slider" min="0" max="1000" step="5">
-                </div>
-                <div class="buff-card buff-gold">
-                    <div class="buff-card-top">
-                        <span class="buff-card-title">🪙 GOLD BOOST</span>
-                        <div class="toggle-switch" id="buff-gold-toggle"></div>
-                    </div>
-                    <input type="number" class="buff-card-value-input" id="buff-gold-value" min="0">
-                    <input type="range" id="buff-gold-slider" min="0" max="1000" step="5">
-                </div>
-                <div class="buff-card buff-peak">
-                    <div class="buff-card-top">
-                        <span class="buff-card-title">⏰ BOTE HORA PICO</span>
-                        <div class="toggle-switch" id="buff-peak-toggle"></div>
-                    </div>
-                    <input type="number" class="buff-card-value-input" id="buff-peak-value" min="0">
-                    <input type="range" id="buff-peak-slider" min="0" max="2000" step="10">
-                </div>
+                <div id="admin-multipliers-list"></div>
                 <button class="admin-save-btn" onclick="saveAdminMultipliers()">💾 Guardar multiplicadores</button>
+            </div>
 
-                <div class="admin-group" style="margin-top:18px;">
-                    <div class="admin-group-title">✖️ Multiplicadores de premio (compra en juego)</div>
-                    <p class="admin-group-hint">Se ofrecen en la Tienda para multiplicar el premio de la siguiente partida.</p>
-                    <div id="admin-purchase-multipliers-list"></div>
+
+            <div class="admin-section" id="admin-pagos">
+                <div class="admin-group">
+                    <div class="admin-group-title">💳 A dónde llega el dinero</div>
+                    <p class="admin-group-hint">Configura tus cuentas para recibir pagos reales</p>
+                    <div class="admin-field"><label>MercadoPago Access Token</label><input type="text" id="cfg-mpAccessToken" placeholder="APP_USR-..."></div>
+                    <div class="admin-field"><label>MercadoPago Public Key</label><input type="text" id="cfg-mpPublicKey"></div>
+                    <div class="admin-field"><label>Culqi Public Key</label><input type="text" id="cfg-culqiPublicKey" placeholder="pk_test_..."></div>
+                    <div class="admin-field"><label>Culqi Secret Key</label><input type="text" id="cfg-culqiSecretKey"></div>
+                    <div class="admin-field"><label>Yape / Plin - Número</label><input type="text" id="cfg-yapeNumber" placeholder="987654321"></div>
+                    <div class="admin-field"><label>Yape / Plin - Titular</label><input type="text" id="cfg-yapeName"></div>
+                    <div class="admin-field"><label>PayPal Email</label><input type="email" id="cfg-paypalEmail"></div>
+                    <div class="admin-field"><label>WhatsApp comprobantes</label><input type="text" id="cfg-whatsappComprobantes"></div>
+                    <div class="admin-field"><label>Mensaje post-pago</label><textarea id="cfg-pagoMensaje" rows="2" style="width:100%; background:#0d1117; color:#fff; border:1px solid #30363d; border-radius:8px; padding:8px"></textarea></div>
+                </div>
+                <div class="admin-group">
+                    <div class="admin-group-title">🧾 Pagos pendientes</div>
+                    <div id="admin-pending-payments" style="font-size:12px">Cargando...</div>
+                    <button class="admin-add-btn" onclick="renderAdminPendingPayments()" style="margin-top:8px">🔄 Actualizar</button>
+                </div>
+                <button class="admin-save-btn" onclick="saveAdminPagos()">💾 Guardar pagos</button>
+            </div>
+
+            <div class="admin-section" id="admin-mascotas">
+                <div class="admin-group">
+                    <div class="admin-group-title">🐾 Mascotas - 4 Etapas + Fotos</div>
+                    <p class="admin-group-hint" style="color:#8b949e; font-size:12px">Sube fotos desde tu celular. Se guardan en base64 en la nube.</p>
+                    <div id="admin-mascotas-list" style="min-height:100px; background:#0d1117; border-radius:10px; padding:10px; border:1px dashed #30363d"></div>
+                    <button class="admin-add-btn" onclick="addMascotaAdmin()" style="background:#238636; color:#fff; border:none; padding:12px; border-radius:10px; width:100%; margin-top:10px; font-weight:900">➕ Agregar nueva mascota</button>
+                    <button class="admin-save-btn" onclick="saveAdminMascotas()" style="background:#8957e5; color:#fff; border:none; padding:14px; border-radius:10px; width:100%; margin-top:10px; font-weight:900; font-size:14px">💾 Guardar mascotas en la nube</button>
                 </div>
             </div>
 
             <div class="admin-section" id="admin-usuarios">
-                <div class="usuarios-search-row">
-                    <input type="text" id="admin-users-search" placeholder="Buscar..." oninput="renderAdminUsers()">
-                    <div class="usuarios-filter-btn">🔽</div>
-                </div>
-                <div id="admin-users-body"></div>
+
+                <table class="admin-table">
+                    <thead><tr><th>Usuario</th><th>🪙</th><th>💎</th><th>VIP</th><th>Bingos</th><th>Acciones</th></tr></thead>
+                    <tbody id="admin-users-body"></tbody>
+                </table>
             </div>
 
         </div>
@@ -1253,24 +1404,15 @@
     </div>
 
     <!-- NAVEGACIÓN INFERIOR -->
-    <div class="nav-bar" id="bottom-nav">
-        <button class="nav-item active" id="nav-inicio" onclick="navTabTo('main-screen')">🏠<br>Inicio</button>
-        <button class="nav-item" id="nav-tienda" onclick="navTabTo('store-screen')">🛒<br>Tienda</button>
-        <button class="nav-item" id="nav-juego" onclick="navTabTo('game-screen')">🎯<br>Bingo</button>
-        <button class="nav-item" id="nav-campaña" onclick="navTabTo('campaign-screen')">🗺️<br>Campaña</button>
-        <button class="nav-item" id="nav-missions" onclick="navTabTo('missions-screen')">📜<br>Misiones</button>
-        <button class="nav-item" id="nav-vippass" onclick="navTabTo('vippass-screen')">🎫<br>Pase VIP</button>
+        <div class="nav-bar" id="bottom-nav" style="display:flex; overflow-x:auto; gap:4px; padding:6px">
+        <button class="nav-item active" id="nav-inicio" onclick="navTabTo('main-screen')" style="min-width:60px">🏠<br>Inicio</button>
+        <button class="nav-item" id="nav-tienda" onclick="navTabTo('store-screen')" style="min-width:60px">🛒<br>Tienda</button>
+        <button class="nav-item" id="nav-juego" onclick="navTabTo('game-screen')" style="min-width:60px">🎯<br>Bingo</button>
+        <button class="nav-item" id="nav-campaña" onclick="navTabTo('campaign-screen')" style="min-width:60px">🗺️<br>Campaña</button>
+        <button class="nav-item" id="nav-missions" onclick="navTabTo('missions-screen')" style="min-width:60px">📜<br>Misiones</button>
+        <button class="nav-item" id="nav-vippass" onclick="navTabTo('vippass-screen')" style="min-width:60px">🎫<br>Pase VIP</button>
+        <button class="nav-item" id="nav-mascota" onclick="navTabTo('mascota-screen')" style="min-width:70px; background:linear-gradient(135deg,#FFD700,#FFA000); color:#000; font-weight:900; border-radius:12px">⭐<br>MASCOTA</button>
     </div>
-
-    <!-- FIX ARRANQUE v6.0: Siempre entra aunque falle Firebase -->
-    <div id="cloud-loading" style="position:fixed;top:0;left:0;width:100%;height:100%;background:#0d1117;z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#8b949e;font-size:13px;">
-        <div style="font-size:32px;margin-bottom:10px;">☁️</div>
-        <div id="cloud-text">Conectando con la nube...</div>
-        <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-            <button onclick="forceStartup()" style="background:#238636;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:bold;cursor:pointer">▶️ Entrar Ahora</button>
-            <button onclick="location.reload()" style="background:#21262d;border:1px solid #30363d;color:#8b949e;padding:10px 14px;border-radius:8px;font-size:12px;cursor:pointer">🔄 Recargar</button>
-        </div>
-        <div style="font-size:10px;color:#484f58;margin-top:10px">Si tarda mucho, toca Entrar Ahora</div>
     </div>
     <script>
     window.__firebaseReady=false;
@@ -1318,7 +1460,7 @@ const SESSION_KEY = SAVE_PREFIX + 'session';
 const ADMIN_SESSION_KEY = SAVE_PREFIX + 'admin_session';
 const RANGES = [[1,15],[16,30],[31,45],[46,60],[61,75]]; // B I N G O
 const LETTERS = ['B','I','N','G','O'];
-const APP_VERSION = 'v8.0 - SIN ERRORES';
+const APP_VERSION = 'v9.3 - Habilidades de Mascota';
 const COLORS = ['rojo','azul','verde','amarillo'];
 const PRODUCTS_PER_PAGE = 2;
 
@@ -1360,32 +1502,200 @@ function defaultConfig() {
         ],
         multipliers: [ {mult:3, cost:1}, {mult:5, cost:2}, {mult:10, cost:4} ],
         roulettePrizes: [
-            {label:'+200 🪙', gold:200, gems:0, weight:40, stock:-1},
-            {label:'+500 🪙', gold:500, gems:0, weight:35, stock:-1},
-            {label:'+1000 🪙', gold:1000, gems:0, weight:25, stock:-1},
-            {label:'+5 💎', gold:0, gems:5, weight:15, stock:-1},
-            {label:'+15 💎', gold:0, gems:15, weight:8, stock:-1},
-            {label:'Sin premio esta vez', gold:0, gems:0, weight:20, stock:-1},
+            {label:'+200 🪙', gold:200, gems:0},
+            {label:'+500 🪙', gold:500, gems:0},
+            {label:'+1000 🪙', gold:1000, gems:0},
+            {label:'+5 💎', gold:0, gems:5},
+            {label:'+15 💎', gold:0, gems:15},
+            {label:'Sin premio esta vez', gold:0, gems:0},
         ],
-        rouletteSpinSpeed: 5,
-        eventBuffs: {
-            xp:   { enabled:true, value:300 },
-            gold: { enabled:true, value:735 },
-            peak: { enabled:true, value:500 },
-        },
         products: [
-            {id:1, name:'Paquete Bronce',  gemCost:5,  goldReward:400,  discount:'', isCosmetic:false, contents:''},
-            {id:2, name:'Paquete Plata',   gemCost:12, goldReward:1100, discount:'10% MÁS', isCosmetic:false, contents:''},
-            {id:3, name:'Paquete Oro',     gemCost:25, goldReward:2500, discount:'15% MÁS', isCosmetic:false, contents:''},
-            {id:4, name:'Paquete Platino', gemCost:50, goldReward:5500, discount:'20% MÁS', isCosmetic:false, contents:''},
-            {id:5, name:'Paquete Diamante',gemCost:90, goldReward:11000,discount:'25% MÁS', isCosmetic:false, contents:''},
-            {id:6, name:'Paquete Rubí',    gemCost:150,goldReward:20000,discount:'30% MÁS', isCosmetic:false, contents:''},
-            {id:7, name:'Marco Fuego',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
-            {id:8, name:'Marco Hielo',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
-            {id:9, name:'Marco Real',      gemCost:80, goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
-            {id:10,name:'Marco Mítico',    gemCost:160,goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
+            {id:1, name:'Paquete Bronce',  gemCost:5,  goldReward:400,  discount:'', isCosmetic:false},
+            {id:2, name:'Paquete Plata',   gemCost:12, goldReward:1100, discount:'10% MÁS', isCosmetic:false},
+            {id:3, name:'Paquete Oro',     gemCost:25, goldReward:2500, discount:'15% MÁS', isCosmetic:false},
+            {id:4, name:'Paquete Platino', gemCost:50, goldReward:5500, discount:'20% MÁS', isCosmetic:false},
+            {id:5, name:'Paquete Diamante',gemCost:90, goldReward:11000,discount:'25% MÁS', isCosmetic:false},
+            {id:6, name:'Paquete Rubí',    gemCost:150,goldReward:20000,discount:'30% MÁS', isCosmetic:false},
+            {id:7, name:'Marco Fuego',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:8, name:'Marco Hielo',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:9, name:'Marco Real',      gemCost:80, goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:10,name:'Marco Mítico',    gemCost:160,goldReward:0,    discount:'Cosmético', isCosmetic:true},
+        ],
+        mascotas: [
+            { id:'pollito', name:'Pollito', emoji:'🐥', rarity:'comun', levelMax:15, obtainMethod:'Gratis al empezar',
+              story:'Nació de un huevo dorado que cayó del cielo. Es la mascota más leal de todas. Crece junto a ti y, si lo cuidas mucho, se convierte en el ave más poderosa del reino.',
+              bonusLabel:'Monedas extra', bonusInitial:'+5% Monedas extra', bonusMax:'+15% Monedas extra',
+              foodType:'🌿 Semilla', totalFood:75, totalCost:7500, goldCost:0, totalDiamondCost:100, images:{e1:'',e2:'',e3:'',e4:''},
+              evolutionStages:[
+                  {range:'1 → 4', name:'Pollito Bebé', aspect:'Pequeño, amarillo suave', diamondCost:0},
+                  {range:'5 → 9', name:'Pollito Joven', aspect:'Más grande, plumas doradas', diamondCost:20},
+                  {range:'10 → 14', name:'Gallo Adulto', aspect:'Fuerte, plumas brillantes', diamondCost:30},
+                  {range:'15', name:'Águila Real', aspect:'Forma final, alas doradas', diamondCost:50},
+              ] },
+            { id:'zorro', name:'Zorro', emoji:'🦊', rarity:'raro', levelMax:20, obtainMethod:'💎 500 en tienda',
+              story:'Viene de los bosques mágicos. Dicen que quien lo tiene siempre encuentra lo que busca. Sus ojos brillan cuando la suerte está cerca.',
+              bonusLabel:'Suerte / número faltante', bonusInitial:'+15% de conseguir número faltante', bonusMax:'+25% de suerte',
+              foodType:'🌿 Semilla + 🍅 Fruta Dulce', totalFood:100, totalCost:15000, goldCost:15000, totalDiamondCost:150, images:{e1:'',e2:'',e3:'',e4:''},
+              evolutionStages:[
+                  {range:'1 → 5', name:'Cachorro Zorro', aspect:'Pequeño, pelaje naranja claro', diamondCost:0},
+                  {range:'6 → 10', name:'Zorro Joven', aspect:'Pelaje más oscuro, cola grande', diamondCost:40},
+                  {range:'11 → 15', name:'Zorro de la Suerte', aspect:'Pelaje intenso, ojos brillantes', diamondCost:50},
+                  {range:'16 → 20', name:'Zorro Legendario', aspect:'Forma final, pelaje dorado luminoso', diamondCost:60},
+              ],
+              specialAbilities:[
+                  { stage:3, key:'numero_afortunado', name:'Número Afortunado', icon:'🦊', effect:'Si te falta 1 solo número, aparece gratis' },
+              ] },
+            { id:'pulpo', name:'Pulpo', emoji:'🐙', rarity:'raro', levelMax:20, obtainMethod:'💎 800 en tienda',
+              story:'Viajó desde otra galaxia para acompañarte. Cada uno de sus tentáculos trae una estrella diferente. Trae suerte en los juegos largos.',
+              bonusLabel:'Cartones extra', bonusInitial:'+1 Cartón extra', bonusMax:'+2 Cartones extra',
+              foodType:'🌿 Semilla + 🍅 Fruta Dulce', totalFood:100, totalCost:15000, goldCost:15000, totalDiamondCost:180, images:{e1:'',e2:'',e3:'',e4:''},
+              evolutionStages:[
+                  {range:'1 → 5', name:'Pulpo Bebé', aspect:'Pequeño, celeste claro, 4 tentáculos', diamondCost:0},
+                  {range:'6 → 10', name:'Pulpo Joven', aspect:'Azul oscuro, 6 tentáculos con luces', diamondCost:50},
+                  {range:'11 → 15', name:'Pulpo Espacial', aspect:'Cuerpo brillante, 8 tentáculos luminosos', diamondCost:60},
+                  {range:'16 → 20', name:'Pulpo Cósmico', aspect:'Forma final, cuerpo con galaxias', diamondCost:70},
+              ],
+              specialAbilities:[
+                  { stage:3, key:'carton_extra', name:'Cartón Extra', icon:'🐙', effect:'Al iniciar la partida, recibes 1 cartón adicional GRATIS' },
+              ] },
+            { id:'dragon', name:'Dragón', emoji:'🐉', rarity:'epico', levelMax:25, obtainMethod:'Pase VIP',
+              story:'Guardián de las montañas de fuego. Solo aparece ante quienes demuestran gran valor. Su fuego quema las malas rachas y trae riqueza.',
+              bonusLabel:'Gemas extra', bonusInitial:'+15% Gemas extra', bonusMax:'+30% Gemas extra',
+              foodType:'🌿 Semilla + 🍅 Fruta + 🥩 Carne Mágica', totalFood:125, totalCost:33750, goldCost:33750, totalDiamondCost:300, images:{e1:'',e2:'',e3:'',e4:''},
+              evolutionStages:[
+                  {range:'1 → 6', name:'Dragón Bebé', aspect:'Pequeño, escamas rojas', diamondCost:0},
+                  {range:'7 → 12', name:'Dragón Joven', aspect:'Cuerpo alargado, fuego pequeño', diamondCost:80},
+                  {range:'13 → 18', name:'Dragón de Fuego', aspect:'Escamas con bordes dorados, fuego constante', diamondCost:100},
+                  {range:'19 → 25', name:'Dragón Infernal', aspect:'Forma final, llamas vivas, alas enormes', diamondCost:120},
+              ],
+              specialAbilities:[
+                  { stage:3, key:'lluvia_gemas', name:'Lluvia de Gemas', icon:'🐉', effect:'Cada vez que cantes una línea, ganas gemas extra' },
+              ] },
+            { id:'unicornio', name:'Unicornio', emoji:'🦄', rarity:'epico', levelMax:25, obtainMethod:'Evento especial',
+              story:'Nace cuando el sol se oculta y la luna sale. Su luz sana y da fuerza. Quien lo posee aprende más rápido que nadie.',
+              bonusLabel:'Experiencia extra', bonusInitial:'+20% Experiencia extra', bonusMax:'+40% Experiencia extra',
+              foodType:'🌿 Semilla + 🍅 Fruta + 🥩 Carne Mágica', totalFood:125, totalCost:33750, goldCost:33750, totalDiamondCost:300, images:{e1:'',e2:'',e3:'',e4:''},
+              evolutionStages:[
+                  {range:'1 → 6', name:'Potrillo Blanco', aspect:'Blanco puro, cuerno pequeño', diamondCost:0},
+                  {range:'7 → 12', name:'Unicornio Joven', aspect:'Pelaje brillante, cuerno plateado', diamondCost:80},
+                  {range:'13 → 18', name:'Unicornio Aurora', aspect:'Pelaje cambiante, cuerno luminoso', diamondCost:100},
+                  {range:'19 → 25', name:'Unicornio Celestial', aspect:'Forma final, cuerpo luminoso, cuerno arcoíris', diamondCost:120},
+              ],
+              specialAbilities:[
+                  { stage:3, key:'experiencia_celestial', name:'Experiencia Celestial', icon:'🦄', effect:'Toda la experiencia que ganes se duplica por 10 minutos' },
+              ] },
+            { id:'leon', name:'León', emoji:'🦁', rarity:'legendario', levelMax:30, obtainMethod:'Pase VIP MAESTRO',
+              story:'Rey de todos los animales. Solo se entrega a los jugadores más leales y fuertes. Su presencia impone respeto y da grandes recompensas.',
+              bonusLabel:'Bonificación en TODO', bonusInitial:'+30% en TODO', bonusMax:'+45% en TODO',
+              foodType:'🌿 Semilla + 🍅 Fruta + 🥩 Carne + 🍖 Manjar Real', totalFood:150, totalCost:60000, goldCost:60000, totalDiamondCost:470, images:{e1:'',e2:'',e3:'',e4:''},
+              evolutionStages:[
+                  {range:'1 → 7', name:'Cachorro León', aspect:'Dorado claro, sin melena', diamondCost:0},
+                  {range:'8 → 14', name:'León Joven', aspect:'Pelaje dorado, melena creciendo', diamondCost:120},
+                  {range:'15 → 22', name:'León Real', aspect:'Melena completa, ojos ámbar', diamondCost:150},
+                  {range:'23 → 30', name:'León Coronado', aspect:'Forma final, corona de oro real', diamondCost:200},
+              ],
+              specialAbilities:[
+                  { stage:3, key:'poder_real', name:'Poder Real', icon:'👑', effect:'Todos tus cartones valen el doble de puntos' },
+              ] },
+            { id:'aguila', name:'Águila', emoji:'🦅', rarity:'mitico', levelMax:35, obtainMethod:'Evolucionando el Pollito a Nivel 30',
+              story:'La forma más alta de evolución. Solo quien cuida desde el principio logra despertar su poder. Vuela más alto que todo y trae la victoria segura.',
+              bonusLabel:'Bonificación en TODO', bonusInitial:'+50% en TODO', bonusMax:'+75% en TODO',
+              foodType:'Todos los tipos + ✨ Ámbar Dorado', totalFood:175, totalCost:105000, goldCost:105000, totalDiamondCost:500, images:{e1:'',e2:'',e3:'',e4:'',e5:''},
+              evolutionStages:[
+                  {range:'1 → 6', name:'Pollito Dorado', aspect:'Forma inicial', diamondCost:0},
+                  {range:'7 → 13', name:'Pollito Real', aspect:'Dorado brillante', diamondCost:50},
+                  {range:'14 → 20', name:'Gallo Dorado', aspect:'Cuerpo real, plumas doradas', diamondCost:80},
+                  {range:'21 → 29', name:'Águila Dorada', aspect:'Alas grandes, ojos de fuego', diamondCost:120},
+                  {range:'30 → 35', name:'Águila Mítica', aspect:'Forma final, corona, alas arcoíris', diamondCost:250},
+              ],
+              specialAbilities:[
+                  { stage:1, key:'doble_ganancia', name:'Doble Ganancia', icon:'🐣', effect:'Al hacer Bingo, recibes el doble de monedas' },
+                  { stage:4, key:'victoria_total', name:'Victoria Total', icon:'🦅', effect:'Si faltan 2 números o menos, tienes probabilidad de ganar automáticamente' },
+              ] },
+        ],
+        mascotaFoods: [
+            { name:'Semilla', icon:'🌿', price:100, exp:100, rarity:'Común' },
+            { name:'Fruta Dulce', icon:'🍅', price:200, exp:120, rarity:'Raro' },
+            { name:'Carne Mágica', icon:'🥩', price:350, exp:150, rarity:'Épico' },
+            { name:'Manjar Real', icon:'🍖', price:500, exp:180, rarity:'Legendario' },
+            { name:'Ámbar Dorado', icon:'✨', price:750, exp:200, rarity:'Mítico' },
+        ],
+        mascotaXpTable: [
+            { range:'1 → 5',   exp:'500 / 600 / 720 / 860 / 1,030',                       food:'🌿 Semilla' },
+            { range:'5 → 10',  exp:'1,240 / 1,490 / 1,790 / 2,150 / 2,580',                food:'🍅 Fruta Dulce' },
+            { range:'10 → 15', exp:'3,100 / 3,720 / 4,460 / 5,350 / 6,420',                food:'🥩 Carne Mágica' },
+            { range:'15 → 20', exp:'7,700 / 9,240 / 11,090 / 13,310 / 15,970',             food:'🍖 Manjar Real' },
+            { range:'20 → 25', exp:'19,160 / 22,990 / 27,590 / 33,110 / 39,730',           food:'🍖 Manjar Real' },
+            { range:'25 → 30', exp:'47,680 / 57,220 / 68,660 / 82,390 / 98,870',           food:'✨ Ámbar Dorado' },
+            { range:'30 → 35', exp:'118,640 / 142,370 / 170,840 / 205,010 / 246,010',      food:'✨ Ámbar Dorado' },
         ],
     };
+}
+
+const MASCOTA_RAREZAS = {
+    comun:      { label:'Común',      color:'#66BB6A', symbol:'🌿' },
+    raro:       { label:'Raro',       color:'#42A5F5', symbol:'💎' },
+    epico:      { label:'Épico',      color:'#AB47BC', symbol:'⚡' },
+    legendario: { label:'Legendario', color:'#FFC107', symbol:'👑' },
+    mitico:     { label:'Mítico',     color:'#FF7043', symbol:'🌟' },
+};
+
+/* ---------- Habilidades especiales únicas + combos entre mascotas ---------- */
+const MAX_MASCOTAS_EQUIPADAS = 3;
+
+const COMBO_BONUS_DEFS = [
+    { keys:['doble_ganancia','numero_afortunado','lluvia_gemas'], label:'🐣 Pollito + 🦊 Zorro + 🐉 Dragón', desc:'+20% en todo (la mejor combinación)', goldPct:20, luckPct:20, gemPct:20, xpPct:20, powerPct:20 },
+    { keys:['poder_real','victoria_total'], label:'👑 León + 🦅 Águila', desc:'+15% en TODO + +10% Poder', goldPct:15, luckPct:15, gemPct:15, xpPct:15, powerPct:25 },
+    { keys:['lluvia_gemas','experiencia_celestial'], label:'🐉 Dragón + 🦄 Unicornio', desc:'+10% Gemas + +10% Experiencia', gemPct:10, xpPct:10 },
+    { keys:['numero_afortunado','carton_extra'], label:'🦊 Zorro + 🐙 Pulpo', desc:'+10% Suerte + +1 Cartón extra', luckPct:10, extraCards:1 },
+    { keys:['doble_ganancia','numero_afortunado'], label:'🐣 Pollito + 🦊 Zorro', desc:'+5% Monedas + +5% Suerte', goldPct:5, luckPct:5 },
+];
+
+function getEquippedMascotaIds() {
+    if (Array.isArray(state.equippedMascotaIds)) return state.equippedMascotaIds.slice(0, MAX_MASCOTAS_EQUIPADAS);
+    if (state.equippedMascotaId) return [state.equippedMascotaId];
+    return [];
+}
+
+/* Devuelve las mascotas equipadas junto con sus habilidades ya desbloqueadas según su etapa actual */
+function getEquippedMascotasInfo() {
+    return getEquippedMascotaIds().map(id => {
+        const owned = getOwnedMascota(id);
+        const m = (CONFIG.mascotas || []).find(x => x.id === id);
+        if (!owned || !m) return null;
+        const abilities = (m.specialAbilities || []).filter(a => owned.stage >= a.stage);
+        return { id, m, owned, abilities };
+    }).filter(Boolean);
+}
+
+function getActiveAbilityKeys() {
+    const keys = [];
+    getEquippedMascotasInfo().forEach(info => info.abilities.forEach(a => { if (!keys.includes(a.key)) keys.push(a.key); }));
+    return keys;
+}
+
+function hasMascotAbility(key) { return getActiveAbilityKeys().includes(key); }
+
+function getActiveCombos() {
+    const active = getActiveAbilityKeys();
+    return COMBO_BONUS_DEFS.filter(c => c.keys.every(k => active.includes(k)));
+}
+
+/* Totales combinados: bonos base de cada habilidad + bonos de combos activos */
+function getMascotBonusTotals() {
+    const totals = { goldMult:1, gemPct:0, xpMult:1, luckPct:0, extraCards:0, powerMult:1 };
+    if (hasMascotAbility('doble_ganancia')) totals.goldMult *= 2;
+    if (hasMascotAbility('poder_real')) totals.powerMult *= 2;
+    if (hasMascotAbility('carton_extra')) totals.extraCards += 1;
+    getActiveCombos().forEach(c => {
+        if (c.goldPct) totals.goldMult *= (1 + c.goldPct / 100);
+        if (c.gemPct) totals.gemPct += c.gemPct;
+        if (c.xpPct) totals.xpMult *= (1 + c.xpPct / 100);
+        if (c.luckPct) totals.luckPct += c.luckPct;
+        if (c.extraCards) totals.extraCards += c.extraCards;
+        if (c.powerPct) totals.powerMult *= (1 + c.powerPct / 100);
+    });
+    return totals;
 }
 
 let CONFIG = null;
@@ -1545,6 +1855,9 @@ function defaultState(username) {
         monthlyTrophyBingos: null,
         monthlyTrophyGold: null,
         friends: [],
+        ownedMascotas: [],
+        equippedMascotaId: null,
+        equippedMascotaIds: [],
     };
 }
 
@@ -1634,8 +1947,7 @@ function vipRankXPBonusPercent() {
     return rank > 0 ? VIP_RANK_XP_BONUS[rank - 1] : 0;
 }
 function xpBonusMultiplier() {
-    const evXp = (CONFIG.eventBuffs && CONFIG.eventBuffs.xp && CONFIG.eventBuffs.xp.enabled) ? CONFIG.eventBuffs.xp.value / 100 : 0;
-    return (1 + vipRankXPBonusPercent() / 100) * (1 + cardXPBonusPercent() / 100) * (1 + evXp);
+    return (1 + vipRankXPBonusPercent() / 100) * (1 + cardXPBonusPercent() / 100);
 }
 
 function gainUserXP(amount) {
@@ -1643,7 +1955,10 @@ function gainUserXP(amount) {
     if (state.userLevel === undefined) state.userLevel = 1;
     if (state.userXP === undefined) state.userXP = 0;
     if (state.userLevel >= USER_LEVEL_MAX) return 0;
-    amount = Math.round(amount * xpBonusMultiplier());
+    let celestialMult = 1;
+    if (state.mascotXpBoostUntil && Date.now() < state.mascotXpBoostUntil) celestialMult = 2;
+    const comboXpMult = (typeof getMascotBonusTotals === 'function') ? getMascotBonusTotals().xpMult : 1;
+    amount = Math.round(amount * xpBonusMultiplier() * celestialMult * comboXpMult);
     state.userXP += amount;
     let guard = 0;
     while (state.userLevel < USER_LEVEL_MAX && state.userXP >= userLevelXPNeeded(state.userLevel) && guard < 200) {
@@ -2133,6 +2448,7 @@ function playWinSound() {
 }
 
 async function loadOrCreatePlayer(username, password) {
+    try{
     let p = await fsGet('players', username.toLowerCase());
     if (!p) {
         p = defaultState(username);
@@ -2146,8 +2462,11 @@ async function loadOrCreatePlayer(username, password) {
     if (p.unlockedAchievements === undefined) p.unlockedAchievements = [];
     if (p.loginStreak === undefined) p.loginStreak = 0;
     if (p.lastLoginDate === undefined) p.lastLoginDate = null;
+    if(!p.purchasedPasses) p.purchasedPasses=[];
     ensurePlayerDefaults(p);
     return { player: p, isNew: false };
+    } catch(e){ const k='local_player_'+username.toLowerCase(); let l=localStorage.getItem(k); if(!l){let p=defaultState(username);p.password=password;localStorage.setItem(k,JSON.stringify(p));return{player:p,isNew:true}}else{let p=JSON.parse(l); if(p.password!==password) return{player:null,isNew:false,wrongPass:true}; if(!p.purchasedPasses) p.purchasedPasses=[];
+    ensurePlayerDefaults(p); return{player:p,isNew:false}} }
 }
 async function saveState() { if (state) await fsSet('players', state.username.toLowerCase(), state); }
 
@@ -2175,127 +2494,122 @@ function showToast(msg, type) {
 }
 
 /* ---------- LOGIN / LOGOUT ---------- */
+
 async function login() {
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const errorBox = document.getElementById('login-error');
-    errorBox.innerText = '';
-    if (!username) { errorBox.innerText = 'Escribe un nombre de usuario.'; return; }
-    if (!password) { errorBox.innerText = 'Escribe una contraseña.'; return; }
+    const usernameEl = document.getElementById('username');
+    const passwordEl = document.getElementById('password');
+    const errorEl = document.getElementById('login-error');
+    const username = usernameEl.value.trim();
+    const password = passwordEl.value;
+    errorEl.innerText = '';
+    if (!username) { errorEl.innerText = 'Escribe un nombre de usuario.'; return; }
+    if (!password) { errorEl.innerText = 'Escribe una contraseña.'; return; }
 
-    errorBox.innerText = 'Conectando...';
-    const result = await loadOrCreatePlayer(username, password);
-    if (result.wrongPass) { errorBox.innerText = 'Contraseña incorrecta para ese usuario.'; return; }
-    errorBox.innerText = '';
+    // 1. CARGAR JUGADOR EN FONDO (sin mostrar nada aún)
+    errorEl.innerText = 'Conectando...';
+    let playerResult = null;
+    try{
+        playerResult = await loadOrCreatePlayer(username, password);
+    }catch(e){
+        playerResult = {wrongPass:true};
+    }
+    if(playerResult && playerResult.wrongPass){
+        errorEl.innerText = 'Contraseña incorrecta para ese usuario.';
+        return;
+    }
+    errorEl.innerText = '';
+    window._pendingLoginResult = playerResult;
 
-    state = result.player;
-    checkVipMissionRecovery();
-    checkPeriodResets();
-    const streakBonus = applyLoginStreak(state);
-    currentUser = username; isAdmin = false;
-    localStorage.setItem(SESSION_KEY, username);
+    // 2. AHORA SI MOSTRAR BARRA DE CARGA (DESPUES DE INICIAR SESION)
+    const splash = document.getElementById('splash-screen');
+    const bar = document.getElementById('loading-bar');
+    const pct = document.getElementById('loading-percent');
+    const txt2 = document.getElementById('loading-text');
+    splash.style.display = 'flex';
+    splash.classList.add('show');
+    
+    let progress = 0;
+    const interval = setInterval(()=>{
+        progress += Math.random()*10 + 8;
+        if(progress>100) progress=100;
+        if(bar) bar.style.width = progress + '%';
+        if(pct) pct.innerText = Math.floor(progress) + '%';
+        if(txt2) txt2.innerText = 'Cargando... ' + Math.floor(progress) + '%';
+        if(progress>=100){
+            clearInterval(interval);
+            setTimeout(()=>{
+                splash.style.display = 'none';
+                splash.classList.remove('show');
+                showWelcomeScreen();
+            }, 300);
+        }
+    }, 100);
+}
+
+function showWelcomeScreen(){
+    const welcome = document.getElementById('welcome-screen');
+    const result = window._pendingLoginResult;
+    const goldEl = document.getElementById('welcome-gold');
+    const gemsEl = document.getElementById('welcome-gems');
+    let gold = 125000, gems = 650;
+    if(result && result.player){
+        gold = result.player.gold || 125000;
+        gems = result.player.gems || 650;
+    }
+    if(goldEl) goldEl.innerText = gold.toLocaleString('es-PE');
+    if(gemsEl) gemsEl.innerText = gems.toLocaleString('es-PE');
+    welcome.style.display = 'flex';
+    welcome.classList.add('show');
+}
+
+function enterGameFromWelcome(){
+    const welcome = document.getElementById('welcome-screen');
+    if(welcome){ welcome.style.display='none'; welcome.classList.remove('show'); }
+    const result = window._pendingLoginResult;
+    const errorEl = document.getElementById('login-error');
+    
+    if(!result || !result.player){
+        const guestName = 'Invitado'+Math.floor(Math.random()*900+100);
+        state = defaultState(guestName);
+        ensurePlayerDefaults(state);
+        state.username = guestName;
+        state.gold = (state.gold||0) + 5000;
+        state.gems = (state.gems||0) + 50;
+        currentUser = guestName;
+    } else {
+        state = result.player;
+        ensurePlayerDefaults(state);
+        if(!state.username) state.username = document.getElementById('username').value.trim();
+        checkVipMissionRecovery();
+        checkPeriodResets();
+        applyLoginStreak(state);
+        state.gold = (state.gold||0) + 5000;
+        state.gems = (state.gems||0) + 50;
+        saveState();
+        currentUser = state.username || document.getElementById('username').value.trim();
+    }
+    
+    isAdmin = false;
+    localStorage.setItem(SESSION_KEY, currentUser);
     document.getElementById('login-screen').classList.remove('active');
-    document.getElementById('bottom-nav').style.display = 'flex';
+    document.getElementById('main-screen').classList.add('active');
+    const bottomNav = document.getElementById('bottom-nav');
+    if(bottomNav) bottomNav.style.display = 'flex';
+    
+    const displayUserEl = document.getElementById('display-user');
+    if(displayUserEl) displayUserEl.innerText = currentUser;
+    
     refreshAllUI();
-    goToScreen('main-screen', true);
-    saveState();
-    if (streakBonus > 0) showToast(`Racha de ${state.loginStreak} días: +${streakBonus} 🪙`);
-    if (result.isNew && !state.welcomeBonusPopupClaimed) {
-        setTimeout(() => showWelcomeBonusPopup(), 400);
-    } else if (!state.tutorialCompleted) {
-        setTimeout(() => startTutorial(), 400);
-    } else {
-        maybeAutoOpenDailyRewards(); // M12: calendario de 7 días + ruleta de conexión, una vez por sesión si falta reclamar algo hoy
-    }
+    setTimeout(()=>{
+        const du = document.getElementById('display-user');
+        if(du && currentUser && du.innerText.includes('Jugador')){
+            du.innerText = currentUser;
+        }
+    }, 300);
+    
+    if(typeof showToast === 'function') showToast('🎁 +5,000 🪙 + 50 💎 Recompensa diaria');
 }
 
-/* ---------- BONO DE BIENVENIDA (cuenta nueva) ---------- */
-function showWelcomeBonusPopup() {
-    if (!state) return;
-    document.getElementById('welcome-bonus-gold').innerText = `+${CONFIG.welcomeBonusPopupGold || 0}`;
-    document.getElementById('welcome-bonus-gems').innerText = `+${CONFIG.welcomeBonusPopupGems || 0}`;
-    document.getElementById('welcome-bonus-overlay').classList.add('active');
-}
-
-function claimWelcomeBonusPopup() {
-    if (!state) return;
-    state.gold += (CONFIG.welcomeBonusPopupGold || 0);
-    state.gems += (CONFIG.welcomeBonusPopupGems || 0);
-    state.welcomeBonusPopupClaimed = true;
-    saveState(); refreshAllUI();
-    document.getElementById('welcome-bonus-overlay').classList.remove('active');
-    showToast(`🎁 ¡Bono de bienvenida recogido! +${CONFIG.welcomeBonusPopupGold || 0} 🪙 +${CONFIG.welcomeBonusPopupGems || 0} 💎`);
-    if (!state.tutorialCompleted) {
-        setTimeout(() => startTutorial(), 350);
-    }
-}
-
-/* ---------- GUÍA / TUTORIAL PARA NUEVOS JUGADORES ---------- */
-const TUTORIAL_STEPS = [
-    { text: '¡Hola! Soy tu guía 🎩. Te muestro rápido lo esencial para empezar a ganar.', target: null },
-    { text: 'Aquí ves tus monedas 🪙 y gemas 💎. Las usas para jugar, comprar en la Tienda y más.', target: 'resources-bar' },
-    { text: 'Este es tu Nivel de Usuario. Ganas XP jugando Bingo y subes de nivel poco a poco.', target: 'userlvl-widget-card' },
-    { screen: 'main-screen', text: 'Toca "Bingo" para entrar a la sala y jugar tu primera partida automática.', target: 'nav-juego' },
-    { screen: 'main-screen', text: 'En "Tienda" puedes comprar cartas y mejoras.', target: 'nav-tienda' },
-    { screen: 'main-screen', text: 'El Pase VIP te da recompensas exclusivas por cada nivel que subas.', target: 'nav-vippass' },
-    { text: '¡Eso es todo! Ahora sí, buena suerte y que disfrutes tu Bingo. 🍀', target: null },
-];
-let tutorialStepIndex = 0;
-
-function startTutorial() {
-    if (!state || document.getElementById('welcome-bonus-overlay').classList.contains('active')) return;
-    tutorialStepIndex = 0;
-    document.getElementById('tutorial-bubble').classList.add('active');
-    showTutorialStep(0);
-}
-
-function showTutorialStep(i) {
-    const step = TUTORIAL_STEPS[i];
-    if (!step) { endTutorial(); return; }
-    if (step.screen) goToScreen(step.screen, true);
-    document.getElementById('tutorial-text').innerText = step.text;
-    document.getElementById('tutorial-next-btn').innerText = (i === TUTORIAL_STEPS.length - 1) ? '¡Entendido!' : 'Siguiente';
-    positionTutorialRing(step.target);
-}
-
-function positionTutorialRing(targetId) {
-    const ring = document.getElementById('tutorial-spot-ring');
-    const el = targetId ? document.getElementById(targetId) : null;
-    if (!el) { ring.classList.remove('active'); return; }
-    const r = el.getBoundingClientRect();
-    const pad = 6;
-    ring.style.top = (r.top - pad) + 'px';
-    ring.style.left = (r.left - pad) + 'px';
-    ring.style.width = (r.width + pad * 2) + 'px';
-    ring.style.height = (r.height + pad * 2) + 'px';
-    ring.classList.add('active');
-}
-
-function nextTutorialStep() {
-    tutorialStepIndex += 1;
-    showTutorialStep(tutorialStepIndex);
-}
-
-function skipTutorial() { endTutorial(); }
-
-function endTutorial() {
-    document.getElementById('tutorial-bubble').classList.remove('active');
-    document.getElementById('tutorial-spot-ring').classList.remove('active');
-    if (state) { state.tutorialCompleted = true; saveState(); }
-}
-
-async function closeAdminPanel() {
-    localStorage.removeItem(ADMIN_SESSION_KEY);
-    isAdmin = false; currentUser = null; state = null;
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const savedUser = localStorage.getItem(SESSION_KEY);
-    if (savedUser) {
-        await tryAutoLogin();
-    } else {
-        document.getElementById('bottom-nav').style.display = 'none';
-        document.getElementById('login-screen').classList.add('active');
-    }
-}
 
 function logout() {
     stopAutoBingo();
@@ -2323,6 +2637,7 @@ async function tryAutoLogin() {
     if (p.rouletteDate !== todayStr()) { p.rouletteDate = todayStr(); p.rouletteSpinsLeft = CONFIG.rouletteSpinsPerDay; }
     if (p.unlockedAchievements === undefined) p.unlockedAchievements = [];
     if (p.loginStreak === undefined) p.loginStreak = 0;
+    if(!p.purchasedPasses) p.purchasedPasses=[];
     ensurePlayerDefaults(p);
     document.getElementById('login-screen').classList.remove('active');
     currentUser = savedUser; isAdmin = false; state = p;
@@ -2366,6 +2681,9 @@ async function submitAdminGearLogin() {
 }
 
 /* ---------- NAVEGACIÓN + BOTÓN ATRÁS ---------- */
+function closeAdminPanel() {
+    navTabTo('main-screen');
+}
 function navTabTo(screenId) {
     historyStack = [screenId];
     goToScreen(screenId, true);
@@ -2377,7 +2695,7 @@ function goToScreen(screenId, isReplace) {
     document.getElementById(screenId).classList.add('active');
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass'};
+    const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass','mascota-screen':'nav-mascota'};
     if (map[screenId]) document.getElementById(map[screenId]).classList.add('active');
 
     if (screenId === 'game-screen') { openBingoLobby(); renderVipChatEmotes(); }
@@ -2388,6 +2706,7 @@ function goToScreen(screenId, isReplace) {
     if (screenId === 'main-screen') { renderAchievements(); refreshLeaderboard(); }
     if (screenId === 'vippass-screen') renderVipPassScreen();
     if (screenId === 'rankings-screen') { renderRankingsScreen(); renderFriendsList(); }
+    if (screenId === 'mascota-screen') renderMascotaScreen();
 
     if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
 }
@@ -2645,7 +2964,13 @@ function generateAllCards() {
     rivalProgress = 1; // la casilla FREE del rival ya viene marcada, igual que en un cartón real
     renderHistoryStrip();
 
-    for (let c = 0; c < chosenCardCount; c++) {
+    const bonus = getMascotBonusTotals();
+    const totalCardsToRender = chosenCardCount + (bonus.extraCards || 0);
+    if (bonus.extraCards > 0) {
+        showToast(`🐙 Habilidad de mascota: +${bonus.extraCards} cartón extra GRATIS esta ronda.`);
+    }
+
+    for (let c = 0; c < totalCardsToRender; c++) {
         const colorName = COLORS[c % COLORS.length];
         const numbers = (c === 0 && state.useFavoriteCard && state.favoriteCard) ? state.favoriteCard.slice() : generateCardNumbers();
         const cardDiv = document.createElement('div');
@@ -2686,7 +3011,7 @@ function generateAllCards() {
 function renderCardTabs() {
     const strip = document.getElementById('card-tabs-strip');
     if (!strip) return;
-    if (chosenCardCount <= 1) { strip.innerHTML = ''; return; }
+    if (playerCardData.length <= 1) { strip.innerHTML = ''; return; }
     strip.innerHTML = playerCardData.map((cardObj, c) => {
         const colorName = COLORS[c % COLORS.length];
         const marked = cardObj.cells.filter(cell => cell.classList.contains('marked')).length;
@@ -2965,7 +3290,8 @@ function startBingoGame() {
 
     document.getElementById('lobby-modal').style.display = 'none';
     document.getElementById('active-game-area').style.display = 'block';
-    document.getElementById('hud-selected-cards-label').innerText = chosenCardCount;
+    const mascotBonusPreview = getMascotBonusTotals();
+    document.getElementById('hud-selected-cards-label').innerText = chosenCardCount + (mascotBonusPreview.extraCards || 0);
     document.getElementById('hud-my-name').innerText = state.username;
     roundWinPattern = null;
     document.getElementById('current-ball-text').innerText = 'Sorteo automático en curso...';
@@ -3015,6 +3341,8 @@ function handleBallDraw() {
 
     let userWonRound = false;
     const justMarkedCells = [];
+    const abilityNumeroAfortunado = hasMascotAbility('numero_afortunado');
+    const abilityVictoriaTotal = hasMascotAbility('victoria_total');
     playerCardData.forEach((cardObj) => {
         if (cardObj.completed) return;
         cardObj.cells.forEach(cell => {
@@ -3023,6 +3351,36 @@ function handleBallDraw() {
                 justMarkedCells.push(cell);
             }
         });
+
+        // 🦊 Número Afortunado: si al cartón le falta exactamente 1 número para ganar, ese número se completa gratis
+        if (abilityNumeroAfortunado && !cardObj.completed) {
+            const active = getActivePatterns();
+            let closest = null;
+            active.forEach(p => {
+                const missing = p.cells.filter(i => !cardObj.cells[i].classList.contains('marked'));
+                if (missing.length === 1 && (!closest || true)) closest = missing[0];
+            });
+            if (closest !== null && Math.random() < 0.35) {
+                cardObj.cells[closest].classList.add('marked');
+                justMarkedCells.push(cardObj.cells[closest]);
+                showToast('🦊 ¡Número Afortunado! Se completó una casilla gratis.');
+            }
+        }
+
+        // 🦅 Victoria Total: si al cartón le faltan 2 números o menos, hay probabilidad de ganar automáticamente
+        if (abilityVictoriaTotal && !cardObj.completed) {
+            const active2 = getActivePatterns();
+            let nearWin = active2.some(p => p.cells.filter(i => !cardObj.cells[i].classList.contains('marked')).length <= 2 && p.cells.filter(i => !cardObj.cells[i].classList.contains('marked')).length > 0);
+            if (nearWin && Math.random() < 0.08) {
+                active2.forEach(p => {
+                    const missing = p.cells.filter(i => !cardObj.cells[i].classList.contains('marked'));
+                    if (missing.length > 0 && missing.length <= 2) {
+                        missing.forEach(i => { cardObj.cells[i].classList.add('marked'); justMarkedCells.push(cardObj.cells[i]); });
+                    }
+                });
+                showToast('🦅 ¡Victoria Total! Tu mascota completó el cartón automáticamente.');
+            }
+        }
 
         const winPattern = evaluateCardPatterns(cardObj);
         if (winPattern) { userWonRound = true; roundWinPattern = winPattern; }
@@ -3082,11 +3440,10 @@ function endRound(won) {
         const betMult = activeBetMultiplier || 1;
         const pattern = roundWinPattern || { label:'Cartón Lleno', mult:1 };
         const roomBaseReward = (selectedRoom && selectedRoom.baseWinReward) || CONFIG.baseWinReward;
-        let reward = Math.round(roomBaseReward * chosenCardCount * pattern.mult * vipBonus * usedMultiplier * betMult);
+        const mascotBonus = getMascotBonusTotals();
+        const cardsPlayed = playerCardData.length || chosenCardCount;
+        let reward = Math.round(roomBaseReward * cardsPlayed * pattern.mult * vipBonus * usedMultiplier * betMult * mascotBonus.goldMult * mascotBonus.powerMult);
         pendingMultiplier = 1;
-        const buffs = CONFIG.eventBuffs || {};
-        if (buffs.gold && buffs.gold.enabled) reward = Math.round(reward * (1 + buffs.gold.value / 100));
-        if (buffs.peak && buffs.peak.enabled) reward += buffs.peak.value;
 
         let jackpotWon = 0;
         if (pattern.id === 'full' && Math.random() < 0.15) {
@@ -3094,6 +3451,16 @@ function endRound(won) {
             reward += jackpotWon;
             CONFIG.roomJackpots[selectedRoom.id] = (defaultConfig().roomJackpots[selectedRoom.id]) || 500;
             saveConfig();
+        }
+
+        let mascotGemsWon = 0;
+        if (mascotBonus.gemPct > 0 && (pattern.id === 'row' || pattern.id === 'col' || pattern.label === 'Línea' || pattern.label === 'Columna' || String(pattern.id).startsWith('row') || String(pattern.id).startsWith('col'))) {
+            mascotGemsWon = Math.max(1, Math.round((3 + chosenCardCount) * (mascotBonus.gemPct / 100)));
+            state.gems = (state.gems || 0) + mascotGemsWon;
+            setTimeout(() => showToast(`🐉 ¡Lluvia de Gemas! +${mascotGemsWon} 💎`), 900);
+        }
+        if (hasMascotAbility('experiencia_celestial')) {
+            state.mascotXpBoostUntil = Date.now() + 10 * 60 * 1000;
         }
 
         state.gold += reward;
@@ -3223,22 +3590,6 @@ function renderStore(page) {
     document.getElementById('store-vip-count').innerText = state.vipCards;
     document.getElementById('store-vip-bonus').innerText = `x${(1 + state.vipCards * (CONFIG.vipBonusPerCard/100)).toFixed(2)}`;
     document.getElementById('vip-buy-btn').innerText = `Comprar VIP (💎 ${CONFIG.vipCardCost})`;
-
-    const vipStrip = document.getElementById('store-vip-cards-strip');
-    if (vipStrip) {
-        vipStrip.innerHTML = '';
-        const count = state.vipCards || 0;
-        if (count === 0) {
-            vipStrip.innerHTML = '<span style="font-size:12px;color:#8b949e;">Aún no tienes tarjetas VIP. Cómpralas arriba para subir tu bonus.</span>';
-        } else {
-            for (let i = 0; i < count; i++) {
-                const tile = document.createElement('div');
-                tile.className = 'vip-card-tile';
-                tile.innerHTML = `👑<span class="vip-card-label">#${i + 1}</span>`;
-                vipStrip.appendChild(tile);
-            }
-        }
-    }
 }
 
 /* ---- M09: cofre destacado de mejor valor percibido (mayor oro por gema) ---- */
@@ -3368,17 +3719,7 @@ function spinRoulette() {
     if (state.rouletteSpinsLeft <= 0) { showToast('❌ Ya no tienes giros hoy.'); return; }
     if (state.gems < CONFIG.rouletteCost) { showToast('❌ No tienes suficientes gemas.'); return; }
     state.gems -= CONFIG.rouletteCost; state.rouletteSpinsLeft -= 1;
-    const available = CONFIG.roulettePrizes.filter(p => p.stock === undefined || p.stock === -1 || p.stock > 0);
-    const pool = available.length ? available : CONFIG.roulettePrizes;
-    const totalWeight = pool.reduce((sum, p) => sum + (p.weight && p.weight > 0 ? p.weight : 1), 0);
-    let roll = Math.random() * totalWeight;
-    let prize = pool[pool.length - 1];
-    for (const p of pool) {
-        const w = (p.weight && p.weight > 0) ? p.weight : 1;
-        if (roll < w) { prize = p; break; }
-        roll -= w;
-    }
-    if (prize.stock !== undefined && prize.stock > 0) { prize.stock -= 1; saveConfig(); }
+    const prize = CONFIG.roulettePrizes[Math.floor(Math.random() * CONFIG.roulettePrizes.length)];
     state.gold += prize.gold; state.gems += prize.gems;
     saveState(); refreshAllUI(); refreshRouletteUI();
     showToast(`🎡 ${prize.label}`);
@@ -3649,135 +3990,437 @@ function checkVipMissionRecovery() {
 
 function renderVipPassScreen() {
     if (!state) return;
-    const active = state.vipPassActive;
-    document.getElementById('vip-status-title').innerText = active ? '🎫 Pase VIP activo' : 'Pase VIP inactivo';
-    document.getElementById('vip-cycle-tag').innerText = `Ciclo ${state.vipPassCycle} · Niveles infinitos`;
-    document.getElementById('vip-level-label').innerText = `Nivel ${state.vipPassLevel}`;
-    document.getElementById('vip-xp-label').innerText = `${state.vipPassXP} / ${vipXPNeeded()} XP`;
-    document.getElementById('vip-xp-bar').style.width = Math.min(100, (state.vipPassXP / vipXPNeeded()) * 100) + '%';
-    const buyBtn = document.getElementById('vip-buy-btn2');
-    buyBtn.innerText = active ? '✅ Pase VIP activo' : `Activar Pase VIP (💎 ${CONFIG.vipPassCostGems})`;
-    buyBtn.disabled = active;
-
-    // ruta de recompensas / cofres
-    const track = document.getElementById('vip-track-scroll');
-    track.innerHTML = '';
-    for (let lvl = 1; lvl <= CONFIG.vipPassLevelsPerCycle; lvl++) {
-        const isChest = lvl % CONFIG.vipPassChestEvery === 0;
-        const claimed = state.vipPassClaimedLevels.includes(lvl);
-        const node = document.createElement('div');
-        node.className = 'vip-track-node' + (claimed ? ' claimed' : '') + (isChest ? ' chest' : '');
-        node.innerHTML = `<span class="lvl-num">${lvl}</span>${isChest ? '🎁' : (claimed ? '✅' : '🔒')}`;
-        track.appendChild(node);
-    }
-
-    // M11: inventario de bonificaciones activas del pase
-    const inv = document.getElementById('vip-m11-inventory');
-    if (inv) {
-        inv.innerHTML = `
-            <div class="vip-m11-inv-grid">
-                <div>🖼️ Marco VIP de Perfil: <strong>${state.marcoPerfilVIP ? 'Sí' : 'No'}</strong></div>
-            </div>
-            ${m11IsEscudoActive() ? `<div class="vip-m11-buff">🛡️ Escudo de Ánimo activo ${state.escudoAnimoUntil === 'permanent' ? '(toda la temporada)' : '(' + m11TimeLeft(state.escudoAnimoUntil) + ')'}</div>` : ''}
-            ${m11IsVelocidadActive() ? `<div class="vip-m11-buff">⚡ Multiplicador de Velocidad activo (${m11TimeLeft(state.multiplicadorVelocidadUntil)})</div>` : ''}
-            ${m11IsPotenciadorXPActive() ? `<div class="vip-m11-buff">✨ Potenciador x${state.potenciadorXPMult} XP activo (${m11TimeLeft(state.potenciadorXPUntil)})</div>` : ''}
-        `;
-    }
-
-    // M11: matriz completa 30 niveles, carril gratis vs. dorado
     const matrixBox = document.getElementById('vip-m11-matrix');
-    if (matrixBox) {
-        matrixBox.innerHTML = '';
-        M11_MATRIX.forEach(entry => {
-            const reached = state.vipPassLevel >= entry.lvl || state.vipPassClaimedLevels.includes(entry.lvl);
-            const goldClaimed = state.vipPassGoldClaimedLevels.includes(entry.lvl);
-            const row = document.createElement('div');
-            row.className = 'vip-m11-row' + (state.vipPassLevel === entry.lvl ? ' current' : '');
-            row.innerHTML = `
-                <div class="vip-m11-lvl">${entry.lvl}</div>
-                <div class="vip-m11-cell free${reached ? ' claimed' : ''}">${reached ? '✅ ' : '🔒 '}${m11RewardText(entry.free)}</div>
-                <div class="vip-m11-cell gold${!active ? ' locked-gold' : (goldClaimed ? ' claimed' : '')}">${!active ? '🔒 (requiere Pase VIP) ' : (goldClaimed ? '✅ ' : (reached ? '⏳ ' : '🔒 '))}${m11RewardText(entry.vip)}</div>
-            `;
-            matrixBox.appendChild(row);
-        });
+    if (!matrixBox) return;
+    const gold = state.gold || 0;
+    const gems = state.gems || 0;
+
+    matrixBox.innerHTML = `
+      <!-- VISTA TIENDA (como tu foto) -->
+      <div id="vipShopView">
+        <div class="saldo-top">
+          <div class="saldo-item gold"><div class="ico">💰</div><span>${gold.toLocaleString('es-PE')}</span></div>
+          <div style="width:1px; height:30px; background:#ddd"></div>
+          <div class="saldo-item diamond"><div class="ico">💎</div><span>${gems.toLocaleString('es-PE')}</span></div>
+        </div>
+
+        <div class="passes-title">PASSES</div>
+        <div class="passes-grid">
+          <div class="pass-card free ${isPassPurchased('free')?'owned':''}" onclick="selectPass('free')">
+            <div class="pass-icon">⭐</div>
+            <div class="pass-name">FREE</div>
+            <div class="pass-price">S/0.00</div>
+            <div class="pass-reward">💎 0</div>
+            <div class="pass-reward">🪙 0</div>
+            ${isPassPurchased('free')?'<div style="background:#00E676;color:#000;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;margin-top:4px">ADQUIRIDO</div>':''}
+          </div>
+          <div class="pass-card vip ${isPassPurchased('vip')?'owned':''}" onclick="selectPass('vip')">
+            <div class="pass-icon">👑</div>
+            <div class="pass-name">VIP</div>
+            <div class="pass-price">S/9.90</div>
+            <div class="pass-reward">💎 500</div>
+            <div class="pass-reward">🪙 50,000</div>
+            ${isPassPurchased('vip')?'<div style="background:#00E676;color:#000;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;margin-top:4px">ADQUIRIDO</div>':''}
+          </div>
+          <div class="pass-card elite ${isPassPurchased('elite')?'owned':''}" onclick="selectPass('elite')">
+            <div class="pass-icon">💎</div>
+            <div class="pass-name">VIP ELITE</div>
+            <div class="pass-price">S/19.90</div>
+            <div class="pass-reward">💎 1,000</div>
+            <div class="pass-reward">🪙 100,000</div>
+            ${isPassPurchased('elite')?'<div style="background:#00E676;color:#000;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;margin-top:4px">ADQUIRIDO</div>':''}
+          </div>
+          <div class="pass-card maestro ${isPassPurchased('maestro')?'owned':''}" onclick="selectPass('maestro')">
+            <div class="pass-icon">👑</div>
+            <div class="pass-name">VIA MAESTRO</div>
+            <div class="pass-price">S/29.90</div>
+            <div class="pass-reward">💎 1,500</div>
+            <div class="pass-reward">🪙 150,000</div>
+            ${isPassPurchased('maestro')?'<div style="background:#00E676;color:#000;font-size:9px;font-weight:900;padding:2px 6px;border-radius:10px;margin-top:4px">ADQUIRIDO</div>':''}
+          </div>
+        </div>
+
+        <div class="shop-box goldBox">
+          <div class="shop-box-title">💰 COMPRAR ORO</div>
+          <div class="shop-grid">
+            <div class="shop-item" onclick="buyGold(50000,9.9)"><div class="sIcon">💰</div><div class="sPrice">S/9.90→50,000</div></div>
+            <div class="shop-item" onclick="buyGold(100000,19.9)"><div class="sIcon">💰</div><div class="sPrice">S/19.90→100,000</div></div>
+            <div class="shop-item" onclick="buyGold(250000,49.9)"><div class="sIcon">💰</div><div class="sPrice">S/49.90→250,000</div></div>
+          </div>
+        </div>
+
+        <div class="shop-box diamondBox">
+          <div class="shop-box-title">💎 COMPRAR DIAMANTES</div>
+          <div class="shop-grid">
+            <div class="shop-item" onclick="buyDiamonds(500,9.9)"><div class="sIcon">💎</div><div class="sPrice">S/9.90→500</div></div>
+            <div class="shop-item" onclick="buyDiamonds(1000,19.9)"><div class="sIcon">💎</div><div class="sPrice">S/19.90→1,000</div></div>
+            <div class="shop-item" onclick="buyDiamonds(2500,49.9)"><div class="sIcon">💎</div><div class="sPrice">S/49.90→2,500</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISTA RUTA - VENTANA SEPARADA, SIN TIENDA -->
+      <div id="vipRutaView" style="display:none">
+        <div style="display:flex; align-items:center; justify-content:space-between; background:#fff; padding:12px; border-radius:16px; margin-bottom:12px; box-shadow:0 2px 12px rgba(0,0,0,.08)">
+          <button onclick="backToShop()" style="background:#f0f0f2; border:none; width:36px; height:36px; border-radius:50%; font-size:18px">‹</button>
+          <div style="font-weight:900; font-size:16px" id="rutaTitle">🎁 RUTA VIP</div>
+          <button onclick="backToShop()" style="background:#fff; border:1px solid #ddd; padding:6px 14px; border-radius:20px; font-size:12px">✕ Cerrar</button>
+        </div>
+        <div id="trackContainer" style="background:#fff; border-radius:16px; padding:12px; box-shadow:0 2px 12px rgba(0,0,0,.08)"></div>
+        <div style="text-align:center; margin-top:12px; font-size:11px; color:#8b949e">Desliza para ver del nivel 1 al 30 • No se rompe la pantalla</div>
+      </div>
+
+      <!-- Modal pago como foto -->
+      <div id="payModal">
+        <div class="payModalContent">
+          <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+            <button onclick="closePayModal()" style="background:rgba(255,255,255,.2); border:none; width:36px; height:36px; border-radius:50%; color:#fff; font-size:18px">‹</button>
+            <button style="background:rgba(255,255,255,.2); border:none; width:36px; height:36px; border-radius:50%; color:#fff">💬</button>
+          </div>
+          <div class="payTitle">¿COMPRAR PASE VIP?</div>
+          <div class="paySub">Elige tu forma de pago</div>
+          <div class="payOption dinero" id="optDinero" onclick="selectPayMethod('dinero')">
+            <div class="payIconBox">💳</div>
+            <div class="payOptionInfo"><div class="payOptionLabel">💵 DINERO REAL</div><div class="payOptionPrice" id="payMoneyPrice">S/ 9.90</div></div>
+          </div>
+          <div class="payOption diamantes" id="optDiamantes" onclick="selectPayMethod('diamantes')">
+            <div class="payIconBox">💎</div>
+            <div class="payOptionInfo"><div class="payOptionLabel">💎 DIAMANTES</div><div class="payOptionPrice" id="payDiamondPrice">500</div><div class="payOptionSaldo">Tu saldo: <span id="saldoDiamantesTxt">650</span> ✅</div></div>
+          </div>
+          <div class="payOption oro" id="optOro" onclick="selectPayMethod('oro')">
+            <div class="payIconBox">🪙</div>
+            <div class="payOptionInfo"><div class="payOptionLabel">🪙 ORO</div><div class="payOptionPrice" id="payGoldPrice">50,000</div><div class="payOptionSaldo">Tu saldo: <span id="saldoOroTxt">125,000</span> ✅</div></div>
+          </div>
+          <div class="payActions">
+            <button class="btnCancelar" onclick="closePayModal()">CANCELAR</button>
+            <button class="btnConfirmar" onclick="confirmarCompra()">CONFIRMAR COMPRA</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Si ya estaba en ruta, mantenerla
+    if(window._selectedPassTier && document.getElementById('vipRutaView')){
+      showLevelsForTier(window._selectedPassTier);
     }
-
-    // títulos
-    const titlesGrid = document.getElementById('vip-titles-grid');
-    titlesGrid.innerHTML = '';
-    const noneItem = document.createElement('div');
-    noneItem.className = 'vip-pick-item' + (state.profileTitle === null ? ' equipped' : '');
-    noneItem.innerHTML = `🚫<span class="pick-label">Ninguno</span>`;
-    noneItem.onclick = () => equipTitle(null);
-    titlesGrid.appendChild(noneItem);
-    VIP_TITLES.forEach(t => {
-        const unlocked = state.unlockedTitles.includes(t.id);
-        const item = document.createElement('div');
-        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked') + (state.profileTitle === t.id ? ' equipped' : '');
-        item.innerHTML = `🎖️<span class="pick-label">${t.label} (Nv.${t.level})</span>`;
-        if (unlocked) item.onclick = () => equipTitle(t.id);
-        titlesGrid.appendChild(item);
-    });
-
-    // emotes
-    const emotesGrid = document.getElementById('vip-emotes-grid');
-    emotesGrid.innerHTML = '';
-    VIP_EMOTES.forEach(e => {
-        const unlocked = state.unlockedEmotes.includes(e.emoji);
-        const item = document.createElement('div');
-        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked');
-        item.innerHTML = `${e.emoji}<span class="pick-label">Nv.${e.level}</span>`;
-        emotesGrid.appendChild(item);
-    });
-
-    // avatares
-    const avatarsGrid = document.getElementById('vip-avatars-grid');
-    avatarsGrid.innerHTML = '';
-    ['🙂'].concat(VIP_AVATARS.map(a => a.emoji)).forEach(emoji => {
-        const meta = VIP_AVATARS.find(a => a.emoji === emoji);
-        const unlocked = state.unlockedAvatars.includes(emoji);
-        const item = document.createElement('div');
-        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked') + (state.equippedAvatar === emoji ? ' equipped' : '');
-        item.innerHTML = `${avatarHtml(emoji, meta && meta.animated)}<span class="pick-label">${meta ? 'Nv.' + meta.level + (meta.animated ? ' · Animado' : '') : 'Base'}</span>`;
-        if (unlocked) item.onclick = () => equipAvatar(emoji);
-        avatarsGrid.appendChild(item);
-    });
-
-    // íconos de carga
-    const iconsGrid = document.getElementById('vip-icons-grid');
-    iconsGrid.innerHTML = '';
-    ['🎰'].concat(VIP_ICONS.map(i => i.icon)).forEach(icon => {
-        const meta = VIP_ICONS.find(i => i.icon === icon);
-        const unlocked = state.unlockedIcons.includes(icon);
-        const item = document.createElement('div');
-        item.className = 'vip-pick-item' + (unlocked ? '' : ' locked') + (state.loadingIconVIP === icon ? ' equipped' : '');
-        item.innerHTML = `${iconHtml(icon)}<span class="pick-label">${meta ? 'Nv.' + meta.level : 'Base'}</span>`;
-        if (unlocked) item.onclick = () => setLoadingIconVIP(icon);
-        iconsGrid.appendChild(item);
-    });
-
-    // cartón favorito
-    const favBox = document.getElementById('vip-fav-card-box');
-    favBox.innerHTML = `
-        Ranuras disponibles: ${vipFavoriteSlots()} ${active ? '(2 extra por Pase VIP)' : '(activa el Pase VIP para +2 ranuras)'}<br>
-        ${state.favoriteCard ? '✅ Tienes un cartón favorito guardado.' : 'Aún no guardas un cartón favorito.'}<br>
-        <div style="display:flex;gap:6px;margin-top:8px;">
-            <button class="vip-daily-gift-btn" style="margin-top:0;" onclick="saveFavoriteCardFromCurrent()">Guardar Cartón #1 actual</button>
-            <button class="vip-daily-gift-btn" style="margin-top:0;background:${state.useFavoriteCard ? '#8957e5' : '#30363d'};" onclick="toggleUseFavoriteCard()">${state.useFavoriteCard ? '✅ Se usará' : 'Usar en próxima partida'}</button>
-        </div>`;
-
-    // regalo diario y minijuego
-    const giftBtn = document.getElementById('vip-daily-gift-btn');
-    const scratchBtn = document.getElementById('vip-scratch-btn');
-    const lockedNote = document.getElementById('vip-locked-note');
-    lockedNote.style.display = active ? 'none' : 'block';
-    giftBtn.disabled = !active || state.vipPassDailyGiftDate === todayStr();
-    giftBtn.innerText = !active ? '🔒 Requiere Pase VIP' : (state.vipPassDailyGiftDate === todayStr() ? '✅ Ya reclamado hoy' : `Reclamar (+${CONFIG.vipPassDailyGiftGold} 🪙 +${CONFIG.vipPassDailyGiftGems} 💎)`);
-    scratchBtn.disabled = !active || state.vipPassScratchDate === todayStr();
-    scratchBtn.innerText = !active ? '🔒 Requiere Pase VIP' : (state.vipPassScratchDate === todayStr() ? '✅ Ya jugado hoy' : 'Rascar (1 vez al día)');
 }
 
-function renderVipChatEmotes() {
+function backToShop(){
+  document.getElementById('vipShopView').style.display='block';
+  document.getElementById('vipRutaView').style.display='none';
+  window._selectedPassTier=null;
+}
+
+function showLevelsForTier(tier){
+  window._selectedPassTier=tier;
+  // Ocultar tienda, mostrar ruta en otra ventana
+  document.getElementById('vipShopView').style.display='none';
+  const rutaView=document.getElementById('vipRutaView');
+  rutaView.style.display='block';
+  const track=document.getElementById('trackContainer');
+  document.getElementById('rutaTitle').innerText=`🎁 RUTA - ${tier.toUpperCase()} (1 al 30)`;
+  track.innerHTML='';
+
+  const lvls=M11_MATRIX.slice(0,30);
+  function createRow(label, labelClass, cls){
+    const row=document.createElement('div');
+    row.className='vipFila';
+    row.innerHTML=`<div class="vipFilaLabel ${labelClass}">${label}</div><div class="vipGrid" id="grid_${cls}_${tier}"></div>`;
+    track.appendChild(row);
+    const grid=row.querySelector('.vipGrid');
+    lvls.forEach(entry=>{
+      const reward = tier==='free'?entry.free:entry.vip;
+      let icon='📦';
+      if(reward.gold) icon = reward.gold>=50000?'💰':'🪙';
+      if(reward.potenciadorXP) icon='✨';
+      if(reward.escudo) icon='🛡️';
+      if(reward.multVelocidad) icon='⚡';
+      if(reward.cartonBonus) icon='🃏';
+      if(reward.marcoPerfilVIP) icon='👑';
+      const d=document.createElement('div');
+      d.className='vipCell '+cls;
+      d.innerHTML=`${entry.lvl}<small>LVL</small><span style="font-size:14px">${icon}</span>`;
+      d.onclick=()=>{ if(typeof showToast==='function') showToast(m11RewardText(reward)); };
+      grid.appendChild(d);
+    });
+  }
+  if(tier==='free'){
+    createRow('FREE','free','free');
+  } else {
+    createRow('FREE','free','free');
+    if(tier==='vip') createRow('VIP','vip','vip');
+    if(tier==='elite') createRow('VIP ELITE','elite','elite');
+    if(tier==='maestro') createRow('VIP MAESTRO','maestro','maestro');
+  }
+}
+
+
+
+
+function isPassPurchased(tier){
+  if(!state.purchasedPasses) state.purchasedPasses=[];
+  return tier==='free' || state.purchasedPasses.includes(tier);
+}
+let _selectedPassTier = null;
+let _pendingTier = null;
+let _selectedPayMethod = null;
+
+function selectPass(tier){
+  // FREE siempre se puede ver
+  if(tier==='free'){
+    openRutaForOwned(); // muestra solo FREE si no tiene otros, o todo lo comprado
+    return;
+  }
+  // Si ya está comprado, abrir ruta de TODO lo comprado (no solo lo clickeado)
+  if(isPassPurchased(tier)){
+    openRutaForOwned();
+    if(typeof showToast==='function') showToast(`✅ Viendo tus rutas compradas`);
+    return;
+  }
+  // Si NO comprado, mostrar modal de compra, NO mostrar ruta
+  _pendingTier = tier;
+  const prices={
+    vip:{money:'S/ 9.90', d:'500', g:'50,000', dVal:500, gVal:75000},
+    elite:{money:'S/ 19.90', d:'1,000', g:'100,000', dVal:1000, gVal:150000},
+    maestro:{money:'S/ 29.90', d:'1,500', g:'150,000', dVal:1500, gVal:250000}
+  };
+  const p=prices[tier];
+  document.getElementById('payMoneyPrice').innerText=p.money;
+  document.getElementById('payDiamondPrice').innerText=p.d;
+  document.getElementById('payGoldPrice').innerText=p.g;
+  document.getElementById('saldoDiamantesTxt').innerText=(state.gems||0).toLocaleString();
+  document.getElementById('saldoOroTxt').innerText=(state.gold||0).toLocaleString();
+  _selectedPayMethod=null;
+  document.querySelectorAll('.payOption').forEach(o=>o.classList.remove('selected'));
+  const modal=document.getElementById('payModal');
+  modal.classList.add('show');
+  modal.style.display='flex';
+}
+
+function openRutaForOwned(){
+  // Muestra en otra ventana SOLO lo que has comprado
+  const shopView=document.getElementById('vipShopView');
+  const rutaView=document.getElementById('vipRutaView');
+  if(shopView) shopView.style.display='none';
+  if(rutaView) rutaView.style.display='block';
+  
+  const track=document.getElementById('trackContainer');
+  const titleEl=document.getElementById('rutaTitle');
+  if(!track) return;
+  
+  const owned = state.purchasedPasses || [];
+  if(titleEl){
+    if(owned.length===0) titleEl.innerText=`🎁 RUTA - FREE (1 al 30)`;
+    else titleEl.innerText=`🎁 TUS RUTAS - ${['FREE',...owned].join(' + ').toUpperCase()} (1 al 30)`;
+  }
+  track.innerHTML='';
+  const lvls=M11_MATRIX.slice(0,30);
+  
+  function createRow(label, labelClass, cls, entries){
+    const row=document.createElement('div');
+    row.className='vipFila';
+    row.innerHTML=`<div class="vipFilaLabel ${labelClass}">${label}</div><div class="vipGrid"></div>`;
+    track.appendChild(row);
+    const grid=row.querySelector('.vipGrid');
+    entries.forEach(entry=>{
+      const reward = (cls==='free')?entry.free:entry.vip;
+      let icon='📦';
+      if(reward.gold) icon = reward.gold>=50000?'💰':'🪙';
+      if(reward.potenciadorXP) icon='✨';
+      if(reward.escudo) icon='🛡️';
+      if(reward.multVelocidad) icon='⚡';
+      if(reward.cartonBonus) icon='🃏';
+      if(reward.marcoPerfilVIP) icon='👑';
+      const d=document.createElement('div');
+      d.className='vipCell '+cls;
+      d.innerHTML=`${entry.lvl}<small>LVL</small><span style="font-size:14px">${icon}</span>`;
+      d.onclick=()=>{ if(typeof showToast==='function') showToast(m11RewardText(reward)); };
+      grid.appendChild(d);
+    });
+  }
+  
+  // Siempre FREE
+  createRow('FREE','free','free', lvls);
+  // Solo lo comprado
+  if(owned.includes('vip')) createRow('VIP','vip','vip', lvls);
+  if(owned.includes('elite')) createRow('VIP ELITE','elite','elite', lvls);
+  if(owned.includes('maestro')) createRow('VIP MAESTRO','maestro','maestro', lvls);
+  
+  if(owned.length===0){
+    // Si no ha comprado nada, solo FREE ya mostrado
+  }
+}
+
+function selectPayMethod(method){
+  _selectedPayMethod=method;
+  document.querySelectorAll('.payOption').forEach(o=>o.classList.remove('selected'));
+  document.getElementById('opt'+method.charAt(0).toUpperCase()+method.slice(1)).classList.add('selected');
+}
+function closePayModal(){
+  const modal=document.getElementById('payModal');
+  if(modal){ modal.classList.remove('show'); modal.style.display='none'; }
+  _pendingTier=null;
+  _selectedPayMethod=null;
+}
+function confirmarCompra(){
+  if(!_selectedPayMethod){
+    if(typeof showToast==='function') showToast('Selecciona forma de pago');
+    return;
+  }
+  const tier=_pendingTier;
+  if(_selectedPayMethod==='dinero') payWithMoney(tier);
+  if(_selectedPayMethod==='diamantes') payWithDiamonds(tier);
+  if(_selectedPayMethod==='oro') payWithGold(tier);
+}
+function backToShop(){
+  const shop=document.getElementById('vipShopView');
+  const ruta=document.getElementById('vipRutaView');
+  if(shop) shop.style.display='block';
+  if(ruta) ruta.style.display='none';
+  window._selectedPassTier=null;
+  _selectedPassTier=null;
+  renderVipPassScreen();
+}
+function showLevelsForTier(tier){
+  // Legacy, ahora usa openRutaForOwned
+  openRutaForOwned();
+}
+function payWithMoney(tier){
+  if(isPassPurchased(tier) && tier!=='free'){
+    if(typeof showToast==='function') showToast(`⚠️ Ya compraste ${tier.toUpperCase()}`);
+    closePayModal(); openRutaForOwned(); return;
+  }
+  closePayModal();
+  if(!state.pendingPayments) state.pendingPayments=[];
+  const paymentId = 'PAY-'+Date.now()+'-'+Math.random().toString(36).substr(2,5).toUpperCase();
+  const priceMap = {vip:9.90, elite:19.90, maestro:29.90};
+  state.pendingPayments.push({id:paymentId, tier:tier, amount:priceMap[tier], currency:'PEN', status:'pendiente', createdAt:new Date().toISOString()});
+  saveState();
+  if(typeof showToast==='function') showToast(`⏳ Pago ${tier.toUpperCase()} pendiente: ${paymentId}`);
+  const cfg = CONFIG;
+  const yapeInfo = cfg.yapeNumber ? `Yapea S/ ${priceMap[tier].toFixed(2)} al ${cfg.yapeNumber} (${cfg.yapeName||''})` : `Paga S/ ${priceMap[tier].toFixed(2)}`;
+  const modalHtml = `<div id="realPayModal" style="position:fixed; inset:0; z-index:7000; background:rgba(0,0,0,.85); display:flex; align-items:center; justify-content:center; padding:20px"><div style="background:#161b22; border:2px solid #FFD700; border-radius:16px; padding:24px; max-width:360px; width:100%; text-align:center"><div style="font-size:40px">💳</div><h3 style="color:#FFD700; margin:10px 0">Pago pendiente</h3><p style="color:#fff; font-size:14px">Pase <b>${tier.toUpperCase()}</b> - S/ ${priceMap[tier].toFixed(2)}</p><p style="color:#8b949e; font-size:12px">ID: ${paymentId}</p><div style="background:#0d1117; border-radius:8px; padding:10px; margin:12px 0; font-size:12px; color:#f0c040">⚠️ ${yapeInfo}<br><br>${cfg.pagoMensaje||'Envía comprobante al WhatsApp'}<br><br>No se entrega nada hasta confirmación</div><div style="display:grid; gap:8px; margin-top:12px"><button onclick="simularConfirmacionPago('${paymentId}')" style="background:#238636; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:900">✅ SIMULAR: Confirmado (prueba)</button><button onclick="simularRechazoPago('${paymentId}')" style="background:#da3633; color:#fff; border:none; padding:12px; border-radius:10px">❌ Rechazar</button><button onclick="document.getElementById('realPayModal').remove()" style="background:#21262d; border:1px solid #30363d; color:#fff; padding:10px; border-radius:8px">Cerrar</button></div></div></div>`;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+}
+function simularConfirmacionPago(paymentId){
+  if(!state.pendingPayments) return;
+  const pay = state.pendingPayments.find(p=>p.id===paymentId);
+  if(!pay || pay.status==='confirmado') return;
+  pay.status='confirmado'; pay.confirmedAt=new Date().toISOString();
+  if(!state.purchasedPasses) state.purchasedPasses=[];
+  if(!state.purchasedPasses.includes(pay.tier)) state.purchasedPasses.push(pay.tier);
+  state.vipPassActive=true; state.gold += pay.tier==='vip'?50000:pay.tier==='elite'?100000:150000; state.gems += pay.tier==='vip'?500:pay.tier==='elite'?1000:1500;
+  saveState(); const modal=document.getElementById('realPayModal'); if(modal) modal.remove();
+  openRutaForOwned(); if(typeof showToast==='function') showToast(`✅ Pago ${pay.tier.toUpperCase()} CONFIRMADO`); refreshAllUI();
+}
+function simularRechazoPago(paymentId){
+  if(!state.pendingPayments) return;
+  const pay=state.pendingPayments.find(p=>p.id===paymentId);
+  if(pay) pay.status='rechazado'; saveState();
+  const modal=document.getElementById('realPayModal'); if(modal) modal.remove();
+  if(typeof showToast==='function') showToast(`❌ Pago ${paymentId} rechazado`);
+}
+
+
+
+function payWithDiamonds(tier){
+  if(isPassPurchased(tier) && tier!=='free'){
+    if(typeof showToast==='function') showToast(`⚠️ Ya compraste ${tier.toUpperCase()}`);
+    closePayModal();
+    openRutaForOwned();
+    return;
+  }
+  const need={vip:500,elite:1000,maestro:1500}[tier];
+  if(state.gems < need){
+    if(typeof showToast==='function') showToast(`❌ Te faltan 💎 - Necesitas ${need}`);
+    return;
+  }
+  state.gems -= need;
+  if(!state.purchasedPasses) state.purchasedPasses=[];
+  if(!state.purchasedPasses.includes(tier)) state.purchasedPasses.push(tier);
+  state.gold += tier==='vip'?50000:tier==='elite'?100000:150000;
+  state.vipPassActive=true;
+  saveState();
+  closePayModal();
+  openRutaForOwned();
+  if(typeof showToast==='function') showToast(`✅ ${tier.toUpperCase()} con ${need} 💎 - Ruta desbloqueada`);
+}
+function payWithGold(tier){
+  if(isPassPurchased(tier) && tier!=='free'){
+    if(typeof showToast==='function') showToast(`⚠️ Ya compraste ${tier.toUpperCase()}`);
+    closePayModal();
+    openRutaForOwned();
+    return;
+  }
+  const need={vip:75000,elite:150000,maestro:250000}[tier];
+  if(state.gold < need){
+    if(typeof showToast==='function') showToast(`❌ Te falta 🪙 - Necesitas ${need.toLocaleString()}`);
+    return;
+  }
+  state.gold -= need;
+  if(!state.purchasedPasses) state.purchasedPasses=[];
+  if(!state.purchasedPasses.includes(tier)) state.purchasedPasses.push(tier);
+  state.gems += tier==='vip'?500:tier==='elite'?1000:1500;
+  state.vipPassActive=true;
+  saveState();
+  closePayModal();
+  openRutaForOwned();
+  if(typeof showToast==='function') showToast(`✅ ${tier.toUpperCase()} con ${need.toLocaleString()} 🪙 - Ruta desbloqueada`);
+}
+function buyGold(amount, price){
+  if(!state) return;
+  if(!state.pendingPayments) state.pendingPayments=[];
+  var paymentId = 'GOLD-'+Date.now();
+  state.pendingPayments.push({id:paymentId, tier:'gold', amount:price, goldAmount:amount, currency:'PEN', status:'pendiente', createdAt:new Date().toISOString()});
+  saveState();
+  if(typeof showToast==='function') showToast('⏳ Compra '+amount.toLocaleString()+' 🪙 pendiente: '+paymentId);
+  var cfg = (typeof CONFIG!=='undefined')?CONFIG:{};
+  var yapeInfo = cfg.yapeNumber ? 'Yapea S/ '+price+' al '+cfg.yapeNumber+' ('+(cfg.yapeName||'')+')' : 'Paga S/ '+price;
+  var mensaje = cfg.pagoMensaje || 'Envía tu comprobante al WhatsApp para activar';
+  var html = '<div id="realPayModal" style="position:fixed; inset:0; z-index:7000; background:rgba(0,0,0,.9); display:flex; align-items:center; justify-content:center; padding:20px"><div style="background:#161b22; border:2px solid #FFD700; border-radius:16px; padding:24px; max-width:360px; width:100%; text-align:center"><div style="font-size:48px">🪙</div><h3 style="color:#FFD700; margin:10px 0">Compra de Oro Pendiente</h3><p style="color:#fff; font-size:16px">'+amount.toLocaleString()+' 🪙 - S/ '+price+'</p><p style="font-size:11px; color:#8b949e">ID: '+paymentId+'</p><div style="background:#0d1117; border-radius:10px; padding:12px; margin:14px 0; font-size:13px; color:#f0c040; text-align:left">💳 '+yapeInfo+'<br><br>📱 '+mensaje+'<br><br>⚠️ No se entrega hasta que se confirme el pago</div><button onclick="confirmarCompraOro(\''+paymentId+'\')" style="background:#238636; color:#fff; border:none; padding:14px; border-radius:10px; font-weight:900; width:100%; font-size:14px">✅ SIMULAR: Pago Confirmado (Prueba)</button><div style="margin-top:8px"><button onclick="document.getElementById(\'realPayModal\').remove()" style="background:#21262d; border:1px solid #30363d; color:#fff; padding:10px; border-radius:8px; width:100%">Cerrar - Queda pendiente</button></div></div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+function confirmarCompraOro(paymentId){
+  if(!state || !state.pendingPayments) return;
+  var pay = state.pendingPayments.find(function(p){return p.id===paymentId});
+  if(!pay || pay.status==='confirmado') return;
+  pay.status='confirmado';
+  state.gold += pay.goldAmount;
+  saveState();
+  var m=document.getElementById('realPayModal'); if(m) m.remove();
+  if(typeof showToast==='function') showToast('✅ +'+pay.goldAmount.toLocaleString()+' 🪙 entregados');
+  if(typeof refreshAllUI==='function') refreshAllUI();
+  if(typeof renderVipPassScreen==='function') renderVipPassScreen();
+}
+function buyDiamonds(amount, price){
+  if(!state) return;
+  if(!state.pendingPayments) state.pendingPayments=[];
+  var paymentId = 'GEM-'+Date.now();
+  state.pendingPayments.push({id:paymentId, tier:'gems', amount:price, gemsAmount:amount, currency:'PEN', status:'pendiente', createdAt:new Date().toISOString()});
+  saveState();
+  if(typeof showToast==='function') showToast('⏳ Compra '+amount+' 💎 pendiente: '+paymentId);
+  var cfg = (typeof CONFIG!=='undefined')?CONFIG:{};
+  var yapeInfo = cfg.yapeNumber ? 'Yapea S/ '+price+' al '+cfg.yapeNumber : 'Paga S/ '+price;
+  var mensaje = cfg.pagoMensaje || 'Envía tu comprobante al WhatsApp';
+  var html = '<div id="realPayModal" style="position:fixed; inset:0; z-index:7000; background:rgba(0,0,0,.9); display:flex; align-items:center; justify-content:center; padding:20px"><div style="background:#161b22; border:2px solid #42A5F5; border-radius:16px; padding:24px; max-width:360px; width:100%; text-align:center"><div style="font-size:48px">💎</div><h3 style="color:#42A5F5; margin:10px 0">Diamantes Pendiente</h3><p style="color:#fff; font-size:16px">'+amount+' 💎 - S/ '+price+'</p><p style="font-size:11px; color:#8b949e">ID: '+paymentId+'</p><div style="background:#0d1117; border-radius:10px; padding:12px; margin:14px 0; font-size:13px; color:#f0c040; text-align:left">💳 '+yapeInfo+'<br><br>📱 '+mensaje+'<br><br>⚠️ No se entrega hasta confirmar</div><button onclick="confirmarCompraDiamantes(\''+paymentId+'\')" style="background:#238636; color:#fff; border:none; padding:14px; border-radius:10px; font-weight:900; width:100%">✅ SIMULAR: Pago Confirmado</button><div style="margin-top:8px"><button onclick="document.getElementById(\'realPayModal\').remove()" style="background:#21262d; border:1px solid #30363d; color:#fff; padding:10px; border-radius:8px; width:100%">Cerrar</button></div></div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+function confirmarCompraDiamantes(paymentId){
+  if(!state || !state.pendingPayments) return;
+  var pay = state.pendingPayments.find(function(p){return p.id===paymentId});
+  if(!pay || pay.status==='confirmado') return;
+  pay.status='confirmado';
+  state.gems += pay.gemsAmount;
+  saveState();
+  var m=document.getElementById('realPayModal'); if(m) m.remove();
+  if(typeof showToast==='function') showToast('✅ +'+pay.gemsAmount+' 💎 entregados');
+  if(typeof refreshAllUI==='function') refreshAllUI();
+  if(typeof renderVipPassScreen==='function') renderVipPassScreen();
+}
+
+
+function renderVipChatEmotes
+() {
     const wrap = document.querySelector('.chat-emojis');
     if (!wrap || !state) return;
     document.querySelectorAll('.chat-emoji-btn.vip-emote').forEach(b => b.remove());
@@ -3830,22 +4473,10 @@ async function refreshLeaderboard() {
         players.sort((a, b) => (b.totalWins || 0) - (a.totalWins || 0));
         const top = players.slice(0, 5);
         if (top.length === 0) { wrap.innerHTML = 'Todavía no hay jugadores.'; return; }
-        const RANK_ICON = ['🥇','🥈','🥉'];
         wrap.innerHTML = top.map((p, i) => {
-            const rank = i + 1;
-            const rankCls = rank <= 3 ? ' rank-' + rank : '';
-            const rankLabel = rank <= 3 ? RANK_ICON[i] : '#' + rank;
             const crown = p.vipPassActive ? '<span class="vip-crown-badge">👑</span> ' : '';
             const nm = p.vipPassActive ? `<span class="vip-gold-name">${escapeHtml(p.username)}</span>` : escapeHtml(p.username);
-            const avatarInner = p.equippedAvatar ? avatarHtml(p.equippedAvatar) : '👤';
-            return `<div class="leaderboard-row">
-                <div class="leaderboard-left">
-                    <span class="leaderboard-rank${rankCls}">${rankLabel}</span>
-                    <span class="leaderboard-avatar${rankCls}">${avatarInner}</span>
-                    <span>${crown}${nm} ${trophyBadgesHtml(p)}</span>
-                </div>
-                <span>🏆 ${p.totalWins || 0}</span>
-            </div>`;
+            return `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${crown}${p.equippedAvatar ? avatarHtml(p.equippedAvatar) + ' ' : ''}${nm} ${trophyBadgesHtml(p)}</span><span>🏆 ${p.totalWins || 0}</span></div>`;
         }).join('');
     } catch(e) { wrap.innerHTML = 'No se pudo cargar el ranking.'; }
 }
@@ -3858,11 +4489,12 @@ function openAdminPanel() {
     document.getElementById('bottom-nav').style.display = 'none';
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('admin-screen').classList.add('active');
-    fillAdminGeneralForm();
+    fillAdminGeneralForm(); try{fillAdminPagosForm(); renderAdminPendingPayments();}catch(e){}
     renderAdminProducts();
     renderAdminRoulette();
     renderAdminMultipliers();
     renderAdminUsers();
+    renderAdminMascotas();
 }
 
 function switchAdminTab(tab, el) {
@@ -3870,7 +4502,8 @@ function switchAdminTab(tab, el) {
     el.classList.add('active');
     document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
     document.getElementById('admin-' + tab).classList.add('active');
-    if (tab === 'usuarios') renderAdminUsers();
+    if (tab === 'usuarios') renderAdminUsers(); if(tab==='pagos'){ try{fillAdminPagosForm(); renderAdminPendingPayments();}catch(e){} }
+    if (tab === 'mascotas') renderAdminMascotas();
 }
 
 function fillAdminGeneralForm() {
@@ -3898,10 +4531,6 @@ function fillAdminGeneralForm() {
     document.getElementById('cfg-weeklyPrizesGold').value = (CONFIG.weeklyPrizesGold || []).join(',');
     document.getElementById('cfg-monthlyPrizesGold').value = (CONFIG.monthlyPrizesGold || []).join(',');
     document.getElementById('cfg-betTiers').value = (CONFIG.betTiers || []).map(t => `${t.label},${t.cost},${t.mult}`).join('\n');
-    const rouletteTabCost = document.getElementById('cfg-rouletteCostTab');
-    if (rouletteTabCost) rouletteTabCost.value = CONFIG.rouletteCost;
-    const rouletteSpeed = document.getElementById('cfg-rouletteSpinSpeed');
-    if (rouletteSpeed) rouletteSpeed.value = CONFIG.rouletteSpinSpeed || 5;
     renderAdminRoomImages();
     renderAdminVipImages();
 }
@@ -3990,6 +4619,7 @@ async function uploadVipIconImage(icon, inputEl) {
         showToast('✅ Ícono VIP guardado en la nube.');
     } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
+
 async function saveAdminGeneral() {
     CONFIG.missionTarget = parseInt(document.getElementById('cfg-missionTarget').value) || 1;
     CONFIG.missionRewardGold = parseInt(document.getElementById('cfg-missionRewardGold').value) || 0;
@@ -3998,234 +4628,650 @@ async function saveAdminGeneral() {
     CONFIG.vipBonusPerCard = parseFloat(document.getElementById('cfg-vipBonusPerCard').value) || 0;
     CONFIG.vipCardCost = parseInt(document.getElementById('cfg-vipCardCost').value) || 0;
     CONFIG.rouletteCost = parseInt(document.getElementById('cfg-rouletteCost').value) || 0;
-    CONFIG.welcomeBonusPopupGold = parseInt(document.getElementById('cfg-welcomeBonusPopupGold').value) || 0;
-    CONFIG.welcomeBonusPopupGems = parseInt(document.getElementById('cfg-welcomeBonusPopupGems').value) || 0;
     CONFIG.rouletteSpinsPerDay = parseInt(document.getElementById('cfg-rouletteSpinsPerDay').value) || 0;
-    CONFIG.ballIntervalMs = Math.max(500, (parseFloat(document.getElementById('cfg-ballIntervalSec').value) || 3) * 1000);
-    CONFIG.vipPassCostGems = parseInt(document.getElementById('cfg-vipPassCostGems').value) || 0;
-    CONFIG.vipPassXPPerLevel = Math.max(1, parseInt(document.getElementById('cfg-vipPassXPPerLevel').value) || 100);
-    CONFIG.vipPassLevelsPerCycle = Math.max(1, parseInt(document.getElementById('cfg-vipPassLevelsPerCycle').value) || 30);
-    CONFIG.vipPassXPPerWin = parseInt(document.getElementById('cfg-vipPassXPPerWin').value) || 0;
-    CONFIG.vipPassChestEvery = Math.max(1, parseInt(document.getElementById('cfg-vipPassChestEvery').value) || 5);
-    CONFIG.vipPassStoreDiscount = parseInt(document.getElementById('cfg-vipPassStoreDiscount').value) || 0;
-    CONFIG.vipPassDailyGiftGold = parseInt(document.getElementById('cfg-vipPassDailyGiftGold').value) || 0;
-    CONFIG.vipPassDailyGiftGems = parseInt(document.getElementById('cfg-vipPassDailyGiftGems').value) || 0;
-    CONFIG.vipPassScratchMinGold = parseInt(document.getElementById('cfg-vipPassScratchMinGold').value) || 0;
-    CONFIG.vipPassScratchMaxGold = parseInt(document.getElementById('cfg-vipPassScratchMaxGold').value) || 0;
-    CONFIG.weeklyPrizesGold = (document.getElementById('cfg-weeklyPrizesGold').value || '').split(',').map(n => parseInt(n.trim()) || 0);
-    CONFIG.monthlyPrizesGold = (document.getElementById('cfg-monthlyPrizesGold').value || '').split(',').map(n => parseInt(n.trim()) || 0);
-    const betLines = (document.getElementById('cfg-betTiers').value || '').split('\n').map(l => l.trim()).filter(Boolean);
-    if (betLines.length) {
-        CONFIG.betTiers = betLines.map(l => {
-            const [label, cost, mult] = l.split(',').map(s => s.trim());
-            return { label: label || 'Apuesta', cost: parseInt(cost) || 0, mult: parseFloat(mult) || 1 };
-        });
-    }
-    await saveConfig();
-    showToast('✅ Configuración general guardada en la nube.');
+    const ballSec = document.getElementById('cfg-ballIntervalSec'); if(ballSec) CONFIG.ballIntervalMs = (parseFloat(ballSec.value)||3)*1000;
+    const wbG = document.getElementById('cfg-welcomeBonusPopupGold'); if(wbG) CONFIG.welcomeBonusPopupGold = parseInt(wbG.value)||0;
+    const wbGe = document.getElementById('cfg-welcomeBonusPopupGems'); if(wbGe) CONFIG.welcomeBonusPopupGems = parseInt(wbGe.value)||0;
+    const vpCost = document.getElementById('cfg-vipPassCostGems'); if(vpCost) CONFIG.vipPassCostGems = parseInt(vpCost.value)||0;
+    const xpLevel = document.getElementById('cfg-vipPassXPPerLevel'); if(xpLevel) CONFIG.vipPassXPPerLevel = parseInt(xpLevel.value)||100;
+    const levelsCycle = document.getElementById('cfg-vipPassLevelsPerCycle'); if(levelsCycle) CONFIG.vipPassLevelsPerCycle = parseInt(levelsCycle.value)||30;
+    const xpWin = document.getElementById('cfg-vipPassXPPerWin'); if(xpWin) CONFIG.vipPassXPPerWin = parseInt(xpWin.value)||20;
+    const chestEvery = document.getElementById('cfg-vipPassChestEvery'); if(chestEvery) CONFIG.vipPassChestEvery = parseInt(chestEvery.value)||5;
+    const discount = document.getElementById('cfg-vipPassStoreDiscount'); if(discount) CONFIG.vipPassStoreDiscount = parseInt(discount.value)||0;
+    const dailyGold = document.getElementById('cfg-vipPassDailyGiftGold'); if(dailyGold) CONFIG.vipPassDailyGiftGold = parseInt(dailyGold.value)||0;
+    const dailyGems = document.getElementById('cfg-vipPassDailyGiftGems'); if(dailyGems) CONFIG.vipPassDailyGiftGems = parseInt(dailyGems.value)||0;
+    const scratchMin = document.getElementById('cfg-vipPassScratchMinGold'); if(scratchMin) CONFIG.vipPassScratchMinGold = parseInt(scratchMin.value)||0;
+    const scratchMax = document.getElementById('cfg-vipPassScratchMaxGold'); if(scratchMax) CONFIG.vipPassScratchMaxGold = parseInt(scratchMax.value)||0;
+    const weeklyEl = document.getElementById('cfg-weeklyPrizesGold'); if(weeklyEl){ const w=weeklyEl.value.split(',').map(s=>parseInt(s.trim())||0).filter(n=>n>0); if(w.length) CONFIG.weeklyPrizesGold=w; }
+    const monthlyEl = document.getElementById('cfg-monthlyPrizesGold'); if(monthlyEl){ const m=monthlyEl.value.split(',').map(s=>parseInt(s.trim())||0).filter(n=>n>0); if(m.length) CONFIG.monthlyPrizesGold=m; }
+    const betEl = document.getElementById('cfg-betTiers'); if(betEl){ const lines=betEl.value.split('\n').map(l=>l.trim()).filter(l=>l); if(lines.length){ CONFIG.betTiers=lines.map(line=>{ const [label,cost,mult]=line.split(',').map(s=>s.trim()); return {label:label||'Apuesta', cost:parseInt(cost)||0, mult:parseFloat(mult)||1}; }); } }
+    await saveConfig(); showToast('✅ Config general guardada');
+}
+function fillAdminPagosForm(){
+    if(!CONFIG) return;
+    const g=(id,val)=>{ const el=document.getElementById(id); if(el) el.value=val||''; };
+    g('cfg-mpAccessToken', CONFIG.mpAccessToken); g('cfg-mpPublicKey', CONFIG.mpPublicKey);
+    g('cfg-culqiPublicKey', CONFIG.culqiPublicKey); g('cfg-culqiSecretKey', CONFIG.culqiSecretKey);
+    g('cfg-yapeNumber', CONFIG.yapeNumber); g('cfg-yapeName', CONFIG.yapeName);
+    g('cfg-paypalEmail', CONFIG.paypalEmail); g('cfg-whatsappComprobantes', CONFIG.whatsappComprobantes);
+    g('cfg-pagoMensaje', CONFIG.pagoMensaje);
+}
+async function saveAdminPagos(){
+    CONFIG.mpAccessToken=document.getElementById('cfg-mpAccessToken').value.trim();
+    CONFIG.mpPublicKey=document.getElementById('cfg-mpPublicKey').value.trim();
+    CONFIG.culqiPublicKey=document.getElementById('cfg-culqiPublicKey').value.trim();
+    CONFIG.culqiSecretKey=document.getElementById('cfg-culqiSecretKey').value.trim();
+    CONFIG.yapeNumber=document.getElementById('cfg-yapeNumber').value.trim();
+    CONFIG.yapeName=document.getElementById('cfg-yapeName').value.trim();
+    CONFIG.paypalEmail=document.getElementById('cfg-paypalEmail').value.trim();
+    CONFIG.whatsappComprobantes=document.getElementById('cfg-whatsappComprobantes').value.trim();
+    CONFIG.pagoMensaje=document.getElementById('cfg-pagoMensaje').value.trim();
+    await saveConfig(); showToast('✅ Pagos guardados');
+}
+async function renderAdminPendingPayments(){
+    const wrap=document.getElementById('admin-pending-payments'); if(!wrap) return;
+    try{
+        const all=await fsGetAll('players'); let pending=[];
+        all.forEach(p=>{ if(p.pendingPayments){ p.pendingPayments.filter(pay=>pay.status==='pendiente').forEach(pay=>{ pending.push({user:p.username, key:p.id, ...pay}); }); } });
+        if(pending.length===0){ wrap.innerHTML='<p style="color:#8b949e">No hay pagos pendientes</p>'; return; }
+        wrap.innerHTML=pending.map(pay=>`<div style="background:#161b22; border:1px solid #30363d; border-radius:8px; padding:8px; margin-bottom:6px"><b>${pay.user}</b> - ${pay.tier.toUpperCase()} S/ ${pay.amount} - ID:${pay.id}<br><small>${pay.createdAt}</small><br><button onclick="adminConfirmPayment('${pay.key}','${pay.id}')" style="background:#238636; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:11px; margin-top:4px">✅ Confirmar</button> <button onclick="adminRejectPayment('${pay.key}','${pay.id}')" style="background:#da3633; color:#fff; border:none; padding:4px 8px; border-radius:4px; font-size:11px">❌ Rechazar</button></div>`).join('');
+    }catch(e){ wrap.innerHTML='Error:'+e.message; }
+}
+async function adminConfirmPayment(userKey,paymentId){
+    const p=await fsGet('players',userKey); if(!p||!p.pendingPayments) return;
+    const pay=p.pendingPayments.find(x=>x.id===paymentId); if(!pay) return;
+    pay.status='confirmado'; if(!p.purchasedPasses) p.purchasedPasses=[]; if(!p.purchasedPasses.includes(pay.tier)) p.purchasedPasses.push(pay.tier);
+    p.vipPassActive=true; p.gold=(p.gold||0)+(pay.tier==='vip'?50000:pay.tier==='elite'?100000:150000); p.gems=(p.gems||0)+(pay.tier==='vip'?500:pay.tier==='elite'?1000:1500);
+    await fsSet('players',userKey,p); showToast(`✅ ${paymentId} confirmado a ${p.username}`); renderAdminPendingPayments();
+}
+async function adminRejectPayment(userKey,paymentId){
+    const p=await fsGet('players',userKey); if(!p||!p.pendingPayments) return;
+    const pay=p.pendingPayments.find(x=>x.id===paymentId); if(pay) pay.status='rechazado';
+    await fsSet('players',userKey,p); showToast(`❌ ${paymentId} rechazado`); renderAdminPendingPayments();
 }
 
-let selectedProductIdx = 0;
+
+
 function renderAdminProducts() {
-    renderChestSelector();
-    renderChestForm();
-}
-function renderChestSelector() {
-    const wrap = document.getElementById('chest-selector-row');
-    if (!wrap) return;
+    const wrap = document.getElementById('admin-products-list');
     wrap.innerHTML = '';
-    if (selectedProductIdx >= CONFIG.products.length) selectedProductIdx = Math.max(0, CONFIG.products.length - 1);
     CONFIG.products.forEach((p, idx) => {
-        const tab = document.createElement('div');
-        tab.className = 'chest-tab' + (idx === selectedProductIdx ? ' active' : '');
-        tab.innerHTML = `
-            <div class="chest-icon">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:26px;height:26px;object-fit:cover;border-radius:6px;">` : (p.isCosmetic ? '🖼️' : '📦')}</div>
-            <div class="chest-label">${escapeHtml(p.name)}</div>
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="text" value="${p.name}" data-field="name" placeholder="Nombre">
+                <input type="number" value="${p.gemCost}" data-field="gemCost" placeholder="💎 Costo en gemas">
+                <input type="number" value="${p.goldReward}" data-field="goldReward" placeholder="🪙 Recompensa en oro">
+                <input type="text" value="${p.discount || ''}" data-field="discount" placeholder="Etiqueta (opcional)">
+            </div>
+            <label style="font-size:11px;color:#8b949e;"><input type="checkbox" data-field="isCosmetic" ${p.isCosmetic ? 'checked' : ''}> Es cosmético (no da oro)</label>
+            <div class="admin-img-row">
+                <div class="admin-img-preview" id="prod-img-preview-${idx}">${p.imageUrl ? `<img src="${p.imageUrl}">` : '<span>Sin imagen</span>'}</div>
+                <input type="file" accept="image/*" onchange="uploadProductImage(${idx}, this)">
+            </div>
+            <div style="text-align:right; margin-top:8px;"><button class="admin-del-btn" onclick="removeProductRow(${idx})">Eliminar</button></div>
         `;
-        tab.onclick = () => { selectedProductIdx = idx; renderAdminProducts(); };
-        wrap.appendChild(tab);
+        row.dataset.index = idx;
+        wrap.appendChild(row);
     });
-    const addTab = document.createElement('div');
-    addTab.className = 'chest-tab chest-add-tab';
-    addTab.innerHTML = `<div class="chest-icon">➕</div><div class="chest-label">Nuevo</div>`;
-    addTab.onclick = () => {
-        const newId = CONFIG.products.length ? Math.max(...CONFIG.products.map(p=>p.id)) + 1 : 1;
-        CONFIG.products.push({id:newId, name:'Nuevo Cofre', gemCost:10, goldReward:500, discount:'', isCosmetic:false, contents:''});
-        selectedProductIdx = CONFIG.products.length - 1;
-        renderAdminProducts();
-    };
-    wrap.appendChild(addTab);
 }
-function renderChestForm() {
-    const wrap = document.getElementById('chest-form-wrap');
+async function uploadProductImage(idx, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    showToast('⏳ Subiendo imagen...');
+    try {
+        const url = await uploadImageToStorage(file, 'products');
+        CONFIG.products[idx].imageUrl = url;
+        await saveConfig();
+        renderAdminProducts();
+        renderStore(currentStorePage);
+        showToast('✅ Imagen del producto guardada en la nube.');
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
+}
+/* =========================================================
+   MASCOTAS — Panel admin (4 etapas + fotos) y pantalla del jugador
+   ========================================================= */
+function mascotaStages(m) {
+    return (m && m.evolutionStages && m.evolutionStages.length) ? m.evolutionStages : [
+        {range:'1', name:'Etapa 1 (Bebé)', aspect:''}, {range:'2', name:'Etapa 2 (Joven)', aspect:''},
+        {range:'3', name:'Etapa 3 (Adulto)', aspect:''}, {range:'4', name:'Etapa 4 (Máxima)', aspect:''},
+    ];
+}
+
+function renderAdminMascotas() {
+    const wrap = document.getElementById('admin-mascotas-list');
     if (!wrap) return;
-    const p = CONFIG.products[selectedProductIdx];
-    if (!p) { wrap.innerHTML = '<p style="color:#8b949e;font-size:12px;">No hay productos. Toca ➕ para crear uno.</p>'; return; }
-    wrap.innerHTML = `
-        <div class="toggle-switch-row">
-            <span>Cosmético (no da oro)</span>
-            <div class="toggle-switch ${p.isCosmetic ? 'on' : ''}" id="chest-cosmetic-toggle"></div>
-        </div>
-        <label class="admin-field-label">Nombre</label>
-        <input type="text" id="chest-name" value="${escapeHtml(p.name)}">
-        <div class="dual-price-row">
-            <div class="price-field-box"><label class="admin-field-label">💎 Precio (gemas)</label><input type="number" id="chest-gemcost" value="${p.gemCost}" min="0"></div>
-            <div class="price-field-box"><label class="admin-field-label">🪙 Recompensa (oro)</label><input type="number" id="chest-goldreward" value="${p.goldReward}" min="0"></div>
-        </div>
-        <label class="admin-field-label">Etiqueta</label>
-        <input type="text" id="chest-tag" value="${escapeHtml(p.discount || '')}" placeholder="Ej. 10% MÁS">
-        <label class="admin-field-label">Contenido</label>
-        <textarea id="chest-contents" rows="3" placeholder="Descripción de lo que incluye este cofre...">${escapeHtml(p.contents || '')}</textarea>
-        <div class="admin-img-row">
-            <div class="admin-img-preview" id="chest-img-preview">${p.imageUrl ? `<img src="${p.imageUrl}">` : '<span>Sin imagen</span>'}</div>
-            <input type="file" accept="image/*" onchange="uploadProductImage(${selectedProductIdx}, this)">
-        </div>
-        <button class="btn-guardar-magenta" onclick="saveChestForm()">GUARDAR</button>
-        <button class="btn-eliminar-red" onclick="removeChestForm()">ELIMINAR</button>
-    `;
-    const toggle = document.getElementById('chest-cosmetic-toggle');
-    if (toggle) toggle.onclick = function () { this.classList.toggle('on'); };
+    if (!CONFIG.mascotas) CONFIG.mascotas = [];
+    if (CONFIG.mascotas.length === 0) { wrap.innerHTML = '<p style="color:#8b949e; font-size:12px">Todavía no hay mascotas. Toca "Agregar nueva mascota".</p>'; return; }
+    wrap.innerHTML = '';
+    CONFIG.mascotas.forEach((m, idx) => {
+        const stages = mascotaStages(m);
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="text" value="${m.name || ''}" placeholder="Nombre de la mascota" oninput="CONFIG.mascotas[${idx}].name=this.value">
+                <input type="text" value="${m.emoji || ''}" placeholder="Emoji (ej: 🐉)" oninput="CONFIG.mascotas[${idx}].emoji=this.value" style="max-width:70px">
+            </div>
+            <div class="row-grid" style="margin-top:6px">
+                <select onchange="CONFIG.mascotas[${idx}].rarity=this.value" style="padding:8px; border-radius:8px">
+                    ${Object.keys(MASCOTA_RAREZAS).map(k => `<option value="${k}" ${m.rarity===k?'selected':''}>${MASCOTA_RAREZAS[k].symbol} ${MASCOTA_RAREZAS[k].label}</option>`).join('')}
+                </select>
+                <input type="number" value="${m.levelMax || 0}" placeholder="Nivel máximo" oninput="CONFIG.mascotas[${idx}].levelMax=Number(this.value)">
+            </div>
+            <div class="row-grid" style="margin-top:6px">
+                <input type="text" value="${m.obtainMethod || ''}" placeholder="Cómo se consigue" oninput="CONFIG.mascotas[${idx}].obtainMethod=this.value">
+                <input type="number" value="${m.goldCost || 0}" placeholder="🪙 Costo total" oninput="CONFIG.mascotas[${idx}].goldCost=Number(this.value)">
+            </div>
+            <div class="row-grid" style="margin-top:6px">
+                <input type="text" value="${m.bonusLabel || ''}" placeholder="Tipo de bonificación" oninput="CONFIG.mascotas[${idx}].bonusLabel=this.value">
+            </div>
+            <div class="row-grid" style="margin-top:6px">
+                <input type="text" value="${m.bonusInitial || ''}" placeholder="Bonificación inicial" oninput="CONFIG.mascotas[${idx}].bonusInitial=this.value">
+                <input type="text" value="${m.bonusMax || ''}" placeholder="Bonificación máxima" oninput="CONFIG.mascotas[${idx}].bonusMax=this.value">
+            </div>
+            <div class="row-grid" style="margin-top:6px">
+                <input type="text" value="${m.foodType || ''}" placeholder="Comida usada" oninput="CONFIG.mascotas[${idx}].foodType=this.value">
+                <input type="number" value="${m.totalFood || 0}" placeholder="Total de comidas" oninput="CONFIG.mascotas[${idx}].totalFood=Number(this.value)">
+            </div>
+            <div class="row-grid" style="margin-top:6px">
+                <input type="number" value="${m.totalCost || 0}" placeholder="🪙 Costo total (comida)" oninput="CONFIG.mascotas[${idx}].totalCost=Number(this.value)">
+                <input type="number" value="${m.totalDiamondCost || 0}" placeholder="💎 Costo total de evolución" oninput="CONFIG.mascotas[${idx}].totalDiamondCost=Number(this.value)">
+            </div>
+            <textarea placeholder="📜 Historia de la mascota" oninput="CONFIG.mascotas[${idx}].story=this.value" style="width:100%; margin-top:6px; padding:8px; border-radius:8px; min-height:60px; font-size:12px">${m.story || ''}</textarea>
+            <div style="font-size:11px; color:#8b949e; margin:10px 0 4px">🌱 Etapas de evolución</div>
+            ${stages.map((st, sIdx) => `
+                <div class="row-grid" style="margin-top:4px">
+                    <input type="text" value="${st.range || ''}" placeholder="Nivel (ej: 1 → 6)" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].range=this.value" style="max-width:80px">
+                    <input type="text" value="${st.name || ''}" placeholder="Nombre de la etapa" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].name=this.value">
+                </div>
+                <div class="row-grid" style="margin-top:2px">
+                    <input type="text" value="${st.aspect || ''}" placeholder="Aspecto/descripción" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].aspect=this.value">
+                    <input type="number" value="${st.diamondCost || 0}" placeholder="💎 Costo evolución" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].diamondCost=Number(this.value)" style="max-width:110px">
+                </div>
+            `).join('')}
+            <div style="display:grid; grid-template-columns:repeat(${stages.length},1fr); gap:8px; margin-top:10px">
+                ${stages.map((st, sIdx) => { const key = 'e'+(sIdx+1); return `
+                    <div>
+                        <div style="font-size:10px; color:#8b949e; margin-bottom:4px">${escapeHtml(st.name || key)}</div>
+                        <div class="admin-img-row">
+                            <div class="admin-img-preview" id="mascota-img-preview-${idx}-${key}">${m.images && m.images[key] ? `<img src="${m.images[key]}">` : '<span>Sin foto</span>'}</div>
+                            <input type="file" accept="image/*" onchange="uploadMascotaImage(${idx}, '${key}', this)">
+                        </div>
+                    </div>
+                `; }).join('')}
+            </div>
+            <div style="text-align:right; margin-top:8px;">
+                <button class="admin-add-btn" style="background:#1976D2; color:#fff; border:none; padding:8px 14px; border-radius:8px; margin-right:6px" onclick="addMascotaStage(${idx})">➕ Etapa</button>
+                <button class="admin-del-btn" onclick="removeMascotaAdmin(${idx})">Eliminar</button>
+            </div>
+        `;
+        wrap.appendChild(row);
+    });
 }
-async function saveChestForm() {
-    const p = CONFIG.products[selectedProductIdx];
-    if (!p) return;
-    p.name = document.getElementById('chest-name').value || 'Cofre';
-    p.gemCost = parseInt(document.getElementById('chest-gemcost').value) || 0;
-    p.goldReward = parseInt(document.getElementById('chest-goldreward').value) || 0;
-    p.discount = document.getElementById('chest-tag').value || '';
-    p.contents = document.getElementById('chest-contents').value || '';
-    p.isCosmetic = document.getElementById('chest-cosmetic-toggle').classList.contains('on');
+
+function addMascotaStage(idx) {
+    if (!CONFIG.mascotas[idx].evolutionStages) CONFIG.mascotas[idx].evolutionStages = mascotaStages(CONFIG.mascotas[idx]);
+    CONFIG.mascotas[idx].evolutionStages.push({ range:'', name:'Nueva etapa', aspect:'', diamondCost:0 });
+    renderAdminMascotas();
+}
+
+async function uploadMascotaImage(idx, stageKey, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    showToast('⏳ Subiendo foto de mascota...');
+    try {
+        const url = await uploadImageToStorage(file, 'mascotas');
+        if (!CONFIG.mascotas[idx].images) CONFIG.mascotas[idx].images = {};
+        CONFIG.mascotas[idx].images[stageKey] = url;
+        await saveConfig();
+        renderAdminMascotas();
+        showToast('✅ Foto guardada en la nube.');
+    } catch (e) {
+        console.error('Error subiendo foto de mascota:', e);
+        showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Cloudinary'));
+    }
+}
+
+function addMascotaAdmin() {
+    if (!CONFIG.mascotas) CONFIG.mascotas = [];
+    const newId = 'm' + (Date.now());
+    CONFIG.mascotas.push({
+        id:newId, name:'Nueva mascota', emoji:'🐾', rarity:'comun', levelMax:15, obtainMethod:'', goldCost:0,
+        bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'', totalFood:0, totalCost:0, totalDiamondCost:0,
+        images:{e1:'',e2:'',e3:'',e4:''},
+        evolutionStages:[
+            {range:'1', name:'Etapa 1 (Bebé)', aspect:'', diamondCost:0}, {range:'2', name:'Etapa 2 (Joven)', aspect:'', diamondCost:0},
+            {range:'3', name:'Etapa 3 (Adulto)', aspect:'', diamondCost:0}, {range:'4', name:'Etapa 4 (Máxima)', aspect:'', diamondCost:0},
+        ],
+    });
+    renderAdminMascotas();
+}
+
+function removeMascotaAdmin(idx) {
+    CONFIG.mascotas.splice(idx, 1);
+    renderAdminMascotas();
+}
+
+async function saveAdminMascotas() {
     await saveConfig();
+    showToast('✅ Mascotas guardadas en la nube.');
+}
+
+/* ---------- Pantalla del jugador ---------- */
+let currentMascotaDetailId = null;
+
+function mascotaStageImage(mascotaDef, stage) {
+    if (!mascotaDef || !mascotaDef.images) return '';
+    const maxStage = mascotaStages(mascotaDef).length;
+    const key = 'e' + Math.max(1, Math.min(maxStage, stage || 1));
+    return mascotaDef.images[key] || mascotaDef.images.e1 || '';
+}
+
+function getOwnedMascota(id) {
+    return (state.ownedMascotas || []).find(o => o.id === id);
+}
+
+function renderMascotaScreen() {
+    const card = document.getElementById('mascota-main-card');
+    const grid = document.getElementById('mascota-grid');
+    if (!card || !grid) return;
+    const list = CONFIG.mascotas || [];
+
+    const equippedIds = getEquippedMascotaIds();
+    if (equippedIds.length > 0) {
+        const rows = equippedIds.map(id => {
+            const owned = getOwnedMascota(id);
+            const def = list.find(m => m.id === id);
+            if (!owned || !def) return '';
+            const img = mascotaStageImage(def, owned.stage);
+            const stages = mascotaStages(def);
+            const stageName = (stages[owned.stage - 1] || {}).name || '';
+            const rareza = MASCOTA_RAREZAS[def.rarity] || MASCOTA_RAREZAS.comun;
+            return `
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">
+                <div style="width:50px; height:50px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:26px">
+                    ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover">` : (def.emoji || '🐾')}
+                </div>
+                <div>
+                    <div style="color:#fff; font-weight:900; font-size:13px">${escapeHtml(def.name)} <span style="font-size:10px; color:${rareza.color}">${rareza.symbol} ${rareza.label}</span></div>
+                    <div style="color:#cfe0ff; font-size:11px">${escapeHtml(stageName)} · Etapa ${owned.stage}/${stages.length}</div>
+                </div>
+            </div>`;
+        }).join('');
+        const combos = getActiveCombos();
+        const combosHTML = combos.length ? `
+            <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,.15)">
+                <div style="color:#FFD700; font-size:11px; font-weight:900; margin-bottom:4px">⚡ Combos activos</div>
+                ${combos.map(c => `<div style="color:#7ec8ff; font-size:11px">${c.label}: <b style="color:#fff">${c.desc}</b></div>`).join('')}
+            </div>` : '';
+        card.innerHTML = `<div style="width:100%">${rows}<div style="color:#cfe0ff; font-size:10px; margin-top:4px">${equippedIds.length}/${MAX_MASCOTAS_EQUIPADAS} mascotas equipadas</div>${combosHTML}</div>`;
+    } else {
+        card.innerHTML = `<div style="color:#cfe0ff; font-size:13px">Todavía no tienes mascotas equipadas. Elige hasta ${MAX_MASCOTAS_EQUIPADAS} abajo 👇</div>`;
+    }
+
+    if (list.length === 0) { grid.innerHTML = '<p style="color:#cfe0ff; grid-column:1/-1">El administrador todavía no agregó mascotas.</p>'; return; }
+    grid.innerHTML = list.map(m => {
+        const owned = getOwnedMascota(m.id);
+        const stage = owned ? owned.stage : 1;
+        const img = mascotaStageImage(m, stage);
+        const stages = mascotaStages(m);
+        const isEquipped = equippedIds.includes(m.id);
+        const rareza = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
+        return `
+            <div class="mascota-item ${isEquipped ? 'equipped' : ''}" onclick="openMascotaDetail('${m.id}')" style="border-color:${owned ? rareza.color : 'rgba(255,255,255,.2)'}">
+                <span class="mascota-rareza-badge" title="${rareza.label}">${rareza.symbol}</span>
+                ${owned ? `<span class="mascota-lvl-badge">Nv${stage === stages.length ? m.levelMax : ''}</span>` : ''}
+                <div style="width:100%; aspect-ratio:1; border-radius:10px; overflow:hidden; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; margin-bottom:6px; font-size:30px">
+                    ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover${owned ? '' : ';filter:grayscale(1) brightness(.6)'}">` : (owned ? (m.emoji || '🐾') : '🔒')}
+                </div>
+                <div style="color:#fff; font-size:11px; font-weight:700">${escapeHtml(m.name)}</div>
+                <div style="color:#cfe0ff; font-size:10px">${owned ? `Etapa ${stage}/${stages.length}` : (m.goldCost > 0 ? `🪙 ${m.goldCost.toLocaleString()}` : 'Gratis')}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openMascotaDetail(id) {
+    currentMascotaDetailId = id;
+    goToScreen('mascota-detail-screen');
+    renderMascotaDetail();
+}
+
+function renderMascotaDetail() {
+    const m = (CONFIG.mascotas || []).find(x => x.id === currentMascotaDetailId);
+    const titleEl = document.getElementById('mascota-detail-title');
+    const content = document.getElementById('mascota-detail-content');
+    if (!m || !content) return;
+    const owned = getOwnedMascota(m.id);
+    if (titleEl) titleEl.innerText = m.name;
+    const stage = owned ? owned.stage : 1;
+    const img = mascotaStageImage(m, stage);
+    const stages = mascotaStages(m);
+    const rareza = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
+    const currentStageInfo = stages[stage - 1] || {};
+
+    content.innerHTML = `
+        <div style="text-align:center; padding:10px 15px">
+            <div style="width:160px; height:160px; margin:0 auto 12px; border-radius:20px; overflow:hidden; background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; font-size:70px">
+                ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover${owned ? '' : ';filter:grayscale(1) brightness(.6)'}">` : (m.emoji || '🐾')}
+            </div>
+            <div style="display:inline-block; background:${rareza.color}22; border:1px solid ${rareza.color}; color:${rareza.color}; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:8px">
+                ${rareza.symbol} ${rareza.label} · Nivel máx. ${m.levelMax || '?'}
+            </div>
+            ${owned ? `
+                <div style="color:#fff; font-weight:900; font-size:16px">${escapeHtml(currentStageInfo.name || '')}</div>
+                <div style="color:#9db6e8; font-size:11px; margin-bottom:4px">${escapeHtml(currentStageInfo.aspect || '')}</div>
+                <div style="color:#cfe0ff; font-size:13px; margin:6px 0">Etapa ${stage}/${stages.length} · ❤️ Hambre/Cariño: ${owned.hunger || 0}/100</div>
+                <div style="background:rgba(255,255,255,.15); border-radius:8px; height:10px; overflow:hidden; margin:0 15px">
+                    <div style="background:#FFD700; height:100%; width:${owned.hunger || 0}%"></div>
+                </div>
+                ${stage < stages.length ? `<div style="color:#7ec8ff; font-size:12px; margin-top:8px">Próxima evolución (${escapeHtml(stages[stage].name || '')}): 💎 ${stages[stage].diamondCost || 0}</div>` : `<div style="color:#FFD700; font-size:12px; margin-top:8px">🌟 Etapa máxima alcanzada</div>`}
+            ` : `
+                <div style="color:#fff; font-weight:900; font-size:15px">No la tienes todavía</div>
+                <div style="color:#cfe0ff; font-size:13px; margin:8px 0">${m.obtainMethod ? escapeHtml(m.obtainMethod) : (m.goldCost > 0 ? `Costo: 🪙 ${m.goldCost.toLocaleString()}` : 'Es gratis')}</div>
+                <button class="mascota-btn" style="background:#43A047; max-width:220px; margin:0 auto" onclick="comprarMascotaActual()">🎁 Adquirir mascota</button>
+            `}
+        </div>
+        <div class="mascota-info-card">
+            <div class="mascota-info-row"><span>Cómo se consigue</span><b>${escapeHtml(m.obtainMethod || '—')}</b></div>
+            <div class="mascota-info-row"><span>Bonificación</span><b>${escapeHtml(m.bonusLabel || '—')}</b></div>
+            <div class="mascota-info-row"><span>Bono inicial</span><b>${escapeHtml(m.bonusInitial || '—')}</b></div>
+            <div class="mascota-info-row"><span>Bono máximo</span><b>${escapeHtml(m.bonusMax || '—')}</b></div>
+            <div class="mascota-info-row"><span>Comida usada</span><b>${escapeHtml(m.foodType || '—')}</b></div>
+            <div class="mascota-info-row"><span>Total de comidas</span><b>${m.totalFood ? m.totalFood + ' unidades' : '—'}</b></div>
+            <div class="mascota-info-row"><span>Costo total</span><b>${m.totalCost ? '🪙 ' + m.totalCost.toLocaleString() : '—'}</b></div>
+            <div class="mascota-info-row"><span>Costo total de evolución</span><b>${m.totalDiamondCost ? '💎 ' + m.totalDiamondCost.toLocaleString() : '—'}</b></div>
+        </div>
+        ${(m.specialAbilities && m.specialAbilities.length) ? `
+        <div class="mascota-info-card">
+            <div style="color:#FFD700; font-weight:900; font-size:12px; margin-bottom:6px">⚡ Habilidad especial única</div>
+            ${m.specialAbilities.map(a => {
+                const unlocked = owned && owned.stage >= a.stage;
+                const reqStageName = (mascotaStages(m)[a.stage - 1] || {}).name || ('Etapa ' + a.stage);
+                return `<div style="margin-bottom:6px">
+                    <div style="color:${unlocked ? '#3fb950' : '#8b949e'}; font-size:12px; font-weight:800">${a.icon || '✨'} ${escapeHtml(a.name)} ${unlocked ? '✅' : '🔒'}</div>
+                    <div style="color:#cfe0ff; font-size:11px">${escapeHtml(a.effect)}</div>
+                    ${!unlocked ? `<div style="color:#7ec8ff; font-size:10px">Se desbloquea al llegar a: ${escapeHtml(reqStageName)}</div>` : ''}
+                </div>`;
+            }).join('')}
+        </div>` : ''}
+        <div class="mascota-evo-table">
+            <div style="color:#FFD700; font-weight:900; font-size:13px; margin:4px 0 8px">🌱 Etapas de evolución</div>
+            ${stages.map((st, i) => `
+                <div class="mascota-evo-row ${owned && (i + 1) === stage ? 'current' : ''}">
+                    <div class="mascota-evo-range">Nv. ${st.range}</div>
+                    <div style="flex:1">
+                        <div class="mascota-evo-name">${escapeHtml(st.name || '')}</div>
+                        <div class="mascota-evo-aspect">${escapeHtml(st.aspect || '')}</div>
+                    </div>
+                    ${i > 0 ? `<div style="font-size:11px; font-weight:800; color:#7ec8ff; white-space:nowrap">💎 ${st.diamondCost || 0}</div>` : ''}
+                </div>
+            `).join('')}
+        </div>
+        <div class="mascota-story-card">
+            <div style="color:#FFD700; font-weight:900; font-size:12px; margin-bottom:6px">📜 Historia</div>
+            ${owned && stage >= 2 ? `<p>"${escapeHtml(m.story || '')}"</p>` : `<div class="mascota-story-locked">🔒 Sube de nivel (evoluciona a la 2ª etapa) para desbloquear la historia</div>`}
+        </div>
+    `;
+}
+
+function equiparMascotaActual() {
+    const id = currentMascotaDetailId;
+    if (!id) return;
+    const owned = getOwnedMascota(id);
+    if (!owned) { showToast('❌ Primero debes adquirir esta mascota.'); return; }
+    if (!Array.isArray(state.equippedMascotaIds)) state.equippedMascotaIds = state.equippedMascotaId ? [state.equippedMascotaId] : [];
+    const idx = state.equippedMascotaIds.indexOf(id);
+    if (idx !== -1) {
+        state.equippedMascotaIds.splice(idx, 1);
+        showToast('Mascota quitada del equipo.');
+    } else {
+        if (state.equippedMascotaIds.length >= MAX_MASCOTAS_EQUIPADAS) {
+            showToast(`❌ Ya tienes ${MAX_MASCOTAS_EQUIPADAS} mascotas equipadas. Quita una para agregar otra.`);
+            return;
+        }
+        state.equippedMascotaIds.push(id);
+        showToast('✅ Mascota equipada.');
+    }
+    state.equippedMascotaId = state.equippedMascotaIds[0] || null; // compatibilidad
+    saveState();
+    renderMascotaDetail();
+    renderMascotaScreen();
+}
+
+function alimentarMascotaActual() {
+    const id = currentMascotaDetailId;
+    if (!id) return;
+    const owned = getOwnedMascota(id);
+    if (!owned) { showToast('❌ Primero debes adquirir esta mascota.'); return; }
+    const cost = 50;
+    if ((state.gold || 0) < cost) { showToast('❌ No tienes suficiente oro.'); return; }
+    if ((owned.hunger || 0) >= 100) { showToast('😋 Tu mascota ya está satisfecha.'); return; }
+    state.gold -= cost;
+    owned.hunger = Math.min(100, (owned.hunger || 0) + 20);
+    saveState();
+    showToast('🍖 ¡Mascota alimentada!');
+    renderMascotaDetail();
+    renderMascotaScreen();
+    if (typeof refreshAllUI === 'function') refreshAllUI();
+}
+
+function evolucionarMascotaActual() {
+    const id = currentMascotaDetailId;
+    if (!id) return;
+    const owned = getOwnedMascota(id);
+    if (!owned) { showToast('❌ Primero debes adquirir esta mascota.'); return; }
+    const m = (CONFIG.mascotas || []).find(x => x.id === id);
+    const stages = mascotaStages(m);
+    const maxStage = stages.length;
+    if (owned.stage >= maxStage) { showToast('🌟 Tu mascota ya alcanzó la etapa máxima.'); return; }
+    if ((owned.hunger || 0) < 100) { showToast('❌ Necesita 100/100 de cariño para evolucionar.'); return; }
+    const nextStageInfo = stages[owned.stage] || {};
+    const diamondCost = nextStageInfo.diamondCost || 0;
+    if (diamondCost > 0 && (state.gems || 0) < diamondCost) { showToast(`❌ Necesitas 💎 ${diamondCost} para evolucionar a ${nextStageInfo.name || 'la siguiente etapa'}.`); return; }
+    if (diamondCost > 0) state.gems -= diamondCost;
+    owned.stage += 1;
+    owned.hunger = 0;
+    saveState();
+    const newName = (stages[owned.stage - 1] || {}).name || '';
+    showToast(`✨ ¡Tu mascota evolucionó a ${newName || 'la etapa ' + owned.stage}!${diamondCost > 0 ? ` (−💎${diamondCost})` : ''}`);
+    renderMascotaDetail();
+    renderMascotaScreen();
+    if (typeof refreshAllUI === 'function') refreshAllUI();
+}
+
+function comprarMascotaActual() {
+    const id = currentMascotaDetailId;
+    if (!id) return;
+    const m = (CONFIG.mascotas || []).find(x => x.id === id);
+    if (!m) return;
+    if (getOwnedMascota(id)) { showToast('Ya tienes esta mascota.'); return; }
+    const cost = m.goldCost || 0;
+    if ((state.gold || 0) < cost) { showToast('❌ No tienes suficiente oro.'); return; }
+    state.gold -= cost;
+    if (!state.ownedMascotas) state.ownedMascotas = [];
+    state.ownedMascotas.push({ id, stage:1, hunger:0 });
+    if (!Array.isArray(state.equippedMascotaIds)) state.equippedMascotaIds = state.equippedMascotaId ? [state.equippedMascotaId] : [];
+    if (state.equippedMascotaIds.length < MAX_MASCOTAS_EQUIPADAS) state.equippedMascotaIds.push(id);
+    state.equippedMascotaId = state.equippedMascotaIds[0] || null;
+    saveState();
+    showToast('🎉 ¡Mascota adquirida!');
+    renderMascotaDetail();
+    renderMascotaScreen();
+    if (typeof refreshAllUI === 'function') refreshAllUI();
+}
+
+/* ---------- Guía de Mascotas (tablas maestras) ---------- */
+function abrirGuiaMascotas() {
+    renderGuiaMascotas();
+    document.getElementById('guia-mascotas-overlay').classList.add('show');
+}
+function cerrarGuiaMascotas() {
+    document.getElementById('guia-mascotas-overlay').classList.remove('show');
+}
+function renderGuiaMascotas() {
+    const content = document.getElementById('guia-mascotas-content');
+    if (!content) return;
+    const mascotas = CONFIG.mascotas || [];
+    const foods = CONFIG.mascotaFoods || [];
+    const xpTable = CONFIG.mascotaXpTable || [];
+
+    content.innerHTML = `
+        <h3>🏆 Rareza de mascotas</h3>
+        <table class="guia-tbl">
+            <tr><th>Rareza</th><th>Símbolo</th><th>Nivel máx.</th></tr>
+            ${Object.keys(MASCOTA_RAREZAS).map(k => {
+                const r = MASCOTA_RAREZAS[k];
+                const ejemplo = mascotas.find(m => m.rarity === k);
+                return `<tr><td style="color:${r.color}; font-weight:800">${r.label}</td><td>${r.symbol}</td><td>${ejemplo ? ejemplo.levelMax : '—'}</td></tr>`;
+            }).join('')}
+        </table>
+
+        <h3>🐾 Tabla maestra de mascotas</h3>
+        <table class="guia-tbl">
+            <tr><th>Mascota</th><th>Rareza</th><th>Niv. máx</th><th>Costo total</th><th>Bono máx.</th></tr>
+            ${mascotas.map(m => {
+                const r = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
+                return `<tr>
+                    <td>${m.emoji || ''} ${escapeHtml(m.name)}</td>
+                    <td style="color:${r.color}">${r.label}</td>
+                    <td>${m.levelMax || '—'}</td>
+                    <td>${m.totalCost ? '🪙' + m.totalCost.toLocaleString() : '—'}</td>
+                    <td>${escapeHtml(m.bonusMax || '—')}</td>
+                </tr>`;
+            }).join('')}
+        </table>
+
+        <h3>💎 Costo de diamantes por etapa de evolución</h3>
+        ${mascotas.map(m => {
+            const r = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
+            const stages = mascotaStages(m);
+            const rows = stages.slice(1).map((st, i) => `<tr><td>${st.range.split(' ')[0]}</td><td>${escapeHtml(stages[i].name || '')} → ${escapeHtml(st.name || '')}</td><td>💎 ${st.diamondCost || 0}</td></tr>`).join('');
+            return `
+                <div style="font-size:12px; font-weight:800; color:${r.color}; margin:10px 0 4px">${m.emoji || ''} ${escapeHtml(m.name)} — ${r.label} (Niv. máx ${m.levelMax || '—'})</div>
+                <table class="guia-tbl">
+                    <tr><th>Nivel</th><th>Cambio de etapa</th><th>Costo 💎</th></tr>
+                    ${rows}
+                    <tr style="font-weight:900"><td colspan="2">TOTAL</td><td>💎 ${m.totalDiamondCost || 0}</td></tr>
+                </table>
+            `;
+        }).join('')}
+
+        <h3>⚡ Habilidades especiales únicas</h3>
+        <table class="guia-tbl">
+            <tr><th>Mascota</th><th>Habilidad Especial</th><th>Efecto en partida</th></tr>
+            ${mascotas.flatMap(m => (m.specialAbilities || []).map(a => `<tr><td>${a.icon || ''} ${escapeHtml(m.name)}</td><td>${escapeHtml(a.name)}</td><td>${escapeHtml(a.effect)}</td></tr>`)).join('')}
+        </table>
+
+        <h3>🤝 Ayuda entre mascotas (combos)</h3>
+        <table class="guia-tbl">
+            <tr><th>Combinación</th><th>Bonificación Extra</th></tr>
+            ${COMBO_BONUS_DEFS.slice().reverse().map(c => `<tr><td>${c.label}</td><td>${c.desc}</td></tr>`).join('')}
+        </table>
+        <p style="color:#9db6e8; font-size:11px; margin:2px 0 10px">✅ Solo se suman los bonos de mascotas que tengas desbloqueadas (habilidad en su etapa correspondiente) y equipadas al mismo tiempo (hasta ${MAX_MASCOTAS_EQUIPADAS}).</p>
+
+        <h3>🍖 Tienda de comida</h3>
+        <table class="guia-tbl">
+            <tr><th>Comida</th><th>Precio</th><th>Exp</th><th>Para rareza</th></tr>
+            ${foods.map(f => `<tr><td>${f.icon} ${escapeHtml(f.name)}</td><td>🪙${f.price}</td><td>${f.exp} Exp</td><td>${escapeHtml(f.rarity)}</td></tr>`).join('')}
+        </table>
+
+        <h3>📜 Historia y descripción</h3>
+        ${mascotas.map(m => {
+            const r = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
+            return `
+                <div style="background:rgba(255,255,255,.06); border:1px solid ${r.color}55; border-radius:12px; padding:10px; margin-bottom:8px">
+                    <div style="font-size:12px; font-weight:900; color:${r.color}; margin-bottom:4px">${m.emoji || ''} ${escapeHtml(m.name)}</div>
+                    <p style="font-size:11.5px; color:#dce6ff; font-style:italic; line-height:1.5; margin:0">"${escapeHtml(m.story || '')}"</p>
+                </div>
+            `;
+        }).join('')}
+
+        <h3>📈 Experiencia necesaria por nivel</h3>
+        <table class="guia-tbl">
+            <tr><th>Niveles</th><th>Exp. necesaria</th><th>Comida</th></tr>
+            ${xpTable.map(x => `<tr><td>${x.range}</td><td>${x.exp}</td><td>${x.food}</td></tr>`).join('')}
+        </table>
+    `;
+}
+
+function addProductRow() {
+    const newId = CONFIG.products.length ? Math.max(...CONFIG.products.map(p=>p.id)) + 1 : 1;
+    CONFIG.products.push({id:newId, name:'Nuevo producto', gemCost:10, goldReward:500, discount:'', isCosmetic:false});
     renderAdminProducts();
-    renderStore(currentStorePage);
-    showToast('✅ Cofre guardado en la nube.');
 }
-function removeChestForm() {
-    if (!CONFIG.products[selectedProductIdx]) return;
-    if (!confirm('¿Eliminar este cofre/producto? Esto no se puede deshacer.')) return;
-    CONFIG.products.splice(selectedProductIdx, 1);
-    selectedProductIdx = Math.max(0, selectedProductIdx - 1);
-    saveConfig();
-    renderAdminProducts();
-    renderStore(currentStorePage);
-    showToast('🗑️ Cofre eliminado.');
-}
-async function uploadProductImage(idx, inputEl) {
-    const file = inputEl.files[0];
-    if (!file) return;
-    showToast('⏳ Subiendo imagen...');
-    try {
-        const url = await uploadImageToStorage(file, 'products');
-        CONFIG.products[idx].imageUrl = url;
-        await saveConfig();
-        renderAdminProducts();
-        renderStore(currentStorePage);
-        showToast('✅ Imagen del producto guardada en la nube.');
-    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
-}
-async function uploadProductImage(idx, inputEl) {
-    const file = inputEl.files[0];
-    if (!file) return;
-    showToast('⏳ Subiendo imagen...');
-    try {
-        const url = await uploadImageToStorage(file, 'products');
-        CONFIG.products[idx].imageUrl = url;
-        await saveConfig();
-        renderAdminProducts();
-        renderStore(currentStorePage);
-        showToast('✅ Imagen del producto guardada en la nube.');
-    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
+function removeProductRow(idx) { CONFIG.products.splice(idx, 1); renderAdminProducts(); }
+async function saveAdminProducts() {
+    const rows = document.querySelectorAll('#admin-products-list .admin-row-card');
+    rows.forEach(row => {
+        const idx = parseInt(row.dataset.index);
+        const p = CONFIG.products[idx];
+        row.querySelectorAll('[data-field]').forEach(input => {
+            const field = input.dataset.field;
+            if (field === 'isCosmetic') p[field] = input.checked;
+            else if (field === 'gemCost' || field === 'goldReward') p[field] = parseInt(input.value) || 0;
+            else p[field] = input.value;
+        });
+    });
+    await saveConfig();
+    showToast('✅ Tienda guardada en la nube.');
 }
 
 function renderAdminRoulette() {
     const wrap = document.getElementById('admin-roulette-list');
     wrap.innerHTML = '';
     CONFIG.roulettePrizes.forEach((prize, idx) => {
-        const type = prize.gems > 0 ? 'gems' : 'gold';
-        const amount = prize.gems > 0 ? prize.gems : prize.gold;
-        const tr = document.createElement('tr');
-        tr.dataset.index = idx;
-        tr.innerHTML = `
-            <td>
-                <div style="display:flex;gap:4px;align-items:center;">
-                    <select data-field="type" style="background:#0d1117;border:1px solid #30363d;color:#fff;border-radius:6px;padding:5px;font-size:12px;">
-                        <option value="gold" ${type === 'gold' ? 'selected' : ''}>🪙</option>
-                        <option value="gems" ${type === 'gems' ? 'selected' : ''}>💎</option>
-                    </select>
-                    <input type="number" value="${amount}" data-field="amount" style="width:64px;">
-                </div>
-            </td>
-            <td><input type="number" value="${prize.stock === undefined ? -1 : prize.stock}" data-field="stock" title="-1 = ilimitado"></td>
-            <td><input type="number" value="${prize.weight === undefined ? 10 : prize.weight}" data-field="weight"></td>
-            <td><button class="admin-del-btn" onclick="removeRouletteRow(${idx})">✕</button></td>
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="text" value="${prize.label}" data-field="label" placeholder="Texto del premio">
+                <input type="number" value="${prize.gold}" data-field="gold" placeholder="🪙 Oro">
+                <input type="number" value="${prize.gems}" data-field="gems" placeholder="💎 Gemas">
+            </div>
+            <div style="text-align:right;"><button class="admin-del-btn" onclick="removeRouletteRow(${idx})">Eliminar</button></div>
         `;
-        wrap.appendChild(tr);
+        row.dataset.index = idx;
+        wrap.appendChild(row);
     });
 }
-function addRouletteRow() { CONFIG.roulettePrizes.push({label:'Nuevo premio', gold:0, gems:0, weight:10, stock:-1}); renderAdminRoulette(); }
+function addRouletteRow() { CONFIG.roulettePrizes.push({label:'Nuevo premio', gold:0, gems:0}); renderAdminRoulette(); }
 function removeRouletteRow(idx) { CONFIG.roulettePrizes.splice(idx, 1); renderAdminRoulette(); }
 async function saveAdminRoulette() {
-    const rows = document.querySelectorAll('#admin-roulette-list tr');
+    const rows = document.querySelectorAll('#admin-roulette-list .admin-row-card');
     rows.forEach(row => {
         const idx = parseInt(row.dataset.index);
         const p = CONFIG.roulettePrizes[idx];
-        const type = row.querySelector('[data-field="type"]').value;
-        const amount = parseInt(row.querySelector('[data-field="amount"]').value) || 0;
-        p.gold = type === 'gold' ? amount : 0;
-        p.gems = type === 'gems' ? amount : 0;
-        p.label = amount > 0 ? `+${amount.toLocaleString('es')} ${type === 'gold' ? '🪙' : '💎'}` : 'Sin premio esta vez';
-        p.stock = parseInt(row.querySelector('[data-field="stock"]').value);
-        p.weight = parseInt(row.querySelector('[data-field="weight"]').value) || 0;
+        row.querySelectorAll('[data-field]').forEach(input => {
+            const field = input.dataset.field;
+            p[field] = (field === 'label') ? input.value : (parseInt(input.value) || 0);
+        });
     });
-    CONFIG.rouletteCost = parseInt(document.getElementById('cfg-rouletteCostTab').value) || 0;
-    CONFIG.rouletteSpinSpeed = parseInt(document.getElementById('cfg-rouletteSpinSpeed').value) || 5;
-    const genField = document.getElementById('cfg-rouletteCost');
-    if (genField) genField.value = CONFIG.rouletteCost;
     await saveConfig();
     showToast('✅ Premios de ruleta guardados en la nube.');
 }
 
 function renderAdminMultipliers() {
-    const b = CONFIG.eventBuffs || (CONFIG.eventBuffs = { xp:{enabled:true,value:300}, gold:{enabled:true,value:735}, peak:{enabled:true,value:500} });
-    const map = [['xp','buff-xp'], ['gold','buff-gold'], ['peak','buff-peak']];
-    map.forEach(([key, prefix]) => {
-        const toggle = document.getElementById(`${prefix}-toggle`);
-        const valInput = document.getElementById(`${prefix}-value`);
-        const slider = document.getElementById(`${prefix}-slider`);
-        if (!toggle) return;
-        toggle.classList.toggle('on', !!b[key].enabled);
-        toggle.onclick = () => toggle.classList.toggle('on');
-        valInput.value = b[key].value;
-        slider.value = b[key].value;
-        slider.oninput = () => { valInput.value = slider.value; };
-        valInput.oninput = () => { slider.value = valInput.value; };
+    const wrap = document.getElementById('admin-multipliers-list');
+    wrap.innerHTML = '';
+    CONFIG.multipliers.forEach((m, idx) => {
+        const row = document.createElement('div');
+        row.className = 'admin-row-card';
+        row.innerHTML = `
+            <div class="row-grid">
+                <input type="number" value="${m.mult}" data-field="mult" placeholder="Multiplicador (ej. 3)">
+                <input type="number" value="${m.cost}" data-field="cost" placeholder="💎 Costo en gemas">
+            </div>
+        `;
+        row.dataset.index = idx;
+        wrap.appendChild(row);
     });
-    const wrap = document.getElementById('admin-purchase-multipliers-list');
-    if (wrap) {
-        wrap.innerHTML = '';
-        CONFIG.multipliers.forEach((m, idx) => {
-            const row = document.createElement('div');
-            row.className = 'admin-row-card';
-            row.innerHTML = `
-                <div class="row-grid">
-                    <input type="number" value="${m.mult}" data-field="mult" placeholder="Multiplicador (ej. 3)">
-                    <input type="number" value="${m.cost}" data-field="cost" placeholder="💎 Costo en gemas">
-                </div>
-            `;
-            row.dataset.index = idx;
-            wrap.appendChild(row);
-        });
-    }
 }
 async function saveAdminMultipliers() {
-    const map = [['xp','buff-xp'], ['gold','buff-gold'], ['peak','buff-peak']];
-    if (!CONFIG.eventBuffs) CONFIG.eventBuffs = {};
-    map.forEach(([key, prefix]) => {
-        const toggle = document.getElementById(`${prefix}-toggle`);
-        const valInput = document.getElementById(`${prefix}-value`);
-        CONFIG.eventBuffs[key] = { enabled: toggle.classList.contains('on'), value: parseInt(valInput.value) || 0 };
-    });
-    document.querySelectorAll('#admin-purchase-multipliers-list .admin-row-card').forEach(row => {
+    const rows = document.querySelectorAll('#admin-multipliers-list .admin-row-card');
+    rows.forEach(row => {
         const idx = parseInt(row.dataset.index);
         const m = CONFIG.multipliers[idx];
         row.querySelectorAll('[data-field]').forEach(input => { m[input.dataset.field] = parseFloat(input.value) || 0; });
@@ -4236,36 +5282,22 @@ async function saveAdminMultipliers() {
 
 async function renderAdminUsers() {
     const body = document.getElementById('admin-users-body');
-    body.innerHTML = '<p style="color:#8b949e;font-size:12px;">Cargando...</p>';
+    body.innerHTML = '<tr><td colspan="6" style="color:#8b949e;">Cargando...</td></tr>';
     const players = await fsGetAll('players');
-    const searchEl = document.getElementById('admin-users-search');
-    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
-    const filtered = query ? players.filter(p => (p.username || '').toLowerCase().includes(query)) : players;
-    if (players.length === 0) { body.innerHTML = '<p style="color:#8b949e;font-size:12px;">Aún no hay jugadores registrados en la nube.</p>'; return; }
-    if (filtered.length === 0) { body.innerHTML = '<p style="color:#8b949e;font-size:12px;">Sin resultados para tu búsqueda.</p>'; return; }
+    if (players.length === 0) { body.innerHTML = '<tr><td colspan="6" style="color:#8b949e;">Aún no hay jugadores registrados en la nube.</td></tr>'; return; }
     body.innerHTML = '';
-    filtered.forEach(p => {
+    players.forEach(p => {
         const key = p.id; // id del documento = usuario en minúsculas
-        const card = document.createElement('div');
-        card.className = 'user-card';
-        card.innerHTML = `
-            <div class="user-card-top">
-                <div class="user-card-avatar">😀</div>
-                <div class="user-card-name">${escapeHtml(p.username)}</div>
-                <div class="user-card-stats">
-                    <div><b>${p.gold}</b>🪙</div>
-                    <div><b>${p.gems}</b>💎</div>
-                    <div><b>${p.vipCards}</b>⭐</div>
-                    <div><b>${p.totalWins}</b>🏆</div>
-                </div>
-            </div>
-            <div class="user-card-actions">
-                <button style="background:#238636;" onclick="adminGiveResources('${key}', 1000, 0)">+1000 ORO</button>
-                <button style="background:#1f6feb;" onclick="adminGiveResources('${key}', 0, 100)">+100 GEMAS</button>
-                <button style="background:#d29922;color:#0d1117;" onclick="adminResetUser('${key}')">REINICIAR</button>
-                <button style="background:#da3633;" onclick="adminDeleteUser('${key}')">ELIMINAR</button>
-            </div>`;
-        body.appendChild(card);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${escapeHtml(p.username)}</td><td>${p.gold}</td><td>${p.gems}</td><td>${p.vipCards}</td><td>${p.totalWins}</td>
+            <td>
+                <button class="btn-give" onclick="adminGiveResources('${key}', 1000, 0)">+1000🪙</button>
+                <button class="btn-give" onclick="adminGiveResources('${key}', 0, 100)">+100💎</button>
+                <button class="btn-reset" onclick="adminResetUser('${key}')">Reiniciar</button>
+                <button class="btn-delete" onclick="adminDeleteUser('${key}')">Eliminar</button>
+            </td>`;
+        body.appendChild(tr);
     });
 }
 async function adminGiveResources(key, gold, gems) {
