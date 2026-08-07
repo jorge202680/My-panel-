@@ -187,6 +187,23 @@
         .toast.toast-freespin { border-color:#58a6ff; background:linear-gradient(135deg,#0d2340,#161b22); }
         .toast.toast-friend { border-color:#bc8cff; background:linear-gradient(135deg,#241338,#161b22); }
 
+                /* ---- Salón de Trofeos (ventana independiente) ---- */
+        .trophy-room-overlay { position:fixed; inset:0; background:#050b1a; display:none; z-index:5000; flex-direction:column; }
+        .trophy-room-overlay.active { display:flex; }
+        .trophy-splash { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:radial-gradient(ellipse at 50% 30%, #142a52 0%, #050b1a 70%); position:relative; overflow:hidden; padding:20px; text-align:center; }
+        .trophy-splash-trophy { font-size:110px; filter:drop-shadow(0 0 30px #ffd70099); animation:trophySpinPulse 2.2s ease-in-out infinite; }
+        @keyframes trophySpinPulse { 0%,100%{ transform:scale(1) rotate(-2deg); } 50%{ transform:scale(1.08) rotate(2deg); } }
+        .trophy-splash-title-sm { color:#d4af37; font-size:15px; letter-spacing:4px; font-weight:700; margin-top:18px; }
+        .trophy-splash-title-lg { color:#ffd700; font-size:38px; font-weight:900; letter-spacing:2px; text-shadow:0 0 18px #ffd70066; margin-top:2px; }
+        .trophy-splash-bar-wrap { width:80%; max-width:320px; height:14px; background:#1b2338; border:1px solid #d4af37; border-radius:20px; margin-top:26px; overflow:hidden; }
+        .trophy-splash-bar-fill { height:100%; width:0%; background:linear-gradient(90deg,#b8860b,#ffd700,#fff3b0); border-radius:20px; transition:width .15s linear; }
+        .trophy-splash-pct { color:#ffd700; font-weight:900; font-size:18px; margin-top:10px; }
+        .trophy-splash-sub { color:#8b949e; font-size:13px; margin-top:6px; }
+        .trophy-room-header { display:flex; align-items:center; gap:10px; padding:14px 16px; background:#0d1117; border-bottom:1px solid #30363d; }
+        .trophy-room-header .back-btn { background:#21262d; border:1px solid #30363d; color:#fff; border-radius:8px; padding:8px 12px; font-size:14px; }
+        .trophy-room-header .ttl { color:#ffd700; font-weight:900; font-size:16px; }
+        .trophy-room-body { flex:1; overflow-y:auto; padding:16px; }
+
                 /* ---- Racha / logros / ranking ---- */
         .streak-badge { display:inline-flex; align-items:center; gap:4px; background: linear-gradient(135deg,#da3633,#9e2f2c); color:#fff; padding:4px 10px; border-radius: 20px; font-size:12px; font-weight:bold; }
         .daily-rewards-btn { background:linear-gradient(135deg,#1f6feb,#1158c7); color:#fff; border:none; border-radius:20px; padding:4px 10px; font-size:12px; font-weight:bold; cursor:pointer; margin-left:6px; }
@@ -825,12 +842,12 @@
             <div class="userlvl-xp-text" id="userlvl-bonus-text" style="margin-top:4px;"></div>
         </div>
 
-        <div class="card-widget">
+        <div class="card-widget" style="cursor:pointer;" onclick="openTrophyRoom()">
             <div class="widget-title-row">
                 <span class="widget-icon-badge">🏆</span>
                 <span class="widget-title-text">Salón de Trofeos</span>
+                <span style="margin-left:auto; color:#8b949e; font-size:20px;">›</span>
             </div>
-            <div class="achievements-grid" id="achievements-grid"></div>
         </div>
 
         <div class="card-widget">
@@ -985,6 +1002,27 @@
             <div class="low-balance-actions">
                 <button class="low-balance-cancel" onclick="closeLowBalanceModal()">Ajustar</button>
                 <button class="low-balance-recharge" onclick="goRechargeFromLowBalance()">🛒 Recargar ahora</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SALÓN DE TROFEOS — Ventana independiente con splash de carga -->
+    <div id="trophy-room-overlay" class="trophy-room-overlay">
+        <div id="trophy-splash-screen" class="trophy-splash">
+            <div class="trophy-splash-trophy">🏆</div>
+            <div class="trophy-splash-title-sm">SALÓN DE</div>
+            <div class="trophy-splash-title-lg">TROFEOS</div>
+            <div class="trophy-splash-bar-wrap"><div class="trophy-splash-bar-fill" id="trophy-splash-bar-fill"></div></div>
+            <div class="trophy-splash-pct" id="trophy-splash-pct">0%</div>
+            <div class="trophy-splash-sub">Cargando logros...</div>
+        </div>
+        <div id="trophy-room-content" style="display:none; flex-direction:column; height:100%;">
+            <div class="trophy-room-header">
+                <button class="back-btn" onclick="closeTrophyRoom()">← Volver</button>
+                <span class="ttl">🏆 Salón de Trofeos</span>
+            </div>
+            <div class="trophy-room-body">
+                <div class="achievements-grid" id="achievements-grid"></div>
             </div>
         </div>
     </div>
@@ -4591,6 +4629,36 @@ function refreshAllUI() {
 }
 
 function updateMascotTrophyCount(){ if(!state || !state.ownedMascotas) return; let count=0; (state.ownedMascotas||[]).forEach(id=>{ const m = (CONFIG.mascotas||[]).find(x=>x.id===id); if(m && state['mascota_'+id+'_level'] >= m.levelMax) count++; }); state.mascotMaxLevelCount = count; }
+function openTrophyRoom() {
+    if (!state) return;
+    const overlay = document.getElementById('trophy-room-overlay');
+    const splash = document.getElementById('trophy-splash-screen');
+    const content = document.getElementById('trophy-room-content');
+    const barFill = document.getElementById('trophy-splash-bar-fill');
+    const pctLabel = document.getElementById('trophy-splash-pct');
+    overlay.classList.add('active');
+    splash.style.display = 'flex';
+    content.style.display = 'none';
+    barFill.style.width = '0%';
+    pctLabel.innerText = '0%';
+    let pct = 0;
+    const iv = setInterval(() => {
+        pct = Math.min(100, pct + Math.floor(Math.random()*18) + 8);
+        barFill.style.width = pct + '%';
+        pctLabel.innerText = pct + '%';
+        if (pct >= 100) {
+            clearInterval(iv);
+            setTimeout(() => {
+                renderAchievements();
+                splash.style.display = 'none';
+                content.style.display = 'flex';
+            }, 250);
+        }
+    }, 140);
+}
+function closeTrophyRoom() {
+    document.getElementById('trophy-room-overlay').classList.remove('active');
+}
 function renderAchievements() {
     const grid = document.getElementById('achievements-grid');
     if (!grid || !state) return;
@@ -4610,22 +4678,25 @@ function renderAchievements() {
             const isClaimed = (state.claimedTrophies||[]).includes(a.id);
             const isAchieved = a.check(state);
             const isInProgress = progress > 0 && !isAchieved;
+            const customImg = (CONFIG && CONFIG.trophyImages && CONFIG.trophyImages[a.id]) || (typeof TROPHY_IMAGES!=='undefined' ? TROPHY_IMAGES[a.id] : '');
+            const iconHtmlNormal = customImg ? `<img src="${customImg}" style="width:100%;height:100%;object-fit:contain">` : a.icon;
+            const iconHtmlSilhouette = customImg ? `<img src="${customImg}" style="width:100%;height:100%;object-fit:contain;filter:grayscale(1) brightness(0.4)">` : a.icon;
             const div = document.createElement('div');
             div.className = 'trophy-card';
             let inner = '';
             if(isClaimed){
                 div.classList.add('reclamado');
-                inner = `<div class="trophy-icon-wrap reclamado"><div class="trophy-icon">${a.icon}</div><div class="trophy-check">✅</div></div><div class="trophy-label">${a.label}</div><div class="trophy-desc">${a.desc}</div><div class="trophy-status gold">🏆 COLECCIÓN</div>`;
+                inner = `<div class="trophy-icon-wrap reclamado"><div class="trophy-icon">${iconHtmlNormal}</div><div class="trophy-check">✅</div></div><div class="trophy-label">${a.label}</div><div class="trophy-desc">${a.desc}</div><div class="trophy-status gold">🏆 COLECCIÓN</div>`;
             } else if(isAchieved){
                 div.classList.add('logrado');
-                inner = `<div class="trophy-icon-wrap logrado"><div class="trophy-icon">${a.icon}</div><div class="trophy-sparkle">✨</div></div><div class="trophy-label">${a.label}</div><div class="trophy-desc">${a.desc}</div><div class="trophy-reward">${a.rewardText}</div><button class="trophy-claim-btn" onclick="claimTrophy('${a.id}')">RECLAMAR</button>`;
+                inner = `<div class="trophy-icon-wrap logrado"><div class="trophy-icon">${iconHtmlNormal}</div><div class="trophy-sparkle">✨</div></div><div class="trophy-label">${a.label}</div><div class="trophy-desc">${a.desc}</div><div class="trophy-reward">${a.rewardText}</div><button class="trophy-claim-btn" onclick="claimTrophy('${a.id}')">RECLAMAR</button>`;
             } else if(isInProgress){
                 div.classList.add('progreso');
                 const pct = Math.min(100, Math.floor((progress/target)*100));
-                inner = `<div class="trophy-icon-wrap progreso"><div class="trophy-icon">${a.icon}</div></div><div class="trophy-label">${a.label}</div><div class="trophy-desc">${a.desc}</div><div class="trophy-bar"><div class="trophy-bar-fill" style="width:${pct}%"></div></div><div class="trophy-progress">${progress}/${target}</div>`;
+                inner = `<div class="trophy-icon-wrap progreso"><div class="trophy-icon">${iconHtmlNormal}</div></div><div class="trophy-label">${a.label}</div><div class="trophy-desc">${a.desc}</div><div class="trophy-bar"><div class="trophy-bar-fill" style="width:${pct}%"></div></div><div class="trophy-progress">${progress}/${target}</div>`;
             } else {
                 div.classList.add('bloqueado');
-                inner = `<div class="trophy-icon-wrap bloqueado"><div class="trophy-icon silhouette">${a.icon}</div><div class="trophy-lock">🔒<span class="trophy-q">?</span></div></div><div class="trophy-label" style="opacity:0.4">${a.label}</div><div class="trophy-desc" style="opacity:0.3">?</div><div class="trophy-progress" style="opacity:0.4">?/${target}</div>`;
+                inner = `<div class="trophy-icon-wrap bloqueado"><div class="trophy-icon silhouette">${iconHtmlSilhouette}</div><div class="trophy-lock">🔒<span class="trophy-q">?</span></div></div><div class="trophy-label" style="opacity:0.4">${a.label}</div><div class="trophy-desc" style="opacity:0.3">?</div><div class="trophy-progress" style="opacity:0.4">?/${target}</div>`;
             }
             div.innerHTML = inner;
             grid.appendChild(div);
