@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.6 (Pantalla "Elige Tu Sala": barra de Modos de Juego + salas rediseñadas con escena visual, insignia de candado y nivel mínimo debajo) -->
+<!-- Súper Bingo Rey — v2.8 (Inicio: ranking con medallas 🥇🥈🥉 y avatar circular por rango · Tienda: grid de accesos Suscripción/Mercado/Free-Roll + franja "Tus Tarjetas VIP") -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -48,6 +48,21 @@
         .vip-buy-btn { background: linear-gradient(135deg, #d29922, #bc8c22); border: none; color: #0d1117; font-weight: bold; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
 
         .store-multipliers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+        .store-shortcuts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .store-shortcut-tile { border-radius: 12px; padding: 14px; cursor: pointer; border: 1px solid #30363d; display: flex; align-items: center; gap: 10px; transition: transform .15s ease; }
+        .store-shortcut-tile:hover { transform: translateY(-2px); }
+        .store-shortcut-tile:active { transform: scale(0.97); }
+        .store-shortcut-icon { font-size: 26px; flex-shrink: 0; }
+        .store-shortcut-title { font-weight: bold; font-size: 13px; }
+        .store-shortcut-sub { font-size: 10px; opacity: .85; margin-top: 2px; }
+        .shortcut-suscripcion { background: linear-gradient(135deg,#7a4a10,#3b2205); border-color:#d29922; }
+        .shortcut-mercado-a { background: linear-gradient(135deg,#0b3a63,#0d1117); border-color:#1f6feb; }
+        .shortcut-mercado-b { background: linear-gradient(135deg,#123b2e,#0d1117); border-color:#3fb950; }
+        .shortcut-freeroll { background: linear-gradient(135deg,#4c1d7a,#1c0d33); border-color:#a371f7; }
+        .vip-cards-strip-title { font-weight:bold; font-size:13px; margin:15px 0 8px; color:#d29922; }
+        .vip-cards-strip { display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; }
+        .vip-card-tile { flex:0 0 auto; width:64px; height:80px; border-radius:10px; background:linear-gradient(160deg,#2b2100,#161b22); border:1px solid #d29922; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-size:20px; color:#d29922; }
+        .vip-card-tile span.vip-card-label { font-size:9px; color:#8b949e; }
         .mult-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 10px; text-align: center; color: #fff; cursor: pointer; font-size: 13px; }
         .mult-btn.active { border-color: #58a6ff; background: #1f2937; }
         .mult-btn span { display: block; font-size: 11px; color: #d29922; margin-top: 4px; }
@@ -228,7 +243,15 @@
         .achv-item .achv-label { display:block; font-size:8px; color:#8b949e; margin-top:2px; }
         .leaderboard-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #21262d; font-size:13px; }
         .leaderboard-row:last-child { border-bottom:none; }
-        .leaderboard-rank { color:#d29922; font-weight:bold; width:26px; }
+        .leaderboard-left { display:flex; align-items:center; gap:8px; }
+        .leaderboard-rank { color:#8b949e; font-weight:bold; width:20px; text-align:center; font-size:13px; flex-shrink:0; }
+        .leaderboard-rank.rank-1 { font-size:18px; }
+        .leaderboard-rank.rank-2 { font-size:18px; }
+        .leaderboard-rank.rank-3 { font-size:18px; }
+        .leaderboard-avatar { width:30px; height:30px; border-radius:50%; background:#21262d; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; border:2px solid #30363d; }
+        .leaderboard-avatar.rank-1 { border-color:#d29922; box-shadow:0 0 8px rgba(210,153,34,.5); }
+        .leaderboard-avatar.rank-2 { border-color:#c9d1d9; }
+        .leaderboard-avatar.rank-3 { border-color:#cd7f32; }
         .rank-medal { font-size:15px; margin-right:2px; }
 
         /* ---- Confeti de victoria ---- */
@@ -274,8 +297,60 @@
         .admin-row-card input[type=checkbox] { width: auto; margin-right: 6px; }
         .admin-del-btn { background: #da3633; color: #fff; border: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; }
         .admin-add-btn { background: #238636; color: #fff; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; margin-bottom: 12px; }
-        .admin-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        .admin-table th, .admin-table td { border-bottom: 1px solid #30363d; padding: 8px 4px; text-align: left; }
+        /* ================= PANEL ADMIN — TIENDA (selector de cofres) ================= */
+        .chest-selector-row { display:flex; gap:10px; margin-bottom:14px; overflow-x:auto; padding-bottom:4px; }
+        .chest-tab { flex:0 0 auto; width:76px; text-align:center; padding:10px 6px; border-radius:10px; border:2px solid #30363d; background:#161b22; cursor:pointer; }
+        .chest-tab.active { border-color:#d29922; box-shadow:0 0 10px rgba(210,153,34,.4); background:#1c1608; }
+        .chest-tab .chest-icon { font-size:24px; height:26px; display:flex; align-items:center; justify-content:center; }
+        .chest-tab .chest-label { font-size:9px; color:#8b949e; margin-top:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .chest-tab.active .chest-label { color:#d29922; font-weight:bold; }
+        .chest-add-tab { border-style:dashed; }
+        .toggle-switch-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; font-size:13px; color:#c9d1d9; }
+        .toggle-switch { position:relative; width:42px; height:22px; background:#30363d; border-radius:20px; cursor:pointer; transition:background .2s; flex-shrink:0; }
+        .toggle-switch.on { background:#3fb950; }
+        .toggle-switch::after { content:''; position:absolute; top:2px; left:2px; width:18px; height:18px; background:#fff; border-radius:50%; transition:left .2s; }
+        .toggle-switch.on::after { left:22px; }
+        .admin-field-label { font-size:10px; color:#8b949e; margin-bottom:4px; display:block; letter-spacing:.5px; text-transform:uppercase; }
+        .dual-price-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .chest-form input[type=text], .chest-form input[type=number], .chest-form textarea { width:100%; background:#0d1117; border:1px solid #30363d; color:#fff; border-radius:8px; padding:9px; font-size:13px; margin-bottom:12px; }
+        .btn-guardar-magenta { background:linear-gradient(135deg,#e026e0,#a21caf); color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:bold; letter-spacing:.5px; cursor:pointer; margin-bottom:8px; box-shadow:0 4px 14px rgba(192,38,211,.4); }
+        .btn-eliminar-red { background:linear-gradient(135deg,#c0392b,#7f1d1d); color:#fff; border:none; width:100%; padding:12px; border-radius:10px; font-weight:bold; letter-spacing:.5px; cursor:pointer; }
+
+        /* ================= PANEL ADMIN — RULETA ================= */
+        .ruleta-header-box { display:flex; align-items:center; gap:12px; background:#161b22; border:1px solid #30363d; border-radius:12px; padding:12px 14px; margin-bottom:14px; }
+        .ruleta-mini-wheel { width:46px; height:46px; border-radius:50%; background: conic-gradient(#d29922 0 25%, #8957e5 25% 50%, #3fb950 50% 75%, #f85149 75% 100%); flex-shrink:0; box-shadow:0 0 10px rgba(0,0,0,.5); border:2px solid #30363d; }
+        .ruleta-header-box b { font-size:13px; } .ruleta-header-box span { font-size:11px; color:#8b949e; display:block; }
+        .ruleta-table { width:100%; border-collapse:collapse; font-size:12px; margin-bottom:14px; }
+        .ruleta-table th { text-align:left; color:#8b949e; font-size:9px; text-transform:uppercase; letter-spacing:.4px; padding:6px 4px; border-bottom:1px solid #30363d; }
+        .ruleta-table td { padding:8px 4px; border-bottom:1px solid #21262d; vertical-align:middle; }
+        .ruleta-table input { width:56px; background:#0d1117; border:1px solid #30363d; color:#fff; border-radius:6px; padding:5px; font-size:12px; }
+        .ruleta-table input.premio-label { width:100%; }
+        .ruleta-cost-speed-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+        .ruleta-cost-speed-row .field-box { background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:10px; }
+        .ruleta-cost-speed-row input[type=range] { width:100%; }
+
+        /* ================= PANEL ADMIN — MULTIPLICADORES (Buffs y Eventos) ================= */
+        .buff-card { border-radius:12px; padding:14px; margin-bottom:12px; border:2px solid; }
+        .buff-card.buff-xp { border-color:#58a6ff; background:linear-gradient(135deg,#0d1b30,#0d1117); }
+        .buff-card.buff-gold { border-color:#d29922; background:linear-gradient(135deg,#332405,#0d1117); }
+        .buff-card.buff-peak { border-color:#8957e5; background:linear-gradient(135deg,#1f0f33,#0d1117); }
+        .buff-card-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+        .buff-card-title { font-weight:bold; font-size:13px; display:flex; align-items:center; gap:6px; }
+        .buff-card-value-input { background:transparent; border:none; color:#fff; font-size:26px; font-weight:bold; width:100%; margin-bottom:8px; padding:0; }
+        .buff-card input[type=range] { width:100%; }
+
+        /* ================= PANEL ADMIN — USUARIOS ================= */
+        .usuarios-search-row { display:flex; gap:8px; margin-bottom:14px; }
+        .usuarios-search-row input { flex:1; background:#161b22; border:1px solid #30363d; color:#fff; border-radius:10px; padding:10px 12px; font-size:13px; }
+        .usuarios-filter-btn { background:#161b22; border:1px solid #30363d; color:#8b949e; border-radius:10px; width:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:14px; }
+        .user-card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:12px; margin-bottom:10px; }
+        .user-card-top { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+        .user-card-avatar { width:38px; height:38px; border-radius:50%; background:#21262d; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+        .user-card-name { font-weight:bold; font-size:13px; flex-shrink:0; margin-right:6px; }
+        .user-card-stats { flex:1; display:flex; justify-content:space-around; font-size:9px; color:#8b949e; text-align:center; }
+        .user-card-stats b { display:block; font-size:13px; color:#fff; font-weight:bold; }
+        .user-card-actions { display:flex; gap:6px; flex-wrap:wrap; }
+        .user-card-actions button { flex:1; min-width:70px; font-size:11px; padding:7px 4px; border-radius:8px; border:none; cursor:pointer; font-weight:bold; color:#fff; }
         .admin-table button { font-size: 10px; padding: 4px 6px; margin: 2px; border-radius: 5px; border: none; cursor: pointer; }
 
         /* ---- Grupos/secciones del panel admin ---- */
@@ -868,6 +943,28 @@
         <div class="store-pages" id="store-pages"></div>
 
         <div class="products-grid" id="products-grid"></div>
+
+        <div class="store-shortcuts-grid">
+            <div class="store-shortcut-tile shortcut-suscripcion" onclick="navTabTo('vippass-screen')">
+                <span class="store-shortcut-icon">🎫</span>
+                <div><div class="store-shortcut-title">Suscripción</div><div class="store-shortcut-sub">Pase VIP</div></div>
+            </div>
+            <div class="store-shortcut-tile shortcut-mercado-a" onclick="document.getElementById('products-grid').scrollIntoView({behavior:'smooth'})">
+                <span class="store-shortcut-icon">🏪</span>
+                <div><div class="store-shortcut-title">Mercado</div><div class="store-shortcut-sub">Comprar Oro</div></div>
+            </div>
+            <div class="store-shortcut-tile shortcut-mercado-b" onclick="document.getElementById('store-multipliers').scrollIntoView({behavior:'smooth'})">
+                <span class="store-shortcut-icon">💰</span>
+                <div><div class="store-shortcut-title">Mercado</div><div class="store-shortcut-sub">Multiplicadores</div></div>
+            </div>
+            <div class="store-shortcut-tile shortcut-freeroll" onclick="openDailyRewardsModal()">
+                <span class="store-shortcut-icon">🎰</span>
+                <div><div class="store-shortcut-title">Free-Roll</div><div class="store-shortcut-sub">Giro gratis diario</div></div>
+            </div>
+        </div>
+
+        <div class="vip-cards-strip-title">👑 Tus Tarjetas VIP</div>
+        <div class="vip-cards-strip" id="store-vip-cards-strip"></div>
     </div>
 
     <!-- PANTALLA CAMPAÑA -->
@@ -1067,27 +1164,73 @@
             </div>
 
             <div class="admin-section" id="admin-tienda">
-                <button class="admin-add-btn" onclick="addProductRow()">➕ Agregar producto</button>
-                <div id="admin-products-list"></div>
-                <button class="admin-save-btn" onclick="saveAdminProducts()">💾 Guardar tienda</button>
+                <div class="chest-selector-row" id="chest-selector-row"></div>
+                <div class="chest-form" id="chest-form-wrap"></div>
             </div>
 
             <div class="admin-section" id="admin-ruleta">
+                <div class="ruleta-header-box">
+                    <div class="ruleta-mini-wheel"></div>
+                    <div><b>🎡 Ruleta</b><span>Premios y Probabilidades</span></div>
+                </div>
+                <table class="ruleta-table">
+                    <thead><tr><th>Premio</th><th>Cantidad</th><th>Peso (%)</th><th></th></tr></thead>
+                    <tbody id="admin-roulette-list"></tbody>
+                </table>
                 <button class="admin-add-btn" onclick="addRouletteRow()">➕ Agregar premio</button>
-                <div id="admin-roulette-list"></div>
+                <div class="ruleta-cost-speed-row" style="margin-top:14px;">
+                    <div class="field-box">
+                        <label class="admin-field-label">💎 Costo Giro</label>
+                        <input type="number" id="cfg-rouletteCostTab" min="0">
+                    </div>
+                    <div class="field-box">
+                        <label class="admin-field-label">Velocidad</label>
+                        <input type="range" id="cfg-rouletteSpinSpeed" min="1" max="10" step="1">
+                    </div>
+                </div>
                 <button class="admin-save-btn" onclick="saveAdminRoulette()">💾 Guardar premios de ruleta</button>
             </div>
 
             <div class="admin-section" id="admin-multiplicadores">
-                <div id="admin-multipliers-list"></div>
+                <div class="buff-card buff-xp">
+                    <div class="buff-card-top">
+                        <span class="buff-card-title">✨ XP BOOST</span>
+                        <div class="toggle-switch" id="buff-xp-toggle"></div>
+                    </div>
+                    <input type="number" class="buff-card-value-input" id="buff-xp-value" min="0">
+                    <input type="range" id="buff-xp-slider" min="0" max="1000" step="5">
+                </div>
+                <div class="buff-card buff-gold">
+                    <div class="buff-card-top">
+                        <span class="buff-card-title">🪙 GOLD BOOST</span>
+                        <div class="toggle-switch" id="buff-gold-toggle"></div>
+                    </div>
+                    <input type="number" class="buff-card-value-input" id="buff-gold-value" min="0">
+                    <input type="range" id="buff-gold-slider" min="0" max="1000" step="5">
+                </div>
+                <div class="buff-card buff-peak">
+                    <div class="buff-card-top">
+                        <span class="buff-card-title">⏰ BOTE HORA PICO</span>
+                        <div class="toggle-switch" id="buff-peak-toggle"></div>
+                    </div>
+                    <input type="number" class="buff-card-value-input" id="buff-peak-value" min="0">
+                    <input type="range" id="buff-peak-slider" min="0" max="2000" step="10">
+                </div>
                 <button class="admin-save-btn" onclick="saveAdminMultipliers()">💾 Guardar multiplicadores</button>
+
+                <div class="admin-group" style="margin-top:18px;">
+                    <div class="admin-group-title">✖️ Multiplicadores de premio (compra en juego)</div>
+                    <p class="admin-group-hint">Se ofrecen en la Tienda para multiplicar el premio de la siguiente partida.</p>
+                    <div id="admin-purchase-multipliers-list"></div>
+                </div>
             </div>
 
             <div class="admin-section" id="admin-usuarios">
-                <table class="admin-table">
-                    <thead><tr><th>Usuario</th><th>🪙</th><th>💎</th><th>VIP</th><th>Bingos</th><th>Acciones</th></tr></thead>
-                    <tbody id="admin-users-body"></tbody>
-                </table>
+                <div class="usuarios-search-row">
+                    <input type="text" id="admin-users-search" placeholder="Buscar..." oninput="renderAdminUsers()">
+                    <div class="usuarios-filter-btn">🔽</div>
+                </div>
+                <div id="admin-users-body"></div>
             </div>
 
         </div>
@@ -1217,24 +1360,30 @@ function defaultConfig() {
         ],
         multipliers: [ {mult:3, cost:1}, {mult:5, cost:2}, {mult:10, cost:4} ],
         roulettePrizes: [
-            {label:'+200 🪙', gold:200, gems:0},
-            {label:'+500 🪙', gold:500, gems:0},
-            {label:'+1000 🪙', gold:1000, gems:0},
-            {label:'+5 💎', gold:0, gems:5},
-            {label:'+15 💎', gold:0, gems:15},
-            {label:'Sin premio esta vez', gold:0, gems:0},
+            {label:'+200 🪙', gold:200, gems:0, weight:40, stock:-1},
+            {label:'+500 🪙', gold:500, gems:0, weight:35, stock:-1},
+            {label:'+1000 🪙', gold:1000, gems:0, weight:25, stock:-1},
+            {label:'+5 💎', gold:0, gems:5, weight:15, stock:-1},
+            {label:'+15 💎', gold:0, gems:15, weight:8, stock:-1},
+            {label:'Sin premio esta vez', gold:0, gems:0, weight:20, stock:-1},
         ],
+        rouletteSpinSpeed: 5,
+        eventBuffs: {
+            xp:   { enabled:true, value:300 },
+            gold: { enabled:true, value:735 },
+            peak: { enabled:true, value:500 },
+        },
         products: [
-            {id:1, name:'Paquete Bronce',  gemCost:5,  goldReward:400,  discount:'', isCosmetic:false},
-            {id:2, name:'Paquete Plata',   gemCost:12, goldReward:1100, discount:'10% MÁS', isCosmetic:false},
-            {id:3, name:'Paquete Oro',     gemCost:25, goldReward:2500, discount:'15% MÁS', isCosmetic:false},
-            {id:4, name:'Paquete Platino', gemCost:50, goldReward:5500, discount:'20% MÁS', isCosmetic:false},
-            {id:5, name:'Paquete Diamante',gemCost:90, goldReward:11000,discount:'25% MÁS', isCosmetic:false},
-            {id:6, name:'Paquete Rubí',    gemCost:150,goldReward:20000,discount:'30% MÁS', isCosmetic:false},
-            {id:7, name:'Marco Fuego',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true},
-            {id:8, name:'Marco Hielo',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true},
-            {id:9, name:'Marco Real',      gemCost:80, goldReward:0,    discount:'Cosmético', isCosmetic:true},
-            {id:10,name:'Marco Mítico',    gemCost:160,goldReward:0,    discount:'Cosmético', isCosmetic:true},
+            {id:1, name:'Paquete Bronce',  gemCost:5,  goldReward:400,  discount:'', isCosmetic:false, contents:''},
+            {id:2, name:'Paquete Plata',   gemCost:12, goldReward:1100, discount:'10% MÁS', isCosmetic:false, contents:''},
+            {id:3, name:'Paquete Oro',     gemCost:25, goldReward:2500, discount:'15% MÁS', isCosmetic:false, contents:''},
+            {id:4, name:'Paquete Platino', gemCost:50, goldReward:5500, discount:'20% MÁS', isCosmetic:false, contents:''},
+            {id:5, name:'Paquete Diamante',gemCost:90, goldReward:11000,discount:'25% MÁS', isCosmetic:false, contents:''},
+            {id:6, name:'Paquete Rubí',    gemCost:150,goldReward:20000,discount:'30% MÁS', isCosmetic:false, contents:''},
+            {id:7, name:'Marco Fuego',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
+            {id:8, name:'Marco Hielo',     gemCost:40, goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
+            {id:9, name:'Marco Real',      gemCost:80, goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
+            {id:10,name:'Marco Mítico',    gemCost:160,goldReward:0,    discount:'Cosmético', isCosmetic:true, contents:''},
         ],
     };
 }
@@ -1485,7 +1634,8 @@ function vipRankXPBonusPercent() {
     return rank > 0 ? VIP_RANK_XP_BONUS[rank - 1] : 0;
 }
 function xpBonusMultiplier() {
-    return (1 + vipRankXPBonusPercent() / 100) * (1 + cardXPBonusPercent() / 100);
+    const evXp = (CONFIG.eventBuffs && CONFIG.eventBuffs.xp && CONFIG.eventBuffs.xp.enabled) ? CONFIG.eventBuffs.xp.value / 100 : 0;
+    return (1 + vipRankXPBonusPercent() / 100) * (1 + cardXPBonusPercent() / 100) * (1 + evXp);
 }
 
 function gainUserXP(amount) {
@@ -2934,6 +3084,9 @@ function endRound(won) {
         const roomBaseReward = (selectedRoom && selectedRoom.baseWinReward) || CONFIG.baseWinReward;
         let reward = Math.round(roomBaseReward * chosenCardCount * pattern.mult * vipBonus * usedMultiplier * betMult);
         pendingMultiplier = 1;
+        const buffs = CONFIG.eventBuffs || {};
+        if (buffs.gold && buffs.gold.enabled) reward = Math.round(reward * (1 + buffs.gold.value / 100));
+        if (buffs.peak && buffs.peak.enabled) reward += buffs.peak.value;
 
         let jackpotWon = 0;
         if (pattern.id === 'full' && Math.random() < 0.15) {
@@ -3070,6 +3223,22 @@ function renderStore(page) {
     document.getElementById('store-vip-count').innerText = state.vipCards;
     document.getElementById('store-vip-bonus').innerText = `x${(1 + state.vipCards * (CONFIG.vipBonusPerCard/100)).toFixed(2)}`;
     document.getElementById('vip-buy-btn').innerText = `Comprar VIP (💎 ${CONFIG.vipCardCost})`;
+
+    const vipStrip = document.getElementById('store-vip-cards-strip');
+    if (vipStrip) {
+        vipStrip.innerHTML = '';
+        const count = state.vipCards || 0;
+        if (count === 0) {
+            vipStrip.innerHTML = '<span style="font-size:12px;color:#8b949e;">Aún no tienes tarjetas VIP. Cómpralas arriba para subir tu bonus.</span>';
+        } else {
+            for (let i = 0; i < count; i++) {
+                const tile = document.createElement('div');
+                tile.className = 'vip-card-tile';
+                tile.innerHTML = `👑<span class="vip-card-label">#${i + 1}</span>`;
+                vipStrip.appendChild(tile);
+            }
+        }
+    }
 }
 
 /* ---- M09: cofre destacado de mejor valor percibido (mayor oro por gema) ---- */
@@ -3199,7 +3368,17 @@ function spinRoulette() {
     if (state.rouletteSpinsLeft <= 0) { showToast('❌ Ya no tienes giros hoy.'); return; }
     if (state.gems < CONFIG.rouletteCost) { showToast('❌ No tienes suficientes gemas.'); return; }
     state.gems -= CONFIG.rouletteCost; state.rouletteSpinsLeft -= 1;
-    const prize = CONFIG.roulettePrizes[Math.floor(Math.random() * CONFIG.roulettePrizes.length)];
+    const available = CONFIG.roulettePrizes.filter(p => p.stock === undefined || p.stock === -1 || p.stock > 0);
+    const pool = available.length ? available : CONFIG.roulettePrizes;
+    const totalWeight = pool.reduce((sum, p) => sum + (p.weight && p.weight > 0 ? p.weight : 1), 0);
+    let roll = Math.random() * totalWeight;
+    let prize = pool[pool.length - 1];
+    for (const p of pool) {
+        const w = (p.weight && p.weight > 0) ? p.weight : 1;
+        if (roll < w) { prize = p; break; }
+        roll -= w;
+    }
+    if (prize.stock !== undefined && prize.stock > 0) { prize.stock -= 1; saveConfig(); }
     state.gold += prize.gold; state.gems += prize.gems;
     saveState(); refreshAllUI(); refreshRouletteUI();
     showToast(`🎡 ${prize.label}`);
@@ -3651,10 +3830,22 @@ async function refreshLeaderboard() {
         players.sort((a, b) => (b.totalWins || 0) - (a.totalWins || 0));
         const top = players.slice(0, 5);
         if (top.length === 0) { wrap.innerHTML = 'Todavía no hay jugadores.'; return; }
+        const RANK_ICON = ['🥇','🥈','🥉'];
         wrap.innerHTML = top.map((p, i) => {
+            const rank = i + 1;
+            const rankCls = rank <= 3 ? ' rank-' + rank : '';
+            const rankLabel = rank <= 3 ? RANK_ICON[i] : '#' + rank;
             const crown = p.vipPassActive ? '<span class="vip-crown-badge">👑</span> ' : '';
             const nm = p.vipPassActive ? `<span class="vip-gold-name">${escapeHtml(p.username)}</span>` : escapeHtml(p.username);
-            return `<div class="leaderboard-row"><span><span class="leaderboard-rank">#${i+1}</span> ${crown}${p.equippedAvatar ? avatarHtml(p.equippedAvatar) + ' ' : ''}${nm} ${trophyBadgesHtml(p)}</span><span>🏆 ${p.totalWins || 0}</span></div>`;
+            const avatarInner = p.equippedAvatar ? avatarHtml(p.equippedAvatar) : '👤';
+            return `<div class="leaderboard-row">
+                <div class="leaderboard-left">
+                    <span class="leaderboard-rank${rankCls}">${rankLabel}</span>
+                    <span class="leaderboard-avatar${rankCls}">${avatarInner}</span>
+                    <span>${crown}${nm} ${trophyBadgesHtml(p)}</span>
+                </div>
+                <span>🏆 ${p.totalWins || 0}</span>
+            </div>`;
         }).join('');
     } catch(e) { wrap.innerHTML = 'No se pudo cargar el ranking.'; }
 }
@@ -3707,6 +3898,10 @@ function fillAdminGeneralForm() {
     document.getElementById('cfg-weeklyPrizesGold').value = (CONFIG.weeklyPrizesGold || []).join(',');
     document.getElementById('cfg-monthlyPrizesGold').value = (CONFIG.monthlyPrizesGold || []).join(',');
     document.getElementById('cfg-betTiers').value = (CONFIG.betTiers || []).map(t => `${t.label},${t.cost},${t.mult}`).join('\n');
+    const rouletteTabCost = document.getElementById('cfg-rouletteCostTab');
+    if (rouletteTabCost) rouletteTabCost.value = CONFIG.rouletteCost;
+    const rouletteSpeed = document.getElementById('cfg-rouletteSpinSpeed');
+    if (rouletteSpeed) rouletteSpeed.value = CONFIG.rouletteSpinSpeed || 5;
     renderAdminRoomImages();
     renderAdminVipImages();
 }
@@ -3830,29 +4025,90 @@ async function saveAdminGeneral() {
     showToast('✅ Configuración general guardada en la nube.');
 }
 
+let selectedProductIdx = 0;
 function renderAdminProducts() {
-    const wrap = document.getElementById('admin-products-list');
+    renderChestSelector();
+    renderChestForm();
+}
+function renderChestSelector() {
+    const wrap = document.getElementById('chest-selector-row');
+    if (!wrap) return;
     wrap.innerHTML = '';
+    if (selectedProductIdx >= CONFIG.products.length) selectedProductIdx = Math.max(0, CONFIG.products.length - 1);
     CONFIG.products.forEach((p, idx) => {
-        const row = document.createElement('div');
-        row.className = 'admin-row-card';
-        row.innerHTML = `
-            <div class="row-grid">
-                <input type="text" value="${p.name}" data-field="name" placeholder="Nombre">
-                <input type="number" value="${p.gemCost}" data-field="gemCost" placeholder="💎 Costo en gemas">
-                <input type="number" value="${p.goldReward}" data-field="goldReward" placeholder="🪙 Recompensa en oro">
-                <input type="text" value="${p.discount || ''}" data-field="discount" placeholder="Etiqueta (opcional)">
-            </div>
-            <label style="font-size:11px;color:#8b949e;"><input type="checkbox" data-field="isCosmetic" ${p.isCosmetic ? 'checked' : ''}> Es cosmético (no da oro)</label>
-            <div class="admin-img-row">
-                <div class="admin-img-preview" id="prod-img-preview-${idx}">${p.imageUrl ? `<img src="${p.imageUrl}">` : '<span>Sin imagen</span>'}</div>
-                <input type="file" accept="image/*" onchange="uploadProductImage(${idx}, this)">
-            </div>
-            <div style="text-align:right; margin-top:8px;"><button class="admin-del-btn" onclick="removeProductRow(${idx})">Eliminar</button></div>
+        const tab = document.createElement('div');
+        tab.className = 'chest-tab' + (idx === selectedProductIdx ? ' active' : '');
+        tab.innerHTML = `
+            <div class="chest-icon">${p.imageUrl ? `<img src="${p.imageUrl}" style="width:26px;height:26px;object-fit:cover;border-radius:6px;">` : (p.isCosmetic ? '🖼️' : '📦')}</div>
+            <div class="chest-label">${escapeHtml(p.name)}</div>
         `;
-        row.dataset.index = idx;
-        wrap.appendChild(row);
+        tab.onclick = () => { selectedProductIdx = idx; renderAdminProducts(); };
+        wrap.appendChild(tab);
     });
+    const addTab = document.createElement('div');
+    addTab.className = 'chest-tab chest-add-tab';
+    addTab.innerHTML = `<div class="chest-icon">➕</div><div class="chest-label">Nuevo</div>`;
+    addTab.onclick = () => {
+        const newId = CONFIG.products.length ? Math.max(...CONFIG.products.map(p=>p.id)) + 1 : 1;
+        CONFIG.products.push({id:newId, name:'Nuevo Cofre', gemCost:10, goldReward:500, discount:'', isCosmetic:false, contents:''});
+        selectedProductIdx = CONFIG.products.length - 1;
+        renderAdminProducts();
+    };
+    wrap.appendChild(addTab);
+}
+function renderChestForm() {
+    const wrap = document.getElementById('chest-form-wrap');
+    if (!wrap) return;
+    const p = CONFIG.products[selectedProductIdx];
+    if (!p) { wrap.innerHTML = '<p style="color:#8b949e;font-size:12px;">No hay productos. Toca ➕ para crear uno.</p>'; return; }
+    wrap.innerHTML = `
+        <div class="toggle-switch-row">
+            <span>Cosmético (no da oro)</span>
+            <div class="toggle-switch ${p.isCosmetic ? 'on' : ''}" id="chest-cosmetic-toggle"></div>
+        </div>
+        <label class="admin-field-label">Nombre</label>
+        <input type="text" id="chest-name" value="${escapeHtml(p.name)}">
+        <div class="dual-price-row">
+            <div class="price-field-box"><label class="admin-field-label">💎 Precio (gemas)</label><input type="number" id="chest-gemcost" value="${p.gemCost}" min="0"></div>
+            <div class="price-field-box"><label class="admin-field-label">🪙 Recompensa (oro)</label><input type="number" id="chest-goldreward" value="${p.goldReward}" min="0"></div>
+        </div>
+        <label class="admin-field-label">Etiqueta</label>
+        <input type="text" id="chest-tag" value="${escapeHtml(p.discount || '')}" placeholder="Ej. 10% MÁS">
+        <label class="admin-field-label">Contenido</label>
+        <textarea id="chest-contents" rows="3" placeholder="Descripción de lo que incluye este cofre...">${escapeHtml(p.contents || '')}</textarea>
+        <div class="admin-img-row">
+            <div class="admin-img-preview" id="chest-img-preview">${p.imageUrl ? `<img src="${p.imageUrl}">` : '<span>Sin imagen</span>'}</div>
+            <input type="file" accept="image/*" onchange="uploadProductImage(${selectedProductIdx}, this)">
+        </div>
+        <button class="btn-guardar-magenta" onclick="saveChestForm()">GUARDAR</button>
+        <button class="btn-eliminar-red" onclick="removeChestForm()">ELIMINAR</button>
+    `;
+    const toggle = document.getElementById('chest-cosmetic-toggle');
+    if (toggle) toggle.onclick = function () { this.classList.toggle('on'); };
+}
+async function saveChestForm() {
+    const p = CONFIG.products[selectedProductIdx];
+    if (!p) return;
+    p.name = document.getElementById('chest-name').value || 'Cofre';
+    p.gemCost = parseInt(document.getElementById('chest-gemcost').value) || 0;
+    p.goldReward = parseInt(document.getElementById('chest-goldreward').value) || 0;
+    p.discount = document.getElementById('chest-tag').value || '';
+    p.contents = document.getElementById('chest-contents').value || '';
+    p.isCosmetic = document.getElementById('chest-cosmetic-toggle').classList.contains('on');
+    await saveConfig();
+    renderAdminProducts();
+    renderStore(currentStorePage);
+    showToast('✅ Cofre guardado en la nube.');
+}
+function removeChestForm() {
+    if (!CONFIG.products[selectedProductIdx]) return;
+    if (!confirm('¿Eliminar este cofre/producto? Esto no se puede deshacer.')) return;
+    CONFIG.products.splice(selectedProductIdx, 1);
+    selectedProductIdx = Math.max(0, selectedProductIdx - 1);
+    saveConfig();
+    renderAdminProducts();
+    renderStore(currentStorePage);
+    showToast('🗑️ Cofre eliminado.');
 }
 async function uploadProductImage(idx, inputEl) {
     const file = inputEl.files[0];
@@ -3867,81 +4123,109 @@ async function uploadProductImage(idx, inputEl) {
         showToast('✅ Imagen del producto guardada en la nube.');
     } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
-function addProductRow() {
-    const newId = CONFIG.products.length ? Math.max(...CONFIG.products.map(p=>p.id)) + 1 : 1;
-    CONFIG.products.push({id:newId, name:'Nuevo producto', gemCost:10, goldReward:500, discount:'', isCosmetic:false});
-    renderAdminProducts();
-}
-function removeProductRow(idx) { CONFIG.products.splice(idx, 1); renderAdminProducts(); }
-async function saveAdminProducts() {
-    const rows = document.querySelectorAll('#admin-products-list .admin-row-card');
-    rows.forEach(row => {
-        const idx = parseInt(row.dataset.index);
-        const p = CONFIG.products[idx];
-        row.querySelectorAll('[data-field]').forEach(input => {
-            const field = input.dataset.field;
-            if (field === 'isCosmetic') p[field] = input.checked;
-            else if (field === 'gemCost' || field === 'goldReward') p[field] = parseInt(input.value) || 0;
-            else p[field] = input.value;
-        });
-    });
-    await saveConfig();
-    showToast('✅ Tienda guardada en la nube.');
+async function uploadProductImage(idx, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    showToast('⏳ Subiendo imagen...');
+    try {
+        const url = await uploadImageToStorage(file, 'products');
+        CONFIG.products[idx].imageUrl = url;
+        await saveConfig();
+        renderAdminProducts();
+        renderStore(currentStorePage);
+        showToast('✅ Imagen del producto guardada en la nube.');
+    } catch (e) { console.error('Error subiendo imagen:', e); showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Firebase Storage')); }
 }
 
 function renderAdminRoulette() {
     const wrap = document.getElementById('admin-roulette-list');
     wrap.innerHTML = '';
     CONFIG.roulettePrizes.forEach((prize, idx) => {
-        const row = document.createElement('div');
-        row.className = 'admin-row-card';
-        row.innerHTML = `
-            <div class="row-grid">
-                <input type="text" value="${prize.label}" data-field="label" placeholder="Texto del premio">
-                <input type="number" value="${prize.gold}" data-field="gold" placeholder="🪙 Oro">
-                <input type="number" value="${prize.gems}" data-field="gems" placeholder="💎 Gemas">
-            </div>
-            <div style="text-align:right;"><button class="admin-del-btn" onclick="removeRouletteRow(${idx})">Eliminar</button></div>
+        const type = prize.gems > 0 ? 'gems' : 'gold';
+        const amount = prize.gems > 0 ? prize.gems : prize.gold;
+        const tr = document.createElement('tr');
+        tr.dataset.index = idx;
+        tr.innerHTML = `
+            <td>
+                <div style="display:flex;gap:4px;align-items:center;">
+                    <select data-field="type" style="background:#0d1117;border:1px solid #30363d;color:#fff;border-radius:6px;padding:5px;font-size:12px;">
+                        <option value="gold" ${type === 'gold' ? 'selected' : ''}>🪙</option>
+                        <option value="gems" ${type === 'gems' ? 'selected' : ''}>💎</option>
+                    </select>
+                    <input type="number" value="${amount}" data-field="amount" style="width:64px;">
+                </div>
+            </td>
+            <td><input type="number" value="${prize.stock === undefined ? -1 : prize.stock}" data-field="stock" title="-1 = ilimitado"></td>
+            <td><input type="number" value="${prize.weight === undefined ? 10 : prize.weight}" data-field="weight"></td>
+            <td><button class="admin-del-btn" onclick="removeRouletteRow(${idx})">✕</button></td>
         `;
-        row.dataset.index = idx;
-        wrap.appendChild(row);
+        wrap.appendChild(tr);
     });
 }
-function addRouletteRow() { CONFIG.roulettePrizes.push({label:'Nuevo premio', gold:0, gems:0}); renderAdminRoulette(); }
+function addRouletteRow() { CONFIG.roulettePrizes.push({label:'Nuevo premio', gold:0, gems:0, weight:10, stock:-1}); renderAdminRoulette(); }
 function removeRouletteRow(idx) { CONFIG.roulettePrizes.splice(idx, 1); renderAdminRoulette(); }
 async function saveAdminRoulette() {
-    const rows = document.querySelectorAll('#admin-roulette-list .admin-row-card');
+    const rows = document.querySelectorAll('#admin-roulette-list tr');
     rows.forEach(row => {
         const idx = parseInt(row.dataset.index);
         const p = CONFIG.roulettePrizes[idx];
-        row.querySelectorAll('[data-field]').forEach(input => {
-            const field = input.dataset.field;
-            p[field] = (field === 'label') ? input.value : (parseInt(input.value) || 0);
-        });
+        const type = row.querySelector('[data-field="type"]').value;
+        const amount = parseInt(row.querySelector('[data-field="amount"]').value) || 0;
+        p.gold = type === 'gold' ? amount : 0;
+        p.gems = type === 'gems' ? amount : 0;
+        p.label = amount > 0 ? `+${amount.toLocaleString('es')} ${type === 'gold' ? '🪙' : '💎'}` : 'Sin premio esta vez';
+        p.stock = parseInt(row.querySelector('[data-field="stock"]').value);
+        p.weight = parseInt(row.querySelector('[data-field="weight"]').value) || 0;
     });
+    CONFIG.rouletteCost = parseInt(document.getElementById('cfg-rouletteCostTab').value) || 0;
+    CONFIG.rouletteSpinSpeed = parseInt(document.getElementById('cfg-rouletteSpinSpeed').value) || 5;
+    const genField = document.getElementById('cfg-rouletteCost');
+    if (genField) genField.value = CONFIG.rouletteCost;
     await saveConfig();
     showToast('✅ Premios de ruleta guardados en la nube.');
 }
 
 function renderAdminMultipliers() {
-    const wrap = document.getElementById('admin-multipliers-list');
-    wrap.innerHTML = '';
-    CONFIG.multipliers.forEach((m, idx) => {
-        const row = document.createElement('div');
-        row.className = 'admin-row-card';
-        row.innerHTML = `
-            <div class="row-grid">
-                <input type="number" value="${m.mult}" data-field="mult" placeholder="Multiplicador (ej. 3)">
-                <input type="number" value="${m.cost}" data-field="cost" placeholder="💎 Costo en gemas">
-            </div>
-        `;
-        row.dataset.index = idx;
-        wrap.appendChild(row);
+    const b = CONFIG.eventBuffs || (CONFIG.eventBuffs = { xp:{enabled:true,value:300}, gold:{enabled:true,value:735}, peak:{enabled:true,value:500} });
+    const map = [['xp','buff-xp'], ['gold','buff-gold'], ['peak','buff-peak']];
+    map.forEach(([key, prefix]) => {
+        const toggle = document.getElementById(`${prefix}-toggle`);
+        const valInput = document.getElementById(`${prefix}-value`);
+        const slider = document.getElementById(`${prefix}-slider`);
+        if (!toggle) return;
+        toggle.classList.toggle('on', !!b[key].enabled);
+        toggle.onclick = () => toggle.classList.toggle('on');
+        valInput.value = b[key].value;
+        slider.value = b[key].value;
+        slider.oninput = () => { valInput.value = slider.value; };
+        valInput.oninput = () => { slider.value = valInput.value; };
     });
+    const wrap = document.getElementById('admin-purchase-multipliers-list');
+    if (wrap) {
+        wrap.innerHTML = '';
+        CONFIG.multipliers.forEach((m, idx) => {
+            const row = document.createElement('div');
+            row.className = 'admin-row-card';
+            row.innerHTML = `
+                <div class="row-grid">
+                    <input type="number" value="${m.mult}" data-field="mult" placeholder="Multiplicador (ej. 3)">
+                    <input type="number" value="${m.cost}" data-field="cost" placeholder="💎 Costo en gemas">
+                </div>
+            `;
+            row.dataset.index = idx;
+            wrap.appendChild(row);
+        });
+    }
 }
 async function saveAdminMultipliers() {
-    const rows = document.querySelectorAll('#admin-multipliers-list .admin-row-card');
-    rows.forEach(row => {
+    const map = [['xp','buff-xp'], ['gold','buff-gold'], ['peak','buff-peak']];
+    if (!CONFIG.eventBuffs) CONFIG.eventBuffs = {};
+    map.forEach(([key, prefix]) => {
+        const toggle = document.getElementById(`${prefix}-toggle`);
+        const valInput = document.getElementById(`${prefix}-value`);
+        CONFIG.eventBuffs[key] = { enabled: toggle.classList.contains('on'), value: parseInt(valInput.value) || 0 };
+    });
+    document.querySelectorAll('#admin-purchase-multipliers-list .admin-row-card').forEach(row => {
         const idx = parseInt(row.dataset.index);
         const m = CONFIG.multipliers[idx];
         row.querySelectorAll('[data-field]').forEach(input => { m[input.dataset.field] = parseFloat(input.value) || 0; });
@@ -3952,22 +4236,36 @@ async function saveAdminMultipliers() {
 
 async function renderAdminUsers() {
     const body = document.getElementById('admin-users-body');
-    body.innerHTML = '<tr><td colspan="6" style="color:#8b949e;">Cargando...</td></tr>';
+    body.innerHTML = '<p style="color:#8b949e;font-size:12px;">Cargando...</p>';
     const players = await fsGetAll('players');
-    if (players.length === 0) { body.innerHTML = '<tr><td colspan="6" style="color:#8b949e;">Aún no hay jugadores registrados en la nube.</td></tr>'; return; }
+    const searchEl = document.getElementById('admin-users-search');
+    const query = (searchEl && searchEl.value || '').trim().toLowerCase();
+    const filtered = query ? players.filter(p => (p.username || '').toLowerCase().includes(query)) : players;
+    if (players.length === 0) { body.innerHTML = '<p style="color:#8b949e;font-size:12px;">Aún no hay jugadores registrados en la nube.</p>'; return; }
+    if (filtered.length === 0) { body.innerHTML = '<p style="color:#8b949e;font-size:12px;">Sin resultados para tu búsqueda.</p>'; return; }
     body.innerHTML = '';
-    players.forEach(p => {
+    filtered.forEach(p => {
         const key = p.id; // id del documento = usuario en minúsculas
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${escapeHtml(p.username)}</td><td>${p.gold}</td><td>${p.gems}</td><td>${p.vipCards}</td><td>${p.totalWins}</td>
-            <td>
-                <button class="btn-give" onclick="adminGiveResources('${key}', 1000, 0)">+1000🪙</button>
-                <button class="btn-give" onclick="adminGiveResources('${key}', 0, 100)">+100💎</button>
-                <button class="btn-reset" onclick="adminResetUser('${key}')">Reiniciar</button>
-                <button class="btn-delete" onclick="adminDeleteUser('${key}')">Eliminar</button>
-            </td>`;
-        body.appendChild(tr);
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.innerHTML = `
+            <div class="user-card-top">
+                <div class="user-card-avatar">😀</div>
+                <div class="user-card-name">${escapeHtml(p.username)}</div>
+                <div class="user-card-stats">
+                    <div><b>${p.gold}</b>🪙</div>
+                    <div><b>${p.gems}</b>💎</div>
+                    <div><b>${p.vipCards}</b>⭐</div>
+                    <div><b>${p.totalWins}</b>🏆</div>
+                </div>
+            </div>
+            <div class="user-card-actions">
+                <button style="background:#238636;" onclick="adminGiveResources('${key}', 1000, 0)">+1000 ORO</button>
+                <button style="background:#1f6feb;" onclick="adminGiveResources('${key}', 0, 100)">+100 GEMAS</button>
+                <button style="background:#d29922;color:#0d1117;" onclick="adminResetUser('${key}')">REINICIAR</button>
+                <button style="background:#da3633;" onclick="adminDeleteUser('${key}')">ELIMINAR</button>
+            </div>`;
+        body.appendChild(card);
     });
 }
 async function adminGiveResources(key, gold, gems) {
