@@ -5505,25 +5505,34 @@ function renderAdminTrophies(){
     });
 }
 
-function handleTrophyUpload(id, input){
+async function handleTrophyUpload(id, input){
     const file=input.files[0];
     if(!file) return;
-    if(file.size > 2*1024*1024){ showToast('❌ Imagen muy grande (máx 2MB)'); return; }
-    const reader=new FileReader();
-    reader.onload=function(e){
+    if(file.size > 5*1024*1024){ showToast('❌ Imagen muy grande (máx 5MB)'); return; }
+    showToast('⏳ Subiendo imagen...');
+    try {
+        const url = await uploadImageToStorage(file, 'trophies');
         if(!CONFIG.trophyImages) CONFIG.trophyImages={};
-        CONFIG.trophyImages[id]=e.target.result;
+        CONFIG.trophyImages[id]=url;
+        await saveConfig();
         renderAdminTrophies();
-        showToast(`✅ Imagen para ${id} cargada (guarda en la nube para aplicar)`);
-    };
-    reader.readAsDataURL(file);
+        if(typeof TROPHY_IMAGES!=='undefined') TROPHY_IMAGES[id]=url;
+        if(typeof renderAchievements==='function') renderAchievements();
+        showToast(`✅ Imagen para ${id} guardada en la nube.`);
+    } catch (e) {
+        console.error('Error subiendo trofeo:', e);
+        showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Cloudinary'));
+    }
 }
 
-function clearTrophyImage(id){
+async function clearTrophyImage(id){
     if(CONFIG.trophyImages && CONFIG.trophyImages[id]){
         delete CONFIG.trophyImages[id];
+        if(typeof TROPHY_IMAGES!=='undefined') delete TROPHY_IMAGES[id];
+        await saveConfig();
         renderAdminTrophies();
-        showToast(`🗑️ Imagen de ${id} quitada`);
+        if(typeof renderAchievements==='function') renderAchievements();
+        showToast(`🗑️ Imagen de ${id} quitada y guardada en la nube`);
     }
 }
 
