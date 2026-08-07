@@ -2826,7 +2826,14 @@ async function submitAdminGearLogin() {
 
 /* ---------- NAVEGACIÓN + BOTÓN ATRÁS ---------- */
 function closeAdminPanel() {
-    navTabTo('main-screen');
+    isAdmin = false; currentUser = null; state = null;
+    stopAutoBingo();
+    const bottomNav = document.getElementById('bottom-nav');
+    if (bottomNav) bottomNav.style.display = 'none';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('login-screen').classList.add('active');
+    historyStack = ['login-screen'];
+    history.replaceState({screen: 'login-screen'}, '', '');
 }
 function navTabTo(screenId) {
     historyStack = [screenId];
