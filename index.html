@@ -8,6 +8,7 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0d1117; color: #fff; padding-bottom: 75px; user-select: none; }
+        body.no-scroll-fixed-screen { overflow: hidden; height: 100%; touch-action: none; }
 
         .screen { display: none; padding: 15px; }
         .screen.active { display: block; }
@@ -975,6 +976,7 @@
 .mh-action-evo{ background:linear-gradient(180deg,#FFC24B,#FF9416); }
 .mh-action-equip{ background:linear-gradient(180deg,#C77DFF,#8E3FE0); }
 .mh-action-equip.is-on{ background:linear-gradient(180deg,#9C6BFF,#6A1FD0); }
+.mh-action-battle{ background:linear-gradient(180deg,#FF7676,#D32F2F); }
 .mh-bonus-card{ position:relative; z-index:2; background:#fff; border-radius:16px; margin:14px 15px 0; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 8px 16px rgba(0,0,0,.18); }
 .mh-bonus-card .mh-bonus-txt{ color:#333; font-size:13px; font-weight:700; }
 .mh-bonus-card .mh-bonus-txt b{ color:#FF7A00; }
@@ -987,6 +989,196 @@
 .mh-row-item .mh-row-badge{ position:absolute; bottom:2px; right:2px; font-size:9px; background:rgba(0,0,0,.5); color:#fff; border-radius:6px; padding:0 3px; }
 .mh-row-more{ flex-shrink:0; width:62px; height:62px; border-radius:14px; border:2px dashed #c7ccf5; display:flex; align-items:center; justify-content:center; color:#5b6bf5; font-size:22px; cursor:pointer; }
 .mh-empty{ position:relative; z-index:2; text-align:center; color:#fff; font-size:13px; padding:20px; }
+
+/* ---------- Arena de Batalla de Mascotas (estilo Coliseo VIP) ---------- */
+#pet-battle-screen{ display:none; position:fixed !important; inset:0; z-index:900; width:100%;
+    height:100vh; height:calc(var(--pb-vh, 1vh) * 100); overflow:hidden;
+    flex-direction:column; padding:0 !important;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(255,255,255,.06), transparent 55%),
+        repeating-linear-gradient(135deg, rgba(0,0,0,.12) 0 26px, rgba(0,0,0,0) 26px 52px),
+        linear-gradient(180deg,#8a0f16 0%,#a5171d 22%,#7a0d13 55%,#5c0a0f 100%);
+}
+#pet-battle-screen.active{ display:flex; }
+.pb-topbar, .pb-hpbars, .pb-log, .pb-tabs, .pb-skills-panel{ flex-shrink:0; }
+.pb-arena{ flex:1 1 150px; min-height:110px !important; }
+.pb-skills-panel{ max-height:34vh; overflow-y:auto; overflow-x:hidden; margin-bottom:max(8px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
+
+/* ---- Panel de información de habilidades (estilo lista Dragon City) ---- */
+.pb-info-overlay{ display:none; position:fixed; inset:0; z-index:950; background:rgba(0,0,0,.4); align-items:flex-start; justify-content:flex-end; padding:66px 14px 0; }
+.pb-info-overlay.active{ display:flex; }
+.pb-info-card{ background:#f3e6cf; border-radius:16px; padding:10px 12px; max-width:280px; width:100%; box-shadow:0 10px 26px rgba(0,0,0,.45); max-height:70vh; overflow-y:auto; }
+.pb-info-row{ display:flex; align-items:flex-start; gap:8px; padding:7px 2px; border-bottom:1px solid rgba(0,0,0,.1); }
+.pb-info-row:last-child{ border-bottom:none; }
+.pb-info-ic{ width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0; margin-top:1px; }
+.pb-info-txt{ font-size:11.5px; color:#4a3520; line-height:1.35; }
+.pb-info-txt b{ display:block; font-size:12px; color:#2e1f10; }
+.pb-info-txt.locked{ opacity:.55; }
+
+/* ---- Modo horizontal: layout en grilla, cada zona con su espacio fijo garantizado ---- */
+@media (orientation: landscape){
+    #pet-battle-screen.active{
+        display:grid;
+        grid-template-columns: 1fr 176px;
+        grid-template-rows: auto auto auto 1fr;
+        grid-template-areas: "top top" "hp hp" "log log" "arena skills";
+    }
+    .pb-topbar{ grid-area:top; padding:4px 12px 0; }
+    .pb-hpbars{ grid-area:hp; padding:2px 10px 0; gap:8px; }
+    .pb-hpcard{ padding:4px 8px; }
+    .pb-hp-name{ font-size:11px; }
+    .pb-log{ grid-area:log; font-size:10px; margin:1px 15px 0; min-height:12px; }
+    .pb-tabs{ display:none; }
+    .pb-arena{ grid-area:arena; min-height:0 !important; padding:4px 10px 4px; }
+    .pb-skills-panel{ grid-area:skills; max-height:none; height:100%; margin:6px 10px 6px 0; overflow-y:auto; box-sizing:border-box; }
+    .pb-skills-hint{ display:none; }
+    .pb-skills{ grid-template-columns:1fr; grid-auto-rows:min-content; }
+    .pb-skill-btn{ padding:5px 6px; gap:5px; }
+    .pb-skill-desc{ display:none; }
+    .pb-skill-btn .pb-skill-ic{ width:18px; height:18px; font-size:10px; }
+    .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:10.5px; }
+    .pb-info-overlay{ padding-top:44px; }
+}
+.pb-pillar{ position:absolute; top:0; bottom:0; width:64px; background:linear-gradient(180deg,#c0392b,#7a0d13);
+    box-shadow:inset 0 0 18px rgba(0,0,0,.5); opacity:.9; z-index:1; }
+.pb-pillar::before{ content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(0deg, rgba(255,215,140,.1) 0 3px, transparent 3px 26px), repeating-linear-gradient(90deg, rgba(255,215,140,.08) 0 3px, transparent 3px 26px); }
+.pb-pillar.left{ left:0; border-right:3px solid #ffd28c; }
+.pb-pillar.right{ right:0; border-left:3px solid #ffd28c; }
+.pb-column{ position:absolute; top:60px; bottom:10px; width:46px; background:linear-gradient(90deg,#7a0d13,#c0392b 25%,#7a0d13 55%,#5c0a0f); border-radius:6px; box-shadow:0 0 0 2px rgba(255,210,140,.25) inset; z-index:1; }
+.pb-column.left{ left:70px; }
+.pb-column.right{ right:70px; }
+.pb-stars{ position:absolute; inset:0; pointer-events:none; z-index:1; }
+.pb-stars span{ position:absolute; color:#ffd28c; opacity:.6; animation:mhTwinkle 2.2s ease-in-out infinite; }
+.pb-topbar{ position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:14px 16px 4px; }
+.pb-back{ background:linear-gradient(180deg,#3aa0e8,#1c6fb8); border:2px solid rgba(255,255,255,.5); width:auto; min-width:64px; height:34px; border-radius:17px; color:#fff; font-size:12px; font-weight:900; flex-shrink:0; padding:0 12px; box-shadow:0 3px 0 rgba(0,0,0,.25); letter-spacing:.5px; }
+.pb-help-btn{ background:linear-gradient(180deg,#3aa0e8,#1c6fb8); border:2px solid rgba(255,255,255,.5); min-width:64px; height:34px; border-radius:17px; color:#fff; font-size:12px; font-weight:900; box-shadow:0 3px 0 rgba(0,0,0,.25); letter-spacing:.5px; }
+.pb-hpbars{ position:relative; z-index:5; display:flex; justify-content:space-between; gap:10px; padding:8px 14px 0; }
+.pb-hpcard{ flex:1; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.35)); border:1.5px solid rgba(255,215,150,.55); border-radius:16px; padding:8px 10px; backdrop-filter:blur(3px); position:relative; }
+.pb-hpcard.enemy{ text-align:right; }
+.pb-hp-name{ color:#fff; font-weight:900; font-size:12.5px; display:flex; align-items:center; gap:5px; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+.pb-hpcard.enemy .pb-hp-name{ justify-content:flex-end; }
+.pb-hp-star{ color:#ffe680; font-size:11px; filter:drop-shadow(0 0 3px rgba(255,215,0,.8)); }
+.pb-turn-badge{ display:none; margin-top:2px; background:linear-gradient(180deg,#8bd15a,#4a9e2a); color:#0c2b02; font-size:9.5px; font-weight:900; letter-spacing:.5px; padding:1px 8px; border-radius:8px; width:fit-content; box-shadow:0 1px 3px rgba(0,0,0,.3); }
+.pb-hpcard.enemy .pb-turn-badge{ margin-left:auto; }
+.pb-hpcard.pb-active .pb-turn-badge{ display:inline-block; }
+.pb-hp-elems{ display:flex; gap:4px; margin-top:3px; }
+.pb-hpcard.enemy .pb-hp-elems{ justify-content:flex-end; }
+.pb-elem-badge{ width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; border:1.5px solid rgba(255,255,255,.6); }
+.pb-hp-track{ position:relative; height:12px; border-radius:6px; background:rgba(0,0,0,.4); margin-top:6px; overflow:hidden; border:1px solid #7a0d13; box-shadow:inset 0 0 4px rgba(0,0,0,.6); }
+.pb-hp-chip{ position:absolute; left:0; top:0; height:100%; border-radius:6px; background:linear-gradient(180deg,#ffcc80,#e64a19); }
+.pb-hp-fill{ position:absolute; left:0; top:0; height:100%; border-radius:6px; background:linear-gradient(180deg,#8bffb0,#2eae4a); transition:width .15s ease; box-shadow:inset 0 2px 0 rgba(255,255,255,.35); }
+.pb-hp-fill.low{ background:linear-gradient(180deg,#ffb0b0,#d32f2f); }
+.pb-hp-num{ color:#ffe9c2; font-size:10px; font-weight:800; margin-top:3px; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+.pb-arena{ position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:space-between; padding:22px 30px 6px; transform-origin:center 65%; }
+.pb-arena::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:34px; background:linear-gradient(180deg,#c99356,#8a5f2f 55%,#5e3f1e); border-top:2px solid rgba(255,210,140,.55); box-shadow:inset 0 6px 10px rgba(0,0,0,.35); z-index:0; }
+.pb-arena.pb-zoom-hit{ animation:pbZoomHit .3s ease; }
+@keyframes pbZoomHit{ 0%{transform:scale(1)} 40%{transform:scale(1.05)} 100%{transform:scale(1)} }
+.pb-arena.pb-zoom-ult{ animation:pbZoomUlt .55s ease; }
+@keyframes pbZoomUlt{ 0%{transform:scale(1)} 35%{transform:scale(1.14)} 100%{transform:scale(1)} }
+.pb-arena.pb-slowmo{ animation:pbSlowmoPulse .32s ease-in-out infinite; filter:saturate(.55) brightness(.72); }
+@keyframes pbSlowmoPulse{ 0%,100%{ transform:scale(1.015); } 50%{ transform:scale(1.03); } }
+.pb-slowmo-vignette{ position:fixed; inset:0; z-index:38; pointer-events:none; opacity:0; background:radial-gradient(circle,transparent 45%,rgba(0,0,0,.55) 100%); }
+.pb-slowmo-vignette.play{ animation:pbVignetteFade .32s ease-in-out; }
+@keyframes pbVignetteFade{ 0%{opacity:0} 40%{opacity:1} 100%{opacity:1} }
+.pb-fighter{ display:flex; flex-direction:column; align-items:center; width:120px; transition:transform .15s; position:relative; z-index:2; }
+.pb-fighter.enemy{ align-self:flex-end; }
+.pb-ground-shadow{ width:76px; height:16px; margin-top:-8px; border-radius:50%; background:radial-gradient(ellipse,rgba(0,0,0,.5),rgba(0,0,0,0) 72%); position:relative; z-index:0; }
+.pb-turn-glow{ display:none; position:absolute; top:-8px; left:50%; transform:translateX(-50%); font-size:22px; animation:pbTurnGlow 1.1s ease-in-out infinite; filter:drop-shadow(0 0 6px #FFD700); }
+.pb-fighter.pb-active .pb-turn-glow{ display:block; }
+@keyframes pbTurnGlow{ 0%,100%{ transform:translateX(-50%) translateY(0); opacity:.85; } 50%{ transform:translateX(-50%) translateY(-5px); opacity:1; } }
+.pb-sprite{ font-size:70px; filter:drop-shadow(0 8px 10px rgba(0,0,0,.5)); animation:mhBob 2.4s ease-in-out infinite; }
+.pb-sprite img{ width:108px; height:108px; object-fit:contain; filter:drop-shadow(0 8px 10px rgba(0,0,0,.5)); animation:mhBob 2.4s ease-in-out infinite; }
+.pb-fighter.hit .pb-sprite, .pb-fighter.hit .pb-sprite img{ animation:pbHit .4s ease; }
+.pb-fighter.ko .pb-sprite, .pb-fighter.ko .pb-sprite img{ opacity:.25; filter:grayscale(1); animation:none; }
+.pb-fighter.attack{ z-index:5; }
+.pb-fighter.enemy.attack{ z-index:5; }
+.pb-fighter.attack .pb-sprite, .pb-fighter.attack .pb-sprite img{ animation:pbLungeP .5s ease; }
+.pb-fighter.enemy.attack .pb-sprite, .pb-fighter.enemy.attack .pb-sprite img{ animation:pbLungeE .5s ease; }
+.pb-fighter.pb-spin-attack .pb-sprite, .pb-fighter.pb-spin-attack .pb-sprite img{ animation:pbLungeSpin .5s ease; }
+@keyframes pbLungeSpin{ 0%{transform:rotate(0)} 50%{transform:rotate(180deg)} 100%{transform:rotate(360deg)} }
+@keyframes pbLungeP{ 0%{transform:translateX(0)} 45%{transform:translateX(50px) scale(1.08)} 100%{transform:translateX(0)} }
+@keyframes pbLungeE{ 0%{transform:translateX(0)} 45%{transform:translateX(-50px) scale(1.08)} 100%{transform:translateX(0)} }
+@keyframes pbHit{ 0%{transform:translateX(0)} 25%{transform:translateX(-8px)} 50%{transform:translateX(8px)} 75%{transform:translateX(-4px)} 100%{transform:translateX(0)} }
+.pb-fighter.hit-flash .pb-sprite, .pb-fighter.hit-flash .pb-sprite img{ animation:pbHitFlash .45s ease; }
+@keyframes pbHitFlash{ 0%{ filter:brightness(1); } 30%{ filter:brightness(2.4) saturate(0); } 100%{ filter:brightness(1); } }
+.pb-fighter.hit-shake .pb-sprite, .pb-fighter.hit-shake .pb-sprite img{ animation:pbHit .4s ease; }
+.pb-fighter.hit-big .pb-sprite, .pb-fighter.hit-big .pb-sprite img{ animation:pbHitBig .55s ease; }
+@keyframes pbHitBig{ 0%{transform:scale(1)} 20%{transform:scale(.82) rotate(-4deg)} 45%{transform:scale(1.12) rotate(3deg)} 70%{transform:scale(.94) rotate(-2deg)} 100%{transform:scale(1) rotate(0)} }
+.pb-hit-burst{ position:absolute; left:50%; top:42%; width:10px; height:10px; border-radius:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:8; }
+.pb-hit-burst span{ position:absolute; left:0; top:0; width:6px; height:6px; border-radius:50%; animation:pbBurstFly .55s ease-out forwards; }
+.pb-hit-burst span.emoji{ background:none !important; font-size:15px; width:auto; height:auto; line-height:1; }
+@keyframes pbBurstFly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.pb-screen-shake{ animation:pbScreenShake .35s ease; }
+@keyframes pbScreenShake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.pb-ult-flash{ position:fixed; inset:0; background:#fff; opacity:0; z-index:40; pointer-events:none; }
+.pb-ult-flash.play{ animation:pbUltFlash .45s ease-out; }
+@keyframes pbUltFlash{ 0%{opacity:0} 15%{opacity:.85} 100%{opacity:0} }
+.pb-crit-flash{ position:fixed; inset:0; opacity:0; z-index:40; pointer-events:none; mix-blend-mode:screen; }
+.pb-crit-flash.play{ animation:pbCritFlash .32s ease-out; }
+@keyframes pbCritFlash{ 0%{opacity:0} 20%{opacity:.6} 100%{opacity:0} }
+.pb-dmg-pop{ position:absolute; font-weight:900; font-size:26px; font-style:italic; color:#FFA940; -webkit-text-stroke:2px #5a2200; text-shadow:0 3px 0 #5a2200,0 0 10px rgba(0,0,0,.5); pointer-events:none; animation:pbDmgPop 1s ease-out forwards; z-index:9; white-space:nowrap; }
+.pb-dmg-pop.crit{ color:#FFD700; font-size:30px; }
+@keyframes pbDmgPop{ 0%{ transform:translateY(0) scale(.7); opacity:0; } 15%{ transform:translateY(-6px) scale(1.15); opacity:1; } 30%{ transform:translateY(-14px) scale(1); opacity:1; } 100%{ transform:translateY(-46px) scale(1); opacity:0; } }
+/* Trayectorias/efectos de ataque específicos por mascota */
+.pb-fx-layer{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:7; }
+.pb-fx-tentacle{ position:absolute; top:46%; height:10px; border-radius:6px; background:linear-gradient(90deg,#2e86c1,#5dade2); box-shadow:0 0 8px #2e86c1; transform-origin:left center; animation:pbTentacleGrow .5s ease-out forwards; }
+@keyframes pbTentacleGrow{ 0%{ width:0; opacity:0; } 30%{ opacity:1; } 100%{ width:var(--tlen,140px); opacity:0; } }
+.pb-fx-beam{ position:absolute; top:20%; bottom:20%; left:calc(50% - 4px); width:8px; border-radius:6px; background:linear-gradient(180deg,#fff,#ffe680); box-shadow:0 0 14px #fff, 0 0 26px #ffe680; animation:pbBeamFlash .5s ease-out forwards; }
+@keyframes pbBeamFlash{ 0%{ opacity:0; transform:scaleY(.2); } 30%{ opacity:1; transform:scaleY(1); } 100%{ opacity:0; transform:scaleY(1); } }
+.pb-fx-flame{ position:absolute; bottom:6px; height:22px; border-radius:50% 50% 20% 20%; background:linear-gradient(90deg,#ff9d00,#ff3d00 60%,#7a0d13); filter:blur(1px); animation:pbFlameSweep .55s ease-out forwards; }
+@keyframes pbFlameSweep{ 0%{ width:0; opacity:0; } 25%{ opacity:.95; } 100%{ width:var(--flen,150px); opacity:0; } }
+.pb-fx-slash{ position:absolute; top:30%; width:130px; height:10px; background:linear-gradient(90deg,transparent,#c39bff,#fff,#c39bff,transparent); box-shadow:0 0 16px #a259ff; animation:pbSlashFly .4s ease-out forwards; }
+@keyframes pbSlashFly{ 0%{ transform:translateX(0) rotate(-18deg) scaleX(.2); opacity:0; } 40%{ opacity:1; transform:translateX(var(--sx,60px)) rotate(-18deg) scaleX(1); } 100%{ transform:translateX(calc(var(--sx,60px)*1.6)) rotate(-18deg) scaleX(1); opacity:0; } }
+.pb-fx-teleport{ animation:pbTeleport .5s steps(2) !important; }
+@keyframes pbTeleport{ 0%{ opacity:1; } 20%{ opacity:0; transform:translateX(10px); } 45%{ opacity:0; } 55%{ opacity:0; transform:translateX(-10px);} 100%{ opacity:1; transform:translateX(0);} }
+.pb-fx-meteor{ position:absolute; top:-24px; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle,#fff,#ff9d00 60%,#ff3d00); box-shadow:0 0 10px #ff6a00; animation:pbMeteorFall .5s ease-in forwards; }
+@keyframes pbMeteorFall{ 0%{ transform:translateY(0) scale(.6); opacity:0; } 20%{ opacity:1; } 100%{ transform:translateY(90px) scale(1); opacity:0; } }
+.pb-fx-circle{ position:absolute; left:50%; bottom:0; width:120px; height:40px; margin-left:-60px; border-radius:50%; border:3px solid #ffe680; box-shadow:0 0 16px #ffe680, inset 0 0 16px #fff; opacity:0; animation:pbCirclePulse .55s ease-out forwards; }
+@keyframes pbCirclePulse{ 0%{ opacity:0; transform:scale(.3) rotate(0); } 40%{ opacity:.9; } 100%{ opacity:0; transform:scale(1.5) rotate(60deg); } }
+/* --- FX ampliados: partículas físicas, raíz, tornado, rayo, meteoros grandes, espada, congelado --- */
+.pb-fx-particle{ position:absolute; left:50%; bottom:14%; font-size:15px; line-height:1; pointer-events:none; animation:pbParticleFly var(--pdur,.75s) cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes pbParticleFly{ 0%{ transform:translate(-50%,0) rotate(0); opacity:0; } 12%{ opacity:1; } 100%{ transform:translate(calc(-50% + var(--dx,0px)), var(--dy,40px)) rotate(var(--rot,180deg)); opacity:0; } }
+.pb-fx-root{ position:absolute; left:50%; bottom:0; width:22px; height:0; margin-left:-11px; background:linear-gradient(180deg,#8bd15a,#4a7c2a 60%,#2e5417); clip-path:polygon(50% 0%,80% 15%,68% 45%,90% 60%,60% 100%,40% 100%,10% 60%,32% 45%,20% 15%); box-shadow:0 0 14px rgba(139,209,90,.7); animation:pbRootGrow .6s cubic-bezier(.25,1.4,.4,1) forwards; }
+@keyframes pbRootGrow{ 0%{ height:0; opacity:0; } 15%{ opacity:1; } 60%{ height:150px; } 100%{ height:130px; opacity:.95; } }
+.pb-fx-tornado{ position:absolute; left:50%; bottom:0; width:100px; height:130px; margin-left:-50px; border-radius:50% 50% 40% 40%/60% 60% 40% 40%; background:conic-gradient(from 0deg,#ff3d00,#ffb300,#ff3d00 40%,#7a0d13 60%,#ff9d00 80%,#ff3d00); filter:blur(2px); opacity:0; animation:pbTornadoSpin .95s ease-in-out forwards; }
+@keyframes pbTornadoSpin{ 0%{ opacity:0; transform:scale(.3) rotate(0deg); } 20%{ opacity:.92; } 70%{ opacity:.92; transform:scale(1.05) rotate(560deg); } 100%{ opacity:0; transform:scale(1.15) rotate(760deg); } }
+.pb-fx-bolt{ position:absolute; top:-10%; left:calc(50% - 6px); width:12px; height:120%; background:linear-gradient(180deg,#fff,#9be7ff 30%,#2e86c1 70%,#fff); clip-path:polygon(40% 0,100% 0,55% 40%,90% 42%,10% 100%,45% 55%,0 55%); box-shadow:0 0 18px #9be7ff, 0 0 34px #2e86c1; opacity:0; animation:pbBoltFlash .38s steps(2) forwards; }
+@keyframes pbBoltFlash{ 0%{ opacity:0; } 15%{ opacity:1; } 30%{ opacity:.3; } 45%{ opacity:1; } 100%{ opacity:0; } }
+.pb-fx-ring{ position:absolute; left:50%; bottom:6%; width:20px; height:20px; margin-left:-10px; border-radius:50%; border:3px solid var(--ringcolor,#9be7ff); box-shadow:0 0 14px var(--ringcolor,#9be7ff); opacity:0; animation:pbRingExpand .6s ease-out forwards; }
+@keyframes pbRingExpand{ 0%{ opacity:.9; width:20px; height:20px; margin-left:-10px; } 100%{ opacity:0; width:180px; height:70px; margin-left:-90px; } }
+.pb-fx-lava{ position:absolute; left:50%; bottom:0; width:110px; height:26px; margin-left:-55px; border-radius:50%; background:radial-gradient(ellipse,#ffcf6b,#ff6a00 55%,#7a0d13 85%); box-shadow:0 0 20px #ff6a00; opacity:0; animation:pbLavaGlow 1s ease-out forwards; }
+@keyframes pbLavaGlow{ 0%{ opacity:0; transform:scale(.4); } 25%{ opacity:.9; } 100%{ opacity:0; transform:scale(1.3); } }
+.pb-fx-meteor-big{ position:absolute; top:-30px; width:26px; height:26px; border-radius:50%; background:radial-gradient(circle,#fff,#ff9d00 55%,#7a0d13); box-shadow:0 0 20px #ff6a00, 0 0 36px #ff3d00; animation:pbMeteorBigFall .6s ease-in forwards; }
+.pb-fx-meteor-big::after{ content:''; position:absolute; top:50%; left:50%; width:6px; height:60px; background:linear-gradient(180deg,rgba(255,157,0,.9),transparent); transform:translate(-50%,-100%); }
+@keyframes pbMeteorBigFall{ 0%{ transform:translateY(0) scale(.5); opacity:0; } 20%{ opacity:1; } 100%{ transform:translateY(120px) scale(1.15); opacity:0; } }
+.pb-fx-sword{ position:absolute; top:-40%; left:calc(50% - 9px); width:18px; height:60%; border-radius:3px 3px 0 0; background:linear-gradient(180deg,#fff,#c39bff 30%,#7a2fd6 75%,#3d1466); box-shadow:0 0 20px #a259ff, 0 0 40px #a259ff; opacity:0; animation:pbSwordDrop .65s cubic-bezier(.6,0,.7,1) forwards; }
+@keyframes pbSwordDrop{ 0%{ opacity:0; transform:translateY(-40px) scaleY(.5); } 15%{ opacity:1; } 55%{ transform:translateY(70px) scaleY(1.05); } 100%{ opacity:0; transform:translateY(90px) scaleY(1); } }
+.pb-fx-freeze{ position:fixed; inset:0; background:rgba(180,220,255,.18); backdrop-filter:grayscale(.4); opacity:0; z-index:39; pointer-events:none; animation:pbFreezeFlash 1.1s ease-out forwards; }
+@keyframes pbFreezeFlash{ 0%{ opacity:0; } 10%{ opacity:1; } 80%{ opacity:.55; } 100%{ opacity:0; } }
+.pb-fx-shockwave{ position:absolute; left:50%; bottom:6%; width:24px; height:24px; margin-left:-12px; border-radius:50%; border:4px solid #ffe680; box-shadow:0 0 20px #ffe680; opacity:0; animation:pbShockwaveExpand .55s ease-out forwards; }
+@keyframes pbShockwaveExpand{ 0%{ opacity:.95; transform:scale(.3); } 100%{ opacity:0; transform:scale(6); } }
+.pb-log{ position:relative; z-index:5; margin:4px 15px 0; min-height:20px; text-align:center; color:#ffe9c2; font-size:12px; font-weight:800; text-shadow:0 1px 3px rgba(0,0,0,.6); }
+.pb-tabs{ position:relative; z-index:5; display:flex; gap:0; margin:8px 15px 0; border-radius:12px 12px 0 0; overflow:hidden; }
+.pb-tab{ flex:1; text-align:center; padding:8px 4px; font-size:11.5px; font-weight:900; color:#ffe0c2; background:rgba(0,0,0,.25); }
+.pb-tab.active{ background:rgba(255,255,255,.12); color:#fff; }
+.pb-skills-panel{ position:relative; z-index:5; background:linear-gradient(180deg,rgba(30,6,8,.6),rgba(30,6,8,.85)); margin:0 15px; border-radius:0 0 14px 14px; padding:8px; border:1px solid rgba(255,215,150,.3); border-top:none; }
+.pb-skills-hint{ text-align:center; color:#ffdfae; font-size:10.5px; font-weight:700; margin:2px 0 8px; opacity:.85; }
+.pb-skills{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:6px; overflow-x:hidden; }
+.pb-skill-btn{ display:flex; align-items:center; gap:6px; width:100%; min-width:0; background:linear-gradient(180deg,#3a2f1f,#241c12); border:2px solid #d4a35a; border-radius:12px; padding:6px 8px; color:#fff; font-size:11px; font-weight:800; text-align:left; }
+.pb-skill-btn .pb-skill-ic{ width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+.pb-skill-btn .pb-skill-txt{ flex:1; display:flex; flex-direction:column; gap:1px; min-width:0; }
+.pb-skill-btn .pb-skill-txt > span:first-child{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pb-skill-btn .pb-skill-desc{ font-size:8px; font-weight:600; opacity:.7; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pb-skill-btn .pb-skill-lock{ font-size:8.5px; font-weight:900; color:#ff8a80; background:rgba(0,0,0,.35); padding:2px 6px; border-radius:8px; flex-shrink:0; }
+.pb-skill-btn:disabled{ opacity:.45; filter:grayscale(.4); }
+.pb-attack-row{ position:relative; z-index:5; padding:8px 15px 16px; }
+.pb-attack-btn{ width:100%; background:linear-gradient(180deg,#FFD54F,#FF9416); border:none; border-radius:16px; padding:15px; color:#5a2e00; font-weight:900; font-size:16px; letter-spacing:1px; box-shadow:0 6px 0 #b96c00, 0 10px 16px rgba(0,0,0,.3); }
+.pb-attack-btn:active{ transform:translateY(3px); box-shadow:0 3px 0 #b96c00; }
+.pb-result-modal{ position:fixed; inset:0; background:rgba(0,0,0,.72); z-index:50; display:flex; align-items:center; justify-content:center; }
+.pb-result-card{ background:linear-gradient(180deg,#241a3d,#3a2a5f); border-radius:22px; padding:26px 22px; text-align:center; width:82%; max-width:320px; border:2px solid rgba(255,215,100,.4); }
+.pb-result-card h2{ color:#FFD700; font-size:24px; margin:0 0 6px; }
+.pb-result-card p{ color:#d8d0f0; font-size:13px; margin:0 0 16px; }
+.pb-result-card button{ background:linear-gradient(180deg,#FFD54F,#FF9416); border:none; border-radius:14px; padding:12px 20px; font-weight:900; color:#5a2e00; width:100%; }
 #mascota-food-shop-screen{ background:linear-gradient(180deg,#fdf3e3 0%,#f7e7cf 100%); min-height:100vh; padding-bottom:30px; }
 .fs-header{ display:flex; align-items:center; gap:10px; padding:14px 15px 6px; }
 .fs-header h2{ flex:1; text-align:center; margin:0; font-size:19px; font-weight:900; background:linear-gradient(90deg,#ff5ec4,#7a5cff,#3fa9ff,#3fd18e,#ffd23f,#ff7a3f); -webkit-background-clip:text; background-clip:text; color:transparent; }
@@ -1632,6 +1824,64 @@
         <div class="fs-grid" id="fs-grid"></div>
     </div>
 
+    <div id="pet-battle-screen" class="screen">
+        <div class="pb-ult-flash" id="pb-ult-flash"></div>
+        <div class="pb-crit-flash" id="pb-crit-flash"></div>
+        <div class="pb-slowmo-vignette" id="pb-slowmo-vignette"></div>
+        <div class="pb-pillar left"></div>
+        <div class="pb-pillar right"></div>
+        <div class="pb-column left"></div>
+        <div class="pb-column right"></div>
+        <div class="pb-stars" id="pb-stars"></div>
+        <div class="pb-topbar">
+            <button class="pb-back" onclick="closePetBattle()">SALIR</button>
+            <div style="color:#fff; font-weight:900; font-size:13px; text-shadow:0 2px 4px rgba(0,0,0,.4)">⚔️ ARENA DE BATALLA</div>
+            <button class="pb-help-btn" onclick="pbToggleSkillInfo()">AYUDA</button>
+        </div>
+        <div class="pb-hpbars">
+            <div class="pb-hpcard" id="pb-p-hpcard">
+                <div class="pb-hp-name"><span id="pb-p-name">—</span><span class="pb-hp-star">⭐</span></div>
+                <div class="pb-hp-elems" id="pb-p-elems"></div>
+                <div class="pb-hp-track"><div class="pb-hp-chip" id="pb-p-hpchip"></div><div class="pb-hp-fill" id="pb-p-hpfill"></div></div>
+                <div class="pb-hp-num" id="pb-p-hpnum">0/0</div>
+                <div class="pb-turn-badge">TU TURNO</div>
+            </div>
+            <div class="pb-hpcard enemy" id="pb-e-hpcard">
+                <div class="pb-hp-name"><span class="pb-hp-star">⭐</span><span id="pb-e-name">—</span></div>
+                <div class="pb-hp-elems" id="pb-e-elems"></div>
+                <div class="pb-hp-track"><div class="pb-hp-chip" id="pb-e-hpchip"></div><div class="pb-hp-fill" id="pb-e-hpfill"></div></div>
+                <div class="pb-hp-num" id="pb-e-hpnum">0/0</div>
+                <div class="pb-turn-badge">SU TURNO</div>
+            </div>
+        </div>
+        <div class="pb-arena" id="pb-arena">
+            <div class="pb-fighter" id="pb-p-fighter">
+                <div class="pb-turn-glow">▼</div>
+                <div class="pb-sprite" id="pb-p-sprite">🐾</div>
+                <div class="pb-ground-shadow"></div>
+                <div class="pb-fx-layer" id="pb-p-fx"></div>
+            </div>
+            <div class="pb-fighter enemy" id="pb-e-fighter">
+                <div class="pb-turn-glow">▼</div>
+                <div class="pb-sprite" id="pb-e-sprite">🐾</div>
+                <div class="pb-ground-shadow"></div>
+                <div class="pb-fx-layer" id="pb-e-fx"></div>
+            </div>
+        </div>
+        <div class="pb-log" id="pb-log">¡Elige tu ataque!</div>
+        <div class="pb-tabs">
+            <div class="pb-tab active">ATAQUES</div>
+            <div class="pb-tab">TUS MASCOTAS</div>
+        </div>
+        <div class="pb-skills-panel">
+            <div class="pb-skills-hint">Elige el ataque que quieres que ejecute tu mascota</div>
+            <div class="pb-skills" id="pb-skills"></div>
+        </div>
+        <div class="pb-info-overlay" id="pb-info-overlay" onclick="pbToggleSkillInfo(false)">
+            <div class="pb-info-card" id="pb-info-card" onclick="event.stopPropagation()"></div>
+        </div>
+    </div>
+
     <!-- PANEL DE ADMINISTRADOR -->
 
     <div id="admin-screen" class="screen">
@@ -1945,7 +2195,7 @@ function defaultConfig() {
             {id:10,name:'Marco Mítico',    gemCost:160,goldReward:0,    discount:'Cosmético', isCosmetic:true},
         ],
         mascotas: [
-            { id:'pollito', name:'Pollito', emoji:'🐥', rarity:'comun', levelMax:15, obtainMethod:'Gratis al empezar',
+            { id:'pollito', name:'Pollito', emoji:'🐥', rarity:'comun', element1:'naturaleza', element2:'', levelMax:15, obtainMethod:'Gratis al empezar',
               story:'Nació de un huevo dorado que cayó del cielo. Es la mascota más leal de todas. Crece junto a ti y, si lo cuidas mucho, se convierte en el ave más poderosa del reino.',
               bonusLabel:'Monedas extra', bonusInitial:'+5% Monedas extra', bonusMax:'+15% Monedas extra',
               foodType:'🌿 Semilla', totalFood:75, totalCost:7500, goldCost:0, totalDiamondCost:100, images:{e1:'',e2:'',e3:'',e4:''},
@@ -1955,7 +2205,7 @@ function defaultConfig() {
                   {range:'10 → 14', name:'Gallo Adulto', aspect:'Fuerte, plumas brillantes', diamondCost:30},
                   {range:'15', name:'Águila Real', aspect:'Forma final, alas doradas', diamondCost:50},
               ] },
-            { id:'zorro', name:'Zorro', emoji:'🦊', rarity:'raro', levelMax:20, obtainMethod:'💎 500 en tienda',
+            { id:'zorro', name:'Zorro', emoji:'🦊', rarity:'raro', element1:'fuego', element2:'viento', levelMax:20, obtainMethod:'💎 500 en tienda',
               story:'Viene de los bosques mágicos. Dicen que quien lo tiene siempre encuentra lo que busca. Sus ojos brillan cuando la suerte está cerca.',
               bonusLabel:'Suerte / número faltante', bonusInitial:'+15% de conseguir número faltante', bonusMax:'+25% de suerte',
               foodType:'🌿 Semilla + 🍅 Fruta Dulce', totalFood:100, totalCost:15000, goldCost:15000, totalDiamondCost:150, images:{e1:'',e2:'',e3:'',e4:''},
@@ -1968,7 +2218,7 @@ function defaultConfig() {
               specialAbilities:[
                   { stage:3, key:'numero_afortunado', name:'Número Afortunado', icon:'🦊', effect:'Si te falta 1 solo número, aparece gratis' },
               ] },
-            { id:'pulpo', name:'Pulpo', emoji:'🐙', rarity:'raro', levelMax:20, obtainMethod:'💎 800 en tienda',
+            { id:'pulpo', name:'Pulpo', emoji:'🐙', rarity:'raro', element1:'agua', element2:'electrico', levelMax:20, obtainMethod:'💎 800 en tienda',
               story:'Viajó desde otra galaxia para acompañarte. Cada uno de sus tentáculos trae una estrella diferente. Trae suerte en los juegos largos.',
               bonusLabel:'Cartones extra', bonusInitial:'+1 Cartón extra', bonusMax:'+2 Cartones extra',
               foodType:'🌿 Semilla + 🍅 Fruta Dulce', totalFood:100, totalCost:15000, goldCost:15000, totalDiamondCost:180, images:{e1:'',e2:'',e3:'',e4:''},
@@ -1981,7 +2231,7 @@ function defaultConfig() {
               specialAbilities:[
                   { stage:3, key:'carton_extra', name:'Cartón Extra', icon:'🐙', effect:'Al iniciar la partida, recibes 1 cartón adicional GRATIS' },
               ] },
-            { id:'dragon', name:'Dragón', emoji:'🐉', rarity:'epico', levelMax:25, obtainMethod:'Pase VIP',
+            { id:'dragon', name:'Dragón', emoji:'🐉', rarity:'epico', element1:'fuego', element2:'naturaleza', levelMax:25, obtainMethod:'Pase VIP',
               story:'Guardián de las montañas de fuego. Solo aparece ante quienes demuestran gran valor. Su fuego quema las malas rachas y trae riqueza.',
               bonusLabel:'Gemas extra', bonusInitial:'+15% Gemas extra', bonusMax:'+30% Gemas extra',
               foodType:'🌿 Semilla + 🍅 Fruta + 🥩 Carne Mágica', totalFood:125, totalCost:33750, goldCost:33750, totalDiamondCost:300, images:{e1:'',e2:'',e3:'',e4:''},
@@ -1994,7 +2244,7 @@ function defaultConfig() {
               specialAbilities:[
                   { stage:3, key:'lluvia_gemas', name:'Lluvia de Gemas', icon:'🐉', effect:'Cada vez que cantes una línea, ganas gemas extra' },
               ] },
-            { id:'unicornio', name:'Unicornio', emoji:'🦄', rarity:'epico', levelMax:25, obtainMethod:'Evento especial',
+            { id:'unicornio', name:'Unicornio', emoji:'🦄', rarity:'epico', element1:'luz', element2:'viento', levelMax:25, obtainMethod:'Evento especial',
               story:'Nace cuando el sol se oculta y la luna sale. Su luz sana y da fuerza. Quien lo posee aprende más rápido que nadie.',
               bonusLabel:'Experiencia extra', bonusInitial:'+20% Experiencia extra', bonusMax:'+40% Experiencia extra',
               foodType:'🌿 Semilla + 🍅 Fruta + 🥩 Carne Mágica', totalFood:125, totalCost:33750, goldCost:33750, totalDiamondCost:300, images:{e1:'',e2:'',e3:'',e4:''},
@@ -2007,7 +2257,7 @@ function defaultConfig() {
               specialAbilities:[
                   { stage:3, key:'experiencia_celestial', name:'Experiencia Celestial', icon:'🦄', effect:'Toda la experiencia que ganes se duplica por 10 minutos' },
               ] },
-            { id:'leon', name:'León', emoji:'🦁', rarity:'legendario', levelMax:30, obtainMethod:'Pase VIP MAESTRO',
+            { id:'leon', name:'León', emoji:'🦁', rarity:'legendario', element1:'legendario', element2:'luz', levelMax:30, obtainMethod:'Pase VIP MAESTRO',
               story:'Rey de todos los animales. Solo se entrega a los jugadores más leales y fuertes. Su presencia impone respeto y da grandes recompensas.',
               bonusLabel:'Bonificación en TODO', bonusInitial:'+30% en TODO', bonusMax:'+45% en TODO',
               foodType:'🌿 Semilla + 🍅 Fruta + 🥩 Carne + 🍖 Manjar Real', totalFood:150, totalCost:60000, goldCost:60000, totalDiamondCost:470, images:{e1:'',e2:'',e3:'',e4:''},
@@ -2020,7 +2270,7 @@ function defaultConfig() {
               specialAbilities:[
                   { stage:3, key:'poder_real', name:'Poder Real', icon:'👑', effect:'Todos tus cartones valen el doble de puntos' },
               ] },
-            { id:'aguila', name:'Águila', emoji:'🦅', rarity:'mitico', levelMax:35, obtainMethod:'Evolucionando el Pollito a Nivel 30',
+            { id:'aguila', name:'Águila', emoji:'🦅', rarity:'mitico', element1:'mitico', element2:'electrico', levelMax:35, obtainMethod:'Evolucionando el Pollito a Nivel 30',
               story:'La forma más alta de evolución. Solo quien cuida desde el principio logra despertar su poder. Vuela más alto que todo y trae la victoria segura.',
               bonusLabel:'Bonificación en TODO', bonusInitial:'+50% en TODO', bonusMax:'+75% en TODO',
               foodType:'Todos los tipos + ✨ Ámbar Dorado', totalFood:175, totalCost:105000, goldCost:105000, totalDiamondCost:500, images:{e1:'',e2:'',e3:'',e4:'',e5:''},
@@ -2069,6 +2319,60 @@ const MASCOTA_RAREZAS = {
     legendario: { label:'Legendario', color:'#FFC107', symbol:'👑' },
     mitico:     { label:'Mítico',     color:'#FF7043', symbol:'🌟' },
 };
+
+/* ---------- Sistema de Batalla de Mascotas: Elementos + Rarezas + Combate ---------- */
+const ELEMENTS = {
+    naturaleza: { label:'Naturaleza', color:'#4CAF50', bg:'#1b3a20', icon:'🍃' },
+    fuego:      { label:'Fuego',      color:'#FF5252', bg:'#3a1a14', icon:'🔥' },
+    agua:       { label:'Agua',       color:'#42A5F5', bg:'#12283f', icon:'💧' },
+    viento:     { label:'Viento',     color:'#26C6DA', bg:'#123a3d', icon:'🌪️' },
+    electrico:  { label:'Eléctrico',  color:'#FFD600', bg:'#3a3210', icon:'⚡' },
+    luz:        { label:'Luz',        color:'#FFC107', bg:'#3a2f10', icon:'☀️' },
+    legendario: { label:'Legendario', color:'#AB47BC', bg:'#2a1338', icon:'👑' },
+    mitico:     { label:'Mítico',     color:'#EC407A', bg:'#3a1226', icon:'💎' },
+};
+
+// x2 = el atacante le gana (doble daño) al elemento defensor; x0.5 = le gana el defensor (mitad de daño)
+const TYPE_CHART = {
+    naturaleza: { strong:['agua','electrico'], weak:['fuego','luz'] },
+    fuego:      { strong:['naturaleza','luz'], weak:['agua'] },
+    agua:       { strong:['fuego'],            weak:['naturaleza','electrico'] },
+    viento:     { strong:['naturaleza','luz'], weak:['electrico'] },
+    electrico:  { strong:['agua','viento'],    weak:['naturaleza'] },
+    luz:        { strong:['viento','fuego'],   weak:['naturaleza'] },
+    legendario: { strong:[], weak:[], beatsAll:true },   // x1 a todos, nadie le gana nunca
+    mitico:     { strong:[], weak:[], beatsAll:true, immune:true }, // x1 a todos, nadie le hace x2, nunca inmune al atacar
+};
+
+function elementDamageMult(atkElement, defElement) {
+    if (!atkElement || !defElement) return 1;
+    if (atkElement === 'legendario' || atkElement === 'mitico') return 1; // ganan x1 a todos (nunca x2 ni x0.5)
+    if (defElement === 'legendario' || defElement === 'mitico') return 1; // nadie les gana x2 nunca
+    const chart = TYPE_CHART[atkElement];
+    if (!chart) return 1;
+    if (chart.strong.includes(defElement)) return 2;
+    if (chart.weak.includes(defElement)) return 0.5;
+    return 1;
+}
+
+const RARITY_STATS = {
+    comun:      { mult:1.0, vida:250,  ataque:35,  defensa:20 },
+    raro:       { mult:1.4, vida:380,  ataque:55,  defensa:30 },
+    epico:      { mult:2.0, vida:550,  ataque:80,  defensa:45 },
+    legendario: { mult:4.5, vida:900,  ataque:130, defensa:75 },
+    mitico:     { mult:7.5, vida:1400, ataque:200, defensa:110 },
+};
+
+// Stats de combate de una mascota según su rareza y etapa actual (la etapa sube el poder gradualmente)
+function petBattleStats(m, stage, maxStage) {
+    const base = RARITY_STATS[m.rarity] || RARITY_STATS.comun;
+    const growth = 1 + Math.max(0, (stage || 1) - 1) * (0.9 / Math.max(1, (maxStage || 4) - 1)); // hasta ~+90% en la etapa máxima
+    return {
+        vidaMax: Math.round(base.vida * growth),
+        ataque: Math.round(base.ataque * growth),
+        defensa: Math.round(base.defensa * growth),
+    };
+}
 
 /* ---------- Habilidades especiales únicas + combos entre mascotas ---------- */
 const MAX_MASCOTAS_EQUIPADAS = 3;
@@ -3351,6 +3655,7 @@ function goToScreen(screenId, isReplace) {
     stopAutoBingo();
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
+    document.body.classList.toggle('no-scroll-fixed-screen', screenId === 'pet-battle-screen');
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass','mascota-screen':'nav-mascota'};
@@ -3368,6 +3673,15 @@ function goToScreen(screenId, isReplace) {
 
     if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
 }
+
+// Altura de viewport estable en px (evita el "salto" de 100vh al girar la pantalla
+// o al mostrarse/ocultarse la barra de direcciones del navegador).
+function pbSetStableVH() {
+    document.documentElement.style.setProperty('--pb-vh', (window.innerHeight * 0.01) + 'px');
+}
+pbSetStableVH();
+window.addEventListener('resize', pbSetStableVH);
+window.addEventListener('orientationchange', () => { setTimeout(pbSetStableVH, 60); setTimeout(pbSetStableVH, 300); });
 
 window.addEventListener('popstate', () => {
     if (isAdmin) return;
@@ -5738,6 +6052,16 @@ function renderAdminMascotas() {
                 <input type="number" value="${m.goldCost || 0}" placeholder="🪙 Costo total" oninput="CONFIG.mascotas[${idx}].goldCost=Number(this.value)">
             </div>
             <div class="row-grid" style="margin-top:6px">
+                <select onchange="CONFIG.mascotas[${idx}].element1=this.value" style="width:100%">
+                    <option value="">⚔️ Elemento 1</option>
+                    ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${m.element1===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
+                </select>
+                <select onchange="CONFIG.mascotas[${idx}].element2=this.value" style="width:100%">
+                    <option value="">⚔️ Elemento 2 (opcional)</option>
+                    ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${m.element2===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
+                </select>
+            </div>
+            <div class="row-grid" style="margin-top:6px">
                 <input type="text" value="${m.bonusLabel || ''}" placeholder="Tipo de bonificación" oninput="CONFIG.mascotas[${idx}].bonusLabel=this.value">
             </div>
             <div class="row-grid" style="margin-top:6px">
@@ -5825,7 +6149,7 @@ function addMascotaAdmin() {
     if (!CONFIG.mascotas) CONFIG.mascotas = [];
     const newId = 'm' + (Date.now());
     CONFIG.mascotas.push({
-        id:newId, name:'Nueva mascota', emoji:'🐾', rarity:'comun', levelMax:15, obtainMethod:'', goldCost:0,
+        id:newId, name:'Nueva mascota', emoji:'🐾', rarity:'comun', element1:'', element2:'', levelMax:15, obtainMethod:'', goldCost:0,
         bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'', totalFood:0, totalCost:0, totalDiamondCost:0,
         images:{e1:'',e2:'',e3:'',e4:''},
         evolutionStages:[
@@ -5982,7 +6306,8 @@ function renderMascotaScreen() {
         actions.innerHTML = `
             <button class="mh-action-btn mh-action-feed" onclick="alimentarMascotaActual()"><span class="mh-ic">🎁</span>ALIMENTAR</button>
             <button class="mh-action-btn mh-action-evo" onclick="evolucionarMascotaActual()"><span class="mh-ic">⚡</span>${petStage >= maxStage ? 'AL MÁXIMO' : `EVOLUCIONAR${nextCost ? ` (💎${nextCost})` : ''}`}</button>
-            <button class="mh-action-btn mh-action-equip ${isEquipped ? 'is-on' : ''}" onclick="mhToggleEquip()"><span class="mh-ic">${isEquipped ? '✔️' : '➕'}</span>${isEquipped ? 'EQUIPADO' : 'EQUIPAR'}</button>`;
+            <button class="mh-action-btn mh-action-equip ${isEquipped ? 'is-on' : ''}" onclick="mhToggleEquip()"><span class="mh-ic">${isEquipped ? '✔️' : '➕'}</span>${isEquipped ? 'EQUIPADO' : 'EQUIPAR'}</button>
+            <button class="mh-action-btn mh-action-battle" onclick="openPetBattle('${mascotaHeroSelectedId}')"><span class="mh-ic">⚔️</span>BATALLA</button>`;
         bonusCard.style.display = def.bonusLabel ? 'flex' : 'none';
         if (def.bonusLabel) document.getElementById('mh-bonus-text').textContent = def.bonusLabel + (isEquipped ? '' : ' (sin equipar)');
     } else {
@@ -6750,5 +7075,637 @@ window.addEventListener('load', async () => {
         }
     }, 500);
 });
+
+/* ================= ARENA DE BATALLA DE MASCOTAS ================= */
+let PB = null; // estado de la batalla en curso
+
+function pbBuildStars() {
+    const box = document.getElementById('pb-stars');
+    if (!box || box.childElementCount) return;
+    for (let i = 0; i < 18; i++) {
+        const s = document.createElement('span');
+        s.textContent = '✦';
+        s.style.left = Math.random() * 100 + '%';
+        s.style.top = (Math.random() * 45) + '%';
+        s.style.fontSize = (6 + Math.random() * 8) + 'px';
+        s.style.animationDelay = (Math.random() * 2) + 's';
+        box.appendChild(s);
+    }
+}
+
+function pbElemBadges(m) {
+    const els = [m.element1, m.element2].filter(Boolean);
+    if (!els.length) return '<span class="pb-elem-badge" style="background:#555">🐾</span>';
+    return els.map(k => {
+        const e = ELEMENTS[k]; if (!e) return '';
+        return `<span class="pb-elem-badge" style="background:${e.bg};color:${e.color}" title="${e.label}">${e.icon}</span>`;
+    }).join('');
+}
+
+// Habilidades de combate genéricas por etapa (fallback para cualquier mascota que no
+// tenga su propio set de animaciones definido en PB_PET_SKILLS).
+const PB_SKILL_DEFS = [
+    { name:'Golpe', desc:'Ataque básico', mult:1.1, minStage:1, fx:'shake' },
+    { name:'Impacto', desc:'Golpe con más fuerza', mult:1.35, minStage:2, fx:'flash' },
+    { name:'Furia', desc:'Ataque salvaje', mult:1.65, minStage:3, fx:'flash' },
+    { name:'Definitiva', desc:'Habilidad máxima', mult:2.2, minStage:4, ultimate:true, fx:'ultimate' },
+];
+
+// Set de 4 habilidades (Acción / Impacto / Súper Efectivo / Hab.4) por cada una de las
+// 7 mascotas, según el documento "Animaciones de Ataque - Sistema de Mascotas".
+// "fx" indica qué animación especial se dispara en el campo de batalla al usarla.
+const PB_PET_SKILLS = {
+    pollito: [
+        { name:'Picotazo', desc:'Salto y picotazo fuerte con tierra y hojas', mult:1.1, minStage:1, fx:'pollito-peck' },
+        { name:'Tierra y Hojas', desc:'El impacto levanta más tierra y hojas + onda en el suelo', mult:1.35, minStage:2, fx:'pollito-peck-2' },
+        { name:'Picotazo Doble', desc:'Pica 2 veces rápido con doble lluvia de tierra', mult:1.6, minStage:3, fx:'pollito-double' },
+        { name:'Raíz Gigante', desc:'Súper efectivo: doble picotazo + raíz gigante brota del suelo', mult:2.2, minStage:4, ultimate:true, fx:'pollito-root' },
+    ],
+    zorro: [
+        { name:'Cola de Fuego', desc:'Giro elegante lanzando la cola en espiral', mult:1.1, minStage:1, fx:'zorro-spin' },
+        { name:'Llamarada Envolvente', desc:'Llamaradas en remolino envuelven al objetivo', mult:1.35, minStage:2, fx:'zorro-swirl' },
+        { name:'Furia Ardiente', desc:'Giro feroz de cola en llamas, remolino más intenso', mult:1.6, minStage:3, fx:'zorro-furia' },
+        { name:'Nueve Colas', desc:'9 colas de fuego golpean con la fuerza de un tornado de llamas', mult:2.2, minStage:4, ultimate:true, fx:'zorro-nine' },
+    ],
+    pulpo: [
+        { name:'Tentáculo', desc:'Tentáculo largo que cruza la pantalla', mult:1.1, minStage:1, fx:'pulpo-tentacle' },
+        { name:'Chispazo Azul', desc:'Explosión de agua con chispas eléctricas azules', mult:1.35, minStage:2, fx:'pulpo-splash' },
+        { name:'Tormenta Eléctrica', desc:'Descarga de agua cargada con anillos eléctricos', mult:1.6, minStage:3, fx:'pulpo-storm' },
+        { name:'Kraken', desc:'3 tentáculos gigantes + caída de un trueno devastador', mult:2.2, minStage:4, ultimate:true, fx:'pulpo-kraken' },
+    ],
+    dragon: [
+        { name:'Llamarada', desc:'Llamarada ancha que avanza por el suelo', mult:1.1, minStage:1, fx:'dragon-flame' },
+        { name:'Roca Fundida', desc:'El impacto funde la roca dejando un brillo de lava', mult:1.35, minStage:2, fx:'dragon-lava' },
+        { name:'Furia Draconiana', desc:'Llamarada doble más intensa con lava al impacto', mult:1.6, minStage:3, fx:'dragon-furia' },
+        { name:'Lluvia de Meteoritos', desc:'Bombardeo cinemático de 3 rocas gigantes en llamas', mult:2.2, minStage:4, ultimate:true, fx:'dragon-meteor' },
+    ],
+    unicornio: [
+        { name:'Galope de Luz', desc:'Galope en el aire con rayo puro desde el cuerno', mult:1.1, minStage:1, fx:'unicornio-beam' },
+        { name:'Destello Estelar', desc:'Explosión de estrellas y destellos', mult:1.35, minStage:2, fx:'unicornio-star' },
+        { name:'Rayo Sagrado', desc:'Doble haz de luz con lluvia de estrellas', mult:1.6, minStage:3, fx:'unicornio-sagrado' },
+        { name:'Juicio Divino', desc:'Círculo de luz sagrada en el suelo + rayo descendente con bloom', mult:2.2, minStage:4, ultimate:true, fx:'unicornio-judgment' },
+    ],
+    leon: [
+        { name:'Rugido Sísmico', desc:'Rugido y salto con melena dorada, onda de choque', mult:1.15, minStage:1, fx:'leon-roar' },
+        { name:'Zarpazo Dorado', desc:'Doble onda de choque dorada circular', mult:1.4, minStage:2, fx:'leon-zarpazo' },
+        { name:'Estela Púrpura', desc:'Garras con estela púrpura', mult:1.7, minStage:3, fx:'leon-estela' },
+        { name:'Golpe Real', desc:'Espada de luz púrpura gigante atraviesa al enemigo', mult:2.3, minStage:4, ultimate:true, fx:'leon-royal' },
+    ],
+    aguila: [
+        { name:'Picada Eléctrica', desc:'Teletransporte y picada rodeada de rayos', mult:1.15, minStage:1, fx:'aguila-teleport' },
+        { name:'Energía Divina', desc:'Explosión de energía divina al impactar', mult:1.4, minStage:2, fx:'aguila-energia' },
+        { name:'Rayo Infinito', desc:'Descarga eléctrica sostenida con anillo de rayos', mult:1.7, minStage:3, fx:'aguila-rayo' },
+        { name:'Tormenta Perfecta', desc:'El tiempo se detiene con rayos infinitos y viento elevador', mult:2.3, minStage:4, ultimate:true, fx:'aguila-storm' },
+    ],
+};
+
+function pbSkillsFor(mascotaId) { return PB_PET_SKILLS[mascotaId] || PB_SKILL_DEFS; }
+
+function pbBuildFighter(mascotaDef, ownedRec, isPlayer) {
+    const stages = mascotaStages(mascotaDef);
+    const stage = ownedRec ? ownedRec.stage : 1;
+    const stats = petBattleStats(mascotaDef, stage, stages.length);
+    const img = mascotaStageImage(mascotaDef, stage);
+    return {
+        def: mascotaDef, stage, maxStage: stages.length, img,
+        name: mascotaDef.name, element1: mascotaDef.element1, element2: mascotaDef.element2,
+        hp: stats.vidaMax, hpMax: stats.vidaMax, ataque: stats.ataque, defensa: stats.defensa,
+        skills: pbSkillsFor(mascotaDef.id),
+        isPlayer, alive: true,
+    };
+}
+
+// Indica en la pantalla quién tiene el turno (banda verde "TU TURNO" / "SU TURNO"
+// sobre la barra de vida y flecha dorada sobre la mascota activa).
+function pbSetTurnUI(who) {
+    const pCard = document.getElementById('pb-p-hpcard');
+    const eCard = document.getElementById('pb-e-hpcard');
+    const pFighter = document.getElementById('pb-p-fighter');
+    const eFighter = document.getElementById('pb-e-fighter');
+    if (pCard) pCard.classList.toggle('pb-active', who === 'player');
+    if (eCard) eCard.classList.toggle('pb-active', who === 'enemy');
+    if (pFighter) pFighter.classList.toggle('pb-active', who === 'player');
+    if (eFighter) eFighter.classList.toggle('pb-active', who === 'enemy');
+}
+
+function pbPickRival(excludeId, stage) {
+    const pool = (CONFIG.mascotas || []).filter(m => m.id !== excludeId);
+    const src = pool.length ? pool : (CONFIG.mascotas || []);
+    const pick = src[Math.floor(Math.random() * src.length)] || { id:'rival', name:'Rival Salvaje', emoji:'🐾', rarity:'comun' };
+    return pbBuildFighter(pick, { stage: stage || 1 }, false);
+}
+
+function openPetBattle(mascotaId) {
+    const def = (CONFIG.mascotas || []).find(m => m.id === mascotaId);
+    const owned = getOwnedMascota(mascotaId);
+    if (!def || !owned) { showToast('❌ Necesitas tener esa mascota para batallar.'); return; }
+    const player = pbBuildFighter(def, owned, true);
+    const enemy = pbPickRival(mascotaId, owned.stage);
+    PB = { player, enemy, turn: 'player', over: false };
+    goToScreen('pet-battle-screen');
+    pbTryLandscape();
+    pbBuildStars();
+    pbRenderFighters();
+    pbRenderSkills();
+    pbSetLog('¡Elige tu ataque!');
+    pbSetTurnUI('player');
+}
+
+function closePetBattle() {
+    PB = null;
+    pbToggleSkillInfo(false);
+    pbRestoreOrientation();
+    goToScreen('mascota-screen');
+}
+
+function pbRenderFighters() {
+    if (!PB) return;
+    const { player, enemy } = PB;
+    document.getElementById('pb-p-name').innerHTML = `${player.name} <span style="opacity:.7">Etapa ${player.stage}</span>`;
+    document.getElementById('pb-e-name').innerHTML = `<span style="opacity:.7">Etapa ${enemy.stage}</span> ${enemy.name}`;
+    document.getElementById('pb-p-elems').innerHTML = pbElemBadges(player);
+    document.getElementById('pb-e-elems').innerHTML = pbElemBadges(enemy);
+    document.getElementById('pb-p-sprite').innerHTML = player.img ? `<img src="${player.img}">` : (player.def.emoji || '🐾');
+    document.getElementById('pb-e-sprite').innerHTML = enemy.img ? `<img src="${enemy.img}">` : (enemy.def.emoji || '🐾');
+    pbUpdateHpBar('p', player);
+    pbUpdateHpBar('e', enemy);
+}
+
+function pbUpdateHpBar(prefix, fighter) {
+    const pct = Math.max(0, Math.round((fighter.hp / fighter.hpMax) * 100));
+    const fill = document.getElementById(`pb-${prefix}-hpfill`);
+    const chip = document.getElementById(`pb-${prefix}-hpchip`);
+    fill.style.width = pct + '%';
+    fill.classList.toggle('low', pct <= 30);
+    if (chip) {
+        const prevPct = parseFloat(chip.dataset.pct != null ? chip.dataset.pct : pct);
+        if (pct < prevPct) {
+            chip.style.transition = 'none';
+            chip.style.width = prevPct + '%';
+            void chip.offsetWidth;
+            chip.style.transition = 'width .6s ease .35s';
+            chip.style.width = pct + '%';
+        } else {
+            chip.style.transition = 'none';
+            chip.style.width = pct + '%';
+        }
+        chip.dataset.pct = pct;
+    }
+    document.getElementById(`pb-${prefix}-hpnum`).textContent = `${Math.max(0, Math.round(fighter.hp))}/${fighter.hpMax}`;
+}
+
+function pbRenderSkills() {
+    const wrap = document.getElementById('pb-skills');
+    const player = PB.player;
+    const el = ELEMENTS[player.element1] || { icon:'✨', color:'#fff', bg:'#333' };
+    wrap.innerHTML = player.skills.map((sk, idx) => {
+        const unlocked = player.stage >= sk.minStage;
+        return `<button class="pb-skill-btn" ${unlocked ? '' : 'disabled'} onclick="pbPlayerMove(${idx})">
+            <span class="pb-skill-ic" style="background:${el.bg};color:${el.color}">${sk.ultimate ? '🌟' : el.icon}</span>
+            <span class="pb-skill-txt"><span>${sk.name}</span><span class="pb-skill-desc">${sk.desc || ''}</span></span>
+            ${unlocked ? '' : `<span class="pb-skill-lock">🔒 Etapa ${sk.minStage}</span>`}
+        </button>`;
+    }).join('');
+}
+
+// Panel de información de habilidades (estilo lista Dragon City: icono + "Poder X. Descripción")
+function pbToggleSkillInfo(force) {
+    const ov = document.getElementById('pb-info-overlay');
+    if (!ov || !PB || !PB.player) return;
+    const show = force !== undefined ? force : !ov.classList.contains('active');
+    if (show) {
+        const player = PB.player;
+        const el = ELEMENTS[player.element1] || { icon:'✨', color:'#fff', bg:'#333' };
+        const card = document.getElementById('pb-info-card');
+        card.innerHTML = player.skills.map(sk => {
+            const power = Math.round((player.ataque || 0) * (sk.mult || 1));
+            const locked = player.stage < sk.minStage;
+            return `<div class="pb-info-row">
+                <span class="pb-info-ic" style="background:${el.bg};color:${el.color}">${sk.ultimate ? '🌟' : el.icon}</span>
+                <span class="pb-info-txt${locked ? ' locked' : ''}"><b>${sk.name}${locked ? ` 🔒 Etapa ${sk.minStage}` : ''}</b>Poder ${power}. ${sk.desc || ''}</span>
+            </div>`;
+        }).join('');
+    }
+    ov.classList.toggle('active', show);
+}
+
+// Intenta rotar/forzar horizontal la pantalla de batalla (funciona en navegadores/PWA que
+// lo permitan; si la app está empaquetada con Capacitor y el manifiesto Android está fijado
+// en "portrait", esta llamada no tendrá efecto hasta cambiar esa config nativa).
+async function pbTryLandscape() {
+    try {
+        if (screen.orientation && screen.orientation.lock) {
+            await screen.orientation.lock('landscape');
+        }
+    } catch (e) { /* orientación no bloqueable en este contexto, se ignora */ }
+}
+function pbRestoreOrientation() {
+    try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) { /* no-op */ }
+}
+
+function pbSetLog(txt) { const l = document.getElementById('pb-log'); if (l) l.textContent = txt; }
+
+function pbPlayAttackLunge(prefix) {
+    const el = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
+    if (!el) return;
+    el.classList.remove('attack'); void el.offsetWidth; el.classList.add('attack');
+    setTimeout(() => el.classList.remove('attack'), 500);
+}
+
+function pbBurstColorsForElement(elKey) {
+    const e = ELEMENTS[elKey];
+    return e ? [e.color, '#fff'] : ['#FFD54F', '#fff'];
+}
+
+// Partículas de impacto propias de cada mascota (además del color del elemento),
+// según el efecto descrito para cada una en el documento de animaciones.
+const PB_PET_PARTICLES = {
+    pollito: ['🍃', '🟤', '🍂'],
+    zorro: ['🔥', '🧡'],
+    pulpo: ['💧', '⚡', '🔵'],
+    dragon: ['🔥', '🪨'],
+    unicornio: ['✨', '⭐', '💫'],
+    leon: ['🟡', '💜', '✨'],
+    aguila: ['⚡', '💗', '🌟'],
+};
+
+function pbSpawnHitBurst(prefix, elKey, count, petId) {
+    const fighterEl = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
+    if (!fighterEl) return;
+    fighterEl.style.position = 'relative';
+    const burst = document.createElement('div');
+    burst.className = 'pb-hit-burst';
+    const colors = pbBurstColorsForElement(elKey);
+    const emojis = petId && PB_PET_PARTICLES[petId];
+    const n = count || 8;
+    for (let i = 0; i < n; i++) {
+        const dot = document.createElement('span');
+        const angle = (Math.PI * 2 * i) / n;
+        const dist = 26 + Math.random() * 22;
+        dot.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+        dot.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+        if (emojis) {
+            dot.className = 'emoji';
+            dot.textContent = emojis[i % emojis.length];
+        } else {
+            dot.style.background = colors[i % colors.length];
+        }
+        dot.style.animationDelay = (Math.random() * 0.05) + 's';
+        burst.appendChild(dot);
+    }
+    fighterEl.appendChild(burst);
+    setTimeout(() => burst.remove(), 700);
+}
+
+// Lanza una lluvia/ráfaga de partículas físicas (emojis) desde el centro del layer indicado,
+// con gravedad y rotación aleatoria — usado para tierra/hojas, chispas, agua, estrellas, etc.
+function pbSpawnFxParticles(layer, emojis, count, opts) {
+    if (!layer) return;
+    opts = opts || {};
+    const n = count || 10;
+    for (let i = 0; i < n; i++) {
+        const el = document.createElement('span');
+        el.className = 'pb-fx-particle';
+        el.textContent = emojis[i % emojis.length];
+        const angle = Math.random() * Math.PI - Math.PI / 2;
+        const dist = (opts.spread || 60) + Math.random() * (opts.spread || 60);
+        el.style.setProperty('--dx', Math.sin(angle) * dist + 'px');
+        el.style.setProperty('--dy', -(opts.rise || 20) - Math.random() * 30 + (opts.gravity !== false ? 60 : 0) + 'px');
+        el.style.setProperty('--rot', (Math.random() * 360 - 180) + 'deg');
+        el.style.setProperty('--pdur', (0.55 + Math.random() * 0.4) + 's');
+        el.style.left = (opts.leftPct != null ? opts.leftPct : 50) + '%';
+        el.style.animationDelay = (Math.random() * (opts.delaySpread || 0.08)) + 's';
+        if (opts.size) el.style.fontSize = opts.size;
+        layer.appendChild(el);
+        setTimeout(() => el.remove(), 1100);
+    }
+}
+
+// Dispara la animación de ataque específica de cada mascota: una trayectoria que sale
+// del atacante (tentáculo, llamarada, cola en espiral...) y un efecto de impacto sobre
+// el defensor (rayo, círculo de luz, meteoritos, teletransporte...).
+function pbTriggerPetFx(attackerPrefix, defenderPrefix, petId, fxKey) {
+    const attackerLayer = document.getElementById(attackerPrefix === 'p' ? 'pb-p-fx' : 'pb-e-fx');
+    const defenderLayer = document.getElementById(defenderPrefix === 'p' ? 'pb-p-fx' : 'pb-e-fx');
+    const attackerFighter = document.getElementById(attackerPrefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
+    const battleRoot = document.getElementById('pb-arena') || document.body;
+    const emojis = PB_PET_PARTICLES[petId] || ['✨'];
+    const spawnTravel = (cls, dur) => {
+        if (!attackerLayer) return;
+        const el = document.createElement('div');
+        el.className = cls;
+        if (attackerPrefix === 'p') el.style.left = '100%'; else el.style.right = '100%';
+        attackerLayer.appendChild(el);
+        setTimeout(() => el.remove(), dur || 650);
+    };
+    const spawnImpact = (cls, dur, colorVar) => {
+        if (!defenderLayer) return;
+        const el = document.createElement('div');
+        el.className = cls;
+        if (colorVar) el.style.setProperty('--ringcolor', colorVar);
+        defenderLayer.appendChild(el);
+        setTimeout(() => el.remove(), dur || 650);
+    };
+    const shakeScreen = () => {
+        battleRoot.classList.remove('pb-screen-shake');
+        void battleRoot.offsetWidth;
+        battleRoot.classList.add('pb-screen-shake');
+        setTimeout(() => battleRoot.classList.remove('pb-screen-shake'), 400);
+    };
+    const freezeFlash = () => {
+        const el = document.createElement('div');
+        el.className = 'pb-fx-freeze';
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1150);
+    };
+    switch (fxKey) {
+        // ---------- POLLITO (Naturaleza): salto+picotazo con partículas físicas de tierra/hojas ----------
+        case 'pollito-peck':
+            pbSpawnFxParticles(defenderLayer, ['🟤', '🍂'], 6, { spread: 30 });
+            break;
+        case 'pollito-peck-2':
+            pbSpawnFxParticles(defenderLayer, ['🟤', '🍂', '🍃'], 9, { spread: 40 });
+            spawnImpact('pb-fx-ring', 550, '#8bd15a');
+            break;
+        case 'pollito-double':
+            pbSpawnFxParticles(defenderLayer, ['🟤', '🍂'], 7, { spread: 35 });
+            setTimeout(() => { spawnImpact('pb-fx-circle'); pbSpawnFxParticles(defenderLayer, ['🍃', '🟤'], 8, { spread: 40 }); }, 160);
+            break;
+        case 'pollito-root':
+            pbSpawnFxParticles(defenderLayer, ['🟤', '🍂'], 8, { spread: 40 });
+            setTimeout(() => { spawnImpact('pb-fx-circle'); pbSpawnFxParticles(defenderLayer, ['🍃', '🟤'], 10, { spread: 45 }); }, 150);
+            setTimeout(() => { spawnImpact('pb-fx-root'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['🟤', '🍃', '🍂'], 14, { spread: 60 }); }, 320);
+            break;
+        // ---------- ZORRO (Fuego+Viento): giro con cola en espiral ----------
+        case 'zorro-spin':
+            if (attackerFighter) { attackerFighter.classList.add('pb-spin-attack'); setTimeout(() => attackerFighter.classList.remove('pb-spin-attack'), 550); }
+            spawnTravel('pb-fx-flame');
+            pbSpawnFxParticles(defenderLayer, ['🔥'], 5, { spread: 25 });
+            break;
+        case 'zorro-swirl':
+            if (attackerFighter) { attackerFighter.classList.add('pb-spin-attack'); setTimeout(() => attackerFighter.classList.remove('pb-spin-attack'), 550); }
+            spawnTravel('pb-fx-flame');
+            setTimeout(() => { spawnImpact('pb-fx-tornado'); pbSpawnFxParticles(defenderLayer, ['🔥', '🧡'], 8, { spread: 35 }); }, 120);
+            break;
+        case 'zorro-furia':
+            if (attackerFighter) { attackerFighter.classList.add('pb-spin-attack'); setTimeout(() => attackerFighter.classList.remove('pb-spin-attack'), 550); }
+            spawnTravel('pb-fx-flame'); spawnTravel('pb-fx-flame');
+            setTimeout(() => { spawnImpact('pb-fx-tornado'); pbSpawnFxParticles(defenderLayer, ['🔥', '🧡'], 10, { spread: 40 }); }, 130);
+            break;
+        case 'zorro-nine':
+            for (let i = 0; i < 3; i++) setTimeout(() => spawnTravel('pb-fx-flame'), i * 100);
+            setTimeout(() => { spawnImpact('pb-fx-tornado'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['🔥', '🧡'], 16, { spread: 55 }); }, 200);
+            break;
+        // ---------- PULPO (Agua+Eléctrico): tentáculo cruzando pantalla ----------
+        case 'pulpo-tentacle':
+            spawnTravel('pb-fx-tentacle');
+            pbSpawnFxParticles(defenderLayer, ['💧'], 5, { spread: 25 });
+            break;
+        case 'pulpo-splash':
+            spawnTravel('pb-fx-tentacle');
+            setTimeout(() => { pbSpawnFxParticles(defenderLayer, ['💧', '🔵'], 9, { spread: 40 }); spawnImpact('pb-fx-ring', 550, '#2e86c1'); }, 130);
+            break;
+        case 'pulpo-storm':
+            spawnTravel('pb-fx-tentacle');
+            setTimeout(() => { pbSpawnFxParticles(defenderLayer, ['💧', '⚡', '🔵'], 11, { spread: 45 }); spawnImpact('pb-fx-ring', 550, '#5dade2'); }, 130);
+            setTimeout(() => spawnImpact('pb-fx-ring', 500, '#9be7ff'), 260);
+            break;
+        case 'pulpo-kraken':
+            for (let i = 0; i < 3; i++) setTimeout(() => spawnTravel('pb-fx-tentacle'), i * 100);
+            setTimeout(() => { spawnImpact('pb-fx-bolt'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['💧', '⚡', '🔵'], 16, { spread: 55 }); }, 220);
+            break;
+        // ---------- DRAGÓN (Fuego+Naturaleza): llamarada ancha por el suelo ----------
+        case 'dragon-flame':
+            spawnTravel('pb-fx-flame');
+            pbSpawnFxParticles(defenderLayer, ['🔥'], 5, { spread: 30 });
+            break;
+        case 'dragon-lava':
+            spawnTravel('pb-fx-flame');
+            setTimeout(() => { spawnImpact('pb-fx-lava'); pbSpawnFxParticles(defenderLayer, ['🔥', '🪨'], 8, { spread: 35 }); }, 150);
+            break;
+        case 'dragon-furia':
+            spawnTravel('pb-fx-flame'); spawnTravel('pb-fx-flame');
+            setTimeout(() => { spawnImpact('pb-fx-lava'); pbSpawnFxParticles(defenderLayer, ['🔥', '🪨'], 10, { spread: 45 }); }, 150);
+            break;
+        case 'dragon-meteor':
+            spawnTravel('pb-fx-flame');
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const el = document.createElement('div');
+                    el.className = 'pb-fx-meteor-big';
+                    el.style.left = (20 + i * 28) + '%';
+                    if (defenderLayer) { defenderLayer.appendChild(el); setTimeout(() => el.remove(), 650); }
+                    setTimeout(() => { spawnImpact('pb-fx-lava'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['🔥', '🪨'], 6, { spread: 30, leftPct: 20 + i * 28 }); }, 480);
+                }, i * 180);
+            }
+            break;
+        // ---------- UNICORNIO (Luz+Viento): rayo de luz desde el cuerno ----------
+        case 'unicornio-beam':
+            spawnImpact('pb-fx-beam');
+            pbSpawnFxParticles(defenderLayer, ['✨'], 5, { spread: 25 });
+            break;
+        case 'unicornio-star':
+            spawnImpact('pb-fx-beam');
+            setTimeout(() => pbSpawnFxParticles(defenderLayer, ['⭐', '✨', '💫'], 9, { spread: 40 }), 130);
+            break;
+        case 'unicornio-sagrado':
+            spawnImpact('pb-fx-beam');
+            setTimeout(() => { spawnImpact('pb-fx-beam'); pbSpawnFxParticles(defenderLayer, ['⭐', '✨', '💫'], 11, { spread: 45 }); }, 140);
+            break;
+        case 'unicornio-judgment':
+            spawnImpact('pb-fx-circle');
+            setTimeout(() => spawnImpact('pb-fx-ring', 650, '#fff5cc'), 100);
+            setTimeout(() => { spawnImpact('pb-fx-beam'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['⭐', '✨', '💫'], 16, { spread: 55 }); }, 260);
+            break;
+        // ---------- LEÓN (Legendario+Luz): rugido y salto con melena dorada ----------
+        case 'leon-roar':
+            spawnImpact('pb-fx-shockwave');
+            pbSpawnFxParticles(defenderLayer, ['🟡', '✨'], 6, { spread: 30 });
+            break;
+        case 'leon-zarpazo':
+            spawnImpact('pb-fx-shockwave');
+            setTimeout(() => { spawnImpact('pb-fx-shockwave'); pbSpawnFxParticles(defenderLayer, ['🟡', '✨'], 9, { spread: 40 }); }, 110);
+            break;
+        case 'leon-estela':
+            spawnTravel('pb-fx-slash');
+            pbSpawnFxParticles(defenderLayer, ['💜', '🟡'], 8, { spread: 35 });
+            break;
+        case 'leon-royal':
+            spawnImpact('pb-fx-shockwave');
+            setTimeout(() => { spawnImpact('pb-fx-sword'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['💜', '🟡', '✨'], 14, { spread: 50 }); }, 200);
+            break;
+        // ---------- ÁGUILA (Mítico+Eléctrico): teletransporte + picada eléctrica ----------
+        case 'aguila-teleport':
+            if (attackerFighter) { attackerFighter.classList.remove('pb-fx-teleport'); void attackerFighter.offsetWidth; attackerFighter.classList.add('pb-fx-teleport'); }
+            pbSpawnFxParticles(defenderLayer, ['⚡'], 5, { spread: 25 });
+            break;
+        case 'aguila-energia':
+            if (attackerFighter) { attackerFighter.classList.remove('pb-fx-teleport'); void attackerFighter.offsetWidth; attackerFighter.classList.add('pb-fx-teleport'); }
+            setTimeout(() => { spawnImpact('pb-fx-ring', 550, '#ff8fd6'); pbSpawnFxParticles(defenderLayer, ['⚡', '💗', '🌟'], 8, { spread: 40 }); }, 130);
+            break;
+        case 'aguila-rayo':
+            if (attackerFighter) { attackerFighter.classList.remove('pb-fx-teleport'); void attackerFighter.offsetWidth; attackerFighter.classList.add('pb-fx-teleport'); }
+            setTimeout(() => { spawnImpact('pb-fx-bolt'); spawnImpact('pb-fx-ring', 550, '#9be7ff'); pbSpawnFxParticles(defenderLayer, ['⚡', '💗', '🌟'], 10, { spread: 45 }); }, 130);
+            break;
+        case 'aguila-storm':
+            if (attackerFighter) { attackerFighter.classList.remove('pb-fx-teleport'); void attackerFighter.offsetWidth; attackerFighter.classList.add('pb-fx-teleport'); }
+            freezeFlash();
+            setTimeout(() => { spawnImpact('pb-fx-bolt'); spawnImpact('pb-fx-bolt'); }, 150);
+            setTimeout(() => { spawnImpact('pb-fx-ring', 600, '#fff'); shakeScreen(); pbSpawnFxParticles(defenderLayer, ['⚡', '💗', '🌟'], 16, { spread: 55, rise: 60 }); }, 380);
+            break;
+        default:
+            break;
+    }
+}
+
+// Aplica el efecto visual de impacto según la habilidad usada: golpe básico (sacudida),
+// crítico (destello + más partículas), habilidad definitiva (destello de pantalla + zoom + pantalla tiembla),
+// y las partículas siempre salen del color del elemento usado.
+function pbPlayHitEffect(prefix, attackerElement, tier, isCrit, isDeathBlow) {
+    const fighterEl = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
+    if (!fighterEl) return;
+    ['hit-shake', 'hit-flash', 'hit-big'].forEach(c => fighterEl.classList.remove(c));
+    void fighterEl.offsetWidth;
+    const elColor = (ELEMENTS[attackerElement] && ELEMENTS[attackerElement].color) || '#fff';
+    const arena = document.getElementById('pb-arena');
+
+    if (isDeathBlow || tier === 3) {
+        fighterEl.classList.add('hit-big');
+        pbSpawnHitBurst(prefix, attackerElement, 14);
+        const flash = document.getElementById('pb-ult-flash');
+        if (flash) { flash.style.background = elColor; flash.classList.remove('play'); void flash.offsetWidth; flash.classList.add('play'); }
+        if (arena) { arena.classList.remove('pb-zoom-ult'); void arena.offsetWidth; arena.classList.add('pb-zoom-ult'); setTimeout(() => arena.classList.remove('pb-zoom-ult'), 600); }
+        if (arena) { arena.classList.remove('pb-screen-shake'); void arena.offsetWidth; arena.classList.add('pb-screen-shake'); }
+    } else if (isCrit || tier === 2) {
+        fighterEl.classList.add('hit-flash');
+        pbSpawnHitBurst(prefix, attackerElement, 10);
+        const cflash = document.getElementById('pb-crit-flash');
+        if (cflash) { cflash.style.background = elColor; cflash.classList.remove('play'); void cflash.offsetWidth; cflash.classList.add('play'); }
+        if (arena) { arena.classList.remove('pb-zoom-hit'); void arena.offsetWidth; arena.classList.add('pb-zoom-hit'); setTimeout(() => arena.classList.remove('pb-zoom-hit'), 350); }
+    } else {
+        fighterEl.classList.add('hit-shake');
+        pbSpawnHitBurst(prefix, attackerElement, 6);
+        if (arena) { arena.classList.remove('pb-zoom-hit'); void arena.offsetWidth; arena.classList.add('pb-zoom-hit'); setTimeout(() => arena.classList.remove('pb-zoom-hit'), 350); }
+    }
+    setTimeout(() => fighterEl.classList.remove('hit-shake', 'hit-flash', 'hit-big'), 600);
+}
+
+function pbShowDamage(prefix, amount, isCrit) {
+    const fighterEl = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
+    if (!fighterEl) return;
+    const pop = document.createElement('div');
+    pop.className = 'pb-dmg-pop' + (isCrit ? ' crit' : '');
+    pop.textContent = (isCrit ? '¡CRÍTICO! ' : '') + '-' + Math.round(amount);
+    pop.style.left = '50%'; pop.style.top = '10px'; pop.style.transform = 'translateX(-50%)';
+    fighterEl.style.position = 'relative';
+    fighterEl.appendChild(pop);
+    setTimeout(() => pop.remove(), 1000);
+}
+
+// DAÑO = Ataque × Mult.Habilidad × Elemento × Crítico − (Defensa × 0.5)
+function pbComputeDamage(attacker, defender, skillMult, isUltimate) {
+    const atkEl = attacker.element1;
+    const defEl = defender.element1;
+    const elemMult = elementDamageMult(atkEl, defEl);
+    let isCrit = false, isDeathBlow = false;
+    if (isUltimate && Math.random() < 0.03 && defender.element1 !== 'mitico') {
+        isDeathBlow = true;
+    } else if (Math.random() < 0.15) {
+        isCrit = true;
+    }
+    let dmg = attacker.ataque * skillMult * elemMult * (isCrit ? 1.8 : 1) - (defender.defensa * 0.5);
+    dmg = Math.max(1, Math.round(dmg));
+    if (isDeathBlow) dmg = defender.hp;
+    return { dmg, isCrit, isDeathBlow, elemMult };
+}
+
+function pbPlayerMove(skillIdx) {
+    if (!PB || PB.over || PB.turn !== 'player') return;
+    const sk = skillIdx === null ? PB.player.skills[0] : PB.player.skills[skillIdx];
+    if (!sk || PB.player.stage < sk.minStage) return;
+    PB.turn = 'busy';
+    pbSetTurnUI(null);
+    pbPlayAttackLunge('p');
+    const tier = skillIdx === null ? 0 : skillIdx;
+    const isUlt = !!sk.ultimate;
+    const arena = document.getElementById('pb-arena');
+    const vignette = document.getElementById('pb-slowmo-vignette');
+    if (isUlt && arena) {
+        setTimeout(() => {
+            arena.classList.add('pb-slowmo');
+            if (vignette) { vignette.classList.remove('play'); void vignette.offsetWidth; vignette.classList.add('play'); }
+        }, 120);
+    }
+    setTimeout(() => {
+        if (isUlt && arena) arena.classList.remove('pb-slowmo');
+        const { dmg, isCrit, isDeathBlow, elemMult } = pbComputeDamage(PB.player, PB.enemy, sk.mult, sk.ultimate);
+        PB.enemy.hp = Math.max(0, PB.enemy.hp - dmg);
+        pbUpdateHpBar('e', PB.enemy);
+        pbTriggerPetFx('p', 'e', PB.player.def.id, sk.fx);
+        pbPlayHitEffect('e', PB.player.element1, tier, isCrit, isDeathBlow);
+        pbSpawnHitBurst('e', PB.player.element1, isDeathBlow || tier === 3 ? 14 : (isCrit || tier === 2 ? 10 : 6), PB.player.def.id);
+        pbShowDamage('e', dmg, isCrit);
+        pbSetLog(`${PB.player.name} usó ${sk.name}${elemMult === 2 ? ' ¡SUPER EFECTIVO!' : elemMult === 0.5 ? ' (poco efectivo)' : ''}${isDeathBlow ? ' — ¡GOLPE DE MUERTE!' : ''}`);
+        if (PB.enemy.hp <= 0) {
+            document.getElementById('pb-e-fighter').classList.add('ko');
+            setTimeout(() => pbEndBattle(true), 700);
+            return;
+        }
+        setTimeout(pbEnemyMove, 1100);
+    }, isUlt ? 520 : 230);
+}
+
+function pbEnemyMove() {
+    if (!PB || PB.over) return;
+    pbSetTurnUI('enemy');
+    const usableSkills = PB.enemy.skills.filter(sk => PB.enemy.stage >= sk.minStage);
+    const sk = usableSkills[Math.floor(Math.random() * usableSkills.length)] || PB.enemy.skills[0];
+    const tier = PB.enemy.skills.indexOf(sk);
+    const isUlt = !!sk.ultimate;
+    const arena = document.getElementById('pb-arena');
+    const vignette = document.getElementById('pb-slowmo-vignette');
+    pbPlayAttackLunge('e');
+    if (isUlt && arena) {
+        setTimeout(() => {
+            arena.classList.add('pb-slowmo');
+            if (vignette) { vignette.classList.remove('play'); void vignette.offsetWidth; vignette.classList.add('play'); }
+        }, 120);
+    }
+    setTimeout(() => {
+        if (isUlt && arena) arena.classList.remove('pb-slowmo');
+        const { dmg, isCrit, isDeathBlow, elemMult } = pbComputeDamage(PB.enemy, PB.player, sk.mult, sk.ultimate);
+        PB.player.hp = Math.max(0, PB.player.hp - dmg);
+        pbUpdateHpBar('p', PB.player);
+        pbTriggerPetFx('e', 'p', PB.enemy.def.id, sk.fx);
+        pbPlayHitEffect('p', PB.enemy.element1, tier, isCrit, isDeathBlow);
+        pbSpawnHitBurst('p', PB.enemy.element1, isDeathBlow || tier === 3 ? 14 : (isCrit || tier === 2 ? 10 : 6), PB.enemy.def.id);
+        pbShowDamage('p', dmg, isCrit);
+        pbSetLog(`${PB.enemy.name} usó ${sk.name}${elemMult === 2 ? ' ¡SUPER EFECTIVO!' : elemMult === 0.5 ? ' (poco efectivo)' : ''}${isDeathBlow ? ' — ¡GOLPE DE MUERTE!' : ''}`);
+        if (PB.player.hp <= 0) {
+            document.getElementById('pb-p-fighter').classList.add('ko');
+            setTimeout(() => pbEndBattle(false), 700);
+            return;
+        }
+        PB.turn = 'player';
+        pbSetTurnUI('player');
+    }, isUlt ? 520 : 230);
+}
+
+function pbEndBattle(won) {
+    if (!PB) return;
+    PB.over = true;
+    pbSetTurnUI(null);
+    const rarezaInfo = MASCOTA_RAREZAS[PB.enemy.def.rarity] || MASCOTA_RAREZAS.comun;
+    const reward = won ? Math.round(80 * (RARITY_STATS[PB.enemy.def.rarity]?.mult || 1) * PB.enemy.stage) : 0;
+    if (won && state) { state.gold = (state.gold || 0) + reward; if (typeof saveState === 'function') saveState(); if (typeof refreshAllUI === 'function') refreshAllUI(); }
+    const modal = document.createElement('div');
+    modal.className = 'pb-result-modal';
+    modal.innerHTML = `<div class="pb-result-card">
+        <h2>${won ? '🏆 ¡VICTORIA!' : '💀 DERROTA'}</h2>
+        <p>${won ? `Venciste a ${PB.enemy.name} (${rarezaInfo.label}).<br>Ganaste 🪙 ${reward.toLocaleString()} monedas.` : `${PB.enemy.name} fue más fuerte esta vez.<br>Sube de etapa a tu mascota e inténtalo de nuevo.`}</p>
+        <button onclick="this.closest('.pb-result-modal').remove(); closePetBattle();">Continuar</button>
+    </div>`;
+    document.body.appendChild(modal);
+}
 
 </script>
