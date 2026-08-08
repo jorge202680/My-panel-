@@ -44,8 +44,53 @@
         .widget-title-text { font-weight: bold; font-size: 14px; letter-spacing: .2px; }
 
         .store-header-box { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
-        .store-vip-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
-        .vip-buy-btn { background: linear-gradient(135deg, #d29922, #bc8c22); border: none; color: #0d1117; font-weight: bold; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+
+        /* ---------- Tarjeta VIP moderna (progreso por diamantes) ---------- */
+        .vipcard-wrap{ margin-bottom:14px; }
+        .vipcard{ background:linear-gradient(135deg,#1a2130,#11151d); border:1px solid #2b3444; border-radius:14px; padding:14px 14px; box-shadow:0 4px 14px rgba(0,0,0,.35); color:#c9d1d9; }
+        .vipcard-top{ display:flex; align-items:center; gap:12px; }
+        .vipcard-icon{ width:56px; height:56px; border-radius:16px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:26px; box-shadow:0 3px 8px rgba(0,0,0,.2); }
+        .vipcard-orbit-wrap{ position:relative; width:56px; height:56px; flex-shrink:0; }
+        .vipcard-orbit-track{ position:absolute; inset:-5px; border-radius:50%; border:2px dashed rgba(210,153,34,.35); }
+        .vipcard-orbit-pet{ width:100%; height:100%; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; box-shadow:0 3px 8px rgba(0,0,0,.3); position:relative; z-index:1; }
+        .vipcard-orbit-spin{ position:absolute; inset:-5px; z-index:2; animation:vipOrbitSpin 6s linear infinite; }
+        .vipcard-orbit-badge{ position:absolute; top:-7px; left:50%; margin-left:-13px; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:900; color:#fff; border:2px solid #11151d; box-shadow:0 2px 6px rgba(0,0,0,.4); animation:vipOrbitCounter 6s linear infinite; }
+        @keyframes vipOrbitSpin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+        @keyframes vipOrbitCounter{ from{ transform:rotate(0deg); } to{ transform:rotate(-360deg); } }
+        .vipcard-top-mid{ flex:1; min-width:0; }
+        .vipcard-label{ font-size:11px; font-weight:800; color:#8b949e; letter-spacing:.5px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+        .vipcard-tier-pill{ font-size:10.5px; font-weight:900; padding:2px 9px; border-radius:20px; }
+        .vipcard-level{ font-size:30px; font-weight:900; color:#ffd866; line-height:1.15; }
+        .vipcard-level span{ font-size:15px; font-weight:800; color:#8b949e; }
+        .vipcard-gems{ background:#21262d; border:1px solid #30363d; border-radius:20px; padding:8px 14px; font-size:15px; font-weight:800; color:#c9d1d9; display:flex; align-items:center; gap:6px; flex-shrink:0; }
+        .vipcard-progress-box{ margin-top:16px; border:2px solid #d29922; border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:12px; background:linear-gradient(135deg,#2b2005,#241a04); box-shadow:inset 0 0 12px rgba(210,153,34,.15); }
+        .vipcard-progress-top{ display:flex; align-items:center; gap:14px; }
+        .vipcard-progress-diamond{ width:50px; height:50px; border-radius:14px; background:#161b22; border:1px solid #d29922; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+        .vipcard-progress-mid{ flex:1; min-width:0; }
+        .vipcard-progress-label{ font-size:10.5px; font-weight:800; color:#8b949e; letter-spacing:.5px; }
+        .vipcard-progress-nums{ font-size:22px; font-weight:900; color:#f0f0f0; }
+        .vipcard-progress-nums small{ font-size:13px; font-weight:700; color:#8b949e; }
+        .vipcard-progress-pct-wrap{ text-align:right; flex-shrink:0; }
+        .vipcard-progress-pct-label{ font-size:10.5px; font-weight:800; color:#8b949e; letter-spacing:.5px; }
+        .vipcard-progress-pct{ font-size:22px; font-weight:900; color:#ffd866; }
+        .vipcard-progress-bar-bg{ position:relative; height:14px; border-radius:10px; background:#0d1117; border:1px solid #30363d; overflow:hidden; }
+        .vipcard-progress-bar-fill{ height:100%; border-radius:10px 0 0 10px; background:linear-gradient(90deg,#8a5a06,#d29922,#ffd866); transition:width .5s ease; position:relative; }
+        .vipcard-progress-bar-fill::after{ content:''; position:absolute; inset:0; background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent); background-size:60px 100%; animation:vipBarShine 1.6s linear infinite; }
+        @keyframes vipBarShine{ 0%{ background-position:-60px 0; } 100%{ background-position:220px 0; } }
+        .vipcard-missing{ display:flex; align-items:center; gap:10px; margin:16px 4px 0; font-size:14px; font-weight:700; color:#c9d1d9; }
+        .vipcard-missing-ic{ width:32px; height:32px; border-radius:50%; background:#d29922; color:#1a1300; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+        .vipcard-rapido-label{ font-size:11px; font-weight:800; color:#8b949e; letter-spacing:1px; margin:18px 0 8px; border-top:1px solid #30363d; padding-top:14px; }
+        .vipcard-quick-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; }
+        .vipcard-quick-btn{ background:#21262d; border:1.5px solid #30363d; border-radius:14px; padding:10px 4px; text-align:center; cursor:pointer; }
+        .vipcard-quick-btn:active{ transform:translateY(1px); }
+        .vipcard-quick-num{ font-size:15px; font-weight:900; color:#f0f0f0; display:flex; align-items:center; justify-content:center; gap:3px; }
+        .vipcard-quick-sub{ font-size:9.5px; font-weight:800; color:#8b949e; letter-spacing:.5px; margin-top:2px; }
+        .vipcard-custom-row{ display:flex; gap:10px; margin-top:10px; }
+        .vipcard-custom-input{ width:78px; flex-shrink:0; background:#21262d; border:2px solid #d29922; border-radius:14px; text-align:center; font-size:16px; font-weight:800; color:#f0f0f0; padding:0 6px; }
+        .vipcard-confirm-btn{ flex:1; background:linear-gradient(135deg,#d29922,#8a5a06); color:#fff; border:none; border-radius:14px; font-size:14px; font-weight:900; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 3px 0 rgba(0,0,0,.35); }
+        .vipcard-confirm-btn:active{ transform:translateY(1px); box-shadow:none; }
+        .vipcard-footnote{ font-size:11px; color:#8b949e; line-height:1.5; margin-top:14px; }
+        .vipcard-maxed{ text-align:center; padding:14px 0 4px; color:#ffd866; font-weight:900; font-size:14px; }
 
         .store-multipliers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
         .mult-btn { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 10px; text-align: center; color: #fff; cursor: pointer; font-size: 13px; }
@@ -204,6 +249,61 @@
         .trophy-room-header .ttl { color:#ffd700; font-weight:900; font-size:16px; }
         .trophy-room-body { flex:1; overflow-y:auto; padding:16px; }
 
+                /* ---- HERO INICIO estilo festivo (rediseño) ---- */
+        .hero-rainbow-bg { position:relative; margin:-15px -15px 0; padding:18px 14px 40px; border-radius:0 0 26px 26px; overflow:hidden; min-height:calc(100vh - 60px); display:flex; flex-direction:column;
+            background: linear-gradient(180deg, #e0234f 0%, #f2632b 16%, #f2c623 32%, #3fb950 48%, #1f8fd6 64%, #6e40c9 82%, #a23fd6 100%); }
+        .hero-rainbow-bg::before { content:''; position:absolute; inset:0; background:
+            radial-gradient(circle at 12% 15%, rgba(255,255,255,0.35) 0%, transparent 3%),
+            radial-gradient(circle at 85% 10%, rgba(255,255,255,0.3) 0%, transparent 3%),
+            radial-gradient(circle at 20% 80%, rgba(255,255,255,0.25) 0%, transparent 2.5%),
+            radial-gradient(circle at 90% 70%, rgba(255,255,255,0.3) 0%, transparent 2.5%),
+            radial-gradient(circle at 50% 92%, rgba(255,255,255,0.2) 0%, transparent 2%); pointer-events:none; }
+        .hero-confetti { position:absolute; font-size:16px; opacity:0.85; filter:drop-shadow(0 0 3px rgba(0,0,0,0.25)); pointer-events:none; z-index:2; }
+        .hero-spotlight { position:absolute; top:-10%; width:160px; height:340px; opacity:0.35; pointer-events:none; z-index:1;
+            background:linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 75%); }
+        .hero-spotlight.left { left:-30px; transform:rotate(18deg); transform-origin:top; }
+        .hero-spotlight.right { right:-30px; transform:rotate(-18deg); transform-origin:top; }
+        .hero-topbar { display:flex; gap:8px; align-items:center; position:relative; z-index:3; flex-wrap:wrap; }
+        .hero-pill { background:rgba(13,17,23,0.55); backdrop-filter:blur(2px); border:1px solid rgba(255,255,255,0.35); border-radius:30px; padding:6px 12px; display:flex; align-items:center; gap:6px; font-weight:800; font-size:13px; color:#fff; }
+        .hero-title-wrap { text-align:center; margin:10px 0 0; position:relative; z-index:3; }
+        .hero-title-wrap .t1 { font-size:16px; font-weight:900; letter-spacing:5px; color:#8fd6ff; text-shadow:0 2px 0 rgba(0,0,0,0.25); }
+        .hero-title-wrap .t2 { font-size:40px; font-weight:900; color:#fff389; text-shadow:0 3px 0 #b8860b, 0 0 20px rgba(255,255,255,0.6); line-height:1.02; }
+        .hero-orbit { position:relative; width:100%; max-width:400px; margin:auto auto 0; aspect-ratio:1/1.05; z-index:3; }
+        .hero-mascot { position:absolute; top:53%; left:50%; transform:translate(-50%,-50%); font-size:150px; filter:drop-shadow(0 10px 16px rgba(0,0,0,0.4)); animation:heroBounce 2.6s ease-in-out infinite; z-index:4; }
+        @keyframes heroBounce { 0%,100%{ transform:translate(-50%,-50%) scale(1); } 50%{ transform:translate(-50%,-52%) scale(1.04); } }
+        .hero-orbit-ring { position:absolute; inset:0; animation:orbitSpin 28s linear infinite; z-index:3; }
+        @keyframes orbitSpin { from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+        .hero-badge { position:absolute; top:50%; left:50%; width:84px; margin:-42px 0 0 -42px; cursor:pointer; }
+        .hb-a0 { transform:rotate(0deg) translate(0,-138px) rotate(0deg); }
+        .hb-a1 { transform:rotate(40deg) translate(0,-138px) rotate(-40deg); }
+        .hb-a2 { transform:rotate(80deg) translate(0,-138px) rotate(-80deg); }
+        .hb-a3 { transform:rotate(120deg) translate(0,-138px) rotate(-120deg); }
+        .hb-a4 { transform:rotate(160deg) translate(0,-138px) rotate(-160deg); }
+        .hb-a5 { transform:rotate(200deg) translate(0,-138px) rotate(-200deg); }
+        .hb-a6 { transform:rotate(240deg) translate(0,-138px) rotate(-240deg); }
+        .hb-a7 { transform:rotate(280deg) translate(0,-138px) rotate(-280deg); }
+        .hb-a8 { transform:rotate(320deg) translate(0,-138px) rotate(-320deg); }
+        .hb-inner { background:linear-gradient(160deg,#fff,#f0f0f0); border-radius:16px; padding:10px 5px 8px; text-align:center; box-shadow:0 8px 16px rgba(0,0,0,0.35); border:2px solid rgba(255,255,255,0.85); transition:transform .15s ease; animation:counterSpin 28s linear infinite; }
+        .hero-badge:active .hb-inner { transform:scale(0.92); }
+        .hb-inner .hb-icon { font-size:30px; display:block; }
+        .hb-inner .hb-label { font-size:10px; font-weight:900; color:#3a3a3a; letter-spacing:0.5px; margin-top:3px; text-transform:uppercase; }
+        @keyframes counterSpin { from{ transform:rotate(0deg); } to{ transform:rotate(-360deg); } }
+        .hb-c0 .hb-inner { background:linear-gradient(160deg,#ff8fb3,#e0234f); } .hb-c0 .hb-label{color:#fff;}
+        .hb-c1 .hb-inner { background:linear-gradient(160deg,#b98cf0,#6e40c9); } .hb-c1 .hb-label{color:#fff;}
+        .hb-c2 .hb-inner { background:linear-gradient(160deg,#7be08a,#2ea043); } .hb-c2 .hb-label{color:#fff;}
+        .hb-c3 .hb-inner { background:linear-gradient(160deg,#ffe08a,#d29922); } .hb-c3 .hb-label{color:#4a3300;}
+        .hb-c4 .hb-inner { background:linear-gradient(160deg,#8fd6ff,#1f8fd6); } .hb-c4 .hb-label{color:#fff;}
+        .hb-c5 .hb-inner { background:linear-gradient(160deg,#e39cff,#a23fd6); } .hb-c5 .hb-label{color:#fff;}
+        .hb-c6 .hb-inner { background:linear-gradient(160deg,#ff9e6e,#d9480f); } .hb-c6 .hb-label{color:#fff;}
+        .hb-c7 .hb-inner { background:linear-gradient(160deg,#fff07a,#FFA000); } .hb-c7 .hb-label{color:#4a3300;}
+        .hb-c8 .hb-inner { background:linear-gradient(160deg,#ffd866,#8957e5); } .hb-c8 .hb-label{color:#fff;}
+        .hero-sparkle { position:absolute; font-size:18px; opacity:0.9; z-index:4; pointer-events:none; }
+        .hero-cta { position:relative; z-index:3; margin:24px auto 4px; max-width:340px; background:linear-gradient(90deg,#e0234f,#f2c623,#3fb950,#1f8fd6); border-radius:40px; padding:3px; box-shadow:0 8px 20px rgba(0,0,0,0.35); cursor:pointer; }
+        .hero-cta-inner { background:rgba(13,17,23,0.15); backdrop-filter:blur(1px); border-radius:38px; padding:14px 10px; text-align:center; }
+        .hero-cta .hc-sub { font-size:11px; font-weight:900; letter-spacing:3px; color:#fff; text-shadow:0 1px 0 rgba(0,0,0,0.3); }
+        .hero-cta .hc-main { font-size:22px; font-weight:900; color:#fff; text-shadow:0 2px 0 rgba(0,0,0,0.3); letter-spacing:1px; }
+        #bottom-nav { display:none !important; }
+
                 /* ---- Racha / logros / ranking ---- */
         .streak-badge { display:inline-flex; align-items:center; gap:4px; background: linear-gradient(135deg,#da3633,#9e2f2c); color:#fff; padding:4px 10px; border-radius: 20px; font-size:12px; font-weight:bold; }
         .daily-rewards-btn { background:linear-gradient(135deg,#1f6feb,#1158c7); color:#fff; border:none; border-radius:20px; padding:4px 10px; font-size:12px; font-weight:bold; cursor:pointer; margin-left:6px; }
@@ -224,6 +324,20 @@
         .daily-roulette-box { border-top:1px dashed #30363d; margin-top:14px; padding-top:12px; text-align:center; }
         .daily-roulette-btn { background:linear-gradient(135deg,#8957e5,#6b3fc4); }
         .daily-rewards-close { display:block; margin:12px auto 0; background:none; border:1px solid #30363d; color:#8b949e; border-radius:8px; padding:8px 16px; cursor:pointer; }
+        .vip-progress-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; }
+        .vip-progress-overlay.active { display:flex; }
+        .vip-progress-box { max-width:420px; width:100%; max-height:88vh; overflow-y:auto; }
+        .vip-progress-close { display:block; margin:10px auto 0; background:none; border:1px solid #30363d; color:#8b949e; border-radius:8px; padding:8px 16px; cursor:pointer; width:100%; }
+        .vip-levelup-box { background:linear-gradient(180deg,#1a1300,#3a2a06); border:2px solid #d29922; border-radius:20px; padding:26px 20px; max-width:360px; width:100%; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.5); }
+        .vip-levelup-icon { font-size:48px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.4)); animation:vipLevelupBounce 1.6s ease-in-out infinite; }
+        @keyframes vipLevelupBounce { 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.12); } }
+        .vip-levelup-title { font-size:22px; font-weight:900; color:#ffd866; margin-top:8px; }
+        .vip-levelup-tier { display:inline-block; margin-top:8px; font-size:12px; font-weight:900; padding:4px 14px; border-radius:20px; }
+        .vip-levelup-benefits-label { font-size:11px; font-weight:800; color:#d29922; letter-spacing:1px; margin-top:20px; border-top:1px solid rgba(210,153,34,.3); padding-top:14px; }
+        .vip-levelup-benefits-list { list-style:none; padding:0; margin:10px 0 0; text-align:left; }
+        .vip-levelup-benefits-list li { font-size:14px; color:#f0e6cf; padding:6px 4px; font-weight:600; }
+        .vip-levelup-close { margin-top:18px; width:100%; background:linear-gradient(135deg,#d29922,#8a5a06); color:#fff; border:none; border-radius:14px; padding:12px; font-size:15px; font-weight:900; cursor:pointer; box-shadow:0 3px 0 rgba(0,0,0,.35); }
+        .vip-levelup-close:active { transform:translateY(1px); box-shadow:none; }
         /* M13: vista previa interactiva de contenido en la tienda */
         .store-preview-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); display:none; align-items:center; justify-content:center; z-index:4000; padding:16px; }
         .store-preview-overlay.active { display:flex; }
@@ -340,32 +454,45 @@
         .mode-bar.mode-fusion { background: linear-gradient(135deg,#0b3a63,#5c1f8a); border-color:#58a6ff; }
 
         /* ================= SALAS TEMÁTICAS ================= */
-        .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 10px 0 15px; }
-        .room-card { position: relative; border-radius: 14px; height: 170px; text-align: left; cursor: pointer; border: 2px solid #30363d; overflow: hidden; transition: transform .16s ease, box-shadow .16s ease; display: flex; flex-direction: column; justify-content: flex-end; }
-        .room-card:hover:not(.locked) { transform: translateY(-3px) scale(1.02); box-shadow: 0 10px 20px rgba(0,0,0,0.45); }
-        .room-card:active:not(.locked) { transform: scale(0.97); }
-        .room-card .room-scene { position: absolute; inset: 0; }
-        .room-card .room-name-row { position: relative; z-index: 2; display: flex; align-items: center; gap: 6px; padding: 10px 10px 4px; background: linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0)); }
-        .room-card .room-icon { font-size: 18px; flex-shrink: 0; }
-        .room-card .room-name { font-weight: bold; font-size: 14px; text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
-        .room-card .room-meta-row { position: relative; z-index: 2; padding: 0 10px 10px; background: rgba(0,0,0,0.85); }
-        .room-card .room-meta { font-size: 10px; color: #c9d1d9; }
-        .room-card .room-jackpot { font-size: 11px; color: #ffe58a; font-weight: bold; margin-top: 2px; }
-        .room-card.locked .room-scene { filter: grayscale(0.4) brightness(0.55); }
+        .rooms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 10px 0 15px; padding: 14px 10px; border-radius: 16px;
+            background-color:#7a3b28;
+            background-image:
+                linear-gradient(335deg,#5f2e1e 23px,transparent 23px),
+                linear-gradient(155deg,#5f2e1e 23px,transparent 23px),
+                linear-gradient(335deg,#5f2e1e 23px,transparent 23px),
+                linear-gradient(155deg,#5f2e1e 23px,transparent 23px);
+            background-size:44px 44px;
+            background-position:0px 2px,4px 26px,22px 24px,26px 4px;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.55);
+        }
+        .room-card { position: relative; border-radius: 16px; height: 170px; text-align: center; cursor: pointer; border: none; overflow: visible; transition: transform .16s ease, box-shadow .16s ease; display: flex; align-items: center; justify-content: center; background: transparent; }
+        .room-card:hover:not(.locked) { transform: translateY(-3px) scale(1.03); }
+        .room-card:active:not(.locked) { transform: scale(0.96); }
+        .room-card:nth-child(even) .graffiti-content { transform: rotate(2.5deg); }
+        .room-card:nth-child(odd) .graffiti-content { transform: rotate(-2.5deg); }
+        .graffiti-splash { position: absolute; inset: 4px; border-radius: 42% 58% 63% 37% / 47% 42% 58% 53%; z-index: 1; filter: blur(.3px); }
+        .graffiti-content { position: relative; z-index: 2; padding: 10px 12px; }
+        .graffiti-name { font-weight: 900; font-size: 24px; letter-spacing: .5px; text-transform: uppercase; line-height: .95;
+            -webkit-text-stroke: 2px rgba(0,0,0,.5); text-shadow: 0 3px 0 rgba(0,0,0,.35), 0 0 12px rgba(0,0,0,.3); }
+        .graffiti-meta { margin-top: 8px; font-size: 11px; font-weight: 800; color: #fff; text-shadow: 0 2px 3px rgba(0,0,0,.7); }
+        .graffiti-jackpot { font-size: 11px; color: #ffe58a; font-weight: bold; margin-top: 3px; text-shadow: 0 2px 3px rgba(0,0,0,.7); }
+        .room-card.locked .graffiti-splash { filter: grayscale(0.55) brightness(0.55); }
         .room-card.locked { cursor: not-allowed; }
         .room-card.locked .room-lock-badge { display: flex; }
-        .room-lock-badge { display: none; position: absolute; z-index: 3; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.55); align-items: center; justify-content: center; font-size: 13px; }
-        .room-card.room-clasica .room-scene { background: linear-gradient(180deg,#7fa896 0%,#5c8a72 45%,#3d5c47 100%); }
-        .room-card.room-clasica .room-scene::before { content:''; position:absolute; inset:0; background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 26px), repeating-linear-gradient(90deg, rgba(0,0,0,0.06) 0 2px, transparent 2px 26px); }
-        .room-card.room-oro .room-scene { background: radial-gradient(circle at 50% 35%, #f0c040 0%, #b8860b 30%, #5c4413 65%, #2b2100 100%); }
-        .room-card.room-oro .room-scene::before { content:''; position:absolute; inset:0; background: repeating-linear-gradient(0deg, rgba(255,215,0,0.12) 0 3px, transparent 3px 14px); }
-        .room-card.room-neon .room-scene { background: linear-gradient(180deg,#160d2e 0%,#3b1660 55%,#160d2e 100%); }
-        .room-card.room-neon .room-scene::before { content:''; position:absolute; inset:0; background-image: linear-gradient(90deg, transparent 46%, rgba(163,113,247,0.55) 47%, rgba(163,113,247,0.55) 48%, transparent 49%), linear-gradient(90deg, transparent 66%, rgba(88,166,255,0.4) 67%, rgba(88,166,255,0.4) 68%, transparent 69%); }
-        .room-card.room-fuego .room-scene { background: radial-gradient(circle at 50% 100%, #ffae42 0%, #d9302a 25%, #7a1f16 55%, #2b0b06 100%); }
-        .room-card.room-espacial .room-scene { background: radial-gradient(circle at 30% 20%, #58a6ff 0%, transparent 3%), radial-gradient(circle at 70% 40%, #fff 0%, transparent 2%), radial-gradient(circle at 50% 70%, #a371f7 0%, transparent 3%), linear-gradient(180deg,#0b1f4d 0%,#05061a 100%); }
-        .room-card.room-aurora .room-scene { background: linear-gradient(160deg,#0b1f2e 0%,#123b3a 40%,#1f6f5c 60%,#2d1b4e 100%); }
-        .room-card.room-aurora .room-scene::before { content:''; position:absolute; inset:0; background: linear-gradient(100deg, transparent 20%, rgba(63,185,80,0.35) 35%, transparent 50%, rgba(163,113,247,0.3) 65%, transparent 80%); }
-        .room-lock-note { font-size: 9px; color: #f85149; margin-top: 3px; }
+        .room-lock-badge { display: none; position: absolute; z-index: 3; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,0.55); align-items: center; justify-content: center; font-size: 13px; }
+        .room-card.room-clasica .graffiti-splash { background: radial-gradient(circle at 38% 32%, #a4f04b 0%, #4fae1e 55%, #2c6b10 100%); }
+        .room-card.room-clasica .graffiti-name { color: #cbff8a; }
+        .room-card.room-oro .graffiti-splash { background: radial-gradient(circle at 38% 32%, #ffe27a 0%, #f0a800 55%, #8a5c00 100%); }
+        .room-card.room-oro .graffiti-name { color: #ffe27a; }
+        .room-card.room-neon .graffiti-splash { background: radial-gradient(circle at 38% 32%, #cfa1ff 0%, #8a3fd9 55%, #4a1780 100%); }
+        .room-card.room-neon .graffiti-name { color: #e4c8ff; }
+        .room-card.room-fuego .graffiti-splash { background: radial-gradient(circle at 38% 32%, #ffb35c 0%, #e2401f 55%, #7a1a0d 100%); }
+        .room-card.room-fuego .graffiti-name { color: #ffd39b; }
+        .room-card.room-espacial .graffiti-splash { background: radial-gradient(circle at 38% 32%, #9fdcff 0%, #2f7fd6 55%, #0b2f6b 100%); }
+        .room-card.room-espacial .graffiti-name { color: #cdeeff; }
+        .room-card.room-aurora .graffiti-splash { background: radial-gradient(circle at 38% 32%, #ffb3e8 0%, #e0389f 55%, #6b1256 100%); }
+        .room-card.room-aurora .graffiti-name { color: #ffd6f2; }
+        .room-lock-note { font-size: 10px; color: #ffb3ab; margin-top: 4px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,.8); }
 
         /* Ambientación de la pantalla de juego según la sala activa */
         #game-screen.theme-oro .ball-callout-container, #game-screen.theme-oro #lobby-modal { border-color:#d29922 !important; box-shadow:0 0 14px rgba(210,153,34,0.25); }
@@ -556,6 +683,21 @@
 .admin-img-row{display:flex;align-items:center;gap:8px;background:#0d1117;border:1px solid #21262d;border-radius:8px;padding:8px;margin-bottom:6px}
 .admin-img-preview{width:48px;height:48px;background:#161b22;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:24px;overflow:hidden;border:1px solid #30363d;flex-shrink:0}
 .admin-img-preview img{width:100%;height:100%;object-fit:contain}
+.admin-img-preview-checker{
+    width:64px;height:64px;
+    background-image:
+        linear-gradient(45deg,#888 25%,transparent 25%),
+        linear-gradient(-45deg,#888 25%,transparent 25%),
+        linear-gradient(45deg,transparent 75%,#888 75%),
+        linear-gradient(-45deg,transparent 75%,#888 75%);
+    background-size:14px 14px;
+    background-position:0 0,0 7px,7px -7px,-7px 0;
+    background-color:#fff;
+    border-radius:6px;border:1px solid #30363d;
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;overflow:hidden;flex-shrink:0;
+}
+.admin-img-preview-checker img{width:100%;height:100%;object-fit:contain}
 
 
         
@@ -740,6 +882,148 @@
 .mascota-story-card{ background:linear-gradient(135deg,rgba(255,215,0,.12),rgba(255,255,255,.05)); border:1px solid rgba(255,215,0,.35); border-radius:14px; margin:10px 15px; padding:14px; }
 .mascota-story-card p{ font-size:12.5px; color:#e6edff; font-style:italic; line-height:1.5; margin:0; }
 .mascota-story-locked{ font-size:12px; color:#8b9dc3; text-align:center; padding:6px 0; }
+
+/* ---- MASCOTA HERO v10.0 (pantalla principal estilo "podio") ---- */
+#mascota-screen.mascota-hero{ position:relative; background:linear-gradient(180deg,#3a8bff 0%,#5b6bf5 45%,#8b5cf6 100%); min-height:100vh; overflow-x:hidden; padding-bottom:24px; }
+.mh-confetti{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:1; }
+.mh-confetti span{ position:absolute; top:-40px; width:9px; height:16px; opacity:.9; border-radius:2px; animation:mhFall linear infinite; }
+@keyframes mhFall{ 0%{ transform:translateY(0) rotate(0deg); opacity:.95; } 100%{ transform:translateY(115vh) rotate(360deg); opacity:.6; } }
+.mh-topbar{ position:relative; z-index:3; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:14px 14px 0; }
+.mh-back{ background:rgba(255,255,255,.18); border:none; width:36px; height:36px; border-radius:50%; color:#fff; font-size:18px; flex-shrink:0; }
+.mh-level-pill{ display:flex; align-items:center; gap:8px; background:rgba(10,20,50,.45); backdrop-filter:blur(4px); border-radius:16px; padding:6px 12px 6px 6px; flex:1; max-width:190px; }
+.mh-level-pill img, .mh-level-pill .mh-lvl-emoji{ width:34px; height:34px; border-radius:10px; object-fit:cover; background:linear-gradient(135deg,#FFD54F,#FFA000); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.mh-level-text{ min-width:0; }
+.mh-level-text b{ color:#fff; font-size:14px; font-weight:900; display:block; }
+.mh-level-bar{ background:rgba(255,255,255,.25); border-radius:5px; height:5px; margin-top:4px; overflow:hidden; }
+.mh-level-bar i{ display:block; height:100%; background:linear-gradient(90deg,#FFD700,#FFA000); }
+.mh-mood-pill{ display:flex; align-items:center; gap:6px; background:rgba(10,20,50,.4); border-radius:16px; padding:6px 10px; flex-shrink:0; }
+.mh-mood-bar{ width:80px; height:9px; border-radius:5px; background:rgba(255,255,255,.25); overflow:hidden; }
+.mh-mood-bar i{ display:block; height:100%; background:linear-gradient(90deg,#7CFC00,#2e7d32); }
+.mh-mood-label{ color:#fff; font-size:11px; font-weight:800; white-space:nowrap; }
+.mh-guide-btn{ background:rgba(255,255,255,.18); border:none; width:36px; height:36px; border-radius:50%; color:#fff; font-size:16px; flex-shrink:0; }
+.mh-stage{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; padding:18px 10px 6px; }
+.mh-pet-wrap{ position:relative; width:230px; height:230px; display:flex; align-items:center; justify-content:center; }
+.mh-pet-wrap img, .mh-pet-wrap .mh-pet-emoji{ width:200px; height:200px; object-fit:contain; filter:drop-shadow(0 14px 18px rgba(0,0,0,.35)); animation:mhBob 2.6s ease-in-out infinite; z-index:2; font-size:120px; display:flex; align-items:center; justify-content:center; }
+@keyframes mhBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
+.mh-sparkle{ position:absolute; color:#fff; opacity:.9; animation:mhTwinkle 1.8s ease-in-out infinite; z-index:1; }
+@keyframes mhTwinkle{ 0%,100%{ opacity:.25; transform:scale(.8);} 50%{ opacity:1; transform:scale(1.15);} }
+.mh-podium{ width:250px; height:70px; margin-top:-16px; border-radius:50%; background:conic-gradient(from 0deg,#ff5f6d,#ffc371,#7cffb2,#5b9dff,#c17cff,#ff5f6d); box-shadow:0 0 0 6px rgba(255,255,255,.15), 0 12px 22px rgba(0,0,0,.35); position:relative; z-index:1; }
+.mh-podium::after{ content:''; position:absolute; inset:10px; border-radius:50%; background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.05)); }
+.mh-podium-base{ width:280px; height:16px; background:rgba(20,20,40,.35); border-radius:50%; margin-top:-6px; }
+
+/* ---- MASCOTA HERO v11.0 - Sala oscura estilo "crecimiento" (Dragon City) ---- */
+#mascota-screen.mascota-hero.mh-dark{
+    background:
+        radial-gradient(ellipse at 50% 78%, rgba(255,200,80,.16) 0%, rgba(255,200,80,0) 60%),
+        linear-gradient(180deg,#05070f 0%,#0a0e1e 55%,#05070f 100%);
+}
+.mh-grid-floor{ position:absolute; left:0; right:0; bottom:0; height:52%; z-index:0; overflow:hidden;
+    background-image:
+        linear-gradient(rgba(120,150,255,.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(120,150,255,.14) 1px, transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.9) 35%, rgba(0,0,0,1) 100%);
+    mask-image:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.9) 35%, rgba(0,0,0,1) 100%);
+}
+.mh-dark .mh-stage{ position:relative; }
+.mh-glow-aura{ position:absolute; left:50%; top:58%; transform:translate(-50%,-50%); border-radius:50%; z-index:1; pointer-events:none;
+    background:radial-gradient(circle, rgba(255,214,102,.55) 0%, rgba(255,180,60,.28) 35%, rgba(255,150,40,0) 72%);
+    animation:mhAuraPulse 2.4s ease-in-out infinite; filter:blur(2px); }
+@keyframes mhAuraPulse{ 0%,100%{ opacity:.75; transform:translate(-50%,-50%) scale(1); } 50%{ opacity:1; transform:translate(-50%,-50%) scale(1.08); } }
+.mh-dark .mh-pet-wrap{ z-index:3; }
+.mh-dark .mh-pet-wrap{ animation:mhBob 3.6s ease-in-out infinite; }
+.mh-dark .mh-pet-wrap img, .mh-dark .mh-pet-wrap .mh-pet-emoji{ animation:mhGlowFlicker 3.4s ease-in-out infinite; filter:none; mix-blend-mode:screen; transition:width .5s ease, height .5s ease; }
+@keyframes mhGlowFlicker{ 0%,100%{ opacity:.88; } 50%{ opacity:1; } }
+.mh-dark .mh-podium, .mh-dark .mh-podium-base{ display:none; }
+
+/* Charco de luz bajo las patas, con ondas expandiéndose como en el agua */
+.mh-floor-pool{ position:absolute; left:50%; bottom:20%; width:150px; height:34px; transform:translateX(-50%); z-index:1; pointer-events:none; border-radius:50%;
+    background:radial-gradient(ellipse, rgba(255,215,120,.9) 0%, rgba(255,185,80,.45) 45%, rgba(255,150,40,0) 78%); filter:blur(.5px); transition:width .5s ease; }
+.mh-ripple{ position:absolute; left:50%; bottom:20%; width:60px; height:14px; transform:translate(-50%,50%); border:1.5px solid rgba(255,205,120,.55); border-radius:50%; z-index:1; pointer-events:none; animation:mhRippleOut 2.6s ease-out infinite; }
+.mh-ripple.r2{ animation-delay:.9s; } .mh-ripple.r3{ animation-delay:1.8s; }
+@keyframes mhRippleOut{ 0%{ width:55px; height:13px; opacity:.7; } 100%{ width:200px; height:48px; opacity:0; } }
+
+/* Estela de partículas que orbita alrededor de la mascota, como un cometa girando */
+.mh-orbit-wrap{ position:absolute; left:50%; top:52%; width:0; height:0; transform:translate(-50%,-50%) scaleY(.5); z-index:4; pointer-events:none; }
+.mh-orbit-pivot{ position:absolute; left:0; top:0; width:0; height:0; animation:mhOrbitSpin 13s linear infinite; }
+.mh-orbit-dot{ position:absolute; left:-3px; top:-3px; border-radius:50%; background:radial-gradient(circle, #fff 0%, #ffd766 55%, rgba(255,215,100,0) 78%); }
+.mh-orbit-comet{ position:absolute; left:-5px; top:-5px; width:10px; height:10px; border-radius:50%; background:#fff; box-shadow:0 0 6px 2px rgba(255,230,150,.95), 0 0 18px 7px rgba(255,190,80,.6); }
+@keyframes mhOrbitSpin{ from{ transform:rotate(0deg); } to{ transform:rotate(360deg); } }
+
+/* ---- Nivel: barra de escala (como escala 0.40x - 1.40x por nivel) ---- */
+.mh-scale-card{ position:relative; z-index:2; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:14px; margin:4px 15px 0; padding:10px 14px; }
+.mh-scale-row{ display:flex; align-items:center; justify-content:space-between; font-size:11px; color:#cfe0ff; font-weight:800; margin-bottom:6px; }
+.mh-scale-row b{ color:#FFD700; }
+.mh-scale-track{ position:relative; height:6px; border-radius:4px; background:rgba(255,255,255,.18); }
+.mh-scale-fill{ position:absolute; left:0; top:0; height:100%; border-radius:4px; background:linear-gradient(90deg,#FFD700,#FF9416); transition:width .5s ease; }
+.mh-scale-dot{ position:absolute; top:50%; width:16px; height:16px; border-radius:50%; background:#fff; border:3px solid #FF9416; transform:translate(-50%,-50%); box-shadow:0 2px 6px rgba(0,0,0,.4); transition:left .5s ease; }
+.mh-scale-labels{ display:flex; justify-content:space-between; font-size:9px; color:#8b9dc3; margin-top:5px; }
+
+/* ---- Ráfaga de evolución (destello al crecer) ---- */
+.mh-evo-burst{ position:absolute; left:50%; top:58%; width:10px; height:10px; border-radius:50%; transform:translate(-50%,-50%); z-index:5; pointer-events:none; }
+.mh-evo-burst.play{ animation:mhBurstRing 0.9s ease-out; }
+@keyframes mhBurstRing{ 0%{ box-shadow:0 0 0 0 rgba(255,220,120,.9); opacity:1; } 100%{ box-shadow:0 0 0 160px rgba(255,220,120,0); opacity:0; } }
+.mh-evo-flash{ position:absolute; inset:0; background:#fff; opacity:0; z-index:6; pointer-events:none; border-radius:24px; }
+.mh-evo-flash.play{ animation:mhFlashPop .5s ease-out; }
+@keyframes mhFlashPop{ 0%{ opacity:0; } 12%{ opacity:.85; } 100%{ opacity:0; } }
+.mh-name{ color:#fff; font-weight:900; font-size:15px; margin-top:10px; text-shadow:0 2px 4px rgba(0,0,0,.35); z-index:2; }
+.mh-actions{ position:relative; z-index:2; display:flex; gap:10px; padding:16px 15px 4px; }
+.mh-action-btn{ flex:1; border:none; border-radius:16px; padding:14px 4px 10px; display:flex; flex-direction:column; align-items:center; gap:4px; color:#fff; font-weight:900; font-size:11.5px; cursor:pointer; box-shadow:0 6px 0 rgba(0,0,0,.18), 0 8px 14px rgba(0,0,0,.25); }
+.mh-action-btn:active{ transform:translateY(3px); box-shadow:0 3px 0 rgba(0,0,0,.18); }
+.mh-action-btn .mh-ic{ font-size:22px; }
+.mh-action-feed{ background:linear-gradient(180deg,#8BE04E,#4CAF3D); }
+.mh-action-evo{ background:linear-gradient(180deg,#FFC24B,#FF9416); }
+.mh-action-equip{ background:linear-gradient(180deg,#C77DFF,#8E3FE0); }
+.mh-action-equip.is-on{ background:linear-gradient(180deg,#9C6BFF,#6A1FD0); }
+.mh-bonus-card{ position:relative; z-index:2; background:#fff; border-radius:16px; margin:14px 15px 0; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 8px 16px rgba(0,0,0,.18); }
+.mh-bonus-card .mh-bonus-txt{ color:#333; font-size:13px; font-weight:700; }
+.mh-bonus-card .mh-bonus-txt b{ color:#FF7A00; }
+.mh-bonus-card .mh-bonus-link{ color:#5b6bf5; font-size:12.5px; font-weight:800; white-space:nowrap; }
+.mh-row{ position:relative; z-index:2; background:#fff; border-radius:16px; margin:10px 15px 0; padding:12px; display:flex; gap:10px; overflow-x:auto; box-shadow:0 8px 16px rgba(0,0,0,.15); }
+.mh-row-item{ flex-shrink:0; width:62px; height:62px; border-radius:14px; border:2px solid transparent; background:linear-gradient(135deg,#eef1ff,#dbe2ff); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; font-size:28px; cursor:pointer; }
+.mh-row-item img{ width:100%; height:100%; object-fit:cover; }
+.mh-row-item.selected{ border-color:#5b6bf5; box-shadow:0 0 0 2px rgba(91,107,245,.35); }
+.mh-row-item.locked img, .mh-row-item.locked{ filter:grayscale(1) brightness(.7); }
+.mh-row-item .mh-row-badge{ position:absolute; bottom:2px; right:2px; font-size:9px; background:rgba(0,0,0,.5); color:#fff; border-radius:6px; padding:0 3px; }
+.mh-row-more{ flex-shrink:0; width:62px; height:62px; border-radius:14px; border:2px dashed #c7ccf5; display:flex; align-items:center; justify-content:center; color:#5b6bf5; font-size:22px; cursor:pointer; }
+.mh-empty{ position:relative; z-index:2; text-align:center; color:#fff; font-size:13px; padding:20px; }
+#mascota-food-shop-screen{ background:linear-gradient(180deg,#fdf3e3 0%,#f7e7cf 100%); min-height:100vh; padding-bottom:30px; }
+.fs-header{ display:flex; align-items:center; gap:10px; padding:14px 15px 6px; }
+.fs-header h2{ flex:1; text-align:center; margin:0; font-size:19px; font-weight:900; background:linear-gradient(90deg,#ff5ec4,#7a5cff,#3fa9ff,#3fd18e,#ffd23f,#ff7a3f); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.fs-back{ background:rgba(0,0,0,.08); border:none; width:38px; height:38px; border-radius:50%; font-size:18px; flex-shrink:0; }
+.fs-back-spacer{ width:38px; flex-shrink:0; }
+.fs-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:8px 12px 20px; }
+@media (max-width:420px){ .fs-grid{ grid-template-columns:1fr; } }
+.fs-card{ position:relative; border-radius:18px; padding:12px 10px 10px; border:3px solid rgba(255,255,255,.55); box-shadow:0 4px 0 rgba(0,0,0,.12); overflow:hidden; }
+.fs-card.rar-comun{ background:linear-gradient(160deg,#8bd15a,#5cae32); }
+.fs-card.rar-raro-a{ background:linear-gradient(160deg,#ffcf5c,#f2a11c); }
+.fs-card.rar-raro-b{ background:linear-gradient(160deg,#ff9d7a,#f0532e); }
+.fs-card.rar-epico{ background:linear-gradient(160deg,#ff9fd0,#e8579f); }
+.fs-card.rar-legendario{ background:linear-gradient(160deg,#7fc4ff,#3a86e0); }
+.fs-card.rar-mitico{ background:linear-gradient(160deg,#ffd27f,#e8952e); }
+.fs-num{ position:absolute; top:8px; left:8px; width:22px; height:22px; border-radius:50%; background:rgba(255,255,255,.85); color:#333; font-size:11px; font-weight:900; display:flex; align-items:center; justify-content:center; }
+.fs-ribbon{ position:absolute; top:6px; right:-4px; background:#ff4757; color:#fff; font-size:9px; font-weight:900; padding:4px 8px 4px 14px; border-radius:6px 0 0 6px; box-shadow:0 2px 4px rgba(0,0,0,.25); }
+.fs-icon-wrap{ text-align:center; margin:16px 0 8px; }
+.fs-icon-wrap span{ font-size:44px; filter:drop-shadow(0 3px 3px rgba(0,0,0,.2)); }
+.fs-name{ text-align:center; color:#fff; font-weight:900; font-size:14px; text-shadow:0 1px 2px rgba(0,0,0,.2); }
+.fs-sub{ text-align:center; color:rgba(255,255,255,.85); font-size:10.5px; font-weight:700; margin-bottom:6px; }
+.fs-rarity-pill{ display:block; margin:0 auto 10px; width:fit-content; background:rgba(0,0,0,.25); color:#fff; font-size:10px; font-weight:800; padding:2px 12px; border-radius:12px; }
+.fs-packs{ background:rgba(255,255,255,.9); border-radius:12px; padding:6px 8px; margin-bottom:8px; }
+.fs-pack-row{ display:flex; align-items:center; justify-content:space-between; gap:6px; padding:5px 2px; border-bottom:1px solid rgba(0,0,0,.06); }
+.fs-pack-row:last-child{ border-bottom:none; }
+.fs-pack-info{ font-size:10.5px; color:#3a3a3a; font-weight:700; line-height:1.3; }
+.fs-pack-info b{ color:#111; }
+.fs-buy-btn{ background:linear-gradient(180deg,#5fd16a,#2e9e3d); color:#fff; border:none; border-radius:10px; padding:6px 10px; font-size:10.5px; font-weight:900; white-space:nowrap; box-shadow:0 2px 0 rgba(0,0,0,.15); }
+.fs-buy-btn:active{ transform:translateY(1px); box-shadow:none; }
+.fs-buy-all{ width:100%; background:linear-gradient(180deg,#ffe27a,#ffb020); border:none; border-radius:12px; padding:11px 6px; font-size:13px; font-weight:900; color:#5a3600; box-shadow:0 3px 0 rgba(0,0,0,.18); }
+.fs-inv-bar{ margin:0 15px 10px; background:rgba(255,255,255,.6); border:1px solid rgba(0,0,0,.08); border-radius:14px; padding:10px 12px; display:flex; flex-wrap:wrap; gap:8px; }
+.fs-vip-banner{ width:100%; background:linear-gradient(90deg,#6a3fd1,#a259ff); color:#fff; font-size:11.5px; font-weight:800; padding:8px 10px; border-radius:10px; }
+.fs-flash-banner{ width:100%; background:linear-gradient(90deg,#ff4757,#ff7a3f); color:#fff; font-size:11.5px; font-weight:800; padding:8px 10px; border-radius:10px; animation:fsFlashPulse 1.4s ease-in-out infinite; }
+@keyframes fsFlashPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.75; } }
+.fs-flash-card{ border-color:#ff4757 !important; box-shadow:0 0 0 3px rgba(255,71,87,.45), 0 4px 0 rgba(0,0,0,.12); }
+.fs-flash-card .fs-ribbon{ background:#ff4757; animation:fsFlashPulse 1.4s ease-in-out infinite; }
+.fs-inv-empty{ color:#8b7a5a; font-size:11.5px; }
+.fs-inv-chip{ background:#fff; border-radius:10px; padding:4px 8px; font-size:11px; font-weight:800; color:#5a4326; display:flex; align-items:center; gap:4px; box-shadow:0 1px 2px rgba(0,0,0,.08); }
 #guia-mascotas-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.75); backdrop-filter:blur(6px); z-index:6000; align-items:flex-end; justify-content:center; }
 #guia-mascotas-overlay.show{ display:flex; }
 .guia-mascotas-sheet{ background:#0a1a3f; width:100%; max-width:460px; max-height:88vh; overflow-y:auto; border-radius:22px 22px 0 0; padding:16px; }
@@ -803,74 +1087,74 @@
 
     <!-- INICIO -->
     <div id="main-screen" class="screen">
-        <div class="top-bar">
-            <div class="user-badge" id="display-user">Jugador</div>
-            <div class="resources" id="resources-bar">
-                <span>🪙 <span id="res-gold">0</span></span>
-                <span>💎 <span id="res-gem">0</span></span>
-                <button class="logout-btn" onclick="logout()">Salir</button>
+        <div class="hero-rainbow-bg">
+            <div class="hero-spotlight left"></div>
+            <div class="hero-spotlight right"></div>
+            <span class="hero-confetti" style="top:8%; left:6%;">🎊</span>
+            <span class="hero-confetti" style="top:14%; right:8%;">🎉</span>
+            <span class="hero-confetti" style="top:60%; left:3%;">✨</span>
+            <span class="hero-confetti" style="top:70%; right:5%;">🎊</span>
+            <span class="hero-confetti" style="bottom:6%; left:40%;">✨</span>
+            <span class="hero-confetti" style="top:30%; left:15%; font-size:12px;">🎀</span>
+            <span class="hero-confetti" style="top:36%; right:14%; font-size:12px;">🎀</span>
+
+            <div class="hero-topbar">
+                <div class="hero-pill">🪙 <span id="res-gold">0</span></div>
+                <div class="hero-pill">💎 <span id="res-gem">0</span></div>
+                <div class="hero-pill" id="display-user" style="margin-left:auto;">Jugador</div>
+                <button class="logout-btn" onclick="logout()" style="border-radius:30px;">Salir</button>
             </div>
-        </div>
-        <div style="text-align:right; font-size:13px; font-weight:bold; color:#58a6ff; padding:2px 15px 0;" id="app-version-label">v2.1</div>
+            <div style="text-align:center; font-size:11px; font-weight:bold; color:#fff; opacity:0.85;" id="app-version-label">v2.1</div>
 
-        <div class="play-banner" onclick="navTabTo('game-screen')">
-            🎯 ¡ENTRAR A LA SALA DE BINGO AUTOMÁTICO! 🚀
-        </div>
+            <div class="userlvl-widget" style="border-radius:14px; padding:10px 12px; margin:8px 10px 0;">
+                <div class="userlvl-top-row">
+                    <span class="userlvl-badge">🌟 Nivel <span id="userlvl-num">1</span></span>
+                    <span class="userlvl-xp-text" id="userlvl-xp-text">0 / 1,000 XP</span>
+                </div>
+                <div class="userlvl-bar-bg">
+                    <div id="userlvl-bar-fill" class="userlvl-bar-fill" style="width:0%;"><span id="userlvl-bar-star" class="userlvl-bar-star">⭐</span></div>
+                </div>
+                <div id="userlvl-max-tag" class="userlvl-max-tag" style="display:none;">🌟 ¡Nivel máximo alcanzado!</div>
+                <div id="userlvl-bonus-text" style="font-size:10px; color:#8b949e; margin-top:4px;"></div>
+            </div>
 
-        <div class="card-widget">
-            <div class="widget-title-row" style="margin-bottom:8px;">
-                <span class="widget-icon-badge">🎯</span>
-                <div style="display:flex; justify-content:space-between; align-items:center; flex:1;">
-                    <span class="widget-title-text">Bingos ganados en total</span>
-                    <span id="stat-total-wins" style="font-weight:bold; color:#d29922;">0</span>
+            <div class="hero-title-wrap">
+                <div class="t1">SÚPER</div>
+                <div class="t2">BINGO REY</div>
+            </div>
+
+            <div class="hero-orbit">
+                <span class="hero-sparkle" style="top:2%; left:38%;">✨</span>
+                <span class="hero-sparkle" style="top:8%; right:20%;">⭐</span>
+                <div class="hero-mascot">🐤</div>
+                <div class="hero-orbit-ring">
+                    <div class="hero-badge hb-a0 hb-c0" onclick="navTabTo('missions-screen')"><div class="hb-inner"><span class="hb-icon">📜</span><span class="hb-label">Misión</span></div></div>
+                    <div class="hero-badge hb-a1 hb-c1" onclick="openTrophyRoom()"><div class="hb-inner"><span class="hb-icon">🏆</span><span class="hb-label">Trofeos</span></div></div>
+                    <div class="hero-badge hb-a2 hb-c2" onclick="navTabTo('store-screen')"><div class="hb-inner"><span class="hb-icon">🛒</span><span class="hb-label">Tienda</span></div></div>
+                    <div class="hero-badge hb-a3 hb-c3" onclick="openDailyRewardsModal()"><div class="hb-inner"><span class="hb-icon">🎁</span><span class="hb-label">Regalos</span></div></div>
+                    <div class="hero-badge hb-a4 hb-c4" onclick="goToScreen('rankings-screen')"><div class="hb-inner"><span class="hb-icon">👑</span><span class="hb-label">Rankings</span></div></div>
+                    <div class="hero-badge hb-a5 hb-c5" onclick="navTabTo('campaign-screen')"><div class="hb-inner"><span class="hb-icon">🗺️</span><span class="hb-label">Campaña</span></div></div>
+                    <div class="hero-badge hb-a6 hb-c6" onclick="navTabTo('mascota-screen')"><div class="hb-inner"><span class="hb-icon">⭐</span><span class="hb-label">Mascota</span></div></div>
+                    <div class="hero-badge hb-a7 hb-c7" onclick="navTabTo('vippass-screen')"><div class="hb-inner"><span class="hb-icon">🎫</span><span class="hb-label">Pase</span></div></div>
+                    <div class="hero-badge hb-a8 hb-c8" onclick="openVipProgressModal()"><div class="hb-inner"><span class="hb-icon">💎</span><span class="hb-label">VIP <span id="hero-vip-level">0</span></span></div></div>
                 </div>
             </div>
-            <div><span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span> <button class="daily-rewards-btn" onclick="openDailyRewardsModal()">📅 Recompensas Diarias</button></div>
-        </div>
 
-        <div class="card-widget userlvl-widget" id="userlvl-widget-card">
-            <div class="userlvl-top-row">
-                <span class="userlvl-badge">⭐ Nivel de Usuario <span id="userlvl-num">1</span></span>
-                <span class="userlvl-xp-text" id="userlvl-xp-text">0 / 1,000 XP</span>
-            </div>
-            <div class="userlvl-bar-bg">
-                <div class="userlvl-bar-fill" id="userlvl-bar-fill" style="width:0%;">
-                    <span class="userlvl-bar-star" id="userlvl-bar-star">⭐</span>
+            <div class="hero-cta" onclick="navTabTo('game-screen')">
+                <div class="hero-cta-inner">
+                    <div class="hc-sub">ENTRA A</div>
+                    <div class="hc-main">🚀 BINGO AUTOMÁTICO</div>
                 </div>
             </div>
-            <div class="userlvl-max-tag" id="userlvl-max-tag" style="display:none;">🌟 ¡Nivel máximo alcanzado!</div>
-            <div class="userlvl-xp-text" id="userlvl-bonus-text" style="margin-top:4px;"></div>
         </div>
 
-        <div class="card-widget" style="cursor:pointer;" onclick="openTrophyRoom()">
-            <div class="widget-title-row">
-                <span class="widget-icon-badge">🏆</span>
-                <span class="widget-title-text">Salón de Trofeos</span>
-                <span style="margin-left:auto; color:#8b949e; font-size:20px;">›</span>
-            </div>
-        </div>
-
-        <div class="card-widget">
-            <div class="widget-title-row" style="justify-content:space-between;">
-                <div class="widget-title-row" style="margin-bottom:0;">
-                    <span class="widget-icon-badge">👑</span>
-                    <span class="widget-title-text">Top Jugadores</span>
-                </div>
-                <span style="color:#58a6ff; font-size:12px; cursor:pointer;" onclick="goToScreen('rankings-screen')">Ver Rankings ➜</span>
-            </div>
-            <div id="leaderboard-list" style="margin-top:6px; font-size:12px; color:#8b949e;">Cargando...</div>
-        </div>
-
-        <div class="card-widget">
-            <div class="widget-title-row">
-                <span class="widget-icon-badge">📜</span>
-                <span class="widget-title-text">Misión diaria: Completa cartones de Bingo</span>
-            </div>
-            <div class="progress-container">
-                <div class="progress-bar" id="mission-progress-bar"></div>
-            </div>
-            <div style="font-size: 12px; color: #8b949e; margin-top: 5px;" id="mission-progress-text">0 / 3</div>
-            <button class="mission-claim-btn" id="mission-claim-btn" onclick="claimMission()" disabled>Reclamar</button>
+        <div style="display:none;">
+            <span id="stat-total-wins">0</span>
+            <span class="streak-badge" id="streak-badge">🔥 Racha: 0 días</span>
+            <div id="leaderboard-list">Cargando...</div>
+            <div id="mission-progress-bar"></div>
+            <div id="mission-progress-text">0 / 3</div>
+            <button id="mission-claim-btn" onclick="claimMission()" disabled>Reclamar</button>
         </div>
     </div>
 
@@ -1043,6 +1327,19 @@
         </div>
     </div>
 
+    <!-- MODAL VIP (independiente de la Tienda) -->
+    <div id="vip-progress-overlay" class="vip-progress-overlay">
+        <div class="vip-progress-box">
+            <div class="vipcard-wrap" id="vipcard-wrap"></div>
+            <button class="vip-progress-close" onclick="closeVipProgressModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE BENEFICIOS AL SUBIR DE NIVEL VIP -->
+    <div id="vip-levelup-overlay" class="vip-progress-overlay">
+        <div class="vip-levelup-box" id="vip-levelup-box"></div>
+    </div>
+
     <!-- M13: VISTA PREVIA INTERACTIVA EN LA TIENDA ("Qué vas a obtener") -->
     <div id="store-preview-overlay" class="store-preview-overlay">
         <div class="store-preview-box">
@@ -1112,6 +1409,7 @@
 
     <!-- PANTALLA TIENDA -->
     <div id="store-screen" class="screen">
+        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="navTabTo('main-screen')">⬅ Volver al Menú</span>
         <h2 style="color: #d29922; margin-bottom: 12px;">🛒 Tienda de Recompensas</h2>
 
         <div class="flash-offer-banner" id="flash-offer-banner" onclick="openStorePreview('flash')" style="cursor:pointer;">
@@ -1133,10 +1431,6 @@
         </div>
 
         <div class="store-header-box">
-            <div class="store-vip-row">
-                <span>👑 Tus Tarjetas VIP: <strong style="color: #d29922;" id="store-vip-count">0</strong> · Bonus activo: <span style="color: #3fb950;" id="store-vip-bonus">x1.00</span></span>
-                <button class="vip-buy-btn" id="vip-buy-btn" onclick="buyVipCard()">Comprar VIP</button>
-            </div>
             <div class="store-multipliers" id="store-multipliers"></div>
         </div>
 
@@ -1147,6 +1441,7 @@
 
     <!-- PANTALLA CAMPAÑA -->
     <div id="campaign-screen" class="screen">
+        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="navTabTo('main-screen')">⬅ Volver al Menú</span>
         <h2 style="color: #d29922; margin-bottom: 15px;">🎡 Campaña & Ruleta</h2>
         <div class="card-widget" style="text-align: center;">
             <h3>Ruleta Diaria</h3>
@@ -1193,6 +1488,7 @@
 
     <!-- PANTALLA MISIONES -->
     <div id="missions-screen" class="screen">
+        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="navTabTo('main-screen')">⬅ Volver al Menú</span>
         <h2 style="color: #d29922; margin-bottom: 15px;">📜 Misiones Diarias</h2>
         <div class="card-widget">
             <strong id="mission-title-2">Completar cartones de Bingo</strong>
@@ -1204,6 +1500,7 @@
 
     <!-- PANTALLA PASE VIP -->
     <div id="vippass-screen" class="screen" style="padding-bottom:80px;">
+        <span style="cursor:pointer; color:#58a6ff; font-size:13px;" onclick="navTabTo('main-screen')">⬅ Volver al Menú</span>
         <h2 style="color: #d29922; margin-bottom: 12px;">🎫 Pase VIP</h2>
 
         <div class="vip-header">
@@ -1250,23 +1547,55 @@
     </div>
 
 
-    <!-- MASCOTAS v9.0 CLEAN -->
-    <div id="mascota-screen" class="screen">
-        <div class="mascota-header">
-            <button onclick="navTabTo('main-screen')" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:20px; color:#fff">←</button>
-            <h2 style="color:#fff; font-weight:900">MIS COMPAÑEROS v9.0</h2>
-            <button onclick="abrirGuiaMascotas()" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:18px; color:#fff" title="Guía de mascotas">📖</button>
+    <!-- MASCOTAS v10.0 HERO -->
+    <div id="mascota-screen" class="screen mascota-hero mh-dark">
+        <div class="mh-confetti" id="mh-confetti"></div>
+        <div class="mh-topbar">
+            <button class="mh-back" onclick="navTabTo('main-screen')">←</button>
+            <div class="mh-level-pill" id="mh-level-pill">Cargando…</div>
+            <div class="mh-mood-pill" id="mh-mood-pill" style="display:none">
+                <span style="font-size:15px">🌿</span>
+                <div>
+                    <div class="mh-mood-label" id="mh-mood-name">—</div>
+                    <div class="mh-mood-bar"><i id="mh-mood-fill" style="width:0%"></i></div>
+                </div>
+            </div>
+            <button class="mh-guide-btn" onclick="abrirTiendaAlimentos()" title="Tienda de alimentos" style="margin-right:6px">🍽️</button>
+            <button class="mh-guide-btn" onclick="abrirGuiaMascotas()" title="Guía de mascotas">📖</button>
         </div>
-        <div id="mascota-main-card" class="mascota-main-card">Cargando mascota...</div>
-        <div style="background:rgba(30,91,214,.4); border-radius:14px; margin:10px 15px; padding:10px; display:flex; justify-content:space-around; font-size:11px; color:#fff">
-            <span>🛡️ Bebé</span><span>→</span><span style="color:#FFD700">⭐ Joven</span><span>→</span><span>🔥 Adulto</span><span>→</span><span>🦅 Legendario</span>
+
+        <div class="mh-stage" id="mh-stage">
+            <div class="mh-grid-floor"></div>
+            <div class="mh-glow-aura" id="mh-glow-aura"></div>
+            <div class="mh-evo-burst" id="mh-evo-burst"></div>
+            <div class="mh-evo-flash" id="mh-evo-flash"></div>
+            <div class="mh-orbit-wrap" id="mh-orbit-wrap"><div class="mh-orbit-pivot" id="mh-orbit-pivot"></div></div>
+            <div class="mh-pet-wrap" id="mh-pet-wrap"></div>
+            <div class="mh-ripple r3"></div>
+            <div class="mh-ripple r2"></div>
+            <div class="mh-ripple"></div>
+            <div class="mh-floor-pool"></div>
+            <div class="mh-name" id="mh-name">—</div>
         </div>
-        <div id="mascota-grid" class="mascota-grid"></div>
-        <div class="mascota-btns">
-            <button class="mascota-btn" style="background:#42A5F5" onclick="equiparMascotaActual()">EQUIPAR</button>
-            <button class="mascota-btn" style="background:#FFB74D" onclick="alimentarMascotaActual()">ALIMENTAR</button>
-            <button class="mascota-btn" style="background:#FF8A65" onclick="evolucionarMascotaActual()">EVOLUCIONAR</button>
+
+        <div class="mh-scale-card" id="mh-scale-card" style="display:none">
+            <div class="mh-scale-row"><span>ESCALA</span><b id="mh-scale-value">1.00x</b></div>
+            <div class="mh-scale-track">
+                <div class="mh-scale-fill" id="mh-scale-fill"></div>
+                <div class="mh-scale-dot" id="mh-scale-dot"></div>
+            </div>
+            <div class="mh-scale-labels" id="mh-scale-labels"><span>bebé</span><span>medio</span><span>grande</span></div>
         </div>
+
+        <div class="mh-actions" id="mh-actions" style="display:none"></div>
+
+        <div class="mh-bonus-card" id="mh-bonus-card" style="display:none">
+            <div class="mh-bonus-txt">Bono activo: <b id="mh-bonus-text">—</b></div>
+            <div class="mh-bonus-link" onclick="mhOpenCurrentDetail()">Habilidad única ›</div>
+        </div>
+
+        <div class="mh-row" id="mh-row"></div>
+        <div class="mh-empty" id="mh-empty" style="display:none">Todavía no tienes mascotas. Toca ➕ para ver cómo conseguirlas.</div>
     </div>
 
     <div id="guia-mascotas-overlay">
@@ -1283,7 +1612,7 @@
         <div class="mascota-header">
             <button onclick="navTabTo('mascota-screen')" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:20px; color:#fff">←</button>
             <h2 id="mascota-detail-title" style="color:#fff; font-weight:900">DETALLE</h2>
-            <button style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:18px; color:#fff">📦</button>
+            <button onclick="abrirTiendaAlimentos()" title="Tienda de alimentos" style="background:rgba(255,255,255,.15); border:none; width:40px; height:40px; border-radius:50%; font-size:18px; color:#fff">📦</button>
         </div>
         <div id="mascota-detail-content"></div>
         <div class="mascota-btns">
@@ -1291,6 +1620,16 @@
             <button class="mascota-btn" style="background:#FFB74D" onclick="alimentarMascotaActual()">ALIMENTAR</button>
             <button class="mascota-btn" style="background:#FF8A65" onclick="evolucionarMascotaActual()">EVOLUCIONAR</button>
         </div>
+    </div>
+
+    <div id="mascota-food-shop-screen" class="screen">
+        <div class="fs-header">
+            <button class="fs-back" onclick="goToScreen(mascotaFoodShopReturnScreen||'mascota-screen')">←</button>
+            <h2>TIENDA MASCOTA - ALIMENTOS</h2>
+            <div class="fs-back-spacer"></div>
+        </div>
+        <div class="fs-inv-bar" id="fs-inv-bar"></div>
+        <div class="fs-grid" id="fs-grid"></div>
     </div>
 
     <!-- PANEL DE ADMINISTRADOR -->
@@ -1433,6 +1772,15 @@
                 <div class="admin-group">
                     <div class="admin-group-title">🐾 Mascotas - 4 Etapas + Fotos</div>
                     <p class="admin-group-hint" style="color:#8b949e; font-size:12px">Sube fotos desde tu celular. Se guardan en base64 en la nube.</p>
+                    <div style="background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:10px; margin-bottom:10px">
+                        <div style="font-size:12px; color:#8b949e; margin-bottom:6px">🎞️ Velocidad de animación del GIF (se aplica a las próximas fotos que subas)</div>
+                        <div style="display:flex; align-items:center; gap:10px">
+                            <span style="font-size:10px; color:#8b949e">Rápido</span>
+                            <input type="range" id="mascota-gif-speed-slider" min="40" max="220" step="10" value="100" oninput="document.getElementById('mascota-gif-speed-val').innerText=this.value+' ms'; CONFIG.mascotaGifDelayMs=Number(this.value);" onchange="saveConfig()" style="flex:1">
+                            <span style="font-size:10px; color:#8b949e">Lento</span>
+                        </div>
+                        <div style="text-align:center; margin-top:4px; font-size:11px; color:#e6edf3" id="mascota-gif-speed-val">100 ms</div>
+                    </div>
                     <div id="admin-mascotas-list" style="min-height:100px; background:#0d1117; border-radius:10px; padding:10px; border:1px dashed #30363d"></div>
                     <button class="admin-add-btn" onclick="addMascotaAdmin()" style="background:#238636; color:#fff; border:none; padding:12px; border-radius:10px; width:100%; margin-top:10px; font-weight:900">➕ Agregar nueva mascota</button>
                     <button class="admin-save-btn" onclick="saveAdminMascotas()" style="background:#8957e5; color:#fff; border:none; padding:14px; border-radius:10px; width:100%; margin-top:10px; font-weight:900; font-size:14px">💾 Guardar mascotas en la nube</button>
@@ -1478,16 +1826,8 @@
         </div>
     </div>
 
-    <!-- NAVEGACIÓN INFERIOR -->
-        <div class="nav-bar" id="bottom-nav" style="display:flex; overflow-x:auto; gap:4px; padding:6px">
-        <button class="nav-item active" id="nav-inicio" onclick="navTabTo('main-screen')" style="min-width:60px">🏠<br>Inicio</button>
-        <button class="nav-item" id="nav-tienda" onclick="navTabTo('store-screen')" style="min-width:60px">🛒<br>Tienda</button>
-        <button class="nav-item" id="nav-juego" onclick="navTabTo('game-screen')" style="min-width:60px">🎯<br>Bingo</button>
-        <button class="nav-item" id="nav-campaña" onclick="navTabTo('campaign-screen')" style="min-width:60px">🗺️<br>Campaña</button>
-        <button class="nav-item" id="nav-missions" onclick="navTabTo('missions-screen')" style="min-width:60px">📜<br>Misiones</button>
-        <button class="nav-item" id="nav-vippass" onclick="navTabTo('vippass-screen')" style="min-width:60px">🎫<br>Pase VIP</button>
-        <button class="nav-item" id="nav-mascota" onclick="navTabTo('mascota-screen')" style="min-width:70px; background:linear-gradient(135deg,#FFD700,#FFA000); color:#000; font-weight:900; border-radius:12px">⭐<br>MASCOTA</button>
-    </div>
+    <!-- NAVEGACIÓN INFERIOR (oculta, reemplazada por el círculo de opciones en Inicio) -->
+        <div class="nav-bar" id="bottom-nav" style="display:none;"></div>
     </div>
     <script>
     window.__firebaseReady=false;
@@ -1519,6 +1859,13 @@
             var t=document.getElementById('cloud-text'); if(t) t.innerText='¡Conectado!';
         }catch(e){ console.error('Firebase init error',e); forceStartup(); }
     </script>
+
+    <!-- Librerías para quitar el fondo de imágenes/GIF de mascotas -->
+    <script type="module">
+        import { parseGIF, decompressFrames } from 'https://cdn.jsdelivr.net/npm/gifuct-js@2.1.2/+esm';
+        window.__gifuct = { parseGIF, decompressFrames };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.min.js"></script>
 
 <script>
 /* =======================================================
@@ -1571,10 +1918,10 @@ function defaultConfig() {
         weeklyPrizesGold: [1500, 800, 400],
         monthlyPrizesGold: [6000, 3000, 1500],
         betTiers: [
-            { label: 'Sencillo', cost: 10, mult: 1.2 },
-            { label: 'Doble', cost: 20, mult: 1.5 },
-            { label: 'Triple', cost: 40, mult: 2 },
-            { label: 'Múltiple', cost: 100, mult: 3 },
+            { label: 'Sencillo', cost: 500, mult: 1.2 },
+            { label: 'Doble', cost: 2500, mult: 1.5 },
+            { label: 'Triple', cost: 7500, mult: 2 },
+            { label: 'Múltiple', cost: 25000, mult: 3 },
         ],
         multipliers: [ {mult:3, cost:80}, {mult:5, cost:180}, {mult:10, cost:500} ],
         roulettePrizes: [
@@ -1690,11 +2037,18 @@ function defaultConfig() {
               ] },
         ],
         mascotaFoods: [
-            { name:'Semilla', icon:'🌿', price:100, exp:100, rarity:'Común' },
-            { name:'Fruta Dulce', icon:'🍅', price:200, exp:120, rarity:'Raro' },
-            { name:'Carne Mágica', icon:'🥩', price:350, exp:150, rarity:'Épico' },
-            { name:'Manjar Real', icon:'🍖', price:500, exp:180, rarity:'Legendario' },
-            { name:'Ámbar Dorado', icon:'✨', price:750, exp:200, rarity:'Mítico' },
+            { id:'comilla', name:'comilla', sub:'hoja verde', icon:'🌿', rarity:'comun', cardClass:'rar-comun',
+              packs:[ {qty:1, price:100, exp:100}, {qty:10, price:900, exp:900}, {qty:50, price:4000, exp:4000} ] },
+            { id:'fruta_dulce', name:'Fruta Dulce', sub:'fresa', icon:'🍓', rarity:'raro', cardClass:'rar-raro-a',
+              packs:[ {qty:1, price:200, exp:120}, {qty:10, price:1800, exp:1800}, {qty:50, price:8000, exp:8000} ] },
+            { id:'magic_meat', name:'Magic Meat', sub:'carne', icon:'🥩', rarity:'raro', cardClass:'rar-raro-b',
+              packs:[ {qty:1, price:350, exp:150}, {qty:10, price:3150, exp:3150}, {qty:50, price:14000, exp:14000} ] },
+            { id:'carne_magica', name:'Carne Mágica', sub:'rodajas', icon:'🍖', rarity:'epico', cardClass:'rar-epico',
+              packs:[ {qty:1, price:350, exp:150}, {qty:10, price:3150, exp:3150} ] },
+            { id:'manjar_real', name:'Manjar Real', sub:'mermelada', icon:'🍯', rarity:'legendario', cardClass:'rar-legendario',
+              packs:[ {qty:1, price:500, exp:180}, {qty:10, price:4500, exp:4500} ] },
+            { id:'ambar_dorado', name:'Ámbar Dorado', sub:'gema amarilla', icon:'✨', rarity:'mitico', cardClass:'rar-mitico',
+              packs:[ {qty:1, price:750, exp:200}, {qty:10, price:6750, exp:6750} ] },
         ],
         mascotaXpTable: [
             { range:'1 → 5',   exp:'500 / 600 / 720 / 860 / 1,030',                       food:'🌿 Semilla' },
@@ -1845,6 +2199,157 @@ async function uploadImageToStorage(file, pathPrefix) {
     const data = await res.json();
     return data.secure_url;
 }
+/* ---------- Quitar fondo (color) de fotos/GIF de mascotas ---------- */
+const MASCOTA_BG_TOLERANCE = 42; // qué tan parecido a la esquina debe ser un color para considerarlo "fondo"
+const MASCOTA_CHROMA_KEY = 0xFF00FF; // color reservado para marcar transparencia dentro de un GIF
+const MASCOTA_GIF_FRAME_DELAY_MIN = 40;  // ms — límite rápido del slider
+const MASCOTA_GIF_FRAME_DELAY_MAX = 220; // ms — límite lento del slider
+const MASCOTA_GIF_FRAME_DELAY_DEFAULT = 100; // ms — valor si el admin no ajustó el slider
+
+function colorDist3(r1,g1,b1,r2,g2,b2){
+    const dr=r1-r2, dg=g1-g2, db=b1-b2;
+    return Math.sqrt(dr*dr+dg*dg+db*db);
+}
+
+// Recorre por inundación desde los bordes del ImageData y vuelve transparente
+// todo lo que sea "del color del fondo" (dejando intacta la figura del centro).
+function clearBackgroundFromImageData(imageData, tolerance) {
+    const { data, width, height } = imageData;
+    if (width < 2 || height < 2) return;
+    const corners = [[0,0],[width-1,0],[0,height-1],[width-1,height-1]];
+    let sr=0, sg=0, sb=0, sn=0;
+    corners.forEach(([x,y]) => {
+        const i = (y*width+x)*4;
+        if (data[i+3] > 10) { sr+=data[i]; sg+=data[i+1]; sb+=data[i+2]; sn++; }
+    });
+    if (sn === 0) return; // las esquinas ya son transparentes
+    const bgR = sr/sn, bgG = sg/sn, bgB = sb/sn;
+    const visited = new Uint8Array(width*height);
+    const stack = [];
+    for (let x=0;x<width;x++){ stack.push(x,0); stack.push(x,height-1); }
+    for (let y=0;y<height;y++){ stack.push(0,y); stack.push(width-1,y); }
+    while (stack.length) {
+        const y = stack.pop();
+        const x = stack.pop();
+        if (x<0||y<0||x>=width||y>=height) continue;
+        const idx = y*width+x;
+        if (visited[idx]) continue;
+        visited[idx] = 1;
+        const i = idx*4;
+        if (data[i+3] === 0) {
+            stack.push(x+1,y, x-1,y, x,y+1, x,y-1);
+            continue;
+        }
+        if (colorDist3(data[i],data[i+1],data[i+2], bgR,bgG,bgB) <= tolerance) {
+            data[i+3] = 0;
+            stack.push(x+1,y, x-1,y, x,y+1, x,y-1);
+        }
+    }
+}
+
+async function removeBackgroundFromStaticImage(file, tolerance) {
+    const img = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error('No se pudo leer la imagen'));
+        image.src = URL.createObjectURL(file);
+    });
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    clearBackgroundFromImageData(imageData, tolerance);
+    ctx.putImageData(imageData, 0, 0);
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw new Error('No se pudo generar la imagen sin fondo');
+    const baseName = (file.name || 'mascota').replace(/\.[^.]+$/, '');
+    return new File([blob], baseName + '-transparente.png', { type: 'image/png' });
+}
+
+async function removeBackgroundFromGif(file, tolerance) {
+    if (!window.__gifuct || !window.GIF) {
+        throw new Error('No se pudieron cargar los complementos para procesar GIF');
+    }
+    const buffer = await file.arrayBuffer();
+    const parsed = window.__gifuct.parseGIF(new Uint8Array(buffer));
+    const frames = window.__gifuct.decompressFrames(parsed, true);
+    if (!frames.length) throw new Error('No se pudieron leer los fotogramas del GIF');
+
+    const width = parsed.lsd.width;
+    const height = parsed.lsd.height;
+
+    const workCanvas = document.createElement('canvas');
+    workCanvas.width = width; workCanvas.height = height;
+    const workCtx = workCanvas.getContext('2d');
+
+    const patchCanvas = document.createElement('canvas');
+    const patchCtx = patchCanvas.getContext('2d');
+
+    const workerBlob = await fetch('https://cdn.jsdelivr.net/npm/gif.js@0.2.0/dist/gif.worker.js').then(r => {
+        if (!r.ok) throw new Error('No se pudo cargar el motor de GIF');
+        return r.blob();
+    });
+    const workerUrl = URL.createObjectURL(workerBlob);
+
+    const encoder = new window.GIF({
+        workers: 2,
+        quality: 8,
+        width, height,
+        workerScript: workerUrl,
+        transparent: MASCOTA_CHROMA_KEY
+    });
+
+    for (const frame of frames) {
+        const { left, top, width: fw, height: fh } = frame.dims;
+        patchCanvas.width = fw; patchCanvas.height = fh;
+        const patchImageData = patchCtx.createImageData(fw, fh);
+        patchImageData.data.set(frame.patch);
+        patchCtx.putImageData(patchImageData, 0, 0);
+        workCtx.drawImage(patchCanvas, left, top);
+
+        const fullFrame = workCtx.getImageData(0, 0, width, height);
+        clearBackgroundFromImageData(fullFrame, tolerance);
+
+        const d = fullFrame.data;
+        for (let p = 0; p < d.length; p += 4) {
+            if (d[p + 3] === 0) { d[p] = 255; d[p + 1] = 0; d[p + 2] = 255; d[p + 3] = 255; }
+        }
+
+        const frameCanvas = document.createElement('canvas');
+        frameCanvas.width = width; frameCanvas.height = height;
+        frameCanvas.getContext('2d').putImageData(fullFrame, 0, 0);
+        const targetDelay = Math.min(MASCOTA_GIF_FRAME_DELAY_MAX, Math.max(MASCOTA_GIF_FRAME_DELAY_MIN, Number(CONFIG.mascotaGifDelayMs) || MASCOTA_GIF_FRAME_DELAY_DEFAULT));
+        encoder.addFrame(frameCanvas, { delay: targetDelay, copy: true });
+
+        if (frame.disposalType === 2) {
+            workCtx.clearRect(left, top, fw, fh);
+        }
+    }
+
+    const resultBlob = await new Promise((resolve, reject) => {
+        encoder.on('finished', b => resolve(b));
+        encoder.on('abort', () => reject(new Error('Se canceló la generación del GIF')));
+        encoder.render();
+    });
+    URL.revokeObjectURL(workerUrl);
+    const baseName = (file.name || 'mascota').replace(/\.[^.]+$/, '');
+    return new File([resultBlob], baseName + '-transparente.gif', { type: 'image/gif' });
+}
+
+async function removeBackgroundFromFile(file, tolerance) {
+    const isGif = file.type === 'image/gif' || /\.gif$/i.test(file.name || '');
+    try {
+        if (isGif) return await removeBackgroundFromGif(file, tolerance);
+        return await removeBackgroundFromStaticImage(file, tolerance);
+    } catch (e) {
+        console.error('No se pudo quitar el fondo, se sube la imagen original:', e);
+        showToast('⚠️ No se pudo quitar el fondo, se sube la imagen tal cual.');
+        return file;
+    }
+}
+
 function imgOrFallback(url, fallbackHtml, extraClass) {
     return url ? `<img src="${url}" class="${extraClass || ''}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;">` : fallbackHtml;
 }
@@ -1880,6 +2385,7 @@ function defaultState(username) {
         gold: 5000,
         gems: 100,
         vipCards: 0,
+        vipDiamondProgress: 0,
         totalWins: 0,
         userLevel: 1,
         userXP: 0,
@@ -1935,6 +2441,7 @@ function defaultState(username) {
         ownedMascotas: [],
         equippedMascotaId: null,
         equippedMascotaIds: [],
+        mascotaFoodInventory: {},
     };
 }
 
@@ -1967,12 +2474,12 @@ function renderGameModes() {
 }
 
 const ROOMS = [
-    { id:'clasica',  name:'Clásica',  icon:'🎱', cls:'room-clasica',  theme:'theme-clasica',  minLevel:1,  minStreak:0, welcomeBonus:0,    baseWinReward:825,  unlockDiamonds:0,   cardCosts:{1:10,  2:20,  4:40,  8:80,  12:120, 16:160} },
-    { id:'oro',      name:'Oro',      icon:'👑', cls:'room-oro',      theme:'theme-oro',      minLevel:10, minStreak:0, welcomeBonus:300,  baseWinReward:1575, unlockDiamonds:20,  cardCosts:{1:50,  2:100, 4:200, 8:400, 12:600, 16:800} },
-    { id:'neon',     name:'Neón',     icon:'💜', cls:'room-neon',     theme:'theme-neon',     minLevel:25, minStreak:0, welcomeBonus:500,  baseWinReward:2500, unlockDiamonds:40,  cardCosts:{1:150, 2:300, 4:600, 8:1200,12:1800,16:2400} },
-    { id:'fuego',    name:'Fuego',    icon:'🔥', cls:'room-fuego',    theme:'theme-fuego',    minLevel:45, minStreak:3, welcomeBonus:800,  baseWinReward:4000, unlockDiamonds:80,  cardCosts:{1:400, 2:800, 4:1600,8:3200,12:4800,16:6400} },
-    { id:'espacial', name:'Espacial', icon:'🚀', cls:'room-espacial', theme:'theme-espacial', minLevel:70, minStreak:5, welcomeBonus:1500, baseWinReward:6000, unlockDiamonds:130, cardCosts:{1:800, 2:1600,4:3200,8:6400,12:9600,16:12800} },
-    { id:'aurora',   name:'Aurora',   icon:'🌌', cls:'room-aurora',   theme:'theme-aurora',   minLevel:1,  minStreak:0, welcomeBonus:1000, vipEarlyOnly:true },
+    { id:'clasica',  name:'Clásica',  icon:'🎱', cls:'room-clasica',  theme:'theme-clasica',  minLevel:1,  minStreak:0, welcomeBonus:0,    baseWinReward:3000,   unlockDiamonds:0,   entryPrice:2000,   cardCosts:{1:1000,   2:2000,   4:4000,   8:8000,   12:12000,  16:16000} },
+    { id:'oro',      name:'Oro',      icon:'👑', cls:'room-oro',      theme:'theme-oro',      minLevel:10, minStreak:0, welcomeBonus:300,  baseWinReward:15000,  unlockDiamonds:20,  entryPrice:10000,  cardCosts:{1:5000,   2:10000,  4:20000,  8:40000,  12:60000,  16:80000} },
+    { id:'neon',     name:'Neón',     icon:'💜', cls:'room-neon',     theme:'theme-neon',     minLevel:25, minStreak:0, welcomeBonus:500,  baseWinReward:60000,  unlockDiamonds:40,  entryPrice:40000,  cardCosts:{1:20000,  2:40000,  4:80000,  8:160000, 12:240000, 16:320000} },
+    { id:'fuego',    name:'Fuego',    icon:'🔥', cls:'room-fuego',    theme:'theme-fuego',    minLevel:45, minStreak:3, welcomeBonus:800,  baseWinReward:150000, unlockDiamonds:80,  entryPrice:100000, cardCosts:{1:50000,  2:100000, 4:200000, 8:400000, 12:600000, 16:800000} },
+    { id:'espacial', name:'Espacial', icon:'🚀', cls:'room-espacial', theme:'theme-espacial', minLevel:60, minStreak:5, welcomeBonus:1500, baseWinReward:300000, unlockDiamonds:130, entryPrice:200000, cardCosts:{1:100000, 2:200000} },
+    { id:'aurora',   name:'Aurora',   icon:'🌌', cls:'room-aurora',   theme:'theme-aurora',   minLevel:80, minStreak:0, welcomeBonus:2500, baseWinReward:600000, unlockDiamonds:200, entryPrice:400000, cardCosts:{1:200000, 2:400000} },
 ];
 const FRAMES = [
     { id:'frame-fuego',  name:'Fuego',  productName:'Marco Fuego' },
@@ -2847,7 +3354,7 @@ function goToScreen(screenId, isReplace) {
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass','mascota-screen':'nav-mascota'};
-    if (map[screenId]) document.getElementById(map[screenId]).classList.add('active');
+    if (map[screenId]) { const navEl = document.getElementById(map[screenId]); if (navEl) navEl.classList.add('active'); }
 
     if (screenId === 'game-screen') { openBingoLobby(); renderVipChatEmotes(); }
     stopFlashOfferTimer();
@@ -2895,16 +3402,13 @@ function renderRoomSelect() {
         const div = document.createElement('div');
         div.className = 'room-card ' + room.cls + (locked || needsUnlock ? ' locked' : '');
         div.innerHTML = `
-            <div class="room-scene">${customImg ? `<img src="${customImg}" style="width:100%;height:100%;object-fit:cover;">` : ''}</div>
+            <div class="graffiti-splash">${customImg ? `<img src="${customImg}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;">` : ''}</div>
             <div class="room-lock-badge">🔒</div>
-            <div class="room-name-row">
-                <span class="room-icon">${room.icon}</span>
-                <span class="room-name">${room.name}${room.vipEarlyOnly ? ' 🎫' : ''}</span>
-            </div>
-            <div class="room-meta-row">
-                <div class="room-meta">Nivel mín. ${room.minLevel}${room.minStreak ? ' · Racha ' + room.minStreak + '+' : ''}</div>
-                <div class="room-jackpot">💰 ${jackpot.toLocaleString('es')} 🪙</div>
-                ${vipLocked ? `<div class="room-lock-note">🎫 Acceso anticipado — Requiere Pase VIP</div>` : (!levelOk ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak + ' victorias seguidas'}</div>` : (needsUnlock ? `<button class="game-action-btn" style="padding:6px 10px;font-size:11px;margin-top:4px;" onclick="event.stopPropagation(); unlockRoomWithDiamonds('${room.id}')">🔓 Desbloquear (💎 ${room.unlockDiamonds})</button>` : ''))}
+            <div class="graffiti-content">
+                <div class="graffiti-name">${room.icon} ${room.name}${room.vipEarlyOnly ? ' 🎫' : ''}</div>
+                <div class="graffiti-meta">Nivel: ${room.minLevel}${room.minStreak ? ' · Racha ' + room.minStreak + '+' : ''}<br>Entrada: ${(room.entryPrice || 0).toLocaleString('es')}</div>
+                <div class="graffiti-jackpot">💰 ${jackpot.toLocaleString('es')} 🪙</div>
+                ${vipLocked ? `<div class="room-lock-note">🎫 Requiere Pase VIP</div>` : (!levelOk ? `<div class="room-lock-note">${lvl < room.minLevel ? 'Requiere nivel ' + room.minLevel : 'Requiere racha de ' + room.minStreak}</div>` : (needsUnlock ? `<button class="game-action-btn" style="padding:6px 10px;font-size:11px;margin-top:4px;" onclick="event.stopPropagation(); unlockRoomWithDiamonds('${room.id}')">🔓 Desbloquear (💎 ${room.unlockDiamonds})</button>` : ''))}
             </div>
         `;
         if (levelOk && !vipLocked && !needsUnlock) div.onclick = () => chooseRoom(room.id);
@@ -3020,7 +3524,15 @@ function refreshCardCostLabels() {
     [1, 2, 4, 8, 12, 16].forEach(count => {
         const el = document.getElementById(`cost-label-${count}`);
         if (!el) return;
+        const btn = el.closest('.card-opt-btn');
+        const available = !selectedRoom || !selectedRoom.cardCosts || selectedRoom.cardCosts[count] !== undefined;
         const cost = (selectedRoom && selectedRoom.cardCosts) ? selectedRoom.cardCosts[count] : undefined;
+        if (!available) {
+            el.innerText = 'No disponible';
+            if (btn) { btn.style.opacity = '0.35'; btn.style.cursor = 'not-allowed'; btn.onclick = null; btn.classList.remove('selected'); }
+            return;
+        }
+        if (btn) { btn.style.opacity = ''; btn.style.cursor = ''; btn.onclick = () => selectCardCount(count, btn); }
         if (cost === undefined) { el.innerText = `Premio x${count}`; return; }
         const discount = vipCardCostDiscount();
         const finalCost = Math.round(cost * (1 - discount));
@@ -3082,10 +3594,16 @@ function openBingoLobby() {
     document.getElementById('lobby-modal').style.display = 'block';
     document.getElementById('active-game-area').style.display = 'none';
     document.getElementById('room-mode-title').innerText = `Sala ${selectedRoom.name}`;
+    if (selectedRoom.cardCosts && selectedRoom.cardCosts[chosenCardCount] === undefined) {
+        chosenCardCount = 1;
+    }
     renderLobbyOptions();
     renderBetTierOptions();
     updateBonusSummary();
     refreshCardCostLabels();
+    document.querySelectorAll('.cards-options-grid .card-opt-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.getAttribute('onclick') === `selectCardCount(${chosenCardCount}, this)`);
+    });
     document.getElementById('jackpot-banner').innerText =
         `💰 Pozo acumulado de la sala ${selectedRoom.name}: ${(CONFIG.roomJackpots[selectedRoom.id] || 0).toLocaleString('es')} 🪙`;
 }
@@ -3746,9 +4264,7 @@ function renderStore(page) {
         multWrap.appendChild(btn);
     });
 
-    document.getElementById('store-vip-count').innerText = state.vipCards;
-    document.getElementById('store-vip-bonus').innerText = `x${(1 + state.vipCards * (CONFIG.vipBonusPerCard/100)).toFixed(2)}`;
-    document.getElementById('vip-buy-btn').innerText = `Comprar VIP (💎 ${CONFIG.vipCardCost})`;
+    renderVipProgressCard();
 }
 
 /* ---- M09: cofre destacado de mejor valor percibido (mayor oro por gema) ---- */
@@ -3839,6 +4355,180 @@ function buyVipCard() {
     state.gems -= cost; state.vipCards += 1;
     saveState(); refreshAllUI(); renderStore(currentStorePage);
     showToast(`✅ Tarjeta VIP #${state.vipCards} activada.`);
+}
+
+/* ---------- Tarjeta VIP moderna: progreso por diamantes acumulados (Niveles 1-50) ---------- */
+const VIP_LEVEL_COSTS = [150,165,180,195,210,225,240,255,270,285,305,325,345,365,385,405,425,445,465,485,510,535,560,585,610,635,660,685,710,735,770,805,840,875,910,945,980,1015,1050,1085,1130,1175,1220,1265,1310,1355,1400,1445,1490,1535];
+const VIP_LEVEL_TIERS = [
+    { min:0,  max:10, key:'comun',      label:'COMÚN',      color:'#1e9e6b', bg:'#e6f7f0' },
+    { min:11, max:20, key:'raro',       label:'RARO',       color:'#1976D2', bg:'#e6f1fc' },
+    { min:21, max:30, key:'epico',      label:'ÉPICO',      color:'#8E24AA', bg:'#f4e6fa' },
+    { min:31, max:40, key:'legendario', label:'LEGENDARIO', color:'#C99400', bg:'#fdf3d9' },
+    { min:41, max:50, key:'mitico',     label:'MÍTICO',     color:'#E05A2B', bg:'#fde9e0' },
+];
+function getVipLevelCost(level) { return VIP_LEVEL_COSTS[level - 1] || null; }
+function getVipLevelTier(level) { return VIP_LEVEL_TIERS.find(t => level >= t.min && level <= t.max) || VIP_LEVEL_TIERS[0]; }
+
+function aportarDiamantesVip(amount) {
+    amount = Math.floor(Number(amount));
+    if (!amount || amount <= 0) { showToast('❌ Ingresa una cantidad válida de diamantes.'); return; }
+    if (state.vipCards >= 50) { showToast('🌟 Ya alcanzaste el nivel VIP máximo (50).'); return; }
+    if ((state.gems || 0) <= 0) { showToast('❌ No tienes diamantes 💎 disponibles para aportar.'); return; }
+    if ((state.gems || 0) < amount) {
+        amount = state.gems;
+        showToast(`⚠️ Solo tenías ${amount} 💎 disponibles, se aportaron todos.`);
+    }
+
+    state.gems -= amount;
+    state.vipDiamondProgress = (state.vipDiamondProgress || 0) + amount;
+
+    let leveledUp = 0;
+    while (state.vipCards < 50) {
+        const cost = getVipLevelCost(state.vipCards + 1);
+        if (state.vipDiamondProgress >= cost) {
+            state.vipDiamondProgress -= cost;
+            state.vipCards += 1;
+            leveledUp++;
+        } else break;
+    }
+
+    saveState();
+    if (leveledUp > 0) {
+        showToast(`🎉 ¡Subiste a VIP ${state.vipCards}! (+${amount} 💎 aportados)`);
+        showVipLevelUpModal(state.vipCards);
+    } else {
+        showToast(`💎 +${amount} aportados a tu progreso VIP.`);
+    }
+    refreshAllUI();
+    renderStore(currentStorePage);
+}
+
+function vipLevelBenefits(level) {
+    const tier = getVipLevelTier(level);
+    const bonusPct = (level * (CONFIG.vipBonusPerCard || 0)).toFixed(1);
+    const benefits = [
+        `+${bonusPct}% de bono en recompensas de oro/premios`,
+        `Rango ${tier.label} desbloqueado`,
+    ];
+    if (level % 5 === 0) benefits.push('Nuevo marco de avatar disponible');
+    return { tier, bonusPct, benefits };
+}
+
+function showVipLevelUpModal(level) {
+    const { tier, bonusPct, benefits } = vipLevelBenefits(level);
+    const box = document.getElementById('vip-levelup-box');
+    box.innerHTML = `
+        <div class="vip-levelup-icon">👑</div>
+        <div class="vip-levelup-title">¡Ahora eres VIP ${level}!</div>
+        <div class="vip-levelup-tier" style="background:${tier.bg}; color:${tier.color}">${tier.label}</div>
+        <div class="vip-levelup-benefits-label">BENEFICIOS DESBLOQUEADOS</div>
+        <ul class="vip-levelup-benefits-list">
+            ${benefits.map(b => `<li>✨ ${b}</li>`).join('')}
+        </ul>
+        <button class="vip-levelup-close" onclick="closeVipLevelUpModal()">¡Genial!</button>
+    `;
+    document.getElementById('vip-levelup-overlay').classList.add('active');
+}
+function closeVipLevelUpModal() {
+    document.getElementById('vip-levelup-overlay').classList.remove('active');
+}
+
+
+
+function vipQuickAdd(amount) {
+    const input = document.getElementById('vipcard-custom-input');
+    if (input) input.value = amount;
+    aportarDiamantesVip(amount);
+}
+
+function vipConfirmCustomAdd() {
+    const input = document.getElementById('vipcard-custom-input');
+    const amount = input ? input.value : 0;
+    aportarDiamantesVip(amount);
+}
+
+function openVipProgressModal() {
+    if (!state) return;
+    renderVipProgressCard();
+    document.getElementById('vip-progress-overlay').classList.add('active');
+}
+function closeVipProgressModal() {
+    document.getElementById('vip-progress-overlay').classList.remove('active');
+}
+
+function renderVipProgressCard() {
+    const wrap = document.getElementById('vipcard-wrap');
+    if (!wrap) return;
+    const level = state.vipCards || 0;
+    const gems = state.gems || 0;
+    const progress = state.vipDiamondProgress || 0;
+    const maxed = level >= 50;
+    const tier = getVipLevelTier(level);
+    const nextCost = maxed ? null : getVipLevelCost(level + 1);
+    const pct = maxed ? 100 : Math.min(100, Math.round((progress / nextCost) * 100));
+    const missing = maxed ? 0 : Math.max(0, nextCost - progress);
+
+    wrap.innerHTML = `
+        <div class="vipcard">
+            <div class="vipcard-top">
+                <div class="vipcard-orbit-wrap">
+                    <div class="vipcard-orbit-track"></div>
+                    <div class="vipcard-orbit-pet" style="background:${tier.bg}">🐥</div>
+                    <div class="vipcard-orbit-spin">
+                        <div class="vipcard-orbit-badge" style="background:${tier.color}">${maxed ? '👑' : level}</div>
+                    </div>
+                </div>
+                <div class="vipcard-top-mid">
+                    <div class="vipcard-label">NIVEL ACTUAL <span class="vipcard-tier-pill" style="background:${tier.bg}; color:${tier.color}">${tier.label}</span></div>
+                    <div class="vipcard-level">VIP ${level}<span>/50</span></div>
+                </div>
+                <div class="vipcard-gems">💎 ${gems.toLocaleString()}</div>
+            </div>
+
+            ${maxed ? `
+                <div class="vipcard-maxed">🌟 ¡Nivel VIP máximo alcanzado! (Bono +${(1 + level * (CONFIG.vipBonusPerCard/100)).toFixed(2)}x)</div>
+            ` : `
+                <div class="vipcard-progress-box">
+                    <div class="vipcard-progress-top">
+                        <div class="vipcard-progress-diamond">💎</div>
+                        <div class="vipcard-progress-mid">
+                            <div class="vipcard-progress-label">PROGRESO</div>
+                            <div class="vipcard-progress-nums">${progress.toLocaleString()} <small>/ ${nextCost.toLocaleString()}</small></div>
+                        </div>
+                        <div class="vipcard-progress-pct-wrap">
+                            <div class="vipcard-progress-pct-label">COMPLETADO</div>
+                            <div class="vipcard-progress-pct">${pct}%</div>
+                        </div>
+                    </div>
+                    <div class="vipcard-progress-bar-bg">
+                        <div class="vipcard-progress-bar-fill" style="width:${pct}%"></div>
+                    </div>
+                </div>
+
+                <div class="vipcard-missing">
+                    <div class="vipcard-missing-ic">✨</div>
+                    <div>Te faltan <b>${missing.toLocaleString()}</b> 💎 para VIP ${level + 1}</div>
+                </div>
+            `}
+
+            <div class="vipcard-rapido-label">RÁPIDO</div>
+            <div class="vipcard-quick-grid">
+                ${[10,50,100,500].map(v => `
+                    <div class="vipcard-quick-btn" onclick="vipQuickAdd(${v})">
+                        <div class="vipcard-quick-num">💎 ${v}</div>
+                        <div class="vipcard-quick-sub">AGREGAR</div>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="vipcard-custom-row">
+                <input type="number" id="vipcard-custom-input" class="vipcard-custom-input" value="5" min="1">
+                <button class="vipcard-confirm-btn" onclick="vipConfirmCustomAdd()">⚡ AGREGAR DIAMANTES</button>
+            </div>
+
+            <div class="vipcard-footnote">Ejemplo: si pones 50 y necesitas ${nextCost ? nextCost.toLocaleString() : '150'}, la barra sube a 50/${nextCost ? nextCost.toLocaleString() : '150'}. Hasta que no llegue al costo no cambia de VIP. ¡El sobrante se guarda para el siguiente nivel!</div>
+        </div>
+    `;
 }
 function buyMultiplier(mult, gemCost) {
     const limits = {3:5, 5:3, 10:1};
@@ -4623,9 +5313,12 @@ function refreshAllUI() {
     const nameSpan = state.vipPassActive ? `<span class="vip-gold-name">${escapeHtml(state.username)}</span>` : escapeHtml(state.username);
     const titleTxt = state.profileTitle ? ` · ${titleLabel(state.profileTitle)}` : '';
     document.getElementById('display-user').innerHTML = `${crown} ${avatarHtml(state.equippedAvatar || '🙂')} ${nameSpan} · Nv.${playerLevel(state)} · VIP ${state.vipCards}${titleTxt}`;
+    const heroVipLevelEl = document.getElementById('hero-vip-level');
+    if (heroVipLevelEl) heroVipLevelEl.innerText = state.vipCards || 0;
     document.getElementById('res-gold').innerText = state.gold.toLocaleString('es');
     document.getElementById('res-gem').innerText = state.gems.toLocaleString('es');
-    document.getElementById('stat-total-wins').innerText = state.totalWins;
+    const totalWinsEl = document.getElementById('stat-total-wins');
+    if (totalWinsEl) totalWinsEl.innerText = state.totalWins;
     const streakEl = document.getElementById('streak-badge');
     if (streakEl) streakEl.innerText = `🔥 Racha: ${state.loginStreak || 0} días`;
     if(typeof updateMascotTrophyCount==='function') updateMascotTrophyCount();
@@ -5013,6 +5706,13 @@ function mascotaStages(m) {
 }
 
 function renderAdminMascotas() {
+    const speedSlider = document.getElementById('mascota-gif-speed-slider');
+    if (speedSlider) {
+        const savedSpeed = Number(CONFIG.mascotaGifDelayMs) || 100;
+        speedSlider.value = savedSpeed;
+        const speedLabel = document.getElementById('mascota-gif-speed-val');
+        if (speedLabel) speedLabel.innerText = savedSpeed + ' ms';
+    }
     const wrap = document.getElementById('admin-mascotas-list');
     if (!wrap) return;
     if (!CONFIG.mascotas) CONFIG.mascotas = [];
@@ -5065,13 +5765,14 @@ function renderAdminMascotas() {
                 </div>
             `).join('')}
             <div style="display:grid; grid-template-columns:repeat(${stages.length},1fr); gap:8px; margin-top:10px">
-                ${stages.map((st, sIdx) => { const key = 'e'+(sIdx+1); return `
+                ${stages.map((st, sIdx) => { const key = 'e'+(sIdx+1); const hasImg = !!(m.images && m.images[key]); return `
                     <div>
                         <div style="font-size:10px; color:#8b949e; margin-bottom:4px">${escapeHtml(st.name || key)}</div>
                         <div class="admin-img-row">
-                            <div class="admin-img-preview" id="mascota-img-preview-${idx}-${key}">${m.images && m.images[key] ? `<img src="${m.images[key]}">` : '<span>Sin foto</span>'}</div>
+                            <div class="admin-img-preview-checker" id="mascota-img-preview-${idx}-${key}">${hasImg ? `<img src="${m.images[key]}">` : '<span style="font-size:9px;color:#555">Sin foto</span>'}</div>
                             <input type="file" accept="image/*" onchange="uploadMascotaImage(${idx}, '${key}', this)">
                         </div>
+                        ${hasImg ? `<button class="admin-del-btn" style="width:100%; margin-top:4px; font-size:11px; padding:4px" onclick="removeMascotaImage(${idx}, '${key}')">🗑️ Quitar foto</button>` : ''}
                     </div>
                 `; }).join('')}
             </div>
@@ -5093,18 +5794,31 @@ function addMascotaStage(idx) {
 async function uploadMascotaImage(idx, stageKey, inputEl) {
     const file = inputEl.files[0];
     if (!file) return;
-    showToast('⏳ Subiendo foto de mascota...');
+    showToast('⏳ Quitando el fondo de la imagen...');
     try {
-        const url = await uploadImageToStorage(file, 'mascotas');
+        const processedFile = await removeBackgroundFromFile(file, MASCOTA_BG_TOLERANCE);
+        showToast('⏳ Subiendo foto de mascota...');
+        const url = await uploadImageToStorage(processedFile, 'mascotas');
         if (!CONFIG.mascotas[idx].images) CONFIG.mascotas[idx].images = {};
         CONFIG.mascotas[idx].images[stageKey] = url;
         await saveConfig();
         renderAdminMascotas();
-        showToast('✅ Foto guardada en la nube.');
+        showToast('✅ Foto guardada en la nube, con el fondo transparente.');
     } catch (e) {
         console.error('Error subiendo foto de mascota:', e);
         showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Cloudinary'));
+    } finally {
+        inputEl.value = '';
     }
+}
+
+async function removeMascotaImage(idx, stageKey) {
+    if (!CONFIG.mascotas[idx] || !CONFIG.mascotas[idx].images) return;
+    if (!confirm('¿Quitar esta foto de la mascota?')) return;
+    delete CONFIG.mascotas[idx].images[stageKey];
+    await saveConfig();
+    renderAdminMascotas();
+    showToast('🗑️ Foto eliminada.');
 }
 
 function addMascotaAdmin() {
@@ -5136,7 +5850,11 @@ async function saveAdminMascotas() {
 let currentMascotaDetailId = null;
 
 function mascotaStageImage(mascotaDef, stage) {
-    if (!mascotaDef || !mascotaDef.images) return '';
+    if (!mascotaDef) return '';
+    // Imagen única: si el admin cargó UNA sola imagen para toda la mascota, se usa siempre esa
+    // (la mascota solo cambia de tamaño con el nivel/etapa, no de apariencia).
+    if (mascotaDef.image) return mascotaDef.image;
+    if (!mascotaDef.images) return '';
     const maxStage = mascotaStages(mascotaDef).length;
     const key = 'e' + Math.max(1, Math.min(maxStage, stage || 1));
     return mascotaDef.images[key] || mascotaDef.images.e1 || '';
@@ -5146,64 +5864,186 @@ function getOwnedMascota(id) {
     return (state.ownedMascotas || []).find(o => o.id === id);
 }
 
+let mascotaHeroSelectedId = null;
+
+function mhBuildConfetti() {
+    const box = document.getElementById('mh-confetti');
+    if (!box || box.dataset.built) return;
+    box.dataset.built = '1';
+    const colors = ['#FF6B6B','#FFD166','#06D6A0','#5B7CFA','#C77DFF','#FF9F1C'];
+    let html = '';
+    for (let i = 0; i < 22; i++) {
+        const left = Math.random() * 100;
+        const dur = (5 + Math.random() * 4).toFixed(2);
+        const delay = (Math.random() * 6).toFixed(2);
+        const color = colors[i % colors.length];
+        const rot = Math.random() < .5 ? '0deg' : '45deg';
+        html += `<span style="left:${left}%; background:${color}; animation-duration:${dur}s; animation-delay:${delay}s; transform:rotate(${rot})"></span>`;
+    }
+    box.innerHTML = html;
+}
+
+function mhToggleEquip() {
+    currentMascotaDetailId = mascotaHeroSelectedId;
+    equiparMascotaActual();
+}
+
+function mhOpenCurrentDetail() {
+    if (!mascotaHeroSelectedId) return;
+    openMascotaDetail(mascotaHeroSelectedId);
+}
+
+function mhSelectPet(id) {
+    mascotaHeroSelectedId = id;
+    currentMascotaDetailId = id;
+    renderMascotaScreen();
+}
+
 function renderMascotaScreen() {
-    const card = document.getElementById('mascota-main-card');
-    const grid = document.getElementById('mascota-grid');
-    if (!card || !grid) return;
+    mhBuildConfetti();
     const list = CONFIG.mascotas || [];
+    const levelPill = document.getElementById('mh-level-pill');
+    const moodPill = document.getElementById('mh-mood-pill');
+    const petWrap = document.getElementById('mh-pet-wrap');
+    const stage = document.getElementById('mh-stage');
+    const nameEl = document.getElementById('mh-name');
+    const actions = document.getElementById('mh-actions');
+    const bonusCard = document.getElementById('mh-bonus-card');
+    const row = document.getElementById('mh-row');
+    const empty = document.getElementById('mh-empty');
+    if (!levelPill || !row) return;
+
+    if (list.length === 0) {
+        stage.style.display = 'none'; actions.style.display = 'none'; bonusCard.style.display = 'none';
+        moodPill.style.display = 'none'; row.innerHTML = ''; empty.style.display = 'block';
+        levelPill.innerHTML = `<span class="mh-lvl-emoji">🐾</span><div class="mh-level-text"><b>Sin mascotas</b></div>`;
+        return;
+    }
+    empty.style.display = 'none'; stage.style.display = 'flex';
 
     const equippedIds = getEquippedMascotaIds();
-    if (equippedIds.length > 0) {
-        const rows = equippedIds.map(id => {
-            const owned = getOwnedMascota(id);
-            const def = list.find(m => m.id === id);
-            if (!owned || !def) return '';
-            const img = mascotaStageImage(def, owned.stage);
-            const stages = mascotaStages(def);
-            const stageName = (stages[owned.stage - 1] || {}).name || '';
-            const rareza = MASCOTA_RAREZAS[def.rarity] || MASCOTA_RAREZAS.comun;
-            return `
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px">
-                <div style="width:50px; height:50px; border-radius:12px; overflow:hidden; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:26px">
-                    ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover">` : (def.emoji || '🐾')}
-                </div>
-                <div>
-                    <div style="color:#fff; font-weight:900; font-size:13px">${escapeHtml(def.name)} <span style="font-size:10px; color:${rareza.color}">${rareza.symbol} ${rareza.label}</span></div>
-                    <div style="color:#cfe0ff; font-size:11px">${escapeHtml(stageName)} · Etapa ${owned.stage}/${stages.length}</div>
-                </div>
-            </div>`;
-        }).join('');
-        const combos = getActiveCombos();
-        const combosHTML = combos.length ? `
-            <div style="margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,.15)">
-                <div style="color:#FFD700; font-size:11px; font-weight:900; margin-bottom:4px">⚡ Combos activos</div>
-                ${combos.map(c => `<div style="color:#7ec8ff; font-size:11px">${c.label}: <b style="color:#fff">${c.desc}</b></div>`).join('')}
-            </div>` : '';
-        card.innerHTML = `<div style="width:100%">${rows}<div style="color:#cfe0ff; font-size:10px; margin-top:4px">${equippedIds.length}/${MAX_MASCOTAS_EQUIPADAS} mascotas equipadas</div>${combosHTML}</div>`;
+    const owned = state.ownedMascotas || [];
+    if (!mascotaHeroSelectedId || !list.find(m => m.id === mascotaHeroSelectedId)) {
+        mascotaHeroSelectedId = (equippedIds[0]) || (owned[0] && owned[0].id) || list[0].id;
+    }
+    currentMascotaDetailId = mascotaHeroSelectedId;
+
+    const def = list.find(m => m.id === mascotaHeroSelectedId);
+    const ownedRec = getOwnedMascota(mascotaHeroSelectedId);
+    const stages = mascotaStages(def);
+    const petStage = ownedRec ? ownedRec.stage : 1;
+    const img = mascotaStageImage(def, petStage);
+    const stageName = (stages[petStage - 1] || {}).name || '';
+    const isEquipped = equippedIds.includes(mascotaHeroSelectedId);
+
+    // --- Escala de crecimiento por etapa (estilo Dragon City): la mascota crece de tamaño ---
+    const growthRatio = ownedRec ? Math.max(0, Math.min(1, (petStage - 1) / Math.max(1, stages.length - 1))) : 0;
+    const petPx = Math.round(95 + growthRatio * 145);        // 95px (bebé, chiquito) -> 240px (etapa máxima)
+    const glowPx = Math.round(140 + growthRatio * 120);     // el aura crece junto con la mascota
+    const scaleX = (0.7 + growthRatio * 0.6).toFixed(2);    // 0.70x -> 1.30x
+
+    petWrap.innerHTML = img ? `<img src="${img}" alt="${escapeHtml(def.name)}" style="width:${petPx}px;height:${petPx}px">` : `<div class="mh-pet-emoji" style="width:${petPx}px;height:${petPx}px;font-size:${Math.round(petPx*0.6)}px">${def.emoji || '🐾'}</div>`;
+    mhSpawnOrbit(petPx, growthRatio);
+    nameEl.textContent = ownedRec ? `${def.name} · ${stageName}` : `🔒 ${def.name}`;
+
+    const auraEl = document.getElementById('mh-glow-aura');
+    if (auraEl) { auraEl.style.width = glowPx + 'px'; auraEl.style.height = (glowPx * 0.55) + 'px'; }
+    const poolEl = document.querySelector('.mh-floor-pool');
+    if (poolEl) poolEl.style.width = Math.round(petPx * 0.9) + 'px';
+
+    const scaleCard = document.getElementById('mh-scale-card');
+    if (ownedRec && scaleCard) {
+        scaleCard.style.display = 'block';
+        document.getElementById('mh-scale-value').textContent = scaleX + 'x';
+        document.getElementById('mh-scale-fill').style.width = (growthRatio * 100) + '%';
+        document.getElementById('mh-scale-dot').style.left = (growthRatio * 100) + '%';
+        document.getElementById('mh-scale-labels').innerHTML = `<span>${stages[0]?.name || 'bebé'}</span><span>${stages[Math.floor((stages.length-1)/2)]?.name || 'medio'}</span><span>${stages[stages.length-1]?.name || 'grande'}</span>`;
+    } else if (scaleCard) { scaleCard.style.display = 'none'; }
+
+    levelPill.innerHTML = `
+        ${img ? `<img src="${img}">` : `<span class="mh-lvl-emoji">${def.emoji || '🐾'}</span>`}
+        <div class="mh-level-text">
+            <b>Nivel ${ownedRec ? petStage : 0}</b>
+            <div class="mh-level-bar"><i style="width:${ownedRec ? Math.round((petStage / stages.length) * 100) : 0}%"></i></div>
+        </div>`;
+
+    if (ownedRec) {
+        moodPill.style.display = 'flex';
+        document.getElementById('mh-mood-name').textContent = def.name;
+        document.getElementById('mh-mood-fill').style.width = (ownedRec.hunger || 0) + '%';
     } else {
-        card.innerHTML = `<div style="color:#cfe0ff; font-size:13px">Todavía no tienes mascotas equipadas. Elige hasta ${MAX_MASCOTAS_EQUIPADAS} abajo 👇</div>`;
+        moodPill.style.display = 'none';
     }
 
-    if (list.length === 0) { grid.innerHTML = '<p style="color:#cfe0ff; grid-column:1/-1">El administrador todavía no agregó mascotas.</p>'; return; }
-    grid.innerHTML = list.map(m => {
-        const owned = getOwnedMascota(m.id);
-        const stage = owned ? owned.stage : 1;
-        const img = mascotaStageImage(m, stage);
-        const stages = mascotaStages(m);
-        const isEquipped = equippedIds.includes(m.id);
-        const rareza = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
-        return `
-            <div class="mascota-item ${isEquipped ? 'equipped' : ''}" onclick="openMascotaDetail('${m.id}')" style="border-color:${owned ? rareza.color : 'rgba(255,255,255,.2)'}">
-                <span class="mascota-rareza-badge" title="${rareza.label}">${rareza.symbol}</span>
-                ${owned ? `<span class="mascota-lvl-badge">Nv${stage === stages.length ? m.levelMax : ''}</span>` : ''}
-                <div style="width:100%; aspect-ratio:1; border-radius:10px; overflow:hidden; background:rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; margin-bottom:6px; font-size:30px">
-                    ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover${owned ? '' : ';filter:grayscale(1) brightness(.6)'}">` : (owned ? (m.emoji || '🐾') : '🔒')}
-                </div>
-                <div style="color:#fff; font-size:11px; font-weight:700">${escapeHtml(m.name)}</div>
-                <div style="color:#cfe0ff; font-size:10px">${owned ? `Etapa ${stage}/${stages.length}` : (m.goldCost > 0 ? `🪙 ${m.goldCost.toLocaleString()}` : 'Gratis')}</div>
-            </div>
-        `;
+    if (ownedRec) {
+        const maxStage = stages.length;
+        const nextCost = (stages[petStage] || {}).diamondCost || 0;
+        actions.style.display = 'flex';
+        actions.innerHTML = `
+            <button class="mh-action-btn mh-action-feed" onclick="alimentarMascotaActual()"><span class="mh-ic">🎁</span>ALIMENTAR</button>
+            <button class="mh-action-btn mh-action-evo" onclick="evolucionarMascotaActual()"><span class="mh-ic">⚡</span>${petStage >= maxStage ? 'AL MÁXIMO' : `EVOLUCIONAR${nextCost ? ` (💎${nextCost})` : ''}`}</button>
+            <button class="mh-action-btn mh-action-equip ${isEquipped ? 'is-on' : ''}" onclick="mhToggleEquip()"><span class="mh-ic">${isEquipped ? '✔️' : '➕'}</span>${isEquipped ? 'EQUIPADO' : 'EQUIPAR'}</button>`;
+        bonusCard.style.display = def.bonusLabel ? 'flex' : 'none';
+        if (def.bonusLabel) document.getElementById('mh-bonus-text').textContent = def.bonusLabel + (isEquipped ? '' : ' (sin equipar)');
+    } else {
+        actions.style.display = 'flex';
+        actions.innerHTML = `<button class="mh-action-btn" style="background:linear-gradient(180deg,#4CAF50,#2E7D32); flex:1" onclick="currentMascotaDetailId='${mascotaHeroSelectedId}'; comprarMascotaActual();"><span class="mh-ic">🎁</span>${def.goldCost > 0 ? `ADQUIRIR · 🪙${def.goldCost.toLocaleString()}` : 'ADQUIRIR GRATIS'}</button>`;
+        bonusCard.style.display = 'none';
+    }
+
+    row.innerHTML = list.map(m => {
+        const o = getOwnedMascota(m.id);
+        const st = o ? o.stage : 1;
+        const im = mascotaStageImage(m, st);
+        const sel = m.id === mascotaHeroSelectedId ? 'selected' : '';
+        const locked = o ? '' : 'locked';
+        return `<div class="mh-row-item ${sel} ${locked}" onclick="mhSelectPet('${m.id}')">
+            ${im ? `<img src="${im}">` : (o ? (m.emoji || '🐾') : '🔒')}
+            ${equippedIds.includes(m.id) ? '<span class="mh-row-badge">✔️</span>' : ''}
+        </div>`;
     }).join('');
+}
+
+function mhSpawnOrbit(petPx, growthRatio) {
+    const pivot = document.getElementById('mh-orbit-pivot');
+    const wrap = document.getElementById('mh-orbit-wrap');
+    if (!pivot || !wrap) return;
+    pivot.innerHTML = '';
+    const radius = Math.round(petPx * 0.62 + growthRatio * 22); // órbita más amplia mientras más grande/evolucionada
+    // Cometa con cola (puntos decrecientes detrás, en el mismo ángulo del giro)
+    for (let i = 0; i < 5; i++) {
+        const d = document.createElement('span');
+        const isHead = i === 0;
+        d.className = isHead ? 'mh-orbit-comet' : 'mh-orbit-dot';
+        if (!isHead) {
+            const size = Math.max(2, 6 - i);
+            d.style.width = size + 'px'; d.style.height = size + 'px'; d.style.opacity = (0.75 - i * 0.14);
+        }
+        d.style.transform = `rotate(${i * -8}deg) translateX(${radius}px)`;
+        pivot.appendChild(d);
+    }
+    // Polvo disperso alrededor del anillo, con parpadeo individual
+    const dustCount = 5 + Math.round(growthRatio * 4);
+    for (let i = 0; i < dustCount; i++) {
+        const angle = Math.random() * 360;
+        const r = radius * (0.65 + Math.random() * 0.55);
+        const size = 2 + Math.random() * 3;
+        const d = document.createElement('span');
+        d.className = 'mh-orbit-dot';
+        d.style.width = size + 'px'; d.style.height = size + 'px';
+        d.style.transform = `rotate(${angle}deg) translateX(${r}px)`;
+        d.style.animation = `mhTwinkle ${1.4 + Math.random() * 1.4}s ease-in-out infinite`;
+        d.style.animationDelay = (Math.random() * 2) + 's';
+        pivot.appendChild(d);
+    }
+    pivot.style.animationDuration = (14 - growthRatio * 4).toFixed(1) + 's'; // más evolucionada = gira un poco más rápido, pero siempre suave
+}
+
+function mhPlayEvoBurst() {
+    const burst = document.getElementById('mh-evo-burst');
+    const flash = document.getElementById('mh-evo-flash');
+    if (burst) { burst.classList.remove('play'); void burst.offsetWidth; burst.classList.add('play'); }
+    if (flash) { flash.classList.remove('play'); void flash.offsetWidth; flash.classList.add('play'); }
 }
 
 function openMascotaDetail(id) {
@@ -5241,6 +6081,7 @@ function renderMascotaDetail() {
                     <div style="background:#FFD700; height:100%; width:${owned.hunger || 0}%"></div>
                 </div>
                 ${stage < stages.length ? `<div style="color:#7ec8ff; font-size:12px; margin-top:8px">Próxima evolución (${escapeHtml(stages[stage].name || '')}): 💎 ${stages[stage].diamondCost || 0}</div>` : `<div style="color:#FFD700; font-size:12px; margin-top:8px">🌟 Etapa máxima alcanzada</div>`}
+                <div style="color:#9db6e8; font-size:11px; margin-top:6px; cursor:pointer" onclick="abrirTiendaAlimentos()">🍽️ ${(() => { const inv=getMascotaFoodInventory(); const match=(CONFIG.mascotaFoods||[]).filter(f=>f.rarity===m.rarity); const count=match.reduce((a,f)=>a+(inv[f.id]||0),0); return count>0 ? `Comida disponible para esta mascota: ${count}` : `Sin comida ${escapeHtml(match.map(f=>f.name).join('/'))} en inventario`; })()} — Ir a la tienda ›</div>
             ` : `
                 <div style="color:#fff; font-weight:900; font-size:15px">No la tienes todavía</div>
                 <div style="color:#cfe0ff; font-size:13px; margin:8px 0">${m.obtainMethod ? escapeHtml(m.obtainMethod) : (m.goldCost > 0 ? `Costo: 🪙 ${m.goldCost.toLocaleString()}` : 'Es gratis')}</div>
@@ -5314,20 +6155,169 @@ function equiparMascotaActual() {
     renderMascotaScreen();
 }
 
+/* Cuánta hambre/cariño restaura cada tipo de alimento comprado en la Tienda de Alimentos */
+const MASCOTA_FOOD_HUNGER = { comilla:8, fruta_dulce:12, magic_meat:15, carne_magica:18, manjar_real:24, ambar_dorado:30 };
+
+function getMascotaFoodInventory() {
+    if (!state.mascotaFoodInventory) state.mascotaFoodInventory = {};
+    return state.mascotaFoodInventory;
+}
+
+/* La mascota solo se alimenta con la comida de SU MISMA rareza */
 function alimentarMascotaActual() {
     const id = currentMascotaDetailId;
     if (!id) return;
     const owned = getOwnedMascota(id);
     if (!owned) { showToast('❌ Primero debes adquirir esta mascota.'); return; }
-    const cost = 50;
-    if ((state.gold || 0) < cost) { showToast('❌ No tienes suficiente oro.'); return; }
     if ((owned.hunger || 0) >= 100) { showToast('😋 Tu mascota ya está satisfecha.'); return; }
-    state.gold -= cost;
-    owned.hunger = Math.min(100, (owned.hunger || 0) + 20);
+
+    const m = (CONFIG.mascotas || []).find(x => x.id === id);
+    const rarity = m ? m.rarity : 'comun';
+    const inv = getMascotaFoodInventory();
+    const matchingFoods = (CONFIG.mascotaFoods || []).filter(f => f.rarity === rarity);
+    const foodId = matchingFoods.map(f => f.id).find(fid => (inv[fid] || 0) > 0);
+
+    if (!foodId) {
+        const names = matchingFoods.map(f => `${f.icon} ${f.name}`).join(' o ');
+        showToast(`❌ No tienes ${names || 'la comida correcta'} para esta mascota. Ve a la Tienda de Alimentos 🍽️`);
+        return;
+    }
+
+    const food = matchingFoods.find(f => f.id === foodId);
+    inv[foodId] -= 1;
+    const gain = MASCOTA_FOOD_HUNGER[foodId] || 15;
+    owned.hunger = Math.min(100, (owned.hunger || 0) + gain);
     saveState();
-    showToast('🍖 ¡Mascota alimentada!');
+    showToast(`${food.icon} ¡Mascota alimentada con ${food.name}! (+${gain} cariño)`);
     renderMascotaDetail();
     renderMascotaScreen();
+    if (typeof refreshAllUI === 'function') refreshAllUI();
+}
+
+/* ---------- Tienda de Alimentos de Mascota ---------- */
+let mascotaFoodShopReturnScreen = 'mascota-screen';
+let foodShopFlashOffer = null; // {foodId, discount} — oferta relámpago, aparece de vez en cuando al abrir la tienda
+
+/* Descuento + bono de comida permanente según el rango VIP (cantidad de Tarjetas VIP) */
+const VIP_FOOD_DISCOUNT_TIERS = [
+    { min:1,  max:10, label:'VIP 1-10',  discount:10, bonusPct:0,  bonusFlat:0 },
+    { min:11, max:20, label:'VIP 11-20', discount:15, bonusPct:0,  bonusFlat:0 },
+    { min:21, max:30, label:'VIP 21-30', discount:20, bonusPct:20, bonusFlat:0 },
+    { min:31, max:40, label:'VIP 31-40', discount:25, bonusPct:0,  bonusFlat:25 },
+    { min:41, max:50, label:'VIP 41-50', discount:50, bonusPct:0,  bonusFlat:75 },
+];
+function getVipFoodTier() {
+    const rank = Math.min(state.vipCards || 0, 50);
+    if (rank < 1) return null;
+    return VIP_FOOD_DISCOUNT_TIERS.find(t => rank >= t.min && rank <= t.max) || null;
+}
+
+/* Calcula precio y cantidad finales de un pack aplicando descuento VIP + oferta relámpago si corresponde */
+function getFoodPackFinalValues(foodId, pack) {
+    const tier = getVipFoodTier();
+    let price = pack.price;
+    let qty = pack.qty;
+    if (tier) {
+        price = price * (1 - tier.discount / 100);
+        if (tier.bonusPct) qty = qty + Math.round(qty * tier.bonusPct / 100);
+        if (tier.bonusFlat) qty = qty + tier.bonusFlat;
+    }
+    if (foodShopFlashOffer && foodShopFlashOffer.foodId === foodId) {
+        price = price * (1 - foodShopFlashOffer.discount / 100);
+    }
+    return { price: Math.max(1, Math.round(price)), qty: Math.round(qty), original: pack.price };
+}
+
+function abrirTiendaAlimentos() {
+    const current = document.querySelector('.screen.active');
+    mascotaFoodShopReturnScreen = (current && current.id && current.id !== 'mascota-food-shop-screen') ? current.id : 'mascota-screen';
+
+    // 30% de probabilidad de que aparezca una oferta relámpago en una comida al azar
+    if (Math.random() < 0.3) {
+        const foods = CONFIG.mascotaFoods || [];
+        const pick = foods[Math.floor(Math.random() * foods.length)];
+        foodShopFlashOffer = pick ? { foodId: pick.id, discount: 30 } : null;
+    } else {
+        foodShopFlashOffer = null;
+    }
+
+    renderFoodShopInventory();
+    renderFoodShop();
+    goToScreen('mascota-food-shop-screen');
+}
+
+function renderFoodShopInventory() {
+    const bar = document.getElementById('fs-inv-bar');
+    if (!bar) return;
+    const inv = getMascotaFoodInventory();
+    const foods = CONFIG.mascotaFoods || [];
+    const owned = foods.filter(f => (inv[f.id] || 0) > 0);
+    const tier = getVipFoodTier();
+
+    let html = '';
+    if (tier) {
+        html += `<div class="fs-vip-banner">👑 Descuento VIP activo (${tier.label}): -${tier.discount}% en todo${tier.bonusPct ? ` · +${tier.bonusPct}% más comida` : ''}${tier.bonusFlat ? ` · +${tier.bonusFlat} más comida por pack` : ''}</div>`;
+    }
+    if (foodShopFlashOffer) {
+        const f = foods.find(x => x.id === foodShopFlashOffer.foodId);
+        if (f) html += `<div class="fs-flash-banner">🔥 ¡Oferta relámpago! -${foodShopFlashOffer.discount}% extra en ${f.icon} ${escapeHtml(f.name)}</div>`;
+    }
+    html += owned.length
+        ? owned.map(f => `<div class="fs-inv-chip">${f.icon} ${escapeHtml(f.name)} ×${inv[f.id]}</div>`).join('')
+        : `<div class="fs-inv-empty">🧺 Todavía no tienes comida guardada. ¡Compra abajo para alimentar a tu mascota!</div>`;
+    bar.innerHTML = html;
+}
+
+function renderFoodShop() {
+    const grid = document.getElementById('fs-grid');
+    if (!grid) return;
+    const foods = CONFIG.mascotaFoods || [];
+
+    grid.innerHTML = foods.map((food, idx) => {
+        const rareza = MASCOTA_RAREZAS[food.rarity] || MASCOTA_RAREZAS.comun;
+        const packs = food.packs || [];
+        const bestPack = packs[packs.length - 1];
+        const bestFinal = bestPack ? getFoodPackFinalValues(food.id, bestPack) : null;
+        const isFlash = foodShopFlashOffer && foodShopFlashOffer.foodId === food.id;
+
+        return `
+        <div class="fs-card ${food.cardClass || 'rar-comun'}${isFlash ? ' fs-flash-card' : ''}">
+            <div class="fs-num">${idx + 1}</div>
+            <div class="fs-ribbon">${isFlash ? `🔥 -${foodShopFlashOffer.discount}%` : '⭐ MEJOR OFERTA'}</div>
+            <div class="fs-icon-wrap"><span>${food.icon || '🍽️'}</span></div>
+            <div class="fs-name">${escapeHtml(food.name)}</div>
+            <div class="fs-sub">— ${escapeHtml(food.sub || '')}</div>
+            <div class="fs-rarity-pill">${rareza.symbol} ${rareza.label}</div>
+            <div class="fs-packs">
+                ${packs.map((p, pIdx) => {
+                    const fv = getFoodPackFinalValues(food.id, p);
+                    const discounted = fv.price < p.price;
+                    return `
+                    <div class="fs-pack-row">
+                        <div class="fs-pack-info">Pack ${fv.qty}x • <b>${discounted ? `<s style="opacity:.55">${p.price.toLocaleString()}</s> ${fv.price.toLocaleString()}` : fv.price.toLocaleString()} monedas</b><br>${p.exp.toLocaleString()} Exp</div>
+                        <button class="fs-buy-btn" onclick="comprarComidaMascota('${food.id}', ${pIdx})">COMPRAR</button>
+                    </div>`;
+                }).join('')}
+            </div>
+            <button class="fs-buy-all" onclick="comprarComidaMascota('${food.id}', ${packs.length - 1})">¡COMPRAR!${bestFinal ? ` · 🪙${bestFinal.price.toLocaleString()}` : ''}</button>
+        </div>`;
+    }).join('');
+}
+
+function comprarComidaMascota(foodId, packIdx) {
+    const food = (CONFIG.mascotaFoods || []).find(f => f.id === foodId);
+    if (!food) return;
+    const pack = (food.packs || [])[packIdx];
+    if (!pack) return;
+    const fv = getFoodPackFinalValues(foodId, pack);
+    if ((state.gold || 0) < fv.price) { showToast('❌ No tienes suficiente oro.'); return; }
+
+    state.gold -= fv.price;
+    const inv = getMascotaFoodInventory();
+    inv[foodId] = (inv[foodId] || 0) + fv.qty;
+    saveState();
+    showToast(`${food.icon} ¡Compraste ${fv.qty}x ${food.name}!`);
+    renderFoodShopInventory();
     if (typeof refreshAllUI === 'function') refreshAllUI();
 }
 
@@ -5352,6 +6342,7 @@ function evolucionarMascotaActual() {
     showToast(`✨ ¡Tu mascota evolucionó a ${newName || 'la etapa ' + owned.stage}!${diamondCost > 0 ? ` (−💎${diamondCost})` : ''}`);
     renderMascotaDetail();
     renderMascotaScreen();
+    mhPlayEvoBurst();
     if (typeof refreshAllUI === 'function') refreshAllUI();
 }
 
