@@ -943,8 +943,8 @@
 .mh-mood-label{ color:#fff; font-size:11px; font-weight:800; white-space:nowrap; }
 .mh-guide-btn{ background:rgba(255,255,255,.18); border:none; width:36px; height:36px; border-radius:50%; color:#fff; font-size:16px; flex-shrink:0; }
 .mh-stage{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; padding:18px 10px 6px; }
-.mh-pet-wrap{ position:relative; width:230px; height:230px; display:flex; align-items:center; justify-content:center; }
-.mh-pet-wrap img, .mh-pet-wrap .mh-pet-emoji{ width:200px; height:200px; object-fit:contain; filter:drop-shadow(0 14px 18px rgba(0,0,0,.35)); animation:mhBob 2.6s ease-in-out infinite; z-index:2; font-size:120px; display:flex; align-items:center; justify-content:center; }
+.mh-pet-wrap{ position:relative; width:230px; height:250px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:14px; box-sizing:border-box; }
+.mh-pet-wrap img, .mh-pet-wrap .mh-pet-emoji{ width:200px; height:200px; object-fit:contain; object-position:bottom; filter:drop-shadow(0 14px 18px rgba(0,0,0,.35)); animation:mhBob 2.6s ease-in-out infinite; z-index:2; font-size:120px; display:flex; align-items:flex-end; justify-content:center; }
 @keyframes mhBob{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-10px);} }
 .mh-sparkle{ position:absolute; color:#fff; opacity:.9; animation:mhTwinkle 1.8s ease-in-out infinite; z-index:1; }
 @keyframes mhTwinkle{ 0%,100%{ opacity:.25; transform:scale(.8);} 50%{ opacity:1; transform:scale(1.15);} }
@@ -7570,17 +7570,13 @@ function renderAdminMascotas() {
                     <input type="number" value="${st.diamondCost || 0}" placeholder="💎 Costo evolución" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].diamondCost=Number(this.value)" style="max-width:110px">
                 </div>
             `).join('')}
-            <div style="display:grid; grid-template-columns:repeat(${stages.length},1fr); gap:8px; margin-top:10px">
-                ${stages.map((st, sIdx) => { const key = 'e'+(sIdx+1); const hasImg = !!(m.images && m.images[key]); return `
-                    <div>
-                        <div style="font-size:10px; color:#8b949e; margin-bottom:4px">${escapeHtml(st.name || key)}</div>
-                        <div class="admin-img-row">
-                            <div class="admin-img-preview-checker" id="mascota-img-preview-${idx}-${key}">${hasImg ? `<img src="${m.images[key]}">` : '<span style="font-size:9px;color:#555">Sin foto</span>'}</div>
-                            <input type="file" accept="image/*" onchange="uploadMascotaImage(${idx}, '${key}', this)">
-                        </div>
-                        ${hasImg ? `<button class="admin-del-btn" style="width:100%; margin-top:4px; font-size:11px; padding:4px" onclick="removeMascotaImage(${idx}, '${key}')">🗑️ Quitar foto</button>` : ''}
-                    </div>
-                `; }).join('')}
+            <div style="margin-top:10px">
+                <div style="font-size:11px; color:#8b949e; margin-bottom:4px">🖼️ Foto de la mascota (única — se usa en todas las etapas, solo cambia de tamaño según crece)</div>
+                <div class="admin-img-row">
+                    <div class="admin-img-preview-checker" id="mascota-img-preview-${idx}-unica">${m.image ? `<img src="${m.image}">` : '<span style="font-size:9px;color:#555">Sin foto</span>'}</div>
+                    <input type="file" accept="image/*" onchange="uploadMascotaSingleImage(${idx}, this)">
+                </div>
+                ${m.image ? `<button class="admin-del-btn" style="width:100%; margin-top:4px; font-size:11px; padding:4px" onclick="removeMascotaSingleImage(${idx})">🗑️ Quitar foto</button>` : ''}
             </div>
             <div style="text-align:right; margin-top:8px;">
                 <button class="admin-add-btn" style="background:#1976D2; color:#fff; border:none; padding:8px 14px; border-radius:8px; margin-right:6px" onclick="addMascotaStage(${idx})">➕ Etapa</button>
@@ -7622,6 +7618,37 @@ async function removeMascotaImage(idx, stageKey) {
     if (!CONFIG.mascotas[idx] || !CONFIG.mascotas[idx].images) return;
     if (!confirm('¿Quitar esta foto de la mascota?')) return;
     delete CONFIG.mascotas[idx].images[stageKey];
+    await saveConfig();
+    renderAdminMascotas();
+    showToast('🗑️ Foto eliminada.');
+}
+
+/* Foto única de mascota: una sola imagen para todas las etapas de evolución.
+   La mascota no cambia de apariencia al evolucionar, solo crece de tamaño (ver renderMascotaScreen). */
+async function uploadMascotaSingleImage(idx, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    showToast('⏳ Quitando el fondo de la imagen...');
+    try {
+        const processedFile = await removeBackgroundFromFile(file, MASCOTA_BG_TOLERANCE);
+        showToast('⏳ Subiendo foto de mascota...');
+        const url = await uploadImageToStorage(processedFile, 'mascotas');
+        CONFIG.mascotas[idx].image = url;
+        await saveConfig();
+        renderAdminMascotas();
+        showToast('✅ Foto guardada en la nube, con el fondo transparente.');
+    } catch (e) {
+        console.error('Error subiendo foto de mascota:', e);
+        showToast('❌ Error al subir: ' + (e.code || e.message || 'revisa Cloudinary'));
+    } finally {
+        inputEl.value = '';
+    }
+}
+
+async function removeMascotaSingleImage(idx) {
+    if (!CONFIG.mascotas[idx]) return;
+    if (!confirm('¿Quitar esta foto de la mascota?')) return;
+    delete CONFIG.mascotas[idx].image;
     await saveConfig();
     renderAdminMascotas();
     showToast('🗑️ Foto eliminada.');
@@ -7753,9 +7780,17 @@ function renderMascotaScreen() {
     nameEl.textContent = ownedRec ? `${def.name} · ${stageName}` : `🔒 ${def.name}`;
 
     const auraEl = document.getElementById('mh-glow-aura');
-    if (auraEl) { auraEl.style.width = glowPx + 'px'; auraEl.style.height = (glowPx * 0.55) + 'px'; }
+    const rareInfo = MASCOTA_RAREZAS[def.rarity] || MASCOTA_RAREZAS.comun;
+    const auraColor = rareInfo.color || '#FFD666';
+    if (auraEl) {
+        auraEl.style.width = glowPx + 'px'; auraEl.style.height = (glowPx * 0.55) + 'px';
+        auraEl.style.background = `radial-gradient(circle, ${auraColor}8c 0%, ${auraColor}47 35%, ${auraColor}00 72%)`;
+    }
     const poolEl = document.querySelector('.mh-floor-pool');
-    if (poolEl) poolEl.style.width = Math.round(petPx * 0.9) + 'px';
+    if (poolEl) {
+        poolEl.style.width = Math.round(petPx * 0.9) + 'px';
+        poolEl.style.background = `radial-gradient(ellipse, ${auraColor}e6 0%, ${auraColor}73 45%, ${auraColor}00 78%)`;
+    }
 
     const scaleCard = document.getElementById('mh-scale-card');
     if (ownedRec && scaleCard) {
