@@ -3091,8 +3091,8 @@
                     <button class="admin-save-btn" onclick="saveAdminMascotas()" style="background:#8957e5; color:#fff; border:none; padding:14px; border-radius:10px; width:100%; margin-top:10px; font-weight:900; font-size:14px">💾 Guardar mascotas en la nube</button>
                 </div>
                 <div class="admin-group">
-                    <div class="admin-group-title">🎬 GIF animado por Habilidad (Arena de Batalla)</div>
-                    <p class="admin-group-hint" style="color:#8b949e; font-size:12px">Toca una mascota para ver sus 4 habilidades y subir un GIF/imagen para cada una. Si no subes nada, se sigue mostrando el emoji de siempre.</p>
+                    <div class="admin-group-title">🎬 Habilidades de Batalla (elemento y GIF)</div>
+                    <p class="admin-group-hint" style="color:#8b949e; font-size:12px">Toca una mascota para ver sus 4 habilidades. Ahí puedes elegir el elemento de cada habilidad (afecta el daño en batalla) y subir un GIF/imagen para cada una. Si no subes nada, se sigue mostrando el emoji de siempre.</p>
                     <div id="admin-skillgifs-list" style="min-height:60px; background:#0d1117; border-radius:10px; padding:10px; border:1px dashed #30363d"></div>
                 </div>
             </div>
@@ -3345,23 +3345,23 @@ function defaultConfig() {
               foodType:'⚡ Eléctrico', totalFood:1213200, goldCost:0, totalDiamondCost:120,
               debilContra:['tierra','agua'], resistenteA:['viento','metal'],
               skills:[
-                { name:'Arañazo', dmg:400, type:'fisico', element:'electrico', minLevel:1 },
-                { name:'Latigazo Espina', dmg:488, type:'magico', element:'electrico', minLevel:10 },
-                { name:'Mordisco Verde', dmg:555, type:'magico', element:'electrico', minLevel:20 },
-                { name:'Corona Oculta', dmg:650, type:'magico', element:'electrico', minLevel:30, special:true, effectDesc:'Contra cualquier mascota obtiene la Corona Oculta' },
+                { name:'Arañazo', dmg:400, type:'fisico', element:'luz', minLevel:1 },
+                { name:'Latigazo Espina', dmg:488, type:'magico', element:'luz', minLevel:10 },
+                { name:'Mordisco Verde', dmg:555, type:'magico', element:'luz', minLevel:20 },
+                { name:'Corona Oculta', dmg:650, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Contra cualquier mascota obtiene la Corona Oculta' },
                 { name:'Definitiva: Corona de Rey', dmg:0, type:'magico', element:'electrico', minLevel:30, definitiva:true, special:true, effectDesc:'Solo vs el Gato de Egipto: x20 de daño + inmunidad total este turno' }
               ],
               evolutionStages:[ {range:'1 → 75', name:'Común 5 habilidades', aspect:'Gato', diamondCost:0 } ],
               haceMasDanioA:['agua', 'viento'], hacePocoDanioA:['tierra'], inmuneA:[], debilidadPrincipal:['tierra'], precio:{ anterior:15000, nuevo:7500, vip10:6750, vip50:3750, monedaOro:true, diamantes:[120,60,54,30] }
             },
-            { id:'zorro', name:'Zorro', emoji:'🦊', rarity:'raro', element1:'fuego', element2:'viento', elements:['fuego','viento'], levelMax:75, damageRange:[700,1150], obtainMethod:'Tienda Raro',
+            { id:'zorro', name:'Zorro', emoji:'🦊', rarity:'raro', element1:'fuego', element2:'', elements:['fuego'], levelMax:75, damageRange:[700,1150], obtainMethod:'Tienda Raro',
               bonusLabel:'', bonusInitial:'', bonusMax:'',
               foodType:'🔥 Fuego · 💨 Viento', totalFood:1213200,
               debilContra:['agua','tierra'], resistenteA:['naturaleza','hielo'],
               skills:[
                 { name:'Embate', dmg:700, type:'fisico', element:'fuego', minLevel:1 },
                 { name:'Chispazo Rápido', dmg:858, type:'magico', element:'fuego', minLevel:10 },
-                { name:'Voltaje Menor', dmg:979, type:'magico', element:'viento', minLevel:20 },
+                { name:'Voltaje Menor', dmg:979, type:'magico', element:'fuego', minLevel:20 },
                 { name:'Rayo Veloz', dmg:1150, type:'magico', element:'fuego', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ],
@@ -3371,129 +3371,129 @@ function defaultConfig() {
               debilContra:['electrico','naturaleza'], resistenteA:['fuego','metal'],
               skills:[
                 { name:'Tentáculo', dmg:700, type:'fisico', element:'agua', minLevel:1 },
-                { name:'Chorro de Tinta', dmg:858, type:'magico', element:'agua', minLevel:10 },
-                { name:'Ola Menor', dmg:979, type:'magico', element:'oscuridad', minLevel:20 },
-                { name:'Absorción Marina', dmg:1150, type:'magico', element:'agua', minLevel:30, special:true, effectDesc:'Daño +25% prob. curar 10% HP' },
+                { name:'Chorro de Tinta', dmg:858, type:'magico', element:'oscuridad', minLevel:10 },
+                { name:'Ola Menor', dmg:979, type:'magico', element:'agua', minLevel:20 },
+                { name:'Absorción Marina', dmg:1150, type:'magico', element:'oscuridad', minLevel:30, special:true, effectDesc:'Daño +25% prob. curar 10% HP' },
                 { name:'Bloqueado', dmg:0, locked:true }
               ],
               haceMasDanioA:['fuego', 'tierra'], hacePocoDanioA:['naturaleza', 'electrico'], inmuneA:[], debilidadPrincipal:['naturaleza', 'electrico'], precio:{ anterior:60000, nuevo:30000, vip10:27000, vip50:15000, monedaOro:true, diamantes:[180,90,81,45] }
             },
-            { id:'lobo', name:'Lobo', emoji:'🐺', rarity:'raro', element1:'hielo', element2:'tierra', elements:['hielo','tierra'], levelMax:75, damageRange:[700,1150],
+            { id:'lobo', name:'Lobo', emoji:'🐺', rarity:'raro', element1:'hielo', element2:'oscuridad', elements:['hielo','oscuridad'], levelMax:75, damageRange:[700,1150],
               debilContra:['fuego','metal'], resistenteA:['viento','naturaleza'],
               skills:[
                 { name:'Colmillo', dmg:700, type:'fisico', element:'hielo', minLevel:1 },
-                { name:'Embestida Bélica', dmg:858, type:'magico', element:'hielo', minLevel:10 },
-                { name:'Golpe Táctico', dmg:979, type:'magico', element:'tierra', minLevel:20 },
-                { name:'Garra Feroz', dmg:1150, type:'magico', element:'hielo', minLevel:30 },
+                { name:'Embestida Bélica', dmg:858, type:'magico', element:'oscuridad', minLevel:10 },
+                { name:'Golpe Táctico', dmg:979, type:'magico', element:'hielo', minLevel:20 },
+                { name:'Garra Feroz', dmg:1150, type:'magico', element:'oscuridad', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ],
               haceMasDanioA:['viento', 'naturaleza'], hacePocoDanioA:['fuego', 'metal'], inmuneA:[], debilidadPrincipal:['fuego', 'metal'], precio:{ anterior:80000, nuevo:40000, vip10:36000, vip50:20000, monedaOro:true, diamantes:[200,100,90,50] }
             },
-            { id:'buho', name:'Búho Sabio', emoji:'🦉', rarity:'muy_raro', element1:'viento', element2:'luz', elements:['viento','luz','puro'], levelMax:75, damageRange:[900,1500],
+            { id:'buho', name:'Búho Sabio', emoji:'🦉', rarity:'muy_raro', element1:'viento', element2:'luz', elements:['viento','luz'], levelMax:75, damageRange:[900,1500],
               debilContra:['electrico','hielo'], resistenteA:['tierra','naturaleza'],
               skills:[
                 { name:'Picotazo', dmg:900, type:'fisico', element:'viento', minLevel:1 },
-                { name:'Velo de Sombra', dmg:1110, type:'magico', element:'viento', minLevel:10 },
-                { name:'Viento Nocturno', dmg:1272, type:'magico', element:'luz', minLevel:20 },
-                { name:'Danza Nocturna', dmg:1500, type:'magico', element:'viento', minLevel:30 },
+                { name:'Velo de Sombra', dmg:1110, type:'magico', element:'luz', minLevel:10 },
+                { name:'Viento Nocturno', dmg:1272, type:'magico', element:'viento', minLevel:20 },
+                { name:'Danza Nocturna', dmg:1500, type:'magico', element:'luz', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ],
               haceMasDanioA:['tierra'], hacePocoDanioA:['electrico'], inmuneA:[], debilidadPrincipal:['electrico', 'hielo'], precio:{ anterior:150000, nuevo:75000, vip10:67500, vip50:37500, monedaOro:true, diamantes:[240,120,108,60] }
             },
-            { id:'tortuga', name:'Tortuga Ancestral', emoji:'🐢', rarity:'muy_raro', element1:'tierra', element2:'naturaleza', elements:['tierra','naturaleza','agua'], levelMax:75, damageRange:[900,1500],
+            { id:'tortuga', name:'Tortuga Ancestral', emoji:'🐢', rarity:'muy_raro', element1:'ancestral', element2:'agua', elements:['ancestral','agua'], levelMax:75, damageRange:[900,1500],
               debilContra:['viento','naturaleza'], resistenteA:['electrico','fuego'],
               skills:[
-                { name:'Cabezazo', dmg:900, type:'fisico', element:'tierra', minLevel:1 },
-                { name:'Marea Verde', dmg:1110, type:'magico', element:'tierra', minLevel:10 },
-                { name:'Cañón de Barro', dmg:1272, type:'magico', element:'naturaleza', minLevel:20 },
-                { name:'Cascarón Vital', dmg:1500, type:'magico', element:'tierra', minLevel:30, special:true, effectDesc:'Daño +35% prob. curar 15% HP' },
+                { name:'Cabezazo', dmg:900, type:'fisico', element:'ancestral', minLevel:1 },
+                { name:'Marea Verde', dmg:1110, type:'magico', element:'agua', minLevel:10 },
+                { name:'Cañón de Barro', dmg:1272, type:'magico', element:'ancestral', minLevel:20 },
+                { name:'Cascarón Vital', dmg:1500, type:'magico', element:'agua', minLevel:30, special:true, effectDesc:'Daño +35% prob. curar 15% HP' },
                 { name:'Bloqueado', dmg:0, locked:true }
               ],
               haceMasDanioA:['electrico', 'fuego'], hacePocoDanioA:['viento', 'naturaleza'], inmuneA:['electrico'], debilidadPrincipal:['agua', 'naturaleza'], precio:{ anterior:200000, nuevo:100000, vip10:90000, vip50:50000, monedaOro:true, diamantes:[260,130,117,65] }
             },
-            { id:'golem', name:'Gólem de Acero', emoji:'⚙️', rarity:'muy_raro', element1:'metal', element2:'guerra', elements:['metal','guerra','tierra'], levelMax:75, damageRange:[900,1500],
+            { id:'golem', name:'Gólem de Acero', emoji:'⚙️', rarity:'muy_raro', element1:'metal', element2:'tierra', elements:['metal','tierra'], levelMax:75, damageRange:[900,1500],
               debilContra:['fuego','electrico'], resistenteA:['hielo','guerra'],
               skills:[
                 { name:'Puño', dmg:900, type:'fisico', element:'metal', minLevel:1 },
-                { name:'Carámbano Helado', dmg:1110, type:'magico', element:'metal', minLevel:10 },
-                { name:'Muralla de Roca', dmg:1272, type:'magico', element:'guerra', minLevel:20 },
-                { name:'Avalancha Helada', dmg:1500, type:'magico', element:'metal', minLevel:30 },
+                { name:'Carámbano Helado', dmg:1110, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Muralla de Roca', dmg:1272, type:'magico', element:'metal', minLevel:20 },
+                { name:'Avalancha Helada', dmg:1500, type:'magico', element:'tierra', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ],
               haceMasDanioA:['hielo'], hacePocoDanioA:['fuego'], inmuneA:['veneno'], debilidadPrincipal:['fuego', 'guerra'], precio:{ anterior:250000, nuevo:125000, vip10:112500, vip50:62500, monedaOro:true, diamantes:[280,140,126,70] }
             },
-            { id:'dragon', name:'Dragón', emoji:'🐉', rarity:'epico', element1:'fuego', element2:'ancestral', elements:['fuego','ancestral','guerra','electrico'], levelMax:75, damageRange:[1150,1950],
+            { id:'dragon', name:'Dragón', emoji:'🐉', rarity:'epico', element1:'legendario', element2:'fuego', element3:'viento', elements:['legendario','fuego','viento'], levelMax:75, damageRange:[1150,1950],
               debilContra:['agua','tierra'], resistenteA:['naturaleza','hielo'],
               skills:[
-                { name:'Garra', dmg:1150, type:'fisico', element:'fuego', minLevel:1 },
+                { name:'Garra', dmg:1150, type:'fisico', element:'legendario', minLevel:1 },
                 { name:'Llama Ígnea', dmg:1430, type:'magico', element:'fuego', minLevel:10 },
-                { name:'Hacha de Guerra', dmg:1646, type:'magico', element:'ancestral', minLevel:20 },
-                { name:'Aliento de Magma', dmg:1950, type:'magico', element:'fuego', minLevel:30 },
+                { name:'Hacha de Guerra', dmg:1646, type:'magico', element:'viento', minLevel:20 },
+                { name:'Aliento de Magma', dmg:1950, type:'magico', element:'legendario', minLevel:30 },
                 { name:'Rayo Ancestral', dmg:1900, type:'magico', element:'electrico', minLevel:30 }
               ],
               haceMasDanioA:['naturaleza', 'hielo', 'metal'], hacePocoDanioA:['agua'], inmuneA:[], debilidadPrincipal:['agua', 'tierra'], precio:{ anterior:0, nuevo:500000, vip10:450000, vip50:250000, monedaOro:true, diamantes:[300,270,150], esDiamante:true }
             },
-            { id:'unicornio', name:'Unicornio', emoji:'🦄', rarity:'epico', element1:'puro', element2:'luz', elements:['puro','luz','naturaleza','viento'], levelMax:75, damageRange:[1150,1950],
+            { id:'unicornio', name:'Unicornio', emoji:'🦄', rarity:'epico', element1:'puro', element2:'luz', elements:['puro','luz'], levelMax:75, damageRange:[1150,1950],
               debilContra:['ancestral','oscuridad'], resistenteA:['luz','naturaleza'],
               skills:[
                 { name:'Coz', dmg:1150, type:'fisico', element:'puro', minLevel:1 },
-                { name:'Destello Mágico', dmg:1430, type:'magico', element:'puro', minLevel:10 },
-                { name:'Enredadera Mágica', dmg:1646, type:'magico', element:'luz', minLevel:20 },
-                { name:'Cuerno Sanador', dmg:1950, type:'magico', element:'puro', minLevel:30, special:true, effectDesc:'Daño +40% prob. curar 20% HP' },
+                { name:'Destello Mágico', dmg:1430, type:'magico', element:'luz', minLevel:10 },
+                { name:'Enredadera Mágica', dmg:1646, type:'magico', element:'puro', minLevel:20 },
+                { name:'Cuerno Sanador', dmg:1950, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Daño +40% prob. curar 20% HP' },
                 { name:'Ciclón Astral', dmg:1850, type:'magico', element:'viento', minLevel:30 }
               ],
               haceMasDanioA:['oscuridad'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:['oscuridad'], precio:{ anterior:0, nuevo:500000, vip10:450000, vip50:250000, monedaOro:true, diamantes:[300,270,150], esDiamante:true }
             },
-            { id:'tiburon', name:'Tiburón Abisal', emoji:'🦈', rarity:'epico', element1:'agua', element2:'oscuridad', elements:['agua','oscuridad','hielo','guerra'], levelMax:75, damageRange:[1150,1950],
+            { id:'tiburon', name:'Tiburón Abisal', emoji:'🦈', rarity:'epico', element1:'agua', element2:'oscuridad', element3:'guerra', elements:['agua','oscuridad','guerra'], levelMax:75, damageRange:[1150,1950],
               debilContra:['electrico','naturaleza'], resistenteA:['fuego','metal'],
               skills:[
                 { name:'Dentellada', dmg:1150, type:'fisico', element:'agua', minLevel:1 },
-                { name:'Maelstrom', dmg:1430, type:'magico', element:'agua', minLevel:10 },
-                { name:'Colmillo Helado', dmg:1646, type:'magico', element:'oscuridad', minLevel:20 },
+                { name:'Maelstrom', dmg:1430, type:'magico', element:'oscuridad', minLevel:10 },
+                { name:'Colmillo Helado', dmg:1646, type:'magico', element:'guerra', minLevel:20 },
                 { name:'Mordida Frenética', dmg:1950, type:'magico', element:'agua', minLevel:30, special:true, effectDesc:'Daño +30% prob. robar 15% HP' },
                 { name:'Tajo Abisal', dmg:1950, type:'magico', element:'guerra', minLevel:30 }
               ],
               haceMasDanioA:['fuego', 'tierra'], hacePocoDanioA:['naturaleza', 'electrico'], inmuneA:[], debilidadPrincipal:['naturaleza', 'electrico'], precio:{ anterior:0, nuevo:750000, vip10:675000, vip50:375000, monedaOro:true, diamantes:[380,342,190], esDiamante:true }
             },
-            { id:'leon', name:'León', emoji:'🦁', rarity:'legendario', element1:'luz', element2:'guerra', elements:['luz','guerra','leyenda','puro'], levelMax:75, damageRange:[1500,2300],
+            { id:'leon', name:'León', emoji:'🦁', rarity:'legendario', element1:'fuego', element2:'guerra', element3:'luz', elements:['fuego','guerra','luz'], levelMax:75, damageRange:[1500,2300],
               debilContra:['oscuridad','ancestral'], resistenteA:['puro','electrico'],
               skills:[
-                { name:'Garra', dmg:1500, type:'fisico', element:'luz', minLevel:1 },
-                { name:'Destello Solar', dmg:1780, type:'magico', element:'luz', minLevel:10 },
-                { name:'Llamarada León', dmg:1996, type:'magico', element:'guerra', minLevel:20 },
-                { name:'Rugido Solar', dmg:2300, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
+                { name:'Garra', dmg:1500, type:'fisico', element:'fuego', minLevel:1 },
+                { name:'Destello Solar', dmg:1780, type:'magico', element:'guerra', minLevel:10 },
+                { name:'Llamarada León', dmg:1996, type:'magico', element:'luz', minLevel:20 },
+                { name:'Rugido Solar', dmg:2300, type:'magico', element:'fuego', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
                 { name:'Plegaria Real', dmg:2300, type:'magico', element:'puro', minLevel:30 }
               ],
               haceMasDanioA:['oscuridad'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:['oscuridad', 'ancestral'], precio:{ anterior:0, nuevo:470, vip10:423, vip50:235, esDiamante:true, soloDiamante:true }
             },
-            { id:'aguila', name:'Águila', emoji:'🦅', rarity:'mitica', element1:'viento', element2:'electrico', elements:['viento','electrico','luz','leyenda'], levelMax:75, damageRange:[1600,2550],
+            { id:'aguila', name:'Águila', emoji:'🦅', rarity:'mitica', element1:'viento', element2:'luz', element3:'guerra', elements:['viento','luz','guerra'], levelMax:75, damageRange:[1600,2550],
               debilContra:['electrico','hielo'], resistenteA:['tierra','naturaleza'],
               skills:[
                 { name:'Juicio Solar', dmg:1600, type:'fisico', element:'viento', minLevel:1 },
-                { name:'Trueno Divino', dmg:1932, type:'magico', element:'viento', minLevel:10 },
-                { name:'Tornado Puro', dmg:2189, type:'magico', element:'electrico', minLevel:20 },
+                { name:'Trueno Divino', dmg:1932, type:'magico', element:'luz', minLevel:10 },
+                { name:'Tornado Puro', dmg:2189, type:'magico', element:'guerra', minLevel:20 },
                 { name:'Juicio Divino', dmg:2550, type:'magico', element:'viento', minLevel:30, special:true, effectDesc:'Daño Crítico' },
-                { name:'Juicio Mítico', dmg:2500, type:'magico', element:'leyenda', minLevel:30 }
+                { name:'Juicio Mítico', dmg:2500, type:'magico', element:'viento', minLevel:30 }
               ],
               haceMasDanioA:['tierra'], hacePocoDanioA:['electrico'], inmuneA:[], debilidadPrincipal:['electrico', 'hielo'], precio:{ anterior:0, nuevo:500, vip10:450, vip50:250, esDiamante:true, soloDiamante:true }
             },
-            { id:'fenix', name:'Fénix Real', emoji:'👑', rarity:'mitica', element1:'fuego', element2:'luz', elements:['fuego','luz','puro','ancestral'], levelMax:75, damageRange:[1600,2550],
+            { id:'fenix', name:'Fénix Real', emoji:'👑', rarity:'mitica', element1:'legendario', element2:'fuego', element3:'luz', elements:['legendario','fuego','luz'], levelMax:75, damageRange:[1600,2550],
               debilContra:['agua','tierra'], resistenteA:['naturaleza','hielo'],
               skills:[
-                { name:'Llama Fénix', dmg:1600, type:'fisico', element:'fuego', minLevel:1 },
+                { name:'Llama Fénix', dmg:1600, type:'fisico', element:'legendario', minLevel:1 },
                 { name:'Sol Eterno', dmg:1932, type:'magico', element:'fuego', minLevel:10 },
                 { name:'Mito Arcano', dmg:2189, type:'magico', element:'luz', minLevel:20 },
-                { name:'Renacer Ígneo', dmg:2550, type:'magico', element:'fuego', minLevel:30, special:true, effectDesc:'Gran daño +50% prob. curar 30% HP' },
-                { name:'Magma Divino', dmg:2550, type:'magico', element:'ancestral', minLevel:30 }
+                { name:'Renacer Ígneo', dmg:2550, type:'magico', element:'legendario', minLevel:30, special:true, effectDesc:'Gran daño +50% prob. curar 30% HP' },
+                { name:'Magma Divino', dmg:2550, type:'magico', element:'legendario', minLevel:30 }
               ],
               haceMasDanioA:['naturaleza', 'hielo', 'metal'], hacePocoDanioA:['agua'], inmuneA:[], debilidadPrincipal:['agua', 'tierra'], precio:{ anterior:0, nuevo:550, vip10:495, vip50:275, esDiamante:true, soloDiamante:true }
             },
 
-            { id:'perrito', name:'Perrito', emoji:'🐶', rarity:'comun', element1:'naturaleza', element2:'', elements:['naturaleza'], levelMax:75, damageRange:[400,650], obtainMethod:'Tienda', story:'Perrito leal.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:110, debilContra:['fuego'], resistenteA:['agua'], skills:[
-                { name:'Mordisco', dmg:400, type:'fisico', element:'naturaleza', minLevel:1 },
-                { name:'Lanzamiento Rocoso', dmg:488, type:'magico', element:'naturaleza', minLevel:10 },
-                { name:'Golpeteo de Arena', dmg:555, type:'magico', element:'naturaleza', minLevel:20 },
-                { name:'Pisotón de Barro', dmg:650, type:'magico', element:'naturaleza', minLevel:30 },
+            { id:'perrito', name:'Perrito', emoji:'🐶', rarity:'comun', element1:'tierra', element2:'', elements:['tierra'], levelMax:75, damageRange:[400,650], obtainMethod:'Tienda', story:'Perrito leal.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:110, debilContra:['fuego'], resistenteA:['agua'], skills:[
+                { name:'Mordisco', dmg:400, type:'fisico', element:'tierra', minLevel:1 },
+                { name:'Lanzamiento Rocoso', dmg:488, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Golpeteo de Arena', dmg:555, type:'magico', element:'tierra', minLevel:20 },
+                { name:'Pisotón de Barro', dmg:650, type:'magico', element:'tierra', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['agua', 'tierra'], hacePocoDanioA:['fuego', 'hielo'], inmuneA:['metal'], debilidadPrincipal:['fuego', 'hielo'], precio:{ anterior:12000, nuevo:6000, vip10:5400, vip50:3000, monedaOro:true, diamantes:[110,55,49,27] } },
             { id:'conejo', name:'Conejo', emoji:'🐰', rarity:'comun', element1:'naturaleza', element2:'', elements:['naturaleza'], levelMax:75, damageRange:[400,650], obtainMethod:'Tienda', story:'Conejo veloz.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:130, debilContra:['fuego'], resistenteA:['agua'], skills:[
@@ -3503,246 +3503,246 @@ function defaultConfig() {
                 { name:'Impacto de Aire', dmg:650, type:'magico', element:'naturaleza', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['agua', 'tierra'], hacePocoDanioA:['fuego', 'hielo'], inmuneA:['metal'], debilidadPrincipal:['fuego', 'hielo'], precio:{ anterior:18000, nuevo:9000, vip10:8100, vip50:4500, monedaOro:true, diamantes:[130,65,58,32] } },
-            { id:'raton', name:'Ratón', emoji:'🐭', rarity:'comun', element1:'naturaleza', element2:'', elements:['naturaleza'], levelMax:75, damageRange:[400,650], obtainMethod:'Tienda', story:'Ratón pequeño.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:140, debilContra:['fuego'], resistenteA:['agua'], skills:[
-                { name:'Dentellada', dmg:400, type:'fisico', element:'naturaleza', minLevel:1 },
-                { name:'Terrón de Arena', dmg:488, type:'magico', element:'naturaleza', minLevel:10 },
-                { name:'Piedra Ligera', dmg:555, type:'magico', element:'naturaleza', minLevel:20 },
-                { name:'Golpetazo Polvo', dmg:650, type:'magico', element:'naturaleza', minLevel:30 },
+            { id:'raton', name:'Ratón', emoji:'🐭', rarity:'comun', element1:'tierra', element2:'', elements:['tierra'], levelMax:75, damageRange:[400,650], obtainMethod:'Tienda', story:'Ratón pequeño.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:140, debilContra:['fuego'], resistenteA:['agua'], skills:[
+                { name:'Dentellada', dmg:400, type:'fisico', element:'tierra', minLevel:1 },
+                { name:'Terrón de Arena', dmg:488, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Piedra Ligera', dmg:555, type:'magico', element:'tierra', minLevel:20 },
+                { name:'Golpetazo Polvo', dmg:650, type:'magico', element:'tierra', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['agua', 'tierra'], hacePocoDanioA:['fuego', 'hielo'], inmuneA:['metal'], debilidadPrincipal:['fuego', 'hielo'], precio:{ anterior:20000, nuevo:10000, vip10:9000, vip50:5000, monedaOro:true, diamantes:[140,70,63,35] } },
             { id:'panda', name:'Panda', emoji:'🐼', rarity:'raro', element1:'naturaleza', element2:'tierra', elements:['naturaleza','tierra'], levelMax:75, damageRange:[700,1150], obtainMethod:'Tienda', story:'Panda tierno.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:190, debilContra:['fuego'], resistenteA:['agua'], skills:[
                 { name:'Puñetazo', dmg:700, type:'fisico', element:'naturaleza', minLevel:1 },
-                { name:'Golpe de Bambú', dmg:858, type:'magico', element:'naturaleza', minLevel:10 },
-                { name:'Vara Cortante', dmg:979, type:'magico', element:'tierra', minLevel:20 },
-                { name:'Bambú Vital', dmg:1150, type:'magico', element:'naturaleza', minLevel:30, special:true, effectDesc:'Daño +30% prob. curar 10% HP' },
+                { name:'Golpe de Bambú', dmg:858, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Vara Cortante', dmg:979, type:'magico', element:'naturaleza', minLevel:20 },
+                { name:'Bambú Vital', dmg:1150, type:'magico', element:'tierra', minLevel:30, special:true, effectDesc:'Daño +30% prob. curar 10% HP' },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['agua', 'tierra'], hacePocoDanioA:['fuego', 'hielo'], inmuneA:['metal'], debilidadPrincipal:['fuego', 'hielo'], precio:{ anterior:70000, nuevo:35000, vip10:31500, vip50:17500, monedaOro:true, diamantes:[190,95,85,47] } },
-            { id:'oso', name:'Oso', emoji:'🐻', rarity:'raro', element1:'tierra', element2:'', elements:['tierra'], levelMax:75, damageRange:[700,1150], obtainMethod:'Tienda', story:'Oso fuerte.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:210, debilContra:['fuego'], resistenteA:['agua'], skills:[
+            { id:'oso', name:'Oso', emoji:'🐻', rarity:'raro', element1:'tierra', element2:'hielo', elements:['tierra','hielo'], levelMax:75, damageRange:[700,1150], obtainMethod:'Tienda', story:'Oso fuerte.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:210, debilContra:['fuego'], resistenteA:['agua'], skills:[
                 { name:'Zarpazo', dmg:700, type:'fisico', element:'tierra', minLevel:1 },
-                { name:'Roca Gigante', dmg:858, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Roca Gigante', dmg:858, type:'magico', element:'hielo', minLevel:10 },
                 { name:'Impacto Terreno', dmg:979, type:'magico', element:'tierra', minLevel:20 },
-                { name:'Terremoto', dmg:1150, type:'magico', element:'tierra', minLevel:30 },
+                { name:'Terremoto', dmg:1150, type:'magico', element:'hielo', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['electrico', 'fuego'], hacePocoDanioA:['viento', 'naturaleza'], inmuneA:['electrico'], debilidadPrincipal:['agua', 'naturaleza'], precio:{ anterior:90000, nuevo:45000, vip10:40500, vip50:22500, monedaOro:true, diamantes:[210,105,94,52] } },
-            { id:'escorpion', name:'Escorpión', emoji:'🦂', rarity:'muy_raro', element1:'tierra', element2:'veneno', elements:['tierra','veneno','oscuridad'], levelMax:75, damageRange:[900,1500], obtainMethod:'Tienda', story:'Escorpión venenoso.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:250, debilContra:['agua'], resistenteA:['tierra'], skills:[
+            { id:'escorpion', name:'Escorpión', emoji:'🦂', rarity:'muy_raro', element1:'tierra', element2:'oscuridad', elements:['tierra','oscuridad'], levelMax:75, damageRange:[900,1500], obtainMethod:'Tienda', story:'Escorpión venenoso.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:250, debilContra:['agua'], resistenteA:['tierra'], skills:[
                 { name:'Tenaza', dmg:900, type:'fisico', element:'tierra', minLevel:1 },
-                { name:'Aguijón Antiguo', dmg:1110, type:'magico', element:'tierra', minLevel:10 },
-                { name:'Humo Oscuro', dmg:1272, type:'magico', element:'veneno', minLevel:20 },
-                { name:'Veneno Ancestral', dmg:1500, type:'magico', element:'tierra', minLevel:30 },
+                { name:'Aguijón Antiguo', dmg:1110, type:'magico', element:'oscuridad', minLevel:10 },
+                { name:'Humo Oscuro', dmg:1272, type:'magico', element:'tierra', minLevel:20 },
+                { name:'Veneno Ancestral', dmg:1500, type:'magico', element:'oscuridad', minLevel:30 },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['electrico', 'fuego'], hacePocoDanioA:['viento', 'naturaleza'], inmuneA:['electrico'], debilidadPrincipal:['agua', 'naturaleza'], precio:{ anterior:180000, nuevo:90000, vip10:81000, vip50:45000, monedaOro:true, diamantes:[250,125,112,62] } },
-            { id:'murcielago', name:'Murciélago', emoji:'🦇', rarity:'muy_raro', element1:'oscuridad', element2:'viento', elements:['oscuridad','viento','sonido'], levelMax:75, damageRange:[900,1500], obtainMethod:'Tienda', story:'Murciélago nocturno.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:270, debilContra:['luz'], resistenteA:['oscuridad'], skills:[
+            { id:'murcielago', name:'Murciélago', emoji:'🦇', rarity:'muy_raro', element1:'oscuridad', element2:'viento', elements:['oscuridad','viento'], levelMax:75, damageRange:[900,1500], obtainMethod:'Tienda', story:'Murciélago nocturno.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:270, debilContra:['luz'], resistenteA:['oscuridad'], skills:[
                 { name:'Mordisco', dmg:900, type:'fisico', element:'oscuridad', minLevel:1 },
-                { name:'Sombra Umbría', dmg:1110, type:'magico', element:'oscuridad', minLevel:10 },
-                { name:'Onda Sónica', dmg:1272, type:'magico', element:'viento', minLevel:20 },
-                { name:'Drenaje Vampírico', dmg:1500, type:'magico', element:'oscuridad', minLevel:30, special:true, effectDesc:'Daño +40% prob. robar 15% HP' },
+                { name:'Sombra Umbría', dmg:1110, type:'magico', element:'viento', minLevel:10 },
+                { name:'Onda Sónica', dmg:1272, type:'magico', element:'oscuridad', minLevel:20 },
+                { name:'Drenaje Vampírico', dmg:1500, type:'magico', element:'viento', minLevel:30, special:true, effectDesc:'Daño +40% prob. robar 15% HP' },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['luz', 'puro'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:['luz', 'puro'], precio:{ anterior:220000, nuevo:110000, vip10:99000, vip50:55000, monedaOro:true, diamantes:[270,135,121,67] } },
-            { id:'grifo', name:'Grypho', emoji:'🦅', rarity:'epico', element1:'viento', element2:'luz', elements:['viento','luz','guerra'], levelMax:75, damageRange:[1150,1950], obtainMethod:'Tienda', story:'Grifo majestuoso.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:330, debilContra:['oscuridad'], resistenteA:['viento'], skills:[
+            { id:'grifo', name:'Grypho', emoji:'🦅', rarity:'epico', element1:'viento', element2:'tierra', element3:'guerra', elements:['viento','tierra','guerra'], levelMax:75, damageRange:[1150,1950], obtainMethod:'Tienda', story:'Grifo majestuoso.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:330, debilContra:['oscuridad'], resistenteA:['viento'], skills:[
                 { name:'Picotazo', dmg:1150, type:'fisico', element:'viento', minLevel:1 },
-                { name:'Ráfaga Cortante', dmg:1430, type:'magico', element:'viento', minLevel:10 },
-                { name:'Rayo Relámpago', dmg:1646, type:'magico', element:'luz', minLevel:20 },
+                { name:'Ráfaga Cortante', dmg:1430, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Rayo Relámpago', dmg:1646, type:'magico', element:'guerra', minLevel:20 },
                 { name:'Tornado Eléctrico', dmg:1950, type:'magico', element:'viento', minLevel:30 },
                 { name:'Cielo', dmg:1950, type:'magico', element:'luz', minLevel:30 }
               ], haceMasDanioA:['tierra'], hacePocoDanioA:['electrico'], inmuneA:[], debilidadPrincipal:['electrico', 'hielo'], precio:{ anterior:0, nuevo:600000, vip10:540000, vip50:300000, monedaOro:true, diamantes:[330,297,165], esDiamante:true } },
-            { id:'basilisco', name:'Basilisco', emoji:'🐍', rarity:'epico', element1:'veneno', element2:'tierra', elements:['veneno','tierra','oscuridad'], levelMax:75, damageRange:[1150,1950], obtainMethod:'Tienda', story:'Basilisco petrificante.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:350, debilContra:['luz'], resistenteA:['veneno'], skills:[
-                { name:'Mordida', dmg:1150, type:'fisico', element:'veneno', minLevel:1 },
-                { name:'Aliento Fósil', dmg:1430, type:'magico', element:'veneno', minLevel:10 },
+            { id:'basilisco', name:'Basilisco', emoji:'🐍', rarity:'epico', element1:'naturaleza', element2:'oscuridad', element3:'tierra', elements:['naturaleza','oscuridad','tierra'], levelMax:75, damageRange:[1150,1950], obtainMethod:'Tienda', story:'Basilisco petrificante.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:350, debilContra:['luz'], resistenteA:['veneno'], skills:[
+                { name:'Mordida', dmg:1150, type:'fisico', element:'naturaleza', minLevel:1 },
+                { name:'Aliento Fósil', dmg:1430, type:'magico', element:'oscuridad', minLevel:10 },
                 { name:'Raíz Venenosa', dmg:1646, type:'magico', element:'tierra', minLevel:20 },
-                { name:'Mordida Fósil', dmg:1950, type:'magico', element:'veneno', minLevel:30, special:true, effectDesc:'Daño +35% prob. curar 15% HP' },
+                { name:'Mordida Fósil', dmg:1950, type:'magico', element:'naturaleza', minLevel:30, special:true, effectDesc:'Daño +35% prob. curar 15% HP' },
                 { name:'Muerte', dmg:1950, type:'magico', element:'oscuridad', minLevel:30 }
               ], haceMasDanioA:['naturaleza'], hacePocoDanioA:['metal'], inmuneA:[], debilidadPrincipal:['tierra', 'luz'], precio:{ anterior:0, nuevo:650000, vip10:585000, vip50:325000, monedaOro:true, diamantes:[350,315,175], esDiamante:true } },
-            { id:'tigre_blanco', name:'Tigre Blanco', emoji:'🐯', rarity:'legendario', element1:'hielo', element2:'luz', elements:['hielo','luz','guerra'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Tigre blanco legendario.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:420, debilContra:['fuego'], resistenteA:['hielo'], skills:[
+            { id:'tigre_blanco', name:'Tigre Blanco', emoji:'🐯', rarity:'legendario', element1:'hielo', element2:'guerra', element3:'tierra', elements:['hielo','guerra','tierra'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Tigre blanco legendario.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:420, debilContra:['fuego'], resistenteA:['hielo'], skills:[
                 { name:'Zarpazo', dmg:1500, type:'fisico', element:'hielo', minLevel:1 },
-                { name:'Cuchilla de Acero', dmg:1780, type:'magico', element:'hielo', minLevel:10 },
-                { name:'Garra de Hielo', dmg:1996, type:'magico', element:'luz', minLevel:20 },
+                { name:'Cuchilla de Acero', dmg:1780, type:'magico', element:'guerra', minLevel:10 },
+                { name:'Garra de Hielo', dmg:1996, type:'magico', element:'tierra', minLevel:20 },
                 { name:'Corte Titán', dmg:2300, type:'magico', element:'hielo', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
                 { name:'Leyenda Blanca', dmg:2300, type:'magico', element:'leyenda', minLevel:30 }
               ], haceMasDanioA:['viento', 'naturaleza'], hacePocoDanioA:['fuego', 'metal'], inmuneA:[], debilidadPrincipal:['fuego', 'metal'], precio:{ anterior:0, nuevo:420, vip10:378, vip50:210, esDiamante:true, soloDiamante:true } },
-            { id:'pegaso', name:'Pegaso', emoji:'🦄', rarity:'legendario', element1:'viento', element2:'luz', elements:['viento','luz','puro'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Pegaso alado.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:450, debilContra:['oscuridad'], resistenteA:['viento'], skills:[
-                { name:'Embestida', dmg:1500, type:'fisico', element:'viento', minLevel:1 },
+            { id:'pegaso', name:'Pegaso', emoji:'🦄', rarity:'legendario', element1:'puro', element2:'viento', element3:'luz', elements:['puro','viento','luz'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Pegaso alado.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:450, debilContra:['oscuridad'], resistenteA:['viento'], skills:[
+                { name:'Embestida', dmg:1500, type:'fisico', element:'puro', minLevel:1 },
                 { name:'Mito Celestial', dmg:1780, type:'magico', element:'viento', minLevel:10 },
                 { name:'Viento Sagrado', dmg:1996, type:'magico', element:'luz', minLevel:20 },
-                { name:'Carga Celestial', dmg:2300, type:'magico', element:'viento', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
+                { name:'Carga Celestial', dmg:2300, type:'magico', element:'puro', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
                 { name:'Divino', dmg:2300, type:'magico', element:'luz', minLevel:30 }
               ], haceMasDanioA:['tierra'], hacePocoDanioA:['electrico'], inmuneA:[], debilidadPrincipal:['electrico', 'hielo'], precio:{ anterior:0, nuevo:450, vip10:405, vip50:225, esDiamante:true, soloDiamante:true } },
-            { id:'rinoceronte', name:'Rinoceronte', emoji:'🦏', rarity:'legendario', element1:'tierra', element2:'guerra', elements:['tierra','guerra','metal'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Rinoceronte blindado.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:480, debilContra:['agua'], resistenteA:['tierra'], skills:[
+            { id:'rinoceronte', name:'Rinoceronte', emoji:'🦏', rarity:'legendario', element1:'tierra', element2:'metal', element3:'guerra', elements:['tierra','metal','guerra'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Rinoceronte blindado.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:480, debilContra:['agua'], resistenteA:['tierra'], skills:[
                 { name:'Corneada', dmg:1500, type:'fisico', element:'tierra', minLevel:1 },
-                { name:'Cuerno Sísmico', dmg:1780, type:'magico', element:'tierra', minLevel:10 },
+                { name:'Cuerno Sísmico', dmg:1780, type:'magico', element:'metal', minLevel:10 },
                 { name:'Placa de Metal', dmg:1996, type:'magico', element:'guerra', minLevel:20 },
                 { name:'Impacto Terrestre', dmg:2300, type:'magico', element:'tierra', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
                 { name:'Titán', dmg:2300, type:'magico', element:'guerra', minLevel:30 }
               ], haceMasDanioA:['electrico', 'fuego'], hacePocoDanioA:['viento', 'naturaleza'], inmuneA:['electrico'], debilidadPrincipal:['agua', 'naturaleza'], precio:{ anterior:0, nuevo:480, vip10:432, vip50:240, esDiamante:true, soloDiamante:true } },
-            { id:'hidra', name:'Hidra', emoji:'🐲', rarity:'legendario', element1:'agua', element2:'veneno', elements:['agua','veneno','oscuridad'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Hidra de muchas cabezas.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:490, debilContra:['fuego'], resistenteA:['agua'], skills:[
+            { id:'hidra', name:'Hidra', emoji:'🐲', rarity:'legendario', element1:'agua', element2:'oscuridad', element3:'naturaleza', elements:['agua','oscuridad','naturaleza'], levelMax:75, damageRange:[1500,2300], obtainMethod:'Tienda', story:'Hidra de muchas cabezas.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:490, debilContra:['fuego'], resistenteA:['agua'], skills:[
                 { name:'Trituración', dmg:1500, type:'fisico', element:'agua', minLevel:1 },
-                { name:'Colmillo Bélico', dmg:1780, type:'magico', element:'agua', minLevel:10 },
-                { name:'Hidrocañón', dmg:1996, type:'magico', element:'veneno', minLevel:20 },
+                { name:'Colmillo Bélico', dmg:1780, type:'magico', element:'oscuridad', minLevel:10 },
+                { name:'Hidrocañón', dmg:1996, type:'magico', element:'naturaleza', minLevel:20 },
                 { name:'Tri-Ataque Oscuro', dmg:2300, type:'magico', element:'agua', minLevel:30, special:true, effectDesc:'Daño + roba 25% de vida' },
                 { name:'Regeneración', dmg:2300, type:'magico', element:'agua', minLevel:30 }
               ], haceMasDanioA:['fuego', 'tierra'], hacePocoDanioA:['naturaleza', 'electrico'], inmuneA:[], debilidadPrincipal:['naturaleza', 'electrico'], precio:{ anterior:0, nuevo:490, vip10:441, vip50:245, esDiamante:true, soloDiamante:true } },
-            { id:'golem_titan', name:'Gólem Titán', emoji:'🗿', rarity:'mitica', element1:'tierra', element2:'metal', elements:['tierra','metal','guerra'], levelMax:75, damageRange:[1600,2550], obtainMethod:'Tienda', story:'Titán de piedra.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:520, debilContra:['agua'], resistenteA:['tierra'], skills:[
-                { name:'Puño de Acero', dmg:1600, type:'fisico', element:'tierra', minLevel:1 },
-                { name:'Terremoto Titán', dmg:1932, type:'magico', element:'tierra', minLevel:10 },
-                { name:'Ira Ancestral', dmg:2189, type:'magico', element:'metal', minLevel:20 },
-                { name:'Aniquilación Titánica', dmg:2550, type:'magico', element:'tierra', minLevel:30 },
-                { name:'Avalancha', dmg:2550, type:'magico', element:'tierra', minLevel:30 }
+            { id:'golem_titan', name:'Gólem Titán', emoji:'🗿', rarity:'mitica', element1:'ancestral', element2:'metal', element3:'tierra', elements:['ancestral','metal','tierra'], levelMax:75, damageRange:[1600,2550], obtainMethod:'Tienda', story:'Titán de piedra.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:520, debilContra:['agua'], resistenteA:['tierra'], skills:[
+                { name:'Puño de Acero', dmg:1600, type:'fisico', element:'ancestral', minLevel:1 },
+                { name:'Terremoto Titán', dmg:1932, type:'magico', element:'metal', minLevel:10 },
+                { name:'Ira Ancestral', dmg:2189, type:'magico', element:'tierra', minLevel:20 },
+                { name:'Aniquilación Titánica', dmg:2550, type:'magico', element:'ancestral', minLevel:30 },
+                { name:'Avalancha', dmg:2550, type:'magico', element:'ancestral', minLevel:30 }
               ], haceMasDanioA:['electrico', 'fuego'], hacePocoDanioA:['viento', 'naturaleza'], inmuneA:['electrico'], debilidadPrincipal:['agua', 'naturaleza'], precio:{ anterior:0, nuevo:520, vip10:468, vip50:260, esDiamante:true, soloDiamante:true } },
-            { id:'angel_solar', name:'Ángel Solar', emoji:'👼', rarity:'mitica', element1:'luz', element2:'puro', elements:['luz','puro','leyenda'], levelMax:75, damageRange:[1600,2550], obtainMethod:'Tienda', story:'Ángel del sol.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:580, debilContra:['oscuridad'], resistenteA:['luz'], skills:[
-                { name:'Luz Pura', dmg:1600, type:'fisico', element:'luz', minLevel:1 },
+            { id:'angel_solar', name:'Ángel Solar', emoji:'👼', rarity:'mitica', element1:'puro', element2:'luz', element3:'leyenda', element4:'guerra', elements:['puro','luz','leyenda','guerra'], levelMax:75, damageRange:[1600,2550], obtainMethod:'Tienda', story:'Ángel del sol.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:580, debilContra:['oscuridad'], resistenteA:['luz'], skills:[
+                { name:'Luz Pura', dmg:1600, type:'fisico', element:'puro', minLevel:1 },
                 { name:'Lanza Solar', dmg:1932, type:'magico', element:'luz', minLevel:10 },
-                { name:'Viento Celestial', dmg:2189, type:'magico', element:'puro', minLevel:20 },
-                { name:'Luz Divina', dmg:2550, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Daño Crítico +50% prob. curar 30% HP' },
-                { name:'Sol Divino', dmg:2550, type:'magico', element:'luz', minLevel:30 }
+                { name:'Viento Celestial', dmg:2189, type:'magico', element:'leyenda', minLevel:20 },
+                { name:'Luz Divina', dmg:2550, type:'magico', element:'guerra', minLevel:30, special:true, effectDesc:'Daño Crítico +50% prob. curar 30% HP' },
+                { name:'Sol Divino', dmg:2550, type:'magico', element:'puro', minLevel:30 }
               ], haceMasDanioA:['oscuridad'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:['oscuridad', 'ancestral'], precio:{ anterior:0, nuevo:580, vip10:522, vip50:290, esDiamante:true, soloDiamante:true } },
-            { id:'demonio_abismal', name:'Demonio A.', emoji:'👁️', rarity:'mitica', element1:'oscuridad', element2:'fuego', elements:['oscuridad','fuego','ancestral'], levelMax:75, damageRange:[1600,2550], obtainMethod:'Tienda', story:'Demonio abismal.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:600, debilContra:['luz'], resistenteA:['oscuridad'], skills:[
-                { name:'Sombra Demonio', dmg:1600, type:'fisico', element:'oscuridad', minLevel:1 },
+            { id:'demonio_abismal', name:'Demonio A.', emoji:'👁️', rarity:'mitica', element1:'legendario', element2:'oscuridad', element3:'fuego', element4:'guerra', elements:['legendario','oscuridad','fuego','guerra'], levelMax:75, damageRange:[1600,2550], obtainMethod:'Tienda', story:'Demonio abismal.', bonusLabel:'', bonusInitial:'', bonusMax:'', foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:600, debilContra:['luz'], resistenteA:['oscuridad'], skills:[
+                { name:'Sombra Demonio', dmg:1600, type:'fisico', element:'legendario', minLevel:1 },
                 { name:'Infierno Volcánico', dmg:1932, type:'magico', element:'oscuridad', minLevel:10 },
                 { name:'Maldición Ancestral', dmg:2189, type:'magico', element:'fuego', minLevel:20 },
-                { name:'Festín Umbrío', dmg:2550, type:'magico', element:'oscuridad', minLevel:30, special:true, effectDesc:'Daño Crítico +50% prob. robar 25% HP' },
-                { name:'Abismo', dmg:2550, type:'magico', element:'oscuridad', minLevel:30 }
+                { name:'Festín Umbrío', dmg:2550, type:'magico', element:'guerra', minLevel:30, special:true, effectDesc:'Daño Crítico +50% prob. robar 25% HP' },
+                { name:'Abismo', dmg:2550, type:'magico', element:'legendario', minLevel:30 }
               ], haceMasDanioA:['luz', 'puro'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:['luz', 'puro'], precio:{ anterior:0, nuevo:600, vip10:540, vip50:300, esDiamante:true, soloDiamante:true } },
-            { id:'draco_estelar', name:'Draco Estelar', emoji:'🌠', rarity:'mitico', element1:'luz', element2:'viento', elements:['luz','viento','leyenda'], levelMax:75, damageRange:[1700,2650], obtainMethod:'Evento especial', eventOnly:true,
+            { id:'draco_estelar', name:'Draco Estelar', emoji:'🌠', rarity:'mitico', element1:'legendario', element2:'mitico', element3:'luz', element4:'viento', elements:['legendario','mitico','luz','viento'], levelMax:75, damageRange:[1700,2650], obtainMethod:'Evento especial', eventOnly:true,
               story:'Nació del polvo de una estrella fugaz. Solo aparece cuando el cielo se alinea con un evento especial, y elige acompañar a quienes completan su ruta con constancia.',
               bonusLabel:'Monedas extra', bonusInitial:'+8% Monedas extra', bonusMax:'+22% Monedas extra',
               foodType:'🌿 Naturaleza', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:['oscuridad'], resistenteA:['viento','luz'], skills:[
-                { name:'Destello Estelar', dmg:1700, type:'fisico', element:'luz', minLevel:1 },
-                { name:'Ráfaga Cósmica', dmg:2050, type:'magico', element:'viento', minLevel:10 },
+                { name:'Destello Estelar', dmg:1700, type:'fisico', element:'legendario', minLevel:1 },
+                { name:'Ráfaga Cósmica', dmg:2050, type:'magico', element:'mitico', minLevel:10 },
                 { name:'Lluvia de Meteoros', dmg:2320, type:'magico', element:'luz', minLevel:20 },
-                { name:'Supernova', dmg:2650, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Daño Crítico +50% prob. cegar al rival' },
+                { name:'Supernova', dmg:2650, type:'magico', element:'viento', minLevel:30, special:true, effectDesc:'Daño Crítico +50% prob. cegar al rival' },
                 { name:'Bloqueado', dmg:0, locked:true }
               ], haceMasDanioA:['oscuridad'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:['oscuridad'], precio:null },
 
-            { id:'kronos', name:'KRONOS', emoji:'⏳', rarity:'mitico', sagrada:true, element1:'ancestral', element2:'puro', elements:['ancestral','puro'], levelMax:90, damageRange:[2593,5186], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'kronos', name:'KRONOS', emoji:'⏳', rarity:'mitico', sagrada:true, element1:'leyenda', element2:'metal', element3:'ancestral', element4:'puro', elements:['leyenda','metal','ancestral','puro'], levelMax:90, damageRange:[2593,5186], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Señor del Tiempo. Nació cuando el primer instante fue creado. Puede detener, acelerar o revertir el tiempo a su voluntad. No lo hace por capricho, sino para mantener el orden de todas las cosas. Si él no existiera, el tiempo se desmoronaría y todo volvería al caos. Es el guardián del orden mismo.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Dragón + Unicornio', desbloqueoLabel:'Día 1', desbloqueoHoras:0,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['ancestral','puro'], skills:[
-                { name:'Golpe de Kronos', dmg:2593, type:'fisico', element:'ancestral', minLevel:1 },
-                { name:'Furia Ancestral', dmg:3112, type:'magico', element:'ancestral', minLevel:10 },
-                { name:'Onda Puro', dmg:3552, type:'magico', element:'puro', minLevel:20 },
+                { name:'Golpe de Kronos', dmg:2593, type:'fisico', element:'leyenda', minLevel:1 },
+                { name:'Furia Ancestral', dmg:3112, type:'magico', element:'metal', minLevel:10 },
+                { name:'Onda Puro', dmg:3552, type:'magico', element:'ancestral', minLevel:20 },
                 { name:'Sello Sagrado', dmg:4149, type:'magico', element:'puro', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Kronos', dmg:5186, type:'magico', element:'ancestral', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Definitiva: Juicio de Kronos', dmg:5186, type:'magico', element:'leyenda', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'nihil', name:'NIHIL', emoji:'⚫', rarity:'mitico', sagrada:true, element1:'oscuridad', element2:'hielo', elements:['oscuridad','hielo'], levelMax:90, damageRange:[2778,5556], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'nihil', name:'NIHIL', emoji:'⚫', rarity:'mitico', sagrada:true, element1:'legendario', element2:'oscuridad', element3:'mitico', element4:'puro', elements:['legendario','oscuridad','mitico','puro'], levelMax:90, damageRange:[2778,5556], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Devorador de la Existencia. Vino del vacío que existía antes de que el mundo fuera creado. Absorbe todo lo que toca: luz, materia, incluso la propia vida. No es malvado: es simplemente el retorno al nada. Al final de todo, cuando todo termine, él permanecerá, como estaba antes del principio.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Dem. Abisal + G. Hielo', desbloqueoLabel:'+24h', desbloqueoHoras:24,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['oscuridad','hielo'], skills:[
-                { name:'Golpe de Nihil', dmg:2778, type:'fisico', element:'oscuridad', minLevel:1 },
+                { name:'Golpe de Nihil', dmg:2778, type:'fisico', element:'legendario', minLevel:1 },
                 { name:'Furia Oscuridad', dmg:3334, type:'magico', element:'oscuridad', minLevel:10 },
-                { name:'Onda Hielo', dmg:3806, type:'magico', element:'hielo', minLevel:20 },
-                { name:'Sello Sagrado', dmg:4445, type:'magico', element:'hielo', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Nihil', dmg:5556, type:'magico', element:'oscuridad', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Onda Hielo', dmg:3806, type:'magico', element:'mitico', minLevel:20 },
+                { name:'Sello Sagrado', dmg:4445, type:'magico', element:'puro', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Nihil', dmg:5556, type:'magico', element:'legendario', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'eden', name:'EDÉN', emoji:'🌳', rarity:'mitico', sagrada:true, element1:'naturaleza', element2:'ancestral', elements:['naturaleza','ancestral'], levelMax:90, damageRange:[2222,4444], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'eden', name:'EDÉN', emoji:'🌳', rarity:'mitico', sagrada:true, element1:'puro', element2:'naturaleza', element3:'luz', element4:'leyenda', elements:['puro','naturaleza','luz','leyenda'], levelMax:90, damageRange:[2222,4444], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Guardián del Paraíso. Donde él pisa, florece la vida instantáneamente. Crea bosques eternos y cura cualquier herida, incluso aquellas que se creían incurables. Su corazón es tan puro que jamás ha conocido el mal. Se dice que él sostiene la vida de todo el mundo con su sola presencia.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Panda + T. Ancestral', desbloqueoLabel:'+48h', desbloqueoHoras:48,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['naturaleza','ancestral'], skills:[
-                { name:'Golpe de Edén', dmg:2222, type:'fisico', element:'naturaleza', minLevel:1 },
+                { name:'Golpe de Edén', dmg:2222, type:'fisico', element:'puro', minLevel:1 },
                 { name:'Furia Naturaleza', dmg:2666, type:'magico', element:'naturaleza', minLevel:10 },
-                { name:'Onda Ancestral', dmg:3044, type:'magico', element:'ancestral', minLevel:20 },
-                { name:'Sello Sagrado', dmg:3555, type:'magico', element:'ancestral', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Edén', dmg:4444, type:'magico', element:'naturaleza', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Onda Ancestral', dmg:3044, type:'magico', element:'luz', minLevel:20 },
+                { name:'Sello Sagrado', dmg:3555, type:'magico', element:'leyenda', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Edén', dmg:4444, type:'magico', element:'puro', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'ignis_prime', name:'IGNIS PRIME', emoji:'🔥', rarity:'mitico', sagrada:true, element1:'fuego', element2:'guerra', elements:['fuego','guerra'], levelMax:90, damageRange:[3333,6666], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'ignis_prime', name:'IGNIS PRIME', emoji:'🔥', rarity:'mitico', sagrada:true, element1:'ancestral', element2:'fuego', element3:'legendario', element4:'guerra', elements:['ancestral','fuego','legendario','guerra'], levelMax:90, damageRange:[3333,6666], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Corazón del Sol Primigenio. Su fuego no consume, sino que purifica. Arde desde antes de que existieran los soles que hoy conocemos. Es la llama que dio origen a todo calor, a toda luz, a todo fuego. No se apaga jamás, porque él es el fuego mismo.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Dragón + Tigre Blanco', desbloqueoLabel:'+72h', desbloqueoHoras:72,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['fuego','guerra'], skills:[
-                { name:'Golpe de Ignis Prime', dmg:3333, type:'fisico', element:'fuego', minLevel:1 },
+                { name:'Golpe de Ignis Prime', dmg:3333, type:'fisico', element:'ancestral', minLevel:1 },
                 { name:'Furia Fuego', dmg:4000, type:'magico', element:'fuego', minLevel:10 },
-                { name:'Onda Guerra', dmg:4566, type:'magico', element:'guerra', minLevel:20 },
+                { name:'Onda Guerra', dmg:4566, type:'magico', element:'legendario', minLevel:20 },
                 { name:'Sello Sagrado', dmg:5333, type:'magico', element:'guerra', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Ignis Prime', dmg:6666, type:'magico', element:'fuego', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Definitiva: Juicio de Ignis Prime', dmg:6666, type:'magico', element:'ancestral', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'leviatan_ab', name:'LEVIATÁN AB.', emoji:'🌊', rarity:'mitico', sagrada:true, element1:'agua', element2:'oscuridad', elements:['agua','oscuridad'], levelMax:90, damageRange:[2500,5000], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'leviatan_ab', name:'LEVIATÁN AB.', emoji:'🌊', rarity:'mitico', sagrada:true, element1:'ancestral', element2:'agua', element3:'oscuridad', element4:'mitico', elements:['ancestral','agua','oscuridad','mitico'], levelMax:90, damageRange:[2500,5000], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Terror de las Profundidades. Duerme en el abismo donde el mar no tiene fondo. Si algún día despierta por completo, las aguas se alzarán y cambiarán la faz de la tierra. Es el dueño absoluto de todo lo líquido. Ningún océano existe sin su permiso. Espera, silencioso y poderoso, el momento de su despertar.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Tib. Abisal + Hidra', desbloqueoLabel:'+96h', desbloqueoHoras:96,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['agua','oscuridad'], skills:[
-                { name:'Golpe de Leviatán Ab.', dmg:2500, type:'fisico', element:'agua', minLevel:1 },
+                { name:'Golpe de Leviatán Ab.', dmg:2500, type:'fisico', element:'ancestral', minLevel:1 },
                 { name:'Furia Agua', dmg:3000, type:'magico', element:'agua', minLevel:10 },
                 { name:'Onda Oscuridad', dmg:3425, type:'magico', element:'oscuridad', minLevel:20 },
-                { name:'Sello Sagrado', dmg:4000, type:'magico', element:'oscuridad', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Leviatán Ab.', dmg:5000, type:'magico', element:'agua', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Sello Sagrado', dmg:4000, type:'magico', element:'mitico', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Leviatán Ab.', dmg:5000, type:'magico', element:'ancestral', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'seraph', name:'SERAPH', emoji:'😇', rarity:'mitico', sagrada:true, element1:'luz', element2:'viento', elements:['luz','viento'], levelMax:90, damageRange:[2685,5370], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'seraph', name:'SERAPH', emoji:'😇', rarity:'mitico', sagrada:true, element1:'puro', element2:'luz', element3:'heroico', element4:'leyenda', elements:['puro','luz','heroico','leyenda'], levelMax:90, damageRange:[2685,5370], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Mensajero Celestial. Desciende de las estrellas más antiguas. Sus alas están hechas de luz pura. Lleva mensajes entre los cielos y este mundo. Ninguna tormenta puede tocarlo, ninguna oscuridad puede acercarse a él. Es la voluntad de lo alto, hecha forma y ala.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Pegaso + Grypho', desbloqueoLabel:'+120h', desbloqueoHoras:120,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['luz','viento'], skills:[
-                { name:'Golpe de Seraph', dmg:2685, type:'fisico', element:'luz', minLevel:1 },
+                { name:'Golpe de Seraph', dmg:2685, type:'fisico', element:'puro', minLevel:1 },
                 { name:'Furia Luz', dmg:3222, type:'magico', element:'luz', minLevel:10 },
-                { name:'Onda Viento', dmg:3678, type:'magico', element:'viento', minLevel:20 },
-                { name:'Sello Sagrado', dmg:4296, type:'magico', element:'viento', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Seraph', dmg:5370, type:'magico', element:'luz', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Onda Viento', dmg:3678, type:'magico', element:'heroico', minLevel:20 },
+                { name:'Sello Sagrado', dmg:4296, type:'magico', element:'leyenda', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Seraph', dmg:5370, type:'magico', element:'puro', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'anubis_exe', name:'ANUBIS.EXE', emoji:'𓁢', rarity:'mitico', sagrada:true, element1:'oscuridad', element2:'metal', elements:['oscuridad','metal'], levelMax:90, damageRange:[3148,6296], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'anubis_exe', name:'ANUBIS.EXE', emoji:'𓁢', rarity:'mitico', sagrada:true, element1:'mitico', element2:'oscuridad', element3:'metal', element4:'ancestral', elements:['mitico','oscuridad','metal','ancestral'], levelMax:90, damageRange:[3148,6296], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Juez de Almas. Pesaba el corazón de cada ser que parte de este mundo. No conoce piedad ni favoritismo. Su veredicto es justo, eterno e inapelable. No decide quién es bueno o malo: simplemente pesa lo que cada alma ha llevado. Y su decisión jamás se revoca.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Dem. Abisal + G. Titán', desbloqueoLabel:'+144h', desbloqueoHoras:144,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['oscuridad','metal'], skills:[
-                { name:'Golpe de Anubis.Exe', dmg:3148, type:'fisico', element:'oscuridad', minLevel:1 },
+                { name:'Golpe de Anubis.Exe', dmg:3148, type:'fisico', element:'mitico', minLevel:1 },
                 { name:'Furia Oscuridad', dmg:3778, type:'magico', element:'oscuridad', minLevel:10 },
                 { name:'Onda Metal', dmg:4313, type:'magico', element:'metal', minLevel:20 },
-                { name:'Sello Sagrado', dmg:5037, type:'magico', element:'metal', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Anubis.Exe', dmg:6296, type:'magico', element:'oscuridad', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Sello Sagrado', dmg:5037, type:'magico', element:'ancestral', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Anubis.Exe', dmg:6296, type:'magico', element:'mitico', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'quetzal', name:'QUETZAL', emoji:'🦜', rarity:'mitico', sagrada:true, element1:'viento', element2:'luz', elements:['viento','luz'], levelMax:90, damageRange:[2556,5112], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'quetzal', name:'QUETZAL', emoji:'🦜', rarity:'mitico', sagrada:true, element1:'naturaleza', element2:'viento', element3:'luz', element4:'puro', elements:['naturaleza','viento','luz','puro'], levelMax:90, damageRange:[2556,5112], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'La Serpiente Alada Eterna. Vuela entre mundos uniendo el cielo y la tierra. Su plumaje cambia de color según la era que comienza. Se dice que cuando él aparezca en su plenitud, comenzará una nueva edad para todo el mundo. Es el presagio de cambio y renacimiento.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Águila + Pegaso', desbloqueoLabel:'+168h', desbloqueoHoras:168,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['viento','luz'], skills:[
-                { name:'Golpe de Quetzal', dmg:2556, type:'fisico', element:'viento', minLevel:1 },
+                { name:'Golpe de Quetzal', dmg:2556, type:'fisico', element:'naturaleza', minLevel:1 },
                 { name:'Furia Viento', dmg:3067, type:'magico', element:'viento', minLevel:10 },
                 { name:'Onda Luz', dmg:3502, type:'magico', element:'luz', minLevel:20 },
-                { name:'Sello Sagrado', dmg:4090, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Quetzal', dmg:5112, type:'magico', element:'viento', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Sello Sagrado', dmg:4090, type:'magico', element:'puro', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Quetzal', dmg:5112, type:'magico', element:'naturaleza', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'g_cosmico', name:'G. CÓSMICO', emoji:'🌌', rarity:'mitico', sagrada:true, element1:'luz', element2:'metal', elements:['luz','metal'], levelMax:90, damageRange:[2130,4260], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'g_cosmico', name:'G. CÓSMICO', emoji:'🌌', rarity:'mitico', sagrada:true, element1:'legendario', element2:'puro', element3:'viento', element4:'leyenda', elements:['legendario','puro','viento','leyenda'], levelMax:90, damageRange:[2130,4260], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Peso de las Galaxias. Su cuerpo está hecho de estrellas que brillaron y murieron hace eones. Nadie lo creó: simplemente apareció para sostener el equilibrio del universo. Sostiene estrellas en su lugar y mantiene las galaxias en su curso. Es el guardián silencioso de todo lo que existe allá arriba.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'G. Titán + Ángel Solar', desbloqueoLabel:'+192h', desbloqueoHoras:192,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['luz','metal'], skills:[
-                { name:'Golpe de G. Cósmico', dmg:2130, type:'fisico', element:'luz', minLevel:1 },
-                { name:'Furia Luz', dmg:2556, type:'magico', element:'luz', minLevel:10 },
-                { name:'Onda Metal', dmg:2918, type:'magico', element:'metal', minLevel:20 },
-                { name:'Sello Sagrado', dmg:3408, type:'magico', element:'metal', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de G. Cósmico', dmg:4260, type:'magico', element:'luz', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Golpe de G. Cósmico', dmg:2130, type:'fisico', element:'legendario', minLevel:1 },
+                { name:'Furia Luz', dmg:2556, type:'magico', element:'puro', minLevel:10 },
+                { name:'Onda Metal', dmg:2918, type:'magico', element:'viento', minLevel:20 },
+                { name:'Sello Sagrado', dmg:3408, type:'magico', element:'leyenda', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de G. Cósmico', dmg:4260, type:'magico', element:'legendario', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
-            { id:'fenix_negro', name:'FÉNIX NEGRO', emoji:'🖤', rarity:'mitico', sagrada:true, element1:'fuego', element2:'oscuridad', elements:['fuego','oscuridad'], levelMax:90, damageRange:[2963,5926], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
+            { id:'fenix_negro', name:'FÉNIX NEGRO', emoji:'🖤', rarity:'mitico', sagrada:true, element1:'legendario', element2:'fuego', element3:'oscuridad', element4:'mitico', elements:['legendario','fuego','oscuridad','mitico'], levelMax:90, damageRange:[2963,5926], obtainMethod:'Cruce de Mascotas Sagradas', eventOnly:true,
               story:'El Alma que Nunca Muere. Renace de sus cenizas una y otra vez, cada vez más sabia y más fuerte. Lleva la luz y la oscuridad en perfecto equilibrio: no es luz pura ni sombra absoluta. Es todo lo que ha sido, es y será. Muerte y nacimiento, juntos, por siempre.',
               bonusLabel:'Bono VIP en batalla', bonusInitial:'+5,000 Vida/Ataque/Defensa por cada +10 VIP', bonusMax:'+25,000 Vida/Ataque/Defensa en VIP 50',
               cruzando:'Fénix Real + Dem. Abisal', desbloqueoLabel:'+216h', desbloqueoHoras:216,
               foodType:'✨ Alimento Sagrado', totalFood:1213200, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['fuego','oscuridad'], skills:[
-                { name:'Golpe de Fénix Negro', dmg:2963, type:'fisico', element:'fuego', minLevel:1 },
+                { name:'Golpe de Fénix Negro', dmg:2963, type:'fisico', element:'legendario', minLevel:1 },
                 { name:'Furia Fuego', dmg:3556, type:'magico', element:'fuego', minLevel:10 },
                 { name:'Onda Oscuridad', dmg:4059, type:'magico', element:'oscuridad', minLevel:20 },
-                { name:'Sello Sagrado', dmg:4741, type:'magico', element:'oscuridad', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
-                { name:'Definitiva: Juicio de Fénix Negro', dmg:5926, type:'magico', element:'fuego', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
+                { name:'Sello Sagrado', dmg:4741, type:'magico', element:'mitico', minLevel:30, special:true, effectDesc:'Daño alto + ignora parte de la defensa' },
+                { name:'Definitiva: Juicio de Fénix Negro', dmg:5926, type:'magico', element:'legendario', minLevel:30, definitiva:true, special:true, effectDesc:'La habilidad más poderosa de esta Mascota Sagrada' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
             { id:'gato_egipto', name:'Gato de Egipto', emoji:'🐈‍⬛', rarity:'mitico', sagrada:true, esInmortal:true, eventOnly:true, soloEvento:true, noRequiereAlimento:true, element1:'todos', element2:'', elements:['fuego','hielo','agua','tierra','naturaleza','electrico','viento','oscuridad','luz','puro','ancestral','guerra','leyenda','metal'], levelMax:100, damageRange:[2000,3200], obtainMethod:'Evento especial',
               story:'El Inmortal. Posee todos los elementos existentes y se regenera POR COMPLETO cada turno. Solo el Gato Común puede vencerlo; a él nunca puede hacerle daño. Solo aparece en eventos especiales y no puede usarse como mascota propia: nace ya en su Nivel máximo (100) y no necesita alimentarse.',
               bonusLabel:'Regeneración total', bonusInitial:'Se regenera completo cada turno', bonusMax:'Inmune a todas las mascotas salvo el Gato Común',
               foodType:'✨ Alimento Sagrado', totalFood:0, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:[], skills:[
-                { name:'Zarpazo Milenario', dmg:2000, type:'fisico', element:'todos', minLevel:1 },
-                { name:'Maldición Faraónica', dmg:2400, type:'magico', element:'todos', minLevel:10 },
-                { name:'Arena del Tiempo', dmg:2700, type:'magico', element:'todos', minLevel:20 },
-                { name:'Ojo de Ra', dmg:3200, type:'magico', element:'todos', minLevel:30, special:true, effectDesc:'Daño total + el Gato de Egipto se regenera completo este turno' },
-                { name:'Definitiva: Inmortalidad', dmg:0, type:'magico', element:'todos', minLevel:30, definitiva:true, special:true, effectDesc:'Restaura el 100% de su vida (0 de daño a él siempre, salvo del Gato Común)' }
+                { name:'Zarpazo Milenario', dmg:2000, type:'fisico', element:'puro', minLevel:1 },
+                { name:'Maldición Faraónica', dmg:2400, type:'magico', element:'ancestral', minLevel:10 },
+                { name:'Arena del Tiempo', dmg:2700, type:'magico', element:'legendario', minLevel:20 },
+                { name:'Ojo de Ra', dmg:3200, type:'magico', element:'puro', minLevel:30, special:true, effectDesc:'Daño total + el Gato de Egipto se regenera completo este turno' },
+                { name:'Definitiva: Inmortalidad', dmg:0, type:'magico', element:'puro', minLevel:30, definitiva:true, special:true, effectDesc:'Restaura el 100% de su vida (0 de daño a él siempre, salvo del Gato Común)' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
 
 
@@ -3752,11 +3752,11 @@ function defaultConfig() {
               cruzando:'2 Sagradas activas + Corona', desbloqueoLabel:'INSTANTE', desbloqueoHoras:0,
               foodType:'✨ Alimento Sagrado', totalFood:0, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:['luz'], skills:[
-                { name:'Zarpazo Supremo', dmg:5000, type:'fisico', element:'luz', minLevel:1 },
-                { name:'Corona Brillante', dmg:6000, type:'magico', element:'luz', minLevel:10 },
-                { name:'Juicio del Rey', dmg:7500, type:'magico', element:'luz', minLevel:20 },
-                { name:'Despertar Real', dmg:9000, type:'magico', element:'luz', minLevel:30, special:true, effectDesc:'Despierta la verdadera forma' },
-                { name:'Definitiva: Rey Oculto', dmg:10000, type:'magico', element:'luz', minLevel:30, definitiva:true, special:true, effectDesc:'La forma verdadera del Rey' }
+                { name:'Zarpazo Supremo', dmg:5000, type:'fisico', element:'heroico', minLevel:1 },
+                { name:'Corona Brillante', dmg:6000, type:'magico', element:'puro', minLevel:10 },
+                { name:'Juicio del Rey', dmg:7500, type:'magico', element:'legendario', minLevel:20 },
+                { name:'Despertar Real', dmg:9000, type:'magico', element:'leyenda', minLevel:30, special:true, effectDesc:'Despierta la verdadera forma' },
+                { name:'Definitiva: Rey Oculto', dmg:10000, type:'magico', element:'heroico', minLevel:30, definitiva:true, special:true, effectDesc:'La forma verdadera del Rey' }
               ], haceMasDanioA:['oscuridad'], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
             { id:'gato_egipto_supremo', name:'GATO DE EGIPTO', emoji:'🏛️', rarity:'supremo', sagrada:true, supremo:true, esDios:true, element1:'todos', element2:'', elements:['fuego','hielo','agua','tierra','naturaleza','electrico','viento','oscuridad','luz','puro','ancestral','guerra','leyenda','metal'], levelMax:100, damageRange:[8000,16000], obtainMethod:'Cruce: Gato Común + Gato Supremo - 20% éxito SIEMPRE, 80% fallido → Mascota Legendaria aleatoria. Puedes intentar cuantas veces quieras.',
               story:'Nació de la unión del humilde y el supremo. Posee TODOS los elementos que existen en la creación. Su poder es inmenso, su vida altísima, su fuerza sin igual. Se le creyó invencible, porque nadie ni nada podía contra él. Pero la profecía antigua siempre dijo la verdad: el Dios de Todos los Elementos, todopoderoso y eterno... tiene un solo punto débil. Y aquel que lo creó, aquel humilde gato que un día despertó su corona, siempre será más fuerte que él. Porque el Rey dio origen al Dios, y no al revés. Y por eso, el Gato Común, con su corona oculta, será siempre su único dueño.',
@@ -3764,11 +3764,11 @@ function defaultConfig() {
               cruzando:'Gato Común + Gato Supremo', desbloqueoLabel:'NIVEL 100', desbloqueoHoras:0,
               foodType:'✨ Alimento Sagrado', totalFood:0, goldCost:0, totalDiamondCost:0, images:{e1:'',e2:'',e3:'',e4:''},
               debilContra:[], resistenteA:[], skills:[
-                { name:'Zarpazo Divino', dmg:8000, type:'fisico', element:'todos', minLevel:1 },
-                { name:'Elementos Totales', dmg:10000, type:'magico', element:'todos', minLevel:10 },
-                { name:'Juicio del Dios', dmg:12000, type:'magico', element:'todos', minLevel:20 },
-                { name:'Omnipotencia', dmg:14000, type:'magico', element:'todos', minLevel:30, special:true, effectDesc:'TODOS los elementos' },
-                { name:'Definitiva: Dios Supremo', dmg:16000, type:'magico', element:'todos', minLevel:30, definitiva:true, special:true, effectDesc:'El ser más poderoso' }
+                { name:'Zarpazo Divino', dmg:8000, type:'fisico', element:'heroico', minLevel:1 },
+                { name:'Elementos Totales', dmg:10000, type:'magico', element:'mitico', minLevel:10 },
+                { name:'Juicio del Dios', dmg:12000, type:'magico', element:'puro', minLevel:20 },
+                { name:'Omnipotencia', dmg:14000, type:'magico', element:'leyenda', minLevel:30, special:true, effectDesc:'TODOS los elementos' },
+                { name:'Definitiva: Dios Supremo', dmg:16000, type:'magico', element:'heroico', minLevel:30, definitiva:true, special:true, effectDesc:'El ser más poderoso' }
               ], haceMasDanioA:[], hacePocoDanioA:[], inmuneA:[], debilidadPrincipal:[], precio:null },
 
         ],
@@ -3903,23 +3903,23 @@ const MASCOTA_RAREZAS = {
 
 /* ---------- Sistema de Batalla de Mascotas: Elementos + Rarezas + Combate ---------- */
 const ELEMENTS = {
-    naturaleza: { label:'Naturaleza', color:'#4CAF50', bg:'#1b3a20', icon:'🌿', img:'', debil:['fuego','hielo'], resiste:['agua','tierra'] },
+    naturaleza: { label:'Naturaleza', color:'#4CAF50', bg:'#1b3a20', icon:'🌿', img:'', debil:['fuego','hielo'], resiste:['agua','luz'] },
     fuego:      { label:'Fuego',      color:'#FF5252', bg:'#3a1a14', icon:'🔥', img:'', debil:['agua','tierra'], resiste:['naturaleza','hielo'] },
-    agua:       { label:'Agua',       color:'#42A5F5', bg:'#12283f', icon:'💧', img:'', debil:['electrico','naturaleza'], resiste:['fuego','metal'] },
-    viento:     { label:'Viento',     color:'#26C6DA', bg:'#123a3d', icon:'🌪️', img:'', debil:['electrico','hielo'], resiste:['tierra','naturaleza'] },
-    electrico:  { label:'Electrico',  color:'#FFD600', bg:'#3a3210', icon:'⚡', img:'', debil:['tierra','agua'], resiste:['viento','metal'] },
-    luz:        { label:'Luz',        color:'#FFC107', bg:'#3a2f10', icon:'☀️', img:'', debil:['oscuridad','ancestral'], resiste:['puro','electrico'] },
-    leyenda:    { label:'Leyenda',    color:'#AB47BC', bg:'#2a1338', icon:'♾️', img:'', debil:['puro','leyenda'], resiste:['ancestral','luz'] },
-    puro:       { label:'Puro',       color:'#E1BEE7', bg:'#2a1a2a', icon:'✨', img:'', debil:['ancestral','oscuridad'], resiste:['luz','naturaleza'] },
-    ancestral:  { label:'Ancestral',  color:'#FF5722', bg:'#2a150a', icon:'🌋', img:'', debil:['puro','leyenda'], resiste:['ancestral','luz'] },
-    tierra:     { label:'Tierra',     color:'#8D6E63', bg:'#2a1f14', icon:'⛰️', img:'', debil:['viento','naturaleza'], resiste:['electrico','fuego'] },
-    hielo:      { label:'Hielo',      color:'#81D4FA', bg:'#0f2a33', icon:'❄️', img:'', debil:['fuego','metal'], resiste:['viento','naturaleza'] },
-    metal:      { label:'Metal',      color:'#B0BEC5', bg:'#1a1f24', icon:'⚙️', img:'', debil:['fuego','electrico'], resiste:['hielo','guerra'] },
-    oscuridad:  { label:'Oscuridad',  color:'#7C4DFF', bg:'#1a1030', icon:'🌙', img:'', debil:['luz','puro'], resiste:['oscuridad','ancestral'] },
-    guerra:     { label:'Guerra',     color:'#D32F2F', bg:'#2a0a0a', icon:'⚔️', img:'', debil:['luz','hielo'], resiste:['metal','tierra'] },
-    mitico:     { label:'Mítico',     color:'#EC407A', bg:'#3a1226', icon:'🌟', img:'', debil:['oscuridad','ancestral'], resiste:['naturaleza','hielo'] },
-    heroico:    { label:'Heroico',    color:'#FFD700', bg:'#3a2f10', icon:'👑', img:'', debil:['puro','leyenda'], resiste:['ancestral','luz'] },
-    legendario: { label:'Legendario', color:'#AB47BC', bg:'#2a1338', icon:'♾️', img:'', debil:['puro','leyenda'], resiste:['ancestral','luz'] },
+    agua:       { label:'Agua',       color:'#42A5F5', bg:'#12283f', icon:'💧', img:'', debil:['naturaleza','electrico'], resiste:['fuego','guerra'] },
+    viento:     { label:'Viento',     color:'#26C6DA', bg:'#123a3d', icon:'🌪️', img:'', debil:['legendario','electrico','hielo'], resiste:['leyenda','naturaleza','tierra'] },
+    electrico:  { label:'Electrico',  color:'#FFD600', bg:'#3a3210', icon:'⚡', img:'', debil:['tierra','luz'], resiste:['agua','metal'] },
+    luz:        { label:'Luz',        color:'#FFC107', bg:'#3a2f10', icon:'☀️', img:'', debil:['naturaleza'], resiste:['electrico','oscuridad'] },
+    leyenda:    { label:'Leyenda',    color:'#AB47BC', bg:'#2a1338', icon:'♾️', img:'', debil:['viento','mitico','naturaleza'], resiste:['legendario','heroico','agua'] },
+    puro:       { label:'Puro',       color:'#E1BEE7', bg:'#2a1a2a', icon:'✨', img:'', debil:['ancestral','oscuridad'], resiste:['viento','luz'] },
+    ancestral:  { label:'Ancestral',  color:'#FF5722', bg:'#2a150a', icon:'🌋', img:'', debil:['leyenda','fuego','agua'], resiste:['puro','metal','tierra'] },
+    tierra:     { label:'Tierra',     color:'#8D6E63', bg:'#2a1f14', icon:'⛰️', img:'', debil:['metal','guerra'], resiste:['electrico','fuego'] },
+    hielo:      { label:'Hielo',      color:'#81D4FA', bg:'#0f2a33', icon:'❄️', img:'', debil:['fuego','metal'], resiste:['naturaleza','guerra'] },
+    metal:      { label:'Metal',      color:'#B0BEC5', bg:'#1a1f24', icon:'⚙️', img:'', debil:['electrico','oscuridad'], resiste:['tierra','hielo'] },
+    oscuridad:  { label:'Oscuridad',  color:'#7C4DFF', bg:'#1a1030', icon:'🌙', img:'', debil:['guerra'], resiste:['metal','luz'] },
+    guerra:     { label:'Guerra',     color:'#D32F2F', bg:'#2a0a0a', icon:'⚔️', img:'', debil:['agua','hielo'], resiste:['tierra','oscuridad'] },
+    mitico:     { label:'Mítico',     color:'#EC407A', bg:'#3a1226', icon:'🌟', img:'', debil:['heroico','puro','tierra'], resiste:['legendario','luz','naturaleza'] },
+    heroico:    { label:'Heroico',    color:'#FFD700', bg:'#3a2f10', icon:'👑', img:'', debil:['leyenda','tierra','luz'], resiste:['mitico','puro','guerra'] },
+    legendario: { label:'Legendario', color:'#AB47BC', bg:'#2a1338', icon:'♾️', img:'', debil:['puro','hielo'], resiste:['ancestral','guerra'] },
 };
 
 // Aplica sobre ELEMENTS las imágenes y nombres que el admin haya guardado en CONFIG
@@ -5667,6 +5667,7 @@ async function submitAdminGearLogin() {
 function closeAdminPanel() {
     isAdmin = false; currentUser = null; state = null;
     stopAutoBingo();
+    document.body.classList.remove('no-scroll-fixed-screen');
     const bottomNav = document.getElementById('bottom-nav');
     if (bottomNav) bottomNav.style.display = 'none';
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -7795,6 +7796,7 @@ async function refreshLeaderboard() {
    ========================================================= */
 function openAdminPanel() {
     currentUser = 'admin'; isAdmin = true;
+    document.body.classList.remove('no-scroll-fixed-screen');
     document.getElementById('bottom-nav').style.display = 'none';
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('admin-screen').classList.add('active');
@@ -8553,9 +8555,14 @@ function renderAdminSkillGifs() {
         <div style="font-size:13px; font-weight:900; margin-bottom:8px">${open.emoji || '🐾'} ${open.name || petId}</div>
         ` + skills.map((sk, idx) => {
             const gifUrl = skillGifFor(petId, idx);
+            const currentElem = sk.element || '';
             return `
                 <div style="border:1px solid #30363d; border-radius:10px; padding:8px; margin-bottom:8px; background:#161b22">
                     <div style="font-size:12px; font-weight:800; margin-bottom:6px">${sk.icon || '⚔️'} ${sk.name}</div>
+                    <label style="display:block; font-size:10px; color:#8b949e; margin-bottom:2px">🎯 Elemento de esta habilidad (afecta el daño en batalla)</label>
+                    <select onchange="setSkillElementOverride('${petId}', ${idx}, this.value)" style="width:100%; padding:7px; border-radius:8px; margin-bottom:8px">
+                        ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${currentElem===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
+                    </select>
                     <div class="admin-img-row">
                         <div class="admin-img-preview-checker" id="skillgif-preview-${petId}-${idx}">${gifUrl ? `<img src="${gifUrl}">` : `<span style="font-size:20px">${sk.icon || '⚔️'}</span>`}</div>
                         <input type="file" accept="image/*" onchange="uploadSkillGif('${petId}', ${idx}, this)">
@@ -8567,6 +8574,16 @@ function renderAdminSkillGifs() {
                     ${gifUrl ? `<button class="admin-del-btn" style="width:100%; margin-top:4px; font-size:11px; padding:4px" onclick="removeSkillGif('${petId}', ${idx})">🗑️ Quitar GIF (volver al emoji)</button>` : ''}
                 </div>`;
         }).join('');
+}
+
+// Guarda el elemento elegido por el admin para una habilidad específica de una mascota
+// (sobreescribe el elemento por defecto de esa habilidad, se usa para calcular el daño).
+function setSkillElementOverride(petId, idx, value) {
+    const def = CONFIG.mascotas.find(m => m.id === petId);
+    if (!def) return;
+    if (!def.skillElements) def.skillElements = [];
+    def.skillElements[idx] = value;
+    queueSaveConfig();
 }
 
 async function uploadSkillGif(petId, idx, inputEl) {
@@ -10616,9 +10633,15 @@ function closeImageZoom() {
 
 function pbElemBadges(m) {
     let els = [];
-    if(m.elements && Array.isArray(m.elements) && m.elements.length) els = m.elements;
-    else if(m.def && m.def.elements && Array.isArray(m.def.elements)) els = m.def.elements;
-    else els = [m.element1, m.element2, m.element3, m.element4].filter(Boolean);
+    // Prioridad: los 4 campos de elemento que el admin edita (element1-4). Solo si
+    // ninguno está asignado se usa el campo antiguo "elements" como respaldo, para
+    // que un cambio hecho en el panel de admin siempre se refleje en la batalla.
+    els = [m.element1, m.element2, m.element3, m.element4].filter(Boolean);
+    if (!els.length) {
+        if (m.elements && Array.isArray(m.elements) && m.elements.length) els = m.elements;
+        else if (m.def && m.def.elements && Array.isArray(m.def.elements)) els = m.def.elements;
+        else if (m.def) els = [m.def.element1, m.def.element2, m.def.element3, m.def.element4].filter(Boolean);
+    }
     els = els.slice(0,4);
     if(!els.length) return '';
     return els.map(k => {
@@ -10653,245 +10676,287 @@ const PB_SKILL_DEFS = [
 
 const PB_PET_SKILLS = {
     pollito: [
-        { name:'Picotazo del Amanecer', desc:'Primer rayo rompe suelo con hojas', mult:1.1, minStage:1, icon:'🐤', element:'naturaleza', fx:'pollito__picotazo' },
-        { name:'Jardín Pollito', desc:'Brote de tréboles y tierra fértil', mult:1.35, minStage:2, icon:'🌱', element:'naturaleza', fx:'pollito__tierra_y_hojas' },
-        { name:'Tormenta de Plumón', desc:'Plumas doradas que cortan como cuchillas', mult:1.6, minStage:3, icon:'🪶', element:'viento', fx:'pollito__picotazo_doble' },
-        { name:'Titán Pollito - Génesis', desc:'Raíz ancestral gigante que levanta podio', mult:2.2, minStage:4, ultimate:true, icon:'🌳👑', element:'naturaleza', fx:'pollito__ra_z_gigante' }
+        { name:'Brote Espinoso', desc:'Primer rayo rompe suelo con hojas', mult:1.1, minStage:1, icon:'🐤', element:'naturaleza', fx:'pollito__picotazo' },
+        { name:'Látigo Selva', desc:'Brote de tréboles y tierra fértil', mult:1.35, minStage:2, icon:'🌱', element:'naturaleza', fx:'pollito__tierra_y_hojas' },
+        { name:'Espora Venenosa', desc:'Plumas doradas que cortan como cuchillas', mult:1.6, minStage:3, icon:'🪶', element:'naturaleza', fx:'pollito__picotazo_doble' },
+        { name:'Furia Natural', desc:'Raíz ancestral gigante que levanta podio', mult:2.2, minStage:4, ultimate:true, icon:'🌳👑', element:'naturaleza', fx:'pollito__ra_z_gigante' }
     ],
     gato: [
-        { name:'Arañazo de Sombra', desc:'Garra invisible con chispas eléctricas', mult:1.1, minStage:1, icon:'🐱', element:'oscuridad', fx:'gato__ara_azo' },
-        { name:'Hilo de Luna', desc:'Látigo de luz lunar que enreda', mult:1.3, minStage:2, icon:'🌙', element:'luz', fx:'gato__latigazo_espina' },
-        { name:'Mordida del Vacío', desc:'Mordisco que absorbe color del rival', mult:1.5, minStage:3, icon:'😼', element:'oscuridad', fx:'gato__mordisco_verde' },
-        { name:'Corona Oculta - Desgarro Real', desc:'Zarpazo dimensional que revela corona', mult:1.9, minStage:4, ultimate:true, icon:'👑🐾', element:'leyenda', fx:'gato__zarpazo_salvia_ra_z' }
+        { name:'Destello Gato', desc:'Garra invisible con chispas eléctricas', mult:1.1, minStage:1, icon:'🐱', element:'luz', fx:'gato__ara_azo' },
+        { name:'Rayo Solar', desc:'Látigo de luz lunar que enreda', mult:1.3, minStage:2, icon:'🌙', element:'luz', fx:'gato__latigazo_espina' },
+        { name:'Nova', desc:'Mordisco que absorbe color del rival', mult:1.5, minStage:3, icon:'😼', element:'luz', fx:'gato__mordisco_verde' },
+        { name:'Juicio de Luz', desc:'Zarpazo dimensional que revela corona', mult:1.9, minStage:4, ultimate:true, icon:'👑🐾', element:'luz', fx:'gato__zarpazo_salvia_ra_z' }
     ],
     zorro: [
-        { name:'Cola Chispeante', desc:'Latigazo de cola deja estela fuego', mult:1.1, minStage:1, icon:'🦊', element:'fuego', fx:'zorro__cola_de_fuego' },
-        { name:'Viento Kitsune', desc:'Tornado de fuego que gira en espiral', mult:1.35, minStage:2, icon:'🌪️🔥', element:'viento', fx:'zorro__llamarada_envolvente' },
-        { name:'Furia de las Nueve', desc:'9 sombras de zorro atacan a la vez', mult:1.6, minStage:3, icon:'🦊✨', element:'fuego', fx:'zorro__furia_ardiente' },
-        { name:'Apocalipsis Zorro - Supernova', desc:'Meteoro kitsune + 3 soles falsos', mult:2.2, minStage:4, ultimate:true, icon:'☄️🦊', element:'fuego', fx:'zorro__nueve_colas_meteoro' }
+        { name:'Llama Zorro', desc:'Latigazo de cola deja estela fuego', mult:1.1, minStage:1, icon:'🦊', element:'fuego', fx:'zorro__cola_de_fuego' },
+        { name:'Brasa Infernal', desc:'Tornado de fuego que gira en espiral', mult:1.35, minStage:2, icon:'🌪️🔥', element:'fuego', fx:'zorro__llamarada_envolvente' },
+        { name:'Explosión Ígnea', desc:'9 sombras de zorro atacan a la vez', mult:1.6, minStage:3, icon:'🦊✨', element:'fuego', fx:'zorro__furia_ardiente' },
+        { name:'Infierno Total', desc:'Meteoro kitsune + 3 soles falsos', mult:2.2, minStage:4, ultimate:true, icon:'☄️🦊', element:'fuego', fx:'zorro__nueve_colas_meteoro' }
     ],
     pulpo: [
-        { name:'Tentáculo Abisal', desc:'Tentáculo sale del suelo con tinta', mult:1.1, minStage:1, icon:'🐙', element:'agua', fx:'pulpo__tent_culo' },
-        { name:'Pulso de Profundidad', desc:'Onda sónica azul marino', mult:1.35, minStage:2, icon:'🔵', element:'oscuridad', fx:'pulpo__chispazo_azul' },
-        { name:'Abrazo del Kraken', desc:'4 tentáculos envuelven al enemigo', mult:1.6, minStage:3, icon:'🐙💜', element:'agua', fx:'pulpo__tormenta_el_ctrica' },
-        { name:'Fosa de las Marianas', desc:'El suelo se hunde en tinta + rayo abisal', mult:2.2, minStage:4, ultimate:true, icon:'🌊🕳️', element:'agua', fx:'pulpo__kraken_rayo_final' }
+        { name:'Chorro Pulpo', desc:'Tentáculo sale del suelo con tinta', mult:1.1, minStage:1, icon:'🐙', element:'agua', fx:'pulpo__tent_culo' },
+        { name:'Garra Nocturna', desc:'Onda sónica azul marino', mult:1.35, minStage:2, icon:'🔵', element:'oscuridad', fx:'pulpo__chispazo_azul' },
+        { name:'Tsunami', desc:'4 tentáculos envuelven al enemigo', mult:1.6, minStage:3, icon:'🐙💜', element:'agua', fx:'pulpo__tormenta_el_ctrica' },
+        { name:'Noche Eterna', desc:'El suelo se hunde en tinta + rayo abisal', mult:2.2, minStage:4, ultimate:true, icon:'🌊🕳️', element:'oscuridad', fx:'pulpo__kraken_rayo_final' }
     ],
     lobo: [
-        { name:'Colmillo Gélido', desc:'Mordida deja escarcha en el suelo', mult:1.15, minStage:1, icon:'🐺❄️', element:'hielo', fx:'lobo__colmillo' },
-        { name:'Aullido de Guerra', desc:'Onda roja que raja rocas', mult:1.35, minStage:2, icon:'🐺⚔️', element:'guerra', fx:'lobo__embestida_b_lica' },
-        { name:'Manada Fantasma', desc:'3 lobos de hielo atacan en cadena', mult:1.6, minStage:3, icon:'🐺🐺🐺', element:'hielo', fx:'lobo__golpe_t_ctico' },
-        { name:'Era Glacial - Garra Alfa', desc:'Rayo de hielo gigante + suelo congelado', mult:2.0, minStage:4, ultimate:true, icon:'❄️👑', element:'hielo', fx:'lobo__garra_feroz_rayo' }
+        { name:'Escarcha Lobo', desc:'Mordida deja escarcha en el suelo', mult:1.15, minStage:1, icon:'🐺❄️', element:'hielo', fx:'lobo__colmillo' },
+        { name:'Garra Nocturna', desc:'Onda roja que raja rocas', mult:1.35, minStage:2, icon:'🐺⚔️', element:'oscuridad', fx:'lobo__embestida_b_lica' },
+        { name:'Glaciar', desc:'3 lobos de hielo atacan en cadena', mult:1.6, minStage:3, icon:'🐺🐺🐺', element:'hielo', fx:'lobo__golpe_t_ctico' },
+        { name:'Noche Eterna', desc:'Rayo de hielo gigante + suelo congelado', mult:2.0, minStage:4, ultimate:true, icon:'❄️👑', element:'oscuridad', fx:'lobo__garra_feroz_rayo' }
     ],
     buho: [
-        { name:'Picotazo Nocturno', desc:'Viento que suena como susurro', mult:1.15, minStage:1, icon:'🦉🌙', element:'viento', fx:'buho__picotazo' },
-        { name:'Manto de Plumas', desc:'Plumas negras crean cortina', mult:1.4, minStage:2, icon:'🪶⬛', element:'oscuridad', fx:'buho__velo_de_sombra' },
-        { name:'Ojo del Crepúsculo', desc:'Rayo de luz pura que hipnotiza', mult:1.65, minStage:3, icon:'👁️✨', element:'luz', fx:'buho__viento_nocturno' },
-        { name:'Juicio de Atenea', desc:'Tormenta de plumas + rayos de luna + grieta', mult:2.1, minStage:4, ultimate:true, icon:'🦉⚡', element:'viento', fx:'buho__danza_nocturna_tormenta' }
+        { name:'Ráfaga Búho', desc:'Viento que suena como susurro', mult:1.15, minStage:1, icon:'🦉🌙', element:'viento', fx:'buho__picotazo' },
+        { name:'Rayo Solar', desc:'Plumas negras crean cortina', mult:1.4, minStage:2, icon:'🪶⬛', element:'luz', fx:'buho__velo_de_sombra' },
+        { name:'Torbellino', desc:'Rayo de luz pura que hipnotiza', mult:1.65, minStage:3, icon:'👁️✨', element:'viento', fx:'buho__viento_nocturno' },
+        { name:'Juicio de Luz', desc:'Tormenta de plumas + rayos de luna + grieta', mult:2.1, minStage:4, ultimate:true, icon:'🦉⚡', element:'luz', fx:'buho__danza_nocturna_tormenta' }
     ],
     tortuga: [
-        { name:'Cabezazo Ancestral', desc:'Golpe lento pero que hace temblar', mult:1.15, minStage:1, icon:'🐢💥', element:'tierra', fx:'tortuga__cabezazo' },
-        { name:'Fuente de Vida', desc:'Chorro de agua curativa con algas', mult:1.4, minStage:2, icon:'💧🌿', element:'agua', fx:'tortuga__marea_verde' },
-        { name:'Cañón de Lodo Sagrado', desc:'Bola de barro ancestral explosiva', mult:1.65, minStage:3, icon:'🌋🐢', element:'tierra', fx:'tortuga__ca_n_de_barro' },
-        { name:'Isla Viviente - Tsunami', desc:'Se convierte en isla + ola gigante', mult:2.1, minStage:4, ultimate:true, icon:'🏝️🌊', element:'agua', fx:'tortuga__cascar_n_vital_tsunami_ra_z' }
+        { name:'Garra Ancestral', desc:'Golpe lento pero que hace temblar', mult:1.15, minStage:1, icon:'🐢💥', element:'ancestral', fx:'tortuga__cabezazo' },
+        { name:'Marea', desc:'Chorro de agua curativa con algas', mult:1.4, minStage:2, icon:'💧🌿', element:'agua', fx:'tortuga__marea_verde' },
+        { name:'Poder Ancestral', desc:'Bola de barro ancestral explosiva', mult:1.65, minStage:3, icon:'🌋🐢', element:'ancestral', fx:'tortuga__ca_n_de_barro' },
+        { name:'Abismo Marino', desc:'Se convierte en isla + ola gigante', mult:2.1, minStage:4, ultimate:true, icon:'🏝️🌊', element:'agua', fx:'tortuga__cascar_n_vital_tsunami_ra_z' }
     ],
     golem: [
-        { name:'Puño de Hierro', desc:'Puñetazo metálico con chispas', mult:1.15, minStage:1, icon:'🤜⚙️', element:'metal', fx:'golem__pu_o' },
-        { name:'Escarcha de Acero', desc:'Carámbano que se clava y explota', mult:1.4, minStage:2, icon:'🧊⚙️', element:'hielo', fx:'golem__car_mbano_helado' },
-        { name:'Muralla Inox', desc:'Muro de acero que cae del cielo', mult:1.65, minStage:3, icon:'🏗️', element:'metal', fx:'golem__muralla_de_roca' },
-        { name:'Titán de Acero - Avalancha', desc:'3 meteoros de acero fundido + grietas', mult:2.1, minStage:4, ultimate:true, icon:'🗿☄️', element:'metal', fx:'golem__avalancha_helada_meteoro_hielo' }
+        { name:'Puño Acero Gólem', desc:'Puñetazo metálico con chispas', mult:1.15, minStage:1, icon:'🤜⚙️', element:'metal', fx:'golem__pu_o' },
+        { name:'Terremoto', desc:'Carámbano que se clava y explota', mult:1.4, minStage:2, icon:'🧊⚙️', element:'tierra', fx:'golem__car_mbano_helado' },
+        { name:'Prisión Hierro', desc:'Muro de acero que cae del cielo', mult:1.65, minStage:3, icon:'🏗️', element:'metal', fx:'golem__muralla_de_roca' },
+        { name:'Colapso Total', desc:'3 meteoros de acero fundido + grietas', mult:2.1, minStage:4, ultimate:true, icon:'🗿☄️', element:'tierra', fx:'golem__avalancha_helada_meteoro_hielo' }
     ],
     dragon: [
-        { name:'Aliento Ígneo', desc:'Llamarada clásica que derrite piso', mult:1.1, minStage:1, icon:'🐉🔥', element:'fuego', fx:'dragon__llamarada' },
-        { name:'Sangre de Volcán', desc:'Lava brota bajo rival', mult:1.35, minStage:2, icon:'🌋', element:'tierra', fx:'dragon__roca_fundida' },
-        { name:'Cólera de Bahamut', desc:'Doble aliento cruzado', mult:1.6, minStage:3, icon:'🐲💢', element:'guerra', fx:'dragon__furia_draconiana' },
-        { name:'Fin del Mundo - Meteoritos', desc:'5 meteoros draconianos + grieta estelar', mult:2.2, minStage:4, ultimate:true, icon:'☄️🌌', element:'fuego', fx:'dragon__lluvia_de_meteoritos' }
+        { name:'Aliento Legendario', desc:'Llamarada clásica que derrite piso', mult:1.1, minStage:1, icon:'🐉🔥', element:'legendario', fx:'dragon__llamarada' },
+        { name:'Llama Infernal', desc:'Lava brota bajo rival', mult:1.35, minStage:2, icon:'🌋', element:'fuego', fx:'dragon__roca_fundida' },
+        { name:'Torbellino', desc:'Doble aliento cruzado', mult:1.6, minStage:3, icon:'🐲💢', element:'viento', fx:'dragon__furia_draconiana' },
+        { name:'Ira Legendaria', desc:'5 meteoros draconianos + grieta estelar', mult:2.2, minStage:4, ultimate:true, icon:'☄️🌌', element:'legendario', fx:'dragon__lluvia_de_meteoritos' }
     ],
     unicornio: [
-        { name:'Cornada Prismática', desc:'Destello arcoiris que ciega', mult:1.1, minStage:1, icon:'🦄🌈', element:'luz', fx:'unicornio__galope_de_luz' },
-        { name:'Polvo de Hadas', desc:'Neblina brillante con estrellas', mult:1.35, minStage:2, icon:'✨🧚', element:'puro', fx:'unicornio__destello_estelar' },
-        { name:'Rayo del Alba', desc:'Columna de luz que baja del cielo', mult:1.6, minStage:3, icon:'🌅⚡', element:'luz', fx:'unicornio__rayo_sagrado' },
-        { name:'Paraíso Perdido', desc:'Círculo angelical + lluvia de luz + cura', mult:2.2, minStage:4, ultimate:true, icon:'👼🌈', element:'luz', fx:'unicornio__juicio_divino' }
+        { name:'Luz Pura', desc:'Destello arcoiris que ciega', mult:1.1, minStage:1, icon:'🦄🌈', element:'puro', fx:'unicornio__galope_de_luz' },
+        { name:'Rayo Solar', desc:'Neblina brillante con estrellas', mult:1.35, minStage:2, icon:'✨🧚', element:'luz', fx:'unicornio__destello_estelar' },
+        { name:'Purificación', desc:'Columna de luz que baja del cielo', mult:1.6, minStage:3, icon:'🌅⚡', element:'puro', fx:'unicornio__rayo_sagrado' },
+        { name:'Juicio de Luz', desc:'Círculo angelical + lluvia de luz + cura', mult:2.2, minStage:4, ultimate:true, icon:'👼🌈', element:'luz', fx:'unicornio__juicio_divino' }
     ],
     tiburon: [
-        { name:'Dentellada Sangrienta', desc:'Mordida deja rastro de sangre', mult:1.2, minStage:1, icon:'🦈🩸', element:'agua', fx:'tiburon__dentellada' },
-        { name:'Remolino Mortal', desc:'Tornado de agua con dientes', mult:1.45, minStage:2, icon:'🌀🦈', element:'agua', fx:'tiburon__maelstrom' },
-        { name:'Frío Abisal', desc:'Aliento helado del fondo marino', mult:1.7, minStage:3, icon:'🦈❄️', element:'hielo', fx:'tiburon__colmillo_helado' },
-        { name:'Megalodón - Devorador', desc:'Tiburón gigante emerge del suelo y muerde', mult:2.2, minStage:4, ultimate:true, icon:'🦈👑', element:'agua', fx:'tiburon__mordida_fren_tica_maelstrom' }
+        { name:'Chorro', desc:'Mordida deja rastro de sangre', mult:1.2, minStage:1, icon:'🦈🩸', element:'agua', fx:'tiburon__dentellada' },
+        { name:'Garra Nocturna', desc:'Tornado de agua con dientes', mult:1.45, minStage:2, icon:'🌀🦈', element:'oscuridad', fx:'tiburon__maelstrom' },
+        { name:'Asalto', desc:'Aliento helado del fondo marino', mult:1.7, minStage:3, icon:'🦈❄️', element:'guerra', fx:'tiburon__colmillo_helado' },
+        { name:'Abismo Marino', desc:'Tiburón gigante emerge del suelo y muerde', mult:2.2, minStage:4, ultimate:true, icon:'🦈👑', element:'agua', fx:'tiburon__mordida_fren_tica_maelstrom' }
     ],
     leon: [
-        { name:'Rugido del Rey', desc:'Onda dorada que hace vibrar piedras', mult:1.15, minStage:1, icon:'🦁👑', element:'luz', fx:'leon__rugido_s_smico' },
-        { name:'Garra del Sol', desc:'Corte que deja marca quemada', mult:1.4, minStage:2, icon:'🦁☀️', element:'fuego', fx:'leon__zarpazo_dorado' },
-        { name:'Melena Solar', desc:'Melena se expande como fuego', mult:1.7, minStage:3, icon:'🦁🔥', element:'luz', fx:'leon__estela_p_rpura' },
-        { name:'Reinado Absoluto', desc:'Trono dorado cae + meteoro león', mult:2.3, minStage:4, ultimate:true, icon:'🦁🏛️', element:'leyenda', fx:'leon__golpe_real_meteoro' }
+        { name:'Llama León', desc:'Onda dorada que hace vibrar piedras', mult:1.15, minStage:1, icon:'🦁👑', element:'fuego', fx:'leon__rugido_s_smico' },
+        { name:'Corte Guerra', desc:'Corte que deja marca quemada', mult:1.4, minStage:2, icon:'🦁☀️', element:'guerra', fx:'leon__zarpazo_dorado' },
+        { name:'Nova', desc:'Melena se expande como fuego', mult:1.7, minStage:3, icon:'🦁🔥', element:'luz', fx:'leon__estela_p_rpura' },
+        { name:'Infierno Total', desc:'Trono dorado cae + meteoro león', mult:2.3, minStage:4, ultimate:true, icon:'🦁🏛️', element:'fuego', fx:'leon__golpe_real_meteoro' }
     ],
     aguila: [
-        { name:'Garra Tormenta', desc:'Picada con rayo en las garras', mult:1.15, minStage:1, icon:'🦅⚡', element:'viento', fx:'aguila__picada_el_ctrica' },
-        { name:'Viento Divino', desc:'Aleteo que crea cuchillas de aire', mult:1.4, minStage:2, icon:'🦅💨', element:'viento', fx:'aguila__energ_a_divina' },
-        { name:'Ojo de Zeus', desc:'Rayo sostenido desde las nubes', mult:1.7, minStage:3, icon:'🦅👁️⚡', element:'electrico', fx:'aguila__rayo_infinito' },
-        { name:'Ciclón del Olimpo', desc:'Tornado + rayos + plumas doradas', mult:2.3, minStage:4, ultimate:true, icon:'🦅🌪️⚡', element:'leyenda', fx:'aguila__tormenta_perfecta' }
+        { name:'Ráfaga Águila', desc:'Picada con rayo en las garras', mult:1.15, minStage:1, icon:'🦅⚡', element:'viento', fx:'aguila__picada_el_ctrica' },
+        { name:'Rayo Solar', desc:'Aleteo que crea cuchillas de aire', mult:1.4, minStage:2, icon:'🦅💨', element:'luz', fx:'aguila__energ_a_divina' },
+        { name:'Asalto', desc:'Rayo sostenido desde las nubes', mult:1.7, minStage:3, icon:'🦅👁️⚡', element:'guerra', fx:'aguila__rayo_infinito' },
+        { name:'Huracán Final', desc:'Tornado + rayos + plumas doradas', mult:2.3, minStage:4, ultimate:true, icon:'🦅🌪️⚡', element:'viento', fx:'aguila__tormenta_perfecta' }
     ],
     perrito: [
-        { name:'Mordida Leal', desc:'Mordisco con corazón que explota', mult:1.1, minStage:1, icon:'🐶❤️', element:'naturaleza', fx:'perrito__mordisco' },
-        { name:'Hueso Cohete', desc:'Lanza hueso como meteorito', mult:1.3, minStage:2, icon:'🦴🚀', element:'tierra', fx:'perrito__lanzamiento_rocoso' },
-        { name:'Ladrido Sísmico', desc:'Onda sonora que levanta polvo', mult:1.5, minStage:3, icon:'🐶📢', element:'viento', fx:'perrito__golpeteo_de_arena' },
-        { name:'Guardián Fiel - Terremoto', desc:'Se pone gigante y pisa suelo 3 veces', mult:1.9, minStage:4, ultimate:true, icon:'🐶🛡️', element:'tierra', fx:'perrito__pisot_n_de_barro_sismo' }
+        { name:'Puñetazo', desc:'Mordisco con corazón que explota', mult:1.1, minStage:1, icon:'🐶❤️', element:'tierra', fx:'perrito__mordisco' },
+        { name:'Terremoto', desc:'Lanza hueso como meteorito', mult:1.3, minStage:2, icon:'🦴🚀', element:'tierra', fx:'perrito__lanzamiento_rocoso' },
+        { name:'Avalancha', desc:'Onda sonora que levanta polvo', mult:1.5, minStage:3, icon:'🐶📢', element:'tierra', fx:'perrito__golpeteo_de_arena' },
+        { name:'Colapso Total', desc:'Se pone gigante y pisa suelo 3 veces', mult:1.9, minStage:4, ultimate:true, icon:'🐶🛡️', element:'tierra', fx:'perrito__pisot_n_de_barro_sismo' }
     ],
     conejo: [
-        { name:'Patada Veloz', desc:'Patada deja imagen residual', mult:1.1, minStage:1, icon:'🐰💨', element:'viento', fx:'conejo__patada' },
-        { name:'Zanahoria Vendaval', desc:'Zanahoria gigante giratoria', mult:1.3, minStage:2, icon:'🥕🌪️', element:'viento', fx:'conejo__r_faga_brisa' },
-        { name:'Salto Cuántico', desc:'Se teletransporta y golpea por detrás', mult:1.5, minStage:3, icon:'🐰✨', element:'viento', fx:'conejo__embate_de_aire' },
-        { name:'Tornado de Madriguera', desc:'Hace agujero y sale tornado gigante', mult:1.9, minStage:4, ultimate:true, icon:'🐰🕳️🌪️', element:'viento', fx:'conejo__impacto_de_aire_tornado_real' }
+        { name:'Brote Espinoso Conejo', desc:'Patada deja imagen residual', mult:1.1, minStage:1, icon:'🐰💨', element:'naturaleza', fx:'conejo__patada' },
+        { name:'Látigo Selva', desc:'Zanahoria gigante giratoria', mult:1.3, minStage:2, icon:'🥕🌪️', element:'naturaleza', fx:'conejo__r_faga_brisa' },
+        { name:'Espora Venenosa', desc:'Se teletransporta y golpea por detrás', mult:1.5, minStage:3, icon:'🐰✨', element:'naturaleza', fx:'conejo__embate_de_aire' },
+        { name:'Furia Natural', desc:'Hace agujero y sale tornado gigante', mult:1.9, minStage:4, ultimate:true, icon:'🐰🕳️🌪️', element:'naturaleza', fx:'conejo__impacto_de_aire_tornado_real' }
     ],
     raton: [
-        { name:'Mordisco Travieso', desc:'Roedor roe el suelo y deja grieta', mult:1.1, minStage:1, icon:'🐭🧀', element:'tierra', fx:'raton__dentellada' },
-        { name:'Bola de Pelusa', desc:'Bola de polvo que explota', mult:1.3, minStage:2, icon:'🐭💨', element:'tierra', fx:'raton__terr_n_de_arena' },
-        { name:'Roca del Desván', desc:'Empuja roca más grande que él', mult:1.5, minStage:3, icon:'🐭🪨', element:'tierra', fx:'raton__piedra_ligera' },
-        { name:'Reino de Queso - Meteoro', desc:'Meteoro de queso gigante cae', mult:1.9, minStage:4, ultimate:true, icon:'🧀☄️', element:'tierra', fx:'raton__golpetazo_polvo_meteoro' }
+        { name:'Puñetazo Ratón', desc:'Roedor roe el suelo y deja grieta', mult:1.1, minStage:1, icon:'🐭🧀', element:'tierra', fx:'raton__dentellada' },
+        { name:'Terremoto', desc:'Bola de polvo que explota', mult:1.3, minStage:2, icon:'🐭💨', element:'tierra', fx:'raton__terr_n_de_arena' },
+        { name:'Avalancha', desc:'Empuja roca más grande que él', mult:1.5, minStage:3, icon:'🐭🪨', element:'tierra', fx:'raton__piedra_ligera' },
+        { name:'Colapso Total', desc:'Meteoro de queso gigante cae', mult:1.9, minStage:4, ultimate:true, icon:'🧀☄️', element:'tierra', fx:'raton__golpetazo_polvo_meteoro' }
     ],
     panda: [
-        { name:'Puño de Bambú', desc:'Golpe con bambú que suelta hojas', mult:1.15, minStage:1, icon:'🐼🎋', element:'naturaleza', fx:'panda__pu_etazo' },
-        { name:'Rodada de Bambú', desc:'Rueda como bola con bambúes', mult:1.35, minStage:2, icon:'🐼🌀', element:'naturaleza', fx:'panda__golpe_de_bamb' },
-        { name:'Corte de Hoja', desc:'Hojas afiladas como cuchillas', mult:1.6, minStage:3, icon:'🐼🍃⚔️', element:'naturaleza', fx:'panda__vara_cortante' },
-        { name:'Bosque del Panda Ancestral', desc:'Bosque entero brota y atrapa', mult:2.0, minStage:4, ultimate:true, icon:'🐼🌳', element:'naturaleza', fx:'panda__bamb_vital_bosque' }
+        { name:'Brote Espinoso Panda', desc:'Golpe con bambú que suelta hojas', mult:1.15, minStage:1, icon:'🐼🎋', element:'naturaleza', fx:'panda__pu_etazo' },
+        { name:'Terremoto', desc:'Rueda como bola con bambúes', mult:1.35, minStage:2, icon:'🐼🌀', element:'tierra', fx:'panda__golpe_de_bamb' },
+        { name:'Espora Venenosa', desc:'Hojas afiladas como cuchillas', mult:1.6, minStage:3, icon:'🐼🍃⚔️', element:'naturaleza', fx:'panda__vara_cortante' },
+        { name:'Colapso Total', desc:'Bosque entero brota y atrapa', mult:2.0, minStage:4, ultimate:true, icon:'🐼🌳', element:'tierra', fx:'panda__bamb_vital_bosque' }
     ],
     oso: [
-        { name:'Zarpazo Oso', desc:'Garra que deja 3 marcas profundas', mult:1.15, minStage:1, icon:'🐻💢', element:'tierra', fx:'oso__zarpazo' },
-        { name:'Roca Oso', desc:'Lanza roca del tamaño de su cabeza', mult:1.35, minStage:2, icon:'🐻🪨', element:'tierra', fx:'oso__roca_gigante' },
-        { name:'Pisada de Hibernación', desc:'Salta y hace cráter', mult:1.6, minStage:3, icon:'🐻❄️', element:'tierra', fx:'oso__impacto_terreno' },
-        { name:'Oso Titán - Terremoto Real', desc:'Se hace gigante + 3 pisotones que rajan mapa', mult:2.0, minStage:4, ultimate:true, icon:'🐻🏔️', element:'tierra', fx:'oso__terremoto_sismo_real' }
+        { name:'Puñetazo Oso', desc:'Garra que deja 3 marcas profundas', mult:1.15, minStage:1, icon:'🐻💢', element:'tierra', fx:'oso__zarpazo' },
+        { name:'Ventisca', desc:'Lanza roca del tamaño de su cabeza', mult:1.35, minStage:2, icon:'🐻🪨', element:'hielo', fx:'oso__roca_gigante' },
+        { name:'Avalancha', desc:'Salta y hace cráter', mult:1.6, minStage:3, icon:'🐻❄️', element:'tierra', fx:'oso__impacto_terreno' },
+        { name:'Cero Absoluto', desc:'Se hace gigante + 3 pisotones que rajan mapa', mult:2.0, minStage:4, ultimate:true, icon:'🐻🏔️', element:'hielo', fx:'oso__terremoto_sismo_real' }
     ],
     buho: [
         { name:'Vuelo Silente', desc:'Aleteo que no se oye pero corta', mult:1.15, minStage:1, icon:'🦉🤫', element:'viento', fx:'buho__picotazo' },
-        { name:'Manto Lunar', desc:'Capa de plumas que vuelve invisible', mult:1.4, minStage:2, icon:'🦉🌙', element:'oscuridad', fx:'buho__velo_de_sombra' },
-        { name:'Mirada Abisal', desc:'Ojos brillan y paralizan', mult:1.65, minStage:3, icon:'🦉👁️', element:'puro', fx:'buho__viento_nocturno' },
-        { name:'Noche Eterna de Minerva', desc:'Todo se hace de noche + estrellas caen', mult:2.1, minStage:4, ultimate:true, icon:'🦉🌌', element:'viento', fx:'buho__danza_nocturna_tormenta' }
+        { name:'Ráfaga Búho', desc:'Capa de plumas que vuelve invisible', mult:1.4, minStage:2, icon:'🦉🌙', element:'luz', fx:'buho__velo_de_sombra' },
+        { name:'Rayo Solar', desc:'Ojos brillan y paralizan', mult:1.65, minStage:3, icon:'🦉👁️', element:'viento', fx:'buho__viento_nocturno' },
+        { name:'Torbellino', desc:'Todo se hace de noche + estrellas caen', mult:2.1, minStage:4, ultimate:true, icon:'🦉🌌', element:'luz', fx:'buho__danza_nocturna_tormenta' }
     ],
     escorpion: [
-        { name:'Pinza Venenosa', desc:'Aguijón con gota verde que gotea', mult:1.15, minStage:1, icon:'🦂💚', element:'veneno', fx:'escorpion__tenaza' },
-        { name:'Cola del Desierto', desc:'Cola se entierra y sale bajo rival', mult:1.4, minStage:2, icon:'🦂🏜️', element:'tierra', fx:'escorpion__aguij_n_antiguo' },
-        { name:'Tormenta de Arena Tóxica', desc:'Arena venenosa que ciega', mult:1.65, minStage:3, icon:'🦂🌪️☠️', element:'oscuridad', fx:'escorpion__humo_oscuro' },
-        { name:'Plaga del Desierto', desc:'Escorpiones salen del suelo + raíz venenosa gigante', mult:2.1, minStage:4, ultimate:true, icon:'🦂👑☠️', element:'oscuridad', fx:'escorpion__veneno_ancestral_ra_z_venenosa' }
+        { name:'Puñetazo', desc:'Aguijón con gota verde que gotea', mult:1.15, minStage:1, icon:'🦂💚', element:'tierra', fx:'escorpion__tenaza' },
+        { name:'Garra Nocturna', desc:'Cola se entierra y sale bajo rival', mult:1.4, minStage:2, icon:'🦂🏜️', element:'oscuridad', fx:'escorpion__aguij_n_antiguo' },
+        { name:'Avalancha', desc:'Arena venenosa que ciega', mult:1.65, minStage:3, icon:'🦂🌪️☠️', element:'tierra', fx:'escorpion__humo_oscuro' },
+        { name:'Noche Eterna', desc:'Escorpiones salen del suelo + raíz venenosa gigante', mult:2.1, minStage:4, ultimate:true, icon:'🦂👑☠️', element:'oscuridad', fx:'escorpion__veneno_ancestral_ra_z_venenosa' }
     ],
     murcielago: [
-        { name:'Mordisco Nocturno', desc:'Mordida deja marca de colmillos morada', mult:1.15, minStage:1, icon:'🦇🩸', element:'oscuridad', fx:'murcielago__mordisco' },
-        { name:'Capa de Niebla', desc:'Se convierte en humo y aparece detrás', mult:1.4, minStage:2, icon:'🦇🌫️', element:'viento', fx:'murcielago__sombra_umbr_a' },
-        { name:'Chillido Sónico', desc:'Onda que rompe cristales', mult:1.65, minStage:3, icon:'🦇🔊', element:'sonido', fx:'murcielago__onda_s_nica' },
-        { name:'Conde Drácula - Eclipse', desc:'Luna roja + bandada de murciélagos + rayos', mult:2.1, minStage:4, ultimate:true, icon:'🦇🌑🦇', element:'oscuridad', fx:'murcielago__drenaje_vamp_rico_tormenta_oscura' }
+        { name:'Sombra', desc:'Mordida deja marca de colmillos morada', mult:1.15, minStage:1, icon:'🦇🩸', element:'oscuridad', fx:'murcielago__mordisco' },
+        { name:'Tornado', desc:'Se convierte en humo y aparece detrás', mult:1.4, minStage:2, icon:'🦇🌫️', element:'viento', fx:'murcielago__sombra_umbr_a' },
+        { name:'Vacío', desc:'Onda que rompe cristales', mult:1.65, minStage:3, icon:'🦇🔊', element:'oscuridad', fx:'murcielago__onda_s_nica' },
+        { name:'Huracán Final', desc:'Luna roja + bandada de murciélagos + rayos', mult:2.1, minStage:4, ultimate:true, icon:'🦇🌑🦇', element:'viento', fx:'murcielago__drenaje_vamp_rico_tormenta_oscura' }
     ],
     grifo: [
-        { name:'Garra de León', desc:'Zarpazo mitad águila mitad león', mult:1.2, minStage:1, icon:'🦁🦅', element:'viento', fx:'grifo__picotazo' },
-        { name:'Viento de la Cima', desc:'Aleteo que crea cuchillas doradas', mult:1.45, minStage:2, icon:'🦅✨', element:'luz', fx:'grifo__r_faga_cortante' },
-        { name:'Relámpago de la Montaña', desc:'Rayo cae en su garra y lo lanza', mult:1.7, minStage:3, icon:'🦅⚡', element:'electrico', fx:'grifo__rayo_rel_mpago' },
-        { name:'Guardián del Tesoro - Juicio', desc:'Tornado dorado + 3 rayos + grito', mult:2.2, minStage:4, ultimate:true, icon:'🦅👑⚡', element:'viento', fx:'grifo__tornado_el_ctrico_rayo_real' }
+        { name:'Ráfaga Grypho', desc:'Zarpazo mitad águila mitad león', mult:1.2, minStage:1, icon:'🦁🦅', element:'viento', fx:'grifo__picotazo' },
+        { name:'Terremoto', desc:'Aleteo que crea cuchillas doradas', mult:1.45, minStage:2, icon:'🦅✨', element:'tierra', fx:'grifo__r_faga_cortante' },
+        { name:'Asalto', desc:'Rayo cae en su garra y lo lanza', mult:1.7, minStage:3, icon:'🦅⚡', element:'guerra', fx:'grifo__rayo_rel_mpago' },
+        { name:'Huracán Final', desc:'Tornado dorado + 3 rayos + grito', mult:2.2, minStage:4, ultimate:true, icon:'🦅👑⚡', element:'viento', fx:'grifo__tornado_el_ctrico_rayo_real' }
     ],
     basilisco: [
-        { name:'Mirada Petrificante', desc:'Ojos brillan y suelo se hace piedra', mult:1.2, minStage:1, icon:'🦎👁️', element:'tierra', fx:'basilisco__mordida' },
-        { name:'Aliento Fósil', desc:'Aliento gris que envejece todo', mult:1.45, minStage:2, icon:'🦎💨🪨', element:'oscuridad', fx:'basilisco__aliento_f_sil' },
-        { name:'Cola de Piedra', desc:'Colazo que deja estalagmita', mult:1.7, minStage:3, icon:'🦎🪨', element:'tierra', fx:'basilisco__ra_z_venenosa' },
-        { name:'Rey de Serpientes - Petrificación', desc:'Todo el campo se vuelve piedra y se rompe', mult:2.2, minStage:4, ultimate:true, icon:'👑🐍🪨', element:'tierra', fx:'basilisco__mordida_f_sil_bosque_petrificado' }
+        { name:'Brote Espinoso', desc:'Ojos brillan y suelo se hace piedra', mult:1.2, minStage:1, icon:'🦎👁️', element:'naturaleza', fx:'basilisco__mordida' },
+        { name:'Garra Nocturna', desc:'Aliento gris que envejece todo', mult:1.45, minStage:2, icon:'🦎💨🪨', element:'oscuridad', fx:'basilisco__aliento_f_sil' },
+        { name:'Avalancha', desc:'Colazo que deja estalagmita', mult:1.7, minStage:3, icon:'🦎🪨', element:'tierra', fx:'basilisco__ra_z_venenosa' },
+        { name:'Furia Natural', desc:'Todo el campo se vuelve piedra y se rompe', mult:2.2, minStage:4, ultimate:true, icon:'👑🐍🪨', element:'naturaleza', fx:'basilisco__mordida_f_sil_bosque_petrificado' }
     ],
     tigre_blanco: [
-        { name:'Zarpazo Glacial', desc:'Garra deja camino de hielo', mult:1.25, minStage:1, icon:'🐯❄️', element:'hielo', fx:'tigre_blanco__zarpazo' },
-        { name:'Cuchilla del Dojo', desc:'Corte limpio con nieve', mult:1.5, minStage:2, icon:'🐯⚔️', element:'guerra', fx:'tigre_blanco__cuchilla_de_acero' },
-        { name:'Colmillo del Invierno', desc:'Mordida congela sangre', mult:1.8, minStage:3, icon:'🐯🥶', element:'hielo', fx:'tigre_blanco__garra_de_hielo' },
-        { name:'Tigre Sable - Cero Absoluto', desc:'Meteoro de hielo + ventisca que congela pantalla', mult:2.3, minStage:4, ultimate:true, icon:'🐯❄️☄️', element:'hielo', fx:'tigre_blanco__corte_tit_n_meteoro_hielo' }
+        { name:'Escarcha Tigre', desc:'Garra deja camino de hielo', mult:1.25, minStage:1, icon:'🐯❄️', element:'hielo', fx:'tigre_blanco__zarpazo' },
+        { name:'Corte Guerra', desc:'Corte limpio con nieve', mult:1.5, minStage:2, icon:'🐯⚔️', element:'guerra', fx:'tigre_blanco__cuchilla_de_acero' },
+        { name:'Avalancha', desc:'Mordida congela sangre', mult:1.8, minStage:3, icon:'🐯🥶', element:'tierra', fx:'tigre_blanco__garra_de_hielo' },
+        { name:'Cero Absoluto', desc:'Meteoro de hielo + ventisca que congela pantalla', mult:2.3, minStage:4, ultimate:true, icon:'🐯❄️☄️', element:'hielo', fx:'tigre_blanco__corte_tit_n_meteoro_hielo' }
     ],
     pegaso: [
-        { name:'Carga Alada', desc:'Corre y deja estela de nubes', mult:1.25, minStage:1, icon:'🐴💨', element:'viento', fx:'pegaso__embestida' },
-        { name:'Relincho Celestial', desc:'Sonido que crea anillo de luz', mult:1.5, minStage:2, icon:'🐴🔔✨', element:'luz', fx:'pegaso__mito_celestial' },
-        { name:'Vuelo del Cénit', desc:'Sube al cielo y cae como estrella', mult:1.8, minStage:3, icon:'🐴🌟', element:'luz', fx:'pegaso__viento_sagrado' },
-        { name:'Caballo de los Dioses - Juicio', desc:'Se abre cielo + rayo divino + plumas doradas', mult:2.3, minStage:4, ultimate:true, icon:'🐴👼⚡', element:'luz', fx:'pegaso__tormenta_celestial_juicio' }
+        { name:'Luz Pura Pegaso', desc:'Corre y deja estela de nubes', mult:1.25, minStage:1, icon:'🐴💨', element:'puro', fx:'pegaso__embestida' },
+        { name:'Tornado', desc:'Sonido que crea anillo de luz', mult:1.5, minStage:2, icon:'🐴🔔✨', element:'viento', fx:'pegaso__mito_celestial' },
+        { name:'Nova', desc:'Sube al cielo y cae como estrella', mult:1.8, minStage:3, icon:'🐴🌟', element:'luz', fx:'pegaso__viento_sagrado' },
+        { name:'Éxtasis Puro', desc:'Se abre cielo + rayo divino + plumas doradas', mult:2.3, minStage:4, ultimate:true, icon:'🐴👼⚡', element:'puro', fx:'pegaso__tormenta_celestial_juicio' }
     ],
     fenix: [
-        { name:'Pluma Ígnea', desc:'Pluma de fuego que cae lento y explota', mult:1.25, minStage:1, icon:'🦅🔥🪶', element:'fuego', fx:'fenix__llama_renaciente' },
-        { name:'Brasa Eterna', desc:'Deja brasas que no se apagan', mult:1.5, minStage:2, icon:'🔥♾️', element:'fuego', fx:'fenix__ascua_viva' },
-        { name:'Alas del Sol', desc:'Aleteo crea dos soles falsos', mult:1.8, minStage:3, icon:'🦅☀️☀️', element:'fuego', fx:'fenix__incendio_alado' },
-        { name:'Renacimiento del Fénix', desc:'Muere y renace con 5 meteoros de fuego', mult:2.4, minStage:4, ultimate:true, icon:'🦅🔥♻️', element:'fuego', fx:'fenix__renacer_de_cenizas_lluvia_meteoros' }
+        { name:'Aliento Legendario Fénix', desc:'Pluma de fuego que cae lento y explota', mult:1.25, minStage:1, icon:'🦅🔥🪶', element:'legendario', fx:'fenix__llama_renaciente' },
+        { name:'Brasa Infernal', desc:'Deja brasas que no se apagan', mult:1.5, minStage:2, icon:'🔥♾️', element:'fuego', fx:'fenix__ascua_viva' },
+        { name:'Nova', desc:'Aleteo crea dos soles falsos', mult:1.8, minStage:3, icon:'🦅☀️☀️', element:'luz', fx:'fenix__incendio_alado' },
+        { name:'Legado Eterno', desc:'Muere y renace con 5 meteoros de fuego', mult:2.4, minStage:4, ultimate:true, icon:'🦅🔥♻️', element:'legendario', fx:'fenix__renacer_de_cenizas_lluvia_meteoros' }
     ],
     // SAGRADAS con historias que me diste
     kronos: [
-        { name:'Tick del Inicio', desc:'El primer segundo que existió', mult:1.4, minStage:1, icon:'⏳', element:'ancestral', fx:'kronos__tick_inicio' },
-        { name:'Retroceso Temporal', desc:'Rebobina daño recibido', mult:1.8, minStage:2, icon:'⏪', element:'puro', fx:'kronos__retroceso' },
-        { name:'Prisión del Tiempo', desc:'Rival queda atrapado en reloj', mult:2.2, minStage:3, icon:'⏳🔒', element:'ancestral', fx:'kronos__prision' },
-        { name:'Guardián del Orden - Big Bang Reverso', desc:'Detiene todo 4s y revierte partida', mult:3.0, minStage:4, ultimate:true, icon:'⏳🌌', element:'leyenda', fx:'kronos__big_bang' }
+        { name:'Mito Viviente Kronos', desc:'El primer segundo que existió', mult:1.4, minStage:1, icon:'⏳', element:'leyenda', fx:'kronos__tick_inicio' },
+        { name:'Corte Metálico', desc:'Rebobina daño recibido', mult:1.8, minStage:2, icon:'⏪', element:'metal', fx:'kronos__retroceso' },
+        { name:'Poder Ancestral', desc:'Rival queda atrapado en reloj', mult:2.2, minStage:3, icon:'⏳🔒', element:'ancestral', fx:'kronos__prision' },
+        { name:'Éxtasis Puro', desc:'Detiene todo 4s y revierte partida', mult:3.0, minStage:4, ultimate:true, icon:'⏳🌌', element:'puro', fx:'kronos__big_bang' }
     ],
     nihil: [
-        { name:'Toque del Vacío', desc:'Dedo que borra color', mult:1.4, minStage:1, icon:'⚫', element:'oscuridad', fx:'nihil__toque_vacio' },
-        { name:'Bostezo del Abismo', desc:'Agujero pequeño absorbe luz', mult:1.8, minStage:2, icon:'🕳️', element:'oscuridad', fx:'nihil__bostezo' },
-        { name:'Devorador de Existencia', desc:'Absorbe 3 números del bombo', mult:2.2, minStage:3, icon:'⚫💀', element:'oscuridad', fx:'nihil__devorador' },
-        { name:'Antes del Principio - Nada Absoluta', desc:'Pantalla negra total + solo tú ves', mult:3.0, minStage:4, ultimate:true, icon:'🌌⚫', element:'leyenda', fx:'nihil__nada_absoluta' }
+        { name:'Aliento Legendario Nihil', desc:'Dedo que borra color', mult:1.4, minStage:1, icon:'⚫', element:'legendario', fx:'nihil__toque_vacio' },
+        { name:'Garra Nocturna', desc:'Agujero pequeño absorbe luz', mult:1.8, minStage:2, icon:'🕳️', element:'oscuridad', fx:'nihil__bostezo' },
+        { name:'Mito', desc:'Absorbe 3 números del bombo', mult:2.2, minStage:3, icon:'⚫💀', element:'mitico', fx:'nihil__devorador' },
+        { name:'Éxtasis Puro', desc:'Pantalla negra total + solo tú ves', mult:3.0, minStage:4, ultimate:true, icon:'🌌⚫', element:'puro', fx:'nihil__nada_absoluta' }
     ],
     eden: [
-        { name:'Pisada Floreciente', desc:'Donde pisa nace flor que cura', mult:1.4, minStage:1, icon:'🌱👣', element:'naturaleza', fx:'eden__pisada' },
-        { name:'Bosque Eterno', desc:'Árboles gigantes brotan instantáneo', mult:1.8, minStage:2, icon:'🌳✨', element:'naturaleza', fx:'eden__bosque' },
-        { name:'Lágrima del Paraíso', desc:'Gota que cura cualquier herida', mult:2.2, minStage:3, icon:'💧🌸', element:'puro', fx:'eden__lagrima' },
-        { name:'Guardián del Paraíso - Vida Absoluta', desc:'Revive todo + suelo se vuelve jardín', mult:3.0, minStage:4, ultimate:true, icon:'🌸🌍', element:'leyenda', fx:'eden__vida_absoluta' }
+        { name:'Luz Pura Edén', desc:'Donde pisa nace flor que cura', mult:1.4, minStage:1, icon:'🌱👣', element:'puro', fx:'eden__pisada' },
+        { name:'Látigo Selva', desc:'Árboles gigantes brotan instantáneo', mult:1.8, minStage:2, icon:'🌳✨', element:'naturaleza', fx:'eden__bosque' },
+        { name:'Nova', desc:'Gota que cura cualquier herida', mult:2.2, minStage:3, icon:'💧🌸', element:'luz', fx:'eden__lagrima' },
+        { name:'Fin de Tiempos', desc:'Revive todo + suelo se vuelve jardín', mult:3.0, minStage:4, ultimate:true, icon:'🌸🌍', element:'leyenda', fx:'eden__vida_absoluta' }
     ],
     ignis_prime: [
-        { name:'Chispa Primigenia', desc:'Primera chispa que existió', mult:1.4, minStage:1, icon:'🔥', element:'fuego', fx:'ignis__chispa' },
-        { name:'Corazón del Sol', desc:'Pulso solar que purifica', mult:1.8, minStage:2, icon:'☀️❤️', element:'fuego', fx:'ignis__corazon' },
-        { name:'Fuego que no Quema', desc:'Llama blanca que cura aliados y quema enemigos', mult:2.2, minStage:3, icon:'🤍🔥', element:'fuego', fx:'ignis__fuego_blanco' },
-        { name:'Origen del Calor - Sol Primigenio', desc:'Sol gigante nace detrás y explota', mult:3.0, minStage:4, ultimate:true, icon:'☀️🌌', element:'leyenda', fx:'ignis__sol_primigenio' }
+        { name:'Garra Ancestral Ignis', desc:'Primera chispa que existió', mult:1.4, minStage:1, icon:'🔥', element:'ancestral', fx:'ignis__chispa' },
+        { name:'Brasa Infernal', desc:'Pulso solar que purifica', mult:1.8, minStage:2, icon:'☀️❤️', element:'fuego', fx:'ignis__corazon' },
+        { name:'Furia Legendaria', desc:'Llama blanca que cura aliados y quema enemigos', mult:2.2, minStage:3, icon:'🤍🔥', element:'legendario', fx:'ignis__fuego_blanco' },
+        { name:'Devastación', desc:'Sol gigante nace detrás y explota', mult:3.0, minStage:4, ultimate:true, icon:'☀️🌌', element:'guerra', fx:'ignis__sol_primigenio' }
     ],
     leviatan_ab: [
-        { name:'Burbuja Abisal', desc:'Burbuja gigante que encierra rival', mult:1.4, minStage:1, icon:'🫧', element:'agua', fx:'leviatan_ab__burbuja' },
-        { name:'Marea Negra', desc:'Ola negra de profundidad', mult:1.8, minStage:2, icon:'🌊⬛', element:'oscuridad', fx:'leviatan_ab__marea_negra' },
-        { name:'Despertar Parcial', desc:'Ojo gigante se abre bajo el agua', mult:2.2, minStage:3, icon:'👁️🌊', element:'agua', fx:'leviatan_ab__ojo' },
-        { name:'Terror de Profundidades - Diluvio Final', desc:'Se levanta entero + tsunami cambia mapa', mult:3.0, minStage:4, ultimate:true, icon:'🌊👹', element:'leyenda', fx:'leviatan_ab__diluvio' }
+        { name:'Garra Ancestral', desc:'Burbuja gigante que encierra rival', mult:1.4, minStage:1, icon:'🫧', element:'ancestral', fx:'leviatan_ab__burbuja' },
+        { name:'Marea', desc:'Ola negra de profundidad', mult:1.8, minStage:2, icon:'🌊⬛', element:'agua', fx:'leviatan_ab__marea_negra' },
+        { name:'Vacío', desc:'Ojo gigante se abre bajo el agua', mult:2.2, minStage:3, icon:'👁️🌊', element:'oscuridad', fx:'leviatan_ab__ojo' },
+        { name:'Apocalipsis', desc:'Se levanta entero + tsunami cambia mapa', mult:3.0, minStage:4, ultimate:true, icon:'🌊👹', element:'mitico', fx:'leviatan_ab__diluvio' }
     ],
     seraph: [
-        { name:'Pluma de Luz', desc:'Pluma cae lento y explota en luz', mult:1.4, minStage:1, icon:'🪶✨', element:'luz', fx:'seraph__pluma' },
-        { name:'Mensaje Celestial', desc:'Carta de luz que cruza cielo', mult:1.8, minStage:2, icon:'✉️☁️', element:'viento', fx:'seraph__mensaje' },
-        { name:'Alas de la Salvación', desc:'Alas gigantes protegen', mult:2.2, minStage:3, icon:'👼🪽', element:'luz', fx:'seraph__alas' },
-        { name:'Voluntad de lo Alto - Juicio Final', desc:'Cielo se abre + rayo divino + coro', mult:3.0, minStage:4, ultimate:true, icon:'☁️⚖️✨', element:'leyenda', fx:'seraph__juicio_final' }
+        { name:'Luz Pura Seraph', desc:'Pluma cae lento y explota en luz', mult:1.4, minStage:1, icon:'🪶✨', element:'puro', fx:'seraph__pluma' },
+        { name:'Rayo Solar', desc:'Carta de luz que cruza cielo', mult:1.8, minStage:2, icon:'✉️☁️', element:'luz', fx:'seraph__mensaje' },
+        { name:'Escudo Heroico', desc:'Alas gigantes protegen', mult:2.2, minStage:3, icon:'👼🪽', element:'heroico', fx:'seraph__alas' },
+        { name:'Fin de Tiempos', desc:'Cielo se abre + rayo divino + coro', mult:3.0, minStage:4, ultimate:true, icon:'☁️⚖️✨', element:'leyenda', fx:'seraph__juicio_final' }
     ],
     anubis_exe: [
-        { name:'Peso de la Pluma', desc:'Balanza aparece y pesa rival', mult:1.4, minStage:1, icon:'⚖️🪶', element:'oscuridad', fx:'anubis__peso' },
-        { name:'Juicio Justo', desc:'Libro de muertos se abre', mult:1.8, minStage:2, icon:'📖💀', element:'leyenda', fx:'anubis__juicio' },
-        { name:'Veredicto Eterno', desc:'Sello que no se puede romper', mult:2.2, minStage:3, icon:'🔏⚖️', element:'oscuridad', fx:'anubis__veredicto' },
-        { name:'Juez de Almas - Sentencia Final', desc:'Anubis gigante sentencia + oscuridad total', mult:3.0, minStage:4, ultimate:true, icon:'💀⚖️🌑', element:'leyenda', fx:'anubis__sentencia' }
+        { name:'Encanto Mítico', desc:'Balanza aparece y pesa rival', mult:1.4, minStage:1, icon:'⚖️🪶', element:'mitico', fx:'anubis__peso' },
+        { name:'Garra Nocturna', desc:'Libro de muertos se abre', mult:1.8, minStage:2, icon:'📖💀', element:'oscuridad', fx:'anubis__juicio' },
+        { name:'Prisión Hierro', desc:'Sello que no se puede romper', mult:2.2, minStage:3, icon:'🔏⚖️', element:'metal', fx:'anubis__veredicto' },
+        { name:'Ira Ancestral', desc:'Anubis gigante sentencia + oscuridad total', mult:3.0, minStage:4, ultimate:true, icon:'💀⚖️🌑', element:'ancestral', fx:'anubis__sentencia' }
     ],
     quetzal: [
-        { name:'Viento de Cambio', desc:'Brisa que cambia color del cielo', mult:1.4, minStage:1, icon:'🌬️🌈', element:'viento', fx:'quetzal__viento' },
-        { name:'Serpiente Alada', desc:'Serpiente de plumas cruza pantalla', mult:1.8, minStage:2, icon:'🐍🪶', element:'viento', fx:'quetzal__serpiente' },
-        { name:'Presagio de Era', desc:'Cielo se vuelve aurora boreal', mult:2.2, minStage:3, icon:'🌌🐍', element:'luz', fx:'quetzal__presagio' },
-        { name:'Nueva Edad - Renacimiento', desc:'Mundo se reinicia en flores y luz', mult:3.0, minStage:4, ultimate:true, icon:'🌈🐍✨', element:'leyenda', fx:'quetzal__nueva_edad' }
+        { name:'Brote Espinoso', desc:'Brisa que cambia color del cielo', mult:1.4, minStage:1, icon:'🌬️🌈', element:'naturaleza', fx:'quetzal__viento' },
+        { name:'Tornado', desc:'Serpiente de plumas cruza pantalla', mult:1.8, minStage:2, icon:'🐍🪶', element:'viento', fx:'quetzal__serpiente' },
+        { name:'Nova', desc:'Cielo se vuelve aurora boreal', mult:2.2, minStage:3, icon:'🌌🐍', element:'luz', fx:'quetzal__presagio' },
+        { name:'Éxtasis Puro', desc:'Mundo se reinicia en flores y luz', mult:3.0, minStage:4, ultimate:true, icon:'🌈🐍✨', element:'puro', fx:'quetzal__nueva_edad' }
     ],
     g_cosmico: [
-        { name:'Polvo de Estrellas', desc:'Estrellas muertas caen como polvo', mult:1.4, minStage:1, icon:'✨💫', element:'puro', fx:'g_cosmico__polvo' },
-        { name:'Órbita Rota', desc:'Planetas salen de órbita y chocan', mult:1.8, minStage:2, icon:'🪐💥', element:'leyenda', fx:'g_cosmico__orbita' },
-        { name:'Peso de Galaxia', desc:'Se hace gigante y pisa', mult:2.2, minStage:3, icon:'🌌🗿', element:'tierra', fx:'g_cosmico__peso' },
-        { name:'Guardián Silencioso - Big Crunch', desc:'Galaxias colapsan sobre rival', mult:3.0, minStage:4, ultimate:true, icon:'🌌🤲', element:'leyenda', fx:'g_cosmico__big_crunch' }
+        { name:'Aliento Legendario G.', desc:'Estrellas muertas caen como polvo', mult:1.4, minStage:1, icon:'✨💫', element:'legendario', fx:'g_cosmico__polvo' },
+        { name:'Pilar Puro', desc:'Planetas salen de órbita y chocan', mult:1.8, minStage:2, icon:'🪐💥', element:'puro', fx:'g_cosmico__orbita' },
+        { name:'Torbellino', desc:'Se hace gigante y pisa', mult:2.2, minStage:3, icon:'🌌🗿', element:'viento', fx:'g_cosmico__peso' },
+        { name:'Fin de Tiempos', desc:'Galaxias colapsan sobre rival', mult:3.0, minStage:4, ultimate:true, icon:'🌌🤲', element:'leyenda', fx:'g_cosmico__big_crunch' }
     ],
     fenix_negro: [
-        { name:'Ceniza Sabia', desc:'Ceniza que cuenta historias', mult:1.4, minStage:1, icon:'🖤🪶', element:'oscuridad', fx:'fenix_negro__ceniza' },
-        { name:'Equilibrio Perfecto', desc:'Mitad luz mitad sombra girando', mult:1.8, minStage:2, icon:'☯️🔥', element:'fuego', fx:'fenix_negro__equilibrio' },
-        { name:'Vida y Muerte', desc:'Muere y revive instantáneo con más fuerza', mult:2.2, minStage:3, icon:'💀➡️😇', element:'oscuridad', fx:'fenix_negro__vida_muerte' },
-        { name:'Alma que Nunca Muere - Ciclo Eterno', desc:'Renace infinito + deja fuego negro eterno', mult:3.0, minStage:4, ultimate:true, icon:'🖤🔥♾️', element:'leyenda', fx:'fenix_negro__ciclo' }
+        { name:'Aliento Legendario Fénix', desc:'Ceniza que cuenta historias', mult:1.4, minStage:1, icon:'🖤🪶', element:'legendario', fx:'fenix_negro__ceniza' },
+        { name:'Brasa Infernal', desc:'Mitad luz mitad sombra girando', mult:1.8, minStage:2, icon:'☯️🔥', element:'fuego', fx:'fenix_negro__equilibrio' },
+        { name:'Vacío', desc:'Muere y revive instantáneo con más fuerza', mult:2.2, minStage:3, icon:'💀➡️😇', element:'oscuridad', fx:'fenix_negro__vida_muerte' },
+        { name:'Apocalipsis', desc:'Renace infinito + deja fuego negro eterno', mult:3.0, minStage:4, ultimate:true, icon:'🖤🔥♾️', element:'mitico', fx:'fenix_negro__ciclo' }
     ],
     gato_supremo: [
-        { name:'Despertar de Corona', desc:'Corona brilla por primera vez', mult:1.8, minStage:1, icon:'👑✨', element:'luz', fx:'gato_supremo__despertar' },
-        { name:'Forma Verdadera', desc:'Se quita disfraz de gato común', mult:2.2, minStage:2, icon:'🐱➡️👑', element:'leyenda', fx:'gato_supremo__forma' },
-        { name:'Rey Oculto', desc:'Trono aparece detrás', mult:2.6, minStage:3, icon:'👑🪑', element:'leyenda', fx:'gato_supremo__rey' },
-        { name:'Nacimiento del Dios - Unión', desc:'Se une a sí mismo para crear Dios', mult:3.5, minStage:4, ultimate:true, icon:'👑+🐱=🏛️', element:'supremo', fx:'gato_supremo__union' }
+        { name:'Golpe Heroico Gato', desc:'Corona brilla por primera vez', mult:1.8, minStage:1, icon:'👑✨', element:'heroico', fx:'gato_supremo__despertar' },
+        { name:'Pilar Puro', desc:'Se quita disfraz de gato común', mult:2.2, minStage:2, icon:'🐱➡️👑', element:'puro', fx:'gato_supremo__forma' },
+        { name:'Furia Legendaria', desc:'Trono aparece detrás', mult:2.6, minStage:3, icon:'👑🪑', element:'legendario', fx:'gato_supremo__rey' },
+        { name:'Fin de Tiempos', desc:'Se une a sí mismo para crear Dios', mult:3.5, minStage:4, ultimate:true, icon:'👑+🐱=🏛️', element:'leyenda', fx:'gato_supremo__union' }
     ],
     gato_egipto_supremo: [
-        { name:'Mirada de Dios', desc:'Todos los elementos en un ojo', mult:2.0, minStage:1, icon:'👁️🌈', element:'todos', fx:'gato_egipto_supremo__mirada' },
-        { name:'Omnipotencia Finita', desc:'Vida altísima pero mortal', mult:2.5, minStage:2, icon:'🏛️💪', element:'todos', fx:'gato_egipto_supremo__omnipotencia' },
-        { name:'Invencible con Punto Débil', desc:'Todo le hace poco menos Gato Común', mult:3.0, minStage:3, icon:'🏛️🎯', element:'todos', fx:'gato_egipto_supremo__punto_debil' },
-        { name:'Profecía Cumplida - Dios de Todo', desc:'TODOS los elementos + fin del juego si no hay Gato Común', mult:4.0, minStage:4, ultimate:true, icon:'🏛️🌌👑', element:'supremo', fx:'gato_egipto_supremo__dios' }
+        { name:'Golpe Heroico Gato', desc:'Todos los elementos en un ojo', mult:2.0, minStage:1, icon:'👁️🌈', element:'heroico', fx:'gato_egipto_supremo__mirada' },
+        { name:'Hechizo Mítico', desc:'Vida altísima pero mortal', mult:2.5, minStage:2, icon:'🏛️💪', element:'mitico', fx:'gato_egipto_supremo__omnipotencia' },
+        { name:'Purificación', desc:'Todo le hace poco menos Gato Común', mult:3.0, minStage:3, icon:'🏛️🎯', element:'puro', fx:'gato_egipto_supremo__punto_debil' },
+        { name:'Fin de Tiempos', desc:'TODOS los elementos + fin del juego si no hay Gato Común', mult:4.0, minStage:4, ultimate:true, icon:'🏛️🌌👑', element:'leyenda', fx:'gato_egipto_supremo__dios' }
     ],
     gato_egipto: [
-        { name:'Regeneración Total', desc:'Se cura completo cada turno', mult:1.8, minStage:1, icon:'🏛️💚', element:'todos', fx:'gato_egipto__regen' },
-        { name:'Inmunidad Divina', desc:'Nada le hace daño excepto Común', mult:2.2, minStage:2, icon:'🏛️🛡️', element:'todos', fx:'gato_egipto__inmune' },
-        { name:'Castigo del Inmortal', desc:'Golpe que baja 50% vida', mult:2.6, minStage:3, icon:'🏛️⚡', element:'todos', fx:'gato_egipto__castigo' },
-        { name:'El Inmortal - Solo el Común Vence', desc:'Se hace invencible 5s', mult:3.2, minStage:4, ultimate:true, icon:'🏛️♾️', element:'supremo', fx:'gato_egipto__inmortal' }
-    ]
+        { name:'Luz Pura Gato', desc:'Se cura completo cada turno', mult:1.8, minStage:1, icon:'🏛️💚', element:'puro', fx:'gato_egipto__regen' },
+        { name:'Rugido Primigenio', desc:'Nada le hace daño excepto Común', mult:2.2, minStage:2, icon:'🏛️🛡️', element:'ancestral', fx:'gato_egipto__inmune' },
+        { name:'Furia Legendaria', desc:'Golpe que baja 50% vida', mult:2.6, minStage:3, icon:'🏛️⚡', element:'legendario', fx:'gato_egipto__castigo' },
+        { name:'Éxtasis Puro', desc:'Se hace invencible 5s', mult:3.2, minStage:4, ultimate:true, icon:'🏛️♾️', element:'puro', fx:'gato_egipto__inmortal' }
+    ],
+    rinoceronte: [
+        { name:'Puñetazo', desc:'', mult:1.15, minStage:1, icon:'🦏', element:'tierra', fx:'rinoceronte__punetazo' },
+        { name:'Corte Metálico', desc:'', mult:1.4, minStage:2, icon:'🦏', element:'metal', fx:'rinoceronte__corte_metalico' },
+        { name:'Asalto', desc:'', mult:1.7, minStage:3, icon:'🦏', element:'guerra', fx:'rinoceronte__asalto' },
+        { name:'Colapso Total', desc:'', mult:2.3, minStage:4, ultimate:true, icon:'🦏', element:'tierra', fx:'rinoceronte__colapso_total' }
+    ],
+    hidra: [
+        { name:'Chorro Hidra', desc:'', mult:1.2, minStage:1, icon:'🐲', element:'agua', fx:'hidra__chorro_hidra' },
+        { name:'Garra Nocturna', desc:'', mult:1.45, minStage:2, icon:'🐲', element:'oscuridad', fx:'hidra__garra_nocturna' },
+        { name:'Espora Venenosa', desc:'', mult:1.7, minStage:3, icon:'🐲', element:'naturaleza', fx:'hidra__espora_venenosa' },
+        { name:'Abismo Marino', desc:'', mult:2.3, minStage:4, ultimate:true, icon:'🐲', element:'agua', fx:'hidra__abismo_marino' }
+    ],
+    golem_titan: [
+        { name:'Garra Ancestral Gólem', desc:'', mult:1.4, minStage:1, icon:'🗿', element:'ancestral', fx:'golem_titan__garra_ancestral_golem' },
+        { name:'Corte Metálico', desc:'', mult:1.8, minStage:2, icon:'🗿', element:'metal', fx:'golem_titan__corte_metalico' },
+        { name:'Avalancha', desc:'', mult:2.2, minStage:3, icon:'🗿', element:'tierra', fx:'golem_titan__avalancha' },
+        { name:'Ira Ancestral', desc:'', mult:3.0, minStage:4, ultimate:true, icon:'🗿', element:'ancestral', fx:'golem_titan__ira_ancestral' }
+    ],
+    angel_solar: [
+        { name:'Luz Pura Ángel', desc:'', mult:1.4, minStage:1, icon:'👼', element:'puro', fx:'angel_solar__luz_pura_angel' },
+        { name:'Rayo Solar', desc:'', mult:1.8, minStage:2, icon:'👼', element:'luz', fx:'angel_solar__rayo_solar' },
+        { name:'Leyenda Eterna', desc:'', mult:2.2, minStage:3, icon:'👼', element:'leyenda', fx:'angel_solar__leyenda_eterna' },
+        { name:'Devastación', desc:'', mult:3.0, minStage:4, ultimate:true, icon:'👼', element:'guerra', fx:'angel_solar__devastacion' }
+    ],
+    demonio_abismal: [
+        { name:'Aliento Legendario', desc:'', mult:1.4, minStage:1, icon:'👁️', element:'legendario', fx:'demonio_abismal__aliento_legendario' },
+        { name:'Garra Nocturna', desc:'', mult:1.8, minStage:2, icon:'👁️', element:'oscuridad', fx:'demonio_abismal__garra_nocturna' },
+        { name:'Explosión Ígnea', desc:'', mult:2.2, minStage:3, icon:'👁️', element:'fuego', fx:'demonio_abismal__explosion_ignea' },
+        { name:'Devastación', desc:'', mult:3.0, minStage:4, ultimate:true, icon:'👁️', element:'guerra', fx:'demonio_abismal__devastacion' }
+    ],
+    draco_estelar: [
+        { name:'Aliento Legendario Draco', desc:'', mult:1.4, minStage:1, icon:'🌠', element:'legendario', fx:'draco_estelar__aliento_legendario_draco' },
+        { name:'Hechizo Mítico', desc:'', mult:1.8, minStage:2, icon:'🌠', element:'mitico', fx:'draco_estelar__hechizo_mitico' },
+        { name:'Nova', desc:'', mult:2.2, minStage:3, icon:'🌠', element:'luz', fx:'draco_estelar__nova' },
+        { name:'Huracán Final', desc:'', mult:3.0, minStage:4, ultimate:true, icon:'🌠', element:'viento', fx:'draco_estelar__huracan_final' }
+    ],
 };
 
-
-
-function pbSkillsFor(mascotaId) { return PB_PET_SKILLS[mascotaId] || PB_SKILL_DEFS; }
+function pbSkillsFor(mascotaId) {
+    const base = PB_PET_SKILLS[mascotaId] || PB_SKILL_DEFS;
+    // Si el admin escogió un elemento distinto para alguna habilidad (skillElements),
+    // ese elemento reemplaza al que traía la habilidad por defecto.
+    const def = (typeof CONFIG !== 'undefined' && CONFIG.mascotas) ? CONFIG.mascotas.find(m => m.id === mascotaId) : null;
+    const overrides = def && def.skillElements;
+    if (!overrides) return base;
+    return base.map((sk, i) => overrides[i] ? Object.assign({}, sk, { element: overrides[i] }) : sk);
+}
 
 function pbBuildFighter(mascotaDef, ownedRec, isPlayer) {
     const stages = mascotaStages(mascotaDef);
@@ -10904,7 +10969,7 @@ function pbBuildFighter(mascotaDef, ownedRec, isPlayer) {
     const img = mascotaStageImage(mascotaDef, stage);
     return {
         def: mascotaDef, stage, maxStage: stages.length, img,
-        name: mascotaDef.name, element1: mascotaDef.element1, element2: mascotaDef.element2, element3: mascotaDef.element3||null,
+        name: mascotaDef.name, element1: mascotaDef.element1, element2: mascotaDef.element2, element3: mascotaDef.element3||null, element4: mascotaDef.element4||null,
         elements: mascotaDef.elements||[mascotaDef.element1, mascotaDef.element2, mascotaDef.element3, mascotaDef.element4].filter(Boolean),
         rarity: mascotaDef.rarity,
         hp: stats.vidaMax, hpMax: stats.vidaMax, ataque: stats.ataque, defensa: stats.defensa, defensaMax: stats.defensa,
@@ -11187,7 +11252,7 @@ function pbRenderSkills() {
                     }
                 }
                 const elData = ELEMENTS[skillElemKey] || ELEMENTS[player.element1] || {icon:'✨', color:'#FFD700', bg:'#222'};
-                const skillIcon = sk.icon || elData.icon || '⚔️';
+                const skillIcon = elData.icon || '⚔️';
                 const petId = player.id || (player.def && player.def.id) || '';
                 const gifUrl = skillGifFor(petId, idx);
                 const skillMedia = gifUrl ? `<img src="${gifUrl}" style="width:100%;height:100%;object-fit:contain;background:transparent;">` : skillIcon;
@@ -11203,7 +11268,7 @@ function pbRenderSkills() {
                 try { eff = elementDamageMult(skillElemKey, enemy ? enemy.element1 : null); } catch(e){ eff = 1; }
                 let arrow = eff===2 ? '<span style="color:#22c55e;">▲</span>' : eff===0.5 ? '<span style="color:#ef4444;">▼</span>' : '<span style="color:#8b949e;">●</span>';
                 let label = eff===2 ? '<span style="color:#22c55e;font-size:9px;font-weight:900;"> ▲ MÁS DAÑO</span>' : eff===0.5 ? '<span style="color:#ef4444;font-size:9px;font-weight:900;"> ▼ POCO</span>' : '';
-                const tierBorder = idx===0 ? '#8b949e' : idx===1 ? '#58a6ff' : idx===2 ? '#a855f7' : '#FFD700';
+                const tierBorder = elData.color || '#8b949e';
                 return `<button class="pb-skill-btn" id="pb-skill-btn-${idx}" style="border-left:3px solid ${tierBorder};" ${unlocked ? '' : 'disabled'} onclick="pbPlayerMove(${idx})">
                     <span class="pb-skill-ic" style="background:transparent;padding:2px;">${elIconHtml}</span>
                     <span class="pb-skill-txt"><span style="display:flex;align-items:center;gap:4px;font-weight:900;">${sk.name} ${arrow}</span><span class="pb-skill-desc">${sk.desc || ''}${label}</span></span>
