@@ -4569,6 +4569,22 @@ async function loadConfig() {
 }
 async function saveConfig() { await fsSet('config', 'main', CONFIG); }
 
+/* Guardado automático con retraso: agrupa varios cambios seguidos (ej. escribir un precio)
+   en un solo guardado a los ~900ms de inactividad, y avisa con un toast discreto. */
+let __autoSaveTimer = null;
+function queueSaveConfig() {
+    if (__autoSaveTimer) clearTimeout(__autoSaveTimer);
+    __autoSaveTimer = setTimeout(async () => {
+        try {
+            await saveConfig();
+            showToast('☁️ Guardado automáticamente');
+        } catch (e) {
+            console.error('Error en guardado automático:', e);
+            showToast('❌ No se pudo guardar automáticamente, revisa tu conexión');
+        }
+    }, 900);
+}
+
 async function getAdminPassword() {
     const doc = await fsGet('config', 'admin');
     return doc ? doc.password : null;
@@ -8168,35 +8184,35 @@ function renderAdminMascotas() {
     row.className = 'admin-row-card';
     row.innerHTML = `
             <div class="row-grid">
-                <input type="text" value="${m.name || ''}" placeholder="Nombre de la mascota" oninput="CONFIG.mascotas[${idx}].name=this.value">
-                <input type="text" value="${m.emoji || ''}" placeholder="Emoji (ej: 🐉)" oninput="CONFIG.mascotas[${idx}].emoji=this.value" style="max-width:70px">
+                <input type="text" value="${m.name || ''}" placeholder="Nombre de la mascota" oninput="CONFIG.mascotas[${idx}].name=this.value; queueSaveConfig();">
+                <input type="text" value="${m.emoji || ''}" placeholder="Emoji (ej: 🐉)" oninput="CONFIG.mascotas[${idx}].emoji=this.value; queueSaveConfig();" style="max-width:70px">
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <select onchange="CONFIG.mascotas[${idx}].rarity=this.value" style="padding:8px; border-radius:8px">
+                <select onchange="CONFIG.mascotas[${idx}].rarity=this.value; queueSaveConfig();" style="padding:8px; border-radius:8px">
                     ${Object.keys(MASCOTA_RAREZAS).map(k => `<option value="${k}" ${m.rarity===k?'selected':''}>${MASCOTA_RAREZAS[k].symbol} ${MASCOTA_RAREZAS[k].label}</option>`).join('')}
                 </select>
-                <input type="number" value="${m.levelMax || 0}" placeholder="Nivel máximo" oninput="CONFIG.mascotas[${idx}].levelMax=Number(this.value)">
+                <input type="number" value="${m.levelMax || 0}" placeholder="Nivel máximo" oninput="CONFIG.mascotas[${idx}].levelMax=Number(this.value); queueSaveConfig();">
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <input type="text" value="${m.obtainMethod || ''}" placeholder="Cómo se consigue" oninput="CONFIG.mascotas[${idx}].obtainMethod=this.value">
-                <input type="number" value="${(m.precio && m.precio.nuevo) || m.goldCost || 0}" placeholder="🪙 Costo total" oninput="CONFIG.mascotas[${idx}].goldCost=Number(this.value); if(!CONFIG.mascotas[${idx}].precio) CONFIG.mascotas[${idx}].precio={}; CONFIG.mascotas[${idx}].precio.nuevo=Number(this.value);">
+                <input type="text" value="${m.obtainMethod || ''}" placeholder="Cómo se consigue" oninput="CONFIG.mascotas[${idx}].obtainMethod=this.value; queueSaveConfig();">
+                <input type="number" value="${(m.precio && m.precio.nuevo) || m.goldCost || 0}" placeholder="🪙 Costo total" oninput="CONFIG.mascotas[${idx}].goldCost=Number(this.value); if(!CONFIG.mascotas[${idx}].precio) CONFIG.mascotas[${idx}].precio={}; CONFIG.mascotas[${idx}].precio.nuevo=Number(this.value); queueSaveConfig();">
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <select onchange="CONFIG.mascotas[${idx}].element1=this.value; renderAdminMascotas();" style="width:100%">
+                <select onchange="CONFIG.mascotas[${idx}].element1=this.value; queueSaveConfig(); renderAdminMascotas();" style="width:100%">
                     <option value="">⚔️ Elemento 1 (principal)</option>
                     ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${m.element1===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
                 </select>
-                <select onchange="CONFIG.mascotas[${idx}].element2=this.value; renderAdminMascotas();" style="width:100%">
+                <select onchange="CONFIG.mascotas[${idx}].element2=this.value; queueSaveConfig(); renderAdminMascotas();" style="width:100%">
                     <option value="">⚔️ Elemento 2 (opcional)</option>
                     ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${m.element2===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
                 </select>
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <select onchange="CONFIG.mascotas[${idx}].element3=this.value; renderAdminMascotas();" style="width:100%">
+                <select onchange="CONFIG.mascotas[${idx}].element3=this.value; queueSaveConfig(); renderAdminMascotas();" style="width:100%">
                     <option value="">⚔️ Elemento 3 (opcional)</option>
                     ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${m.element3===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
                 </select>
-                <select onchange="CONFIG.mascotas[${idx}].element4=this.value; renderAdminMascotas();" style="width:100%">
+                <select onchange="CONFIG.mascotas[${idx}].element4=this.value; queueSaveConfig(); renderAdminMascotas();" style="width:100%">
                     <option value="">⚔️ Elemento 4 (opcional)</option>
                     ${Object.keys(ELEMENTS).map(k => `<option value="${k}" ${m.element4===k?'selected':''}>${ELEMENTS[k].icon} ${ELEMENTS[k].label}</option>`).join('')}
                 </select>
@@ -8206,34 +8222,34 @@ function renderAdminMascotas() {
                 ${Object.keys(ELEMENTS).map(k => {
                     const img = CONFIG.elementImages && CONFIG.elementImages[k];
                     const on = m.element1===k;
-                    return `<button class="admin-add-btn" style="padding:4px 8px; border-radius:20px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:4px; border:2px solid ${on?'#8957e5':'#30363d'}; background:${on?'#2d1f4d':'#21262d'}; color:#fff" onclick="CONFIG.mascotas[${idx}].element1='${k}'; renderAdminMascotas();">${img ? `<img src="${img}" style="width:16px; height:16px; object-fit:contain">` : ELEMENTS[k].icon} ${ELEMENTS[k].label}</button>`;
+                    return `<button class="admin-add-btn" style="padding:4px 8px; border-radius:20px; font-size:11px; font-weight:700; display:flex; align-items:center; gap:4px; border:2px solid ${on?'#8957e5':'#30363d'}; background:${on?'#2d1f4d':'#21262d'}; color:#fff" onclick="CONFIG.mascotas[${idx}].element1='${k}'; queueSaveConfig(); renderAdminMascotas();">${img ? `<img src="${img}" style="width:16px; height:16px; object-fit:contain">` : ELEMENTS[k].icon} ${ELEMENTS[k].label}</button>`;
                 }).join('')}
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <input type="text" value="${m.bonusLabel || ''}" placeholder="Tipo de bonificación" oninput="CONFIG.mascotas[${idx}].bonusLabel=this.value">
+                <input type="text" value="${m.bonusLabel || ''}" placeholder="Tipo de bonificación" oninput="CONFIG.mascotas[${idx}].bonusLabel=this.value; queueSaveConfig();">
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <input type="text" value="${m.bonusInitial || ''}" placeholder="Bonificación inicial" oninput="CONFIG.mascotas[${idx}].bonusInitial=this.value">
-                <input type="text" value="${m.bonusMax || ''}" placeholder="Bonificación máxima" oninput="CONFIG.mascotas[${idx}].bonusMax=this.value">
+                <input type="text" value="${m.bonusInitial || ''}" placeholder="Bonificación inicial" oninput="CONFIG.mascotas[${idx}].bonusInitial=this.value; queueSaveConfig();">
+                <input type="text" value="${m.bonusMax || ''}" placeholder="Bonificación máxima" oninput="CONFIG.mascotas[${idx}].bonusMax=this.value; queueSaveConfig();">
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <input type="text" value="${m.foodType || ''}" placeholder="Comida usada" oninput="CONFIG.mascotas[${idx}].foodType=this.value">
-                <input type="number" value="${m.totalFood || 0}" placeholder="Total de comidas" oninput="CONFIG.mascotas[${idx}].totalFood=Number(this.value)">
+                <input type="text" value="${m.foodType || ''}" placeholder="Comida usada" oninput="CONFIG.mascotas[${idx}].foodType=this.value; queueSaveConfig();">
+                <input type="number" value="${m.totalFood || 0}" placeholder="Total de comidas" oninput="CONFIG.mascotas[${idx}].totalFood=Number(this.value); queueSaveConfig();">
             </div>
             <div class="row-grid" style="margin-top:6px">
-                <input type="number" value="${m.totalCost || 0}" placeholder="🪙 Costo total (comida)" oninput="CONFIG.mascotas[${idx}].totalCost=Number(this.value)">
-                <input type="number" value="${m.totalDiamondCost || 0}" placeholder="💎 Costo total de evolución" oninput="CONFIG.mascotas[${idx}].totalDiamondCost=Number(this.value)">
+                <input type="number" value="${m.totalCost || 0}" placeholder="🪙 Costo total (comida)" oninput="CONFIG.mascotas[${idx}].totalCost=Number(this.value); queueSaveConfig();">
+                <input type="number" value="${m.totalDiamondCost || 0}" placeholder="💎 Costo total de evolución" oninput="CONFIG.mascotas[${idx}].totalDiamondCost=Number(this.value); queueSaveConfig();">
             </div>
-            <textarea placeholder="📜 Historia de la mascota" oninput="CONFIG.mascotas[${idx}].story=this.value" style="width:100%; margin-top:6px; padding:8px; border-radius:8px; min-height:60px; font-size:12px">${m.story || ''}</textarea>
+            <textarea placeholder="📜 Historia de la mascota" oninput="CONFIG.mascotas[${idx}].story=this.value; queueSaveConfig();" style="width:100%; margin-top:6px; padding:8px; border-radius:8px; min-height:60px; font-size:12px">${m.story || ''}</textarea>
             <div style="font-size:11px; color:#8b949e; margin:10px 0 4px">🌱 Etapas de evolución</div>
             ${stages.map((st, sIdx) => `
                 <div class="row-grid" style="margin-top:4px">
-                    <input type="text" value="${st.range || ''}" placeholder="Nivel (ej: 1 → 6)" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].range=this.value" style="max-width:80px">
-                    <input type="text" value="${st.name || ''}" placeholder="Nombre de la etapa" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].name=this.value">
+                    <input type="text" value="${st.range || ''}" placeholder="Nivel (ej: 1 → 6)" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].range=this.value; queueSaveConfig();" style="max-width:80px">
+                    <input type="text" value="${st.name || ''}" placeholder="Nombre de la etapa" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].name=this.value; queueSaveConfig();">
                 </div>
                 <div class="row-grid" style="margin-top:2px">
-                    <input type="text" value="${st.aspect || ''}" placeholder="Aspecto/descripción" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].aspect=this.value">
-                    <input type="number" value="${st.diamondCost || 0}" placeholder="💎 Costo evolución" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].diamondCost=Number(this.value)" style="max-width:110px">
+                    <input type="text" value="${st.aspect || ''}" placeholder="Aspecto/descripción" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].aspect=this.value; queueSaveConfig();">
+                    <input type="number" value="${st.diamondCost || 0}" placeholder="💎 Costo evolución" oninput="CONFIG.mascotas[${idx}].evolutionStages[${sIdx}].diamondCost=Number(this.value); queueSaveConfig();" style="max-width:110px">
                 </div>
             `).join('')}
             <div style="margin-top:10px">
@@ -8406,6 +8422,7 @@ function toggleElementRelationAdmin(defKey, atkKey, level) {
 function addMascotaStage(idx) {
     if (!CONFIG.mascotas[idx].evolutionStages) CONFIG.mascotas[idx].evolutionStages = mascotaStages(CONFIG.mascotas[idx]);
     CONFIG.mascotas[idx].evolutionStages.push({ range:'', name:'Nueva etapa', aspect:'', diamondCost:0 });
+    queueSaveConfig();
     renderAdminMascotas();
 }
 
@@ -8491,6 +8508,7 @@ function addMascotaAdmin() {
 function removeMascotaAdmin(idx) {
     CONFIG.mascotas.splice(idx, 1);
     adminMascotaOpenIdx = null;
+    queueSaveConfig();
     renderAdminMascotas();
 }
 
