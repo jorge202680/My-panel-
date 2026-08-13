@@ -1069,8 +1069,8 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 }
 #pet-battle-screen.active{ display:flex; }
 .pb-topbar, .pb-hpbars, .pb-log, .pb-tabs, .pb-skills-panel, .pb-ult-meter-wrap{ flex-shrink:0; }
-.pb-arena{ flex:1 1 150px; min-height:140px !important; }
-.pb-skills-panel{ max-height:40vh; overflow-y:auto; overflow-x:hidden; margin-bottom:max(4px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
+.pb-arena{ flex:1 1 110px; min-height:100px !important; }
+.pb-skills-panel{ max-height:48vh; overflow-y:auto; overflow-x:hidden; margin-bottom:max(4px, env(safe-area-inset-bottom)); -webkit-overflow-scrolling:touch; }
 
 /* ---- Panel de información de habilidades (estilo lista Dragon City) ---- */
 .pb-info-overlay{ display:none; position:fixed; inset:0; z-index:950; background:rgba(0,0,0,.4); align-items:flex-start; justify-content:flex-end; padding:66px 14px 0; }
@@ -1134,10 +1134,11 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-hpcard.enemy .pb-hp-elems{ justify-content:flex-end; margin-left:auto; }
 .pb-elem-badge{ width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:9px; border:1.5px solid rgba(255,255,255,.6); }
 .pb-hp-track{ position:relative; height:9px; border-radius:5px; background:rgba(0,0,0,.4); margin-top:3px; overflow:hidden; border:1px solid #7a0d13; box-shadow:inset 0 0 4px rgba(0,0,0,.6); }
-.pb-hp-chip{ position:absolute; left:0; top:0; height:100%; border-radius:6px; background:linear-gradient(180deg,#ffcc80,#e64a19); }
-.pb-hp-fill{ position:absolute; left:0; top:0; height:100%; border-radius:6px; background:linear-gradient(180deg,#8bffb0,#2eae4a); transition:width .15s ease; box-shadow:inset 0 2px 0 rgba(255,255,255,.35); }
-.pb-hp-fill.low{ background:linear-gradient(180deg,#ffb0b0,#d32f2f); }
-.pb-hp-num{ color:#ffe9c2; font-size:9px; font-weight:800; margin-top:1px; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+.pb-hp-chip{ position:absolute; left:0; top:0; height:100%; border-radius:6px; background:linear-gradient(180deg,#ffcc80,#e64a19); transition:width .5s cubic-bezier(.3,.8,.3,1); }
+.pb-hp-fill{ position:absolute; left:0; top:0; height:100%; border-radius:6px; background:linear-gradient(180deg,#8bffb0,#2eae4a); transition:width .25s cubic-bezier(.3,.8,.3,1); box-shadow:inset 0 2px 0 rgba(255,255,255,.35); }
+.pb-hp-fill.low{ background:linear-gradient(180deg,#ffb0b0,#d32f2f); animation:pbHpLowPulse 0.9s ease-in-out infinite; }
+@keyframes pbHpLowPulse{ 0%,100%{ box-shadow:inset 0 2px 0 rgba(255,255,255,.35), 0 0 4px 1px rgba(255,50,50,.4); } 50%{ box-shadow:inset 0 2px 0 rgba(255,255,255,.35), 0 0 10px 3px rgba(255,50,50,.9); } }
+.pb-hp-num{ color:#ffe9c2; font-size:10.5px; font-weight:900; margin-top:2px; text-shadow:0 1px 3px rgba(0,0,0,.7); letter-spacing:.3px; }
 .pb-stat-row{ display:flex; align-items:center; gap:4px; margin-top:2px; }
 .pb-stat-ic{ font-size:9px; flex-shrink:0; }
 .pb-stat-track{ position:relative; flex:1; height:5px; border-radius:3px; background:rgba(0,0,0,.4); overflow:hidden; border:1px solid rgba(255,255,255,.15); }
@@ -1186,19 +1187,26 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-skill-btn.pb-led-active{ animation:pbSkillLed 1.1s ease; border-color:#4caf50 !important; }
 @keyframes pbSkillLed{ 0%{ box-shadow:0 0 0 rgba(76,175,80,0); } 15%{ box-shadow:0 0 22px 6px rgba(76,175,80,1); } 40%{ box-shadow:0 0 12px 3px rgba(76,175,80,.7); } 65%{ box-shadow:0 0 22px 6px rgba(76,175,80,1); } 100%{ box-shadow:0 0 0 rgba(76,175,80,0); } }
 .pb-hit-burst{ position:absolute; left:50%; top:42%; width:10px; height:10px; border-radius:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:8; }
-.pb-hit-burst span{ position:absolute; left:0; top:0; width:6px; height:6px; border-radius:50%; animation:pbBurstFly .55s ease-out forwards; }
-.pb-hit-burst span.emoji{ background:none !important; font-size:15px; width:auto; height:auto; line-height:1; }
-@keyframes pbBurstFly{ 0%{ transform:translate(0,0) scale(1); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.2); opacity:0; } }
+.pb-hit-burst span{ position:absolute; left:0; top:0; width:6px; height:6px; border-radius:50%; animation:pbBurstFly .6s cubic-bezier(.15,.8,.3,1) forwards; }
+.pb-hit-burst span.emoji{ background:none !important; font-size:16px; width:auto; height:auto; line-height:1; }
+@keyframes pbBurstFly{ 0%{ transform:translate(0,0) scale(1) rotate(0deg); opacity:1; } 100%{ transform:translate(var(--dx),var(--dy)) scale(.15) rotate(var(--rot2,180deg)); opacity:0; } }
+.pb-shockwave{ position:absolute; left:50%; top:42%; width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; border:3px solid rgba(255,255,255,.9); box-shadow:0 0 16px 4px rgba(255,255,255,.5); pointer-events:none; z-index:7; animation:pbShockwave .45s cubic-bezier(.1,.7,.3,1) forwards; }
+@keyframes pbShockwave{ 0%{ transform:scale(0.3); opacity:1; } 100%{ transform:scale(6.5); opacity:0; } }
 .pb-screen-shake{ animation:pbScreenShake .35s ease; }
 @keyframes pbScreenShake{ 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+.pb-screen-shake-light{ animation:pbScreenShakeLight .3s ease; }
+@keyframes pbScreenShakeLight{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-2px)} 50%{transform:translateX(2px)} 75%{transform:translateX(-1px)} }
+.pb-screen-shake-big{ animation:pbScreenShakeBig .45s ease; }
+@keyframes pbScreenShakeBig{ 0%,100%{transform:translate(0,0)} 15%{transform:translate(-10px,3px)} 30%{transform:translate(10px,-3px)} 45%{transform:translate(-8px,2px)} 60%{transform:translate(8px,-2px)} 75%{transform:translate(-4px,1px)} 90%{transform:translate(4px,-1px)} }
 .pb-ult-flash{ position:fixed; inset:0; background:#fff; opacity:0; z-index:40; pointer-events:none; }
 .pb-ult-flash.play{ animation:pbUltFlash .45s ease-out; }
 @keyframes pbUltFlash{ 0%{opacity:0} 15%{opacity:.85} 100%{opacity:0} }
 .pb-crit-flash{ position:fixed; inset:0; opacity:0; z-index:40; pointer-events:none; mix-blend-mode:screen; }
 .pb-crit-flash.play{ animation:pbCritFlash .32s ease-out; }
 @keyframes pbCritFlash{ 0%{opacity:0} 20%{opacity:.6} 100%{opacity:0} }
-.pb-dmg-pop{ position:absolute; font-weight:900; font-size:26px; font-style:italic; color:#FFA940; -webkit-text-stroke:2px #5a2200; text-shadow:0 3px 0 #5a2200,0 0 10px rgba(0,0,0,.5); pointer-events:none; animation:pbDmgPop 1s ease-out forwards; z-index:9; white-space:nowrap; }
-.pb-dmg-pop.crit{ color:#FFD700; font-size:30px; }
+.pb-dmg-pop{ position:absolute; font-weight:900; font-size:28px; font-style:italic; color:#FFA940; -webkit-text-stroke:2px #5a2200; text-shadow:0 3px 0 #5a2200,0 0 14px rgba(255,169,64,.7); pointer-events:none; animation:pbDmgPop 1.05s cubic-bezier(.2,1.5,.35,1) forwards; z-index:9; white-space:nowrap; }
+.pb-dmg-pop.crit{ color:#FFD700; font-size:34px; text-shadow:0 3px 0 #5a2200,0 0 20px rgba(255,215,0,.9); }
+.pb-dmg-pop.weak{ color:#5ec8ff; -webkit-text-stroke:2px #0a3550; text-shadow:0 3px 0 #0a3550,0 0 12px rgba(94,200,255,.7); font-size:22px; }
 .pb-dmg-pop.nodmg{ color:#9aa4af; font-size:20px; -webkit-text-stroke:1.5px #2b3138; }
 .pb-effect-banner{ position:absolute; top:38%; left:50%; z-index:41; pointer-events:none; display:flex; align-items:center; justify-content:center; }
 .pb-effect-banner span{ display:inline-block; font-weight:900; font-size:28px; letter-spacing:1px; color:#fff; -webkit-text-stroke:2px #000; text-shadow:0 0 14px rgba(0,0,0,.85),0 3px 0 #000; white-space:nowrap; transform:translate(-50%,0) scale(0.4) rotate(-4deg); opacity:0; animation:pbEffectBanner 1.1s cubic-bezier(.2,1.4,.4,1) forwards; }
@@ -1212,7 +1220,7 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
     75%{ opacity:1; transform:translate(-50%,-6px) scale(1) rotate(0deg); }
     100%{ opacity:0; transform:translate(-50%,-26px) scale(.92) rotate(0deg); }
 }
-@keyframes pbDmgPop{ 0%{ transform:translateY(0) scale(.7); opacity:0; } 15%{ transform:translateY(-6px) scale(1.15); opacity:1; } 30%{ transform:translateY(-14px) scale(1); opacity:1; } 100%{ transform:translateY(-46px) scale(1); opacity:0; } }
+@keyframes pbDmgPop{ 0%{ transform:translateY(0) scale(.4) rotate(0deg); opacity:0; } 12%{ transform:translateY(-10px) scale(1.35) rotate(var(--wob,6deg)); opacity:1; } 30%{ transform:translateY(-16px) scale(1) rotate(0deg); opacity:1; } 100%{ transform:translateY(-52px) scale(.95) rotate(0deg); opacity:0; } }
 /* Trayectorias/efectos de ataque específicos por mascota */
 .pb-fx-layer{ position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:7; }
 /* ---- PROYECTIL REAL: chorro/rayo + emoji volando, nace del emoji atacante y viaja hasta el rival ---- */
@@ -1280,7 +1288,8 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-skills-panel{ position:relative; z-index:5; background:linear-gradient(180deg,rgba(30,6,8,.6),rgba(30,6,8,.85)); margin:0 15px; border-radius:0 0 14px 14px; padding:8px; border:1px solid rgba(255,215,150,.3); border-top:none; }
 .pb-skills-hint{ text-align:center; color:#ffdfae; font-size:10.5px; font-weight:700; margin:2px 0 8px; opacity:.85; }
 .pb-skills{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:4px; overflow-x:hidden; }
-.pb-skill-btn{ display:flex; align-items:center; gap:5px; width:100%; min-width:0; background:linear-gradient(180deg,#3a2f1f,#241c12); border:2px solid #d4a35a; border-radius:10px; padding:4px 6px; color:#fff; font-size:9.5px; font-weight:800; text-align:left; }
+.pb-skill-btn{ display:flex; align-items:center; gap:5px; width:100%; min-width:0; background:linear-gradient(180deg,#3a2f1f,#241c12); border:2px solid #d4a35a; border-radius:10px; padding:4px 6px; color:#fff; font-size:9.5px; font-weight:800; text-align:left; box-shadow:0 3px 0 rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08); transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+.pb-skill-btn:active:not(:disabled){ transform:translateY(2px) scale(.97); box-shadow:0 1px 0 rgba(0,0,0,.35); border-color:#ffd77a; }
 .pb-skill-btn .pb-skill-ic{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:8px;}
 .pb-skill-ic{ width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; flex-shrink:0; }
 .pb-skill-btn .pb-skill-txt{ flex:1; display:flex; flex-direction:column; gap:0; min-width:0; }
@@ -1741,45 +1750,6 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-skill-btn .pb-cooldown { position:absolute; inset:0; background:conic-gradient(rgba(0,0,0,0.8) var(--cd, 0deg), transparent 0deg); border-radius:10px; }
 
 
-/* v9.0 GENERAL SYSTEMS */
-#v9-hub-btn { position:fixed; bottom:18px; right:18px; width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#FFD700,#FF6A00); border:3px solid #000; font-size:26px; z-index:500; box-shadow:0 0 18px #FFD700; cursor:pointer; }
-#v9-modal { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:600; display:none; align-items:center; justify-content:center; }
-#v9-modal.open { display:flex; }
-.v9-panel { width:94%; max-width:420px; max-height:86vh; background:#0d1117; border:2px solid #30363d; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
-.v9-tabs { display:flex; gap:0; background:#161b22; }
-.v9-tab { flex:1; padding:10px 4px; text-align:center; font-size:11px; font-weight:800; cursor:pointer; border-bottom:2px solid transparent; color:#8b949e; }
-.v9-tab.active { color:#FFD700; border-bottom-color:#FFD700; background:#0d1117; }
-.v9-body { overflow-y:auto; padding:12px; flex:1; }
-.v9-card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:10px; margin-bottom:10px; }
-.v9-progress { height:8px; background:#21262d; border-radius:6px; overflow:hidden; margin-top:6px; }
-.v9-progress-fill { height:100%; background:linear-gradient(90deg,#FFD700,#FF6A00); width:0%; transition:width 0.4s; }
-.v9-roulette { width:180px; height:180px; margin:12px auto; border-radius:50%; border:4px solid #FFD700; position:relative; overflow:hidden; background:conic-gradient(#FFD700 0 60deg, #FF6A00 60deg 120deg, #8A2BE2 120deg 180deg, #00E5FF 180deg 240deg, #00FF88 240deg 300deg, #FF1744 300deg 360deg); transition:transform 3s cubic-bezier(.15,.8,.3,1); }
-.v9-roulette::after { content:'▼'; position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:18px; color:#fff; }
-
-
-/* v10 */
-.v10-egg { width:70px; height:90px; background:radial-gradient(ellipse at 30% 20%, #fff, #FFD700 40%, #FF6A00 100%); border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin:6px; animation: eggWobble 2s infinite; cursor:pointer; }
-@keyframes eggWobble { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
-.v10-boss-bar { height:16px; background:#21262d; border-radius:8px; overflow:hidden; border:1px solid #f00; }
-.v10-boss-fill { height:100%; background:linear-gradient(90deg,#f00,#FF1744); width:100%; }
-.v10-rogue-buff { padding:6px 10px; border:1px solid #FFD700; border-radius:10px; margin:4px; display:inline-block; cursor:pointer; background:#161b22; }
-.v10-setting-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #21262d; }
-
-
-/* v11 TOP 10 MONEY */
-.v11-event-banner { background:linear-gradient(90deg,#FF6A00,#8B00FF); padding:10px; border-radius:12px; text-align:center; color:#fff; font-weight:900; margin-bottom:10px; animation: eventGlow 1.2s infinite alternate; }
-@keyframes eventGlow { to{ box-shadow:0 0 18px #FF6A00} }
-.v11-island { display:inline-block; width:64px; height:64px; border-radius:50%; background:#161b22; border:2px solid #30363d; margin:6px; text-align:center; line-height:64px; font-size:26px; cursor:pointer; }
-.v11-island.done { border-color:#00FF88; background:#00FF881a; }
-.v11-island.boss { border-color:#FF1744; animation: bossPulse 1s infinite alternate; }
-@keyframes bossPulse { to{ box-shadow:0 0 12px #FF1744} }
-
-
-/* v12 habitats */
-.v12-habitat { display:inline-block; width:96px; height:96px; border-radius:14px; border:2px solid #30363d; margin:6px; position:relative; text-align:center; padding:6px 2px; background:#161b22; }
-.v12-habitat.lvl2{ border-color:#FFD700; } .v12-habitat.lvl3{ border-color:#FF6A00; box-shadow:0 0 10px #FF6A00; }
-.v12-farm { background:#1b2b1b; border:1px solid #2d5a2d; border-radius:12px; padding:8px; margin-bottom:8px; }
-
 </style>
 
 
@@ -2223,45 +2193,6 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-skill-btn .pb-cooldown { position:absolute; inset:0; background:conic-gradient(rgba(0,0,0,0.8) var(--cd, 0deg), transparent 0deg); border-radius:10px; }
 
 
-/* v9.0 GENERAL SYSTEMS */
-#v9-hub-btn { position:fixed; bottom:18px; right:18px; width:56px; height:56px; border-radius:50%; background:linear-gradient(135deg,#FFD700,#FF6A00); border:3px solid #000; font-size:26px; z-index:500; box-shadow:0 0 18px #FFD700; cursor:pointer; }
-#v9-modal { position:fixed; inset:0; background:rgba(0,0,0,0.88); z-index:600; display:none; align-items:center; justify-content:center; }
-#v9-modal.open { display:flex; }
-.v9-panel { width:94%; max-width:420px; max-height:86vh; background:#0d1117; border:2px solid #30363d; border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
-.v9-tabs { display:flex; gap:0; background:#161b22; }
-.v9-tab { flex:1; padding:10px 4px; text-align:center; font-size:11px; font-weight:800; cursor:pointer; border-bottom:2px solid transparent; color:#8b949e; }
-.v9-tab.active { color:#FFD700; border-bottom-color:#FFD700; background:#0d1117; }
-.v9-body { overflow-y:auto; padding:12px; flex:1; }
-.v9-card { background:#161b22; border:1px solid #30363d; border-radius:12px; padding:10px; margin-bottom:10px; }
-.v9-progress { height:8px; background:#21262d; border-radius:6px; overflow:hidden; margin-top:6px; }
-.v9-progress-fill { height:100%; background:linear-gradient(90deg,#FFD700,#FF6A00); width:0%; transition:width 0.4s; }
-.v9-roulette { width:180px; height:180px; margin:12px auto; border-radius:50%; border:4px solid #FFD700; position:relative; overflow:hidden; background:conic-gradient(#FFD700 0 60deg, #FF6A00 60deg 120deg, #8A2BE2 120deg 180deg, #00E5FF 180deg 240deg, #00FF88 240deg 300deg, #FF1744 300deg 360deg); transition:transform 3s cubic-bezier(.15,.8,.3,1); }
-.v9-roulette::after { content:'▼'; position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:18px; color:#fff; }
-
-
-/* v10 */
-.v10-egg { width:70px; height:90px; background:radial-gradient(ellipse at 30% 20%, #fff, #FFD700 40%, #FF6A00 100%); border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; display:inline-flex; align-items:center; justify-content:center; font-size:28px; margin:6px; animation: eggWobble 2s infinite; cursor:pointer; }
-@keyframes eggWobble { 0%,100%{transform:rotate(-2deg)} 50%{transform:rotate(2deg)} }
-.v10-boss-bar { height:16px; background:#21262d; border-radius:8px; overflow:hidden; border:1px solid #f00; }
-.v10-boss-fill { height:100%; background:linear-gradient(90deg,#f00,#FF1744); width:100%; }
-.v10-rogue-buff { padding:6px 10px; border:1px solid #FFD700; border-radius:10px; margin:4px; display:inline-block; cursor:pointer; background:#161b22; }
-.v10-setting-row { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid #21262d; }
-
-
-/* v11 TOP 10 MONEY */
-.v11-event-banner { background:linear-gradient(90deg,#FF6A00,#8B00FF); padding:10px; border-radius:12px; text-align:center; color:#fff; font-weight:900; margin-bottom:10px; animation: eventGlow 1.2s infinite alternate; }
-@keyframes eventGlow { to{ box-shadow:0 0 18px #FF6A00} }
-.v11-island { display:inline-block; width:64px; height:64px; border-radius:50%; background:#161b22; border:2px solid #30363d; margin:6px; text-align:center; line-height:64px; font-size:26px; cursor:pointer; }
-.v11-island.done { border-color:#00FF88; background:#00FF881a; }
-.v11-island.boss { border-color:#FF1744; animation: bossPulse 1s infinite alternate; }
-@keyframes bossPulse { to{ box-shadow:0 0 12px #FF1744} }
-
-
-/* v12 habitats */
-.v12-habitat { display:inline-block; width:96px; height:96px; border-radius:14px; border:2px solid #30363d; margin:6px; position:relative; text-align:center; padding:6px 2px; background:#161b22; }
-.v12-habitat.lvl2{ border-color:#FFD700; } .v12-habitat.lvl3{ border-color:#FF6A00; box-shadow:0 0 10px #FF6A00; }
-.v12-farm { background:#1b2b1b; border:1px solid #2d5a2d; border-radius:12px; padding:8px; margin-bottom:8px; }
-
 </style>
 
 </head>
@@ -2377,6 +2308,13 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
                     <div class="hc-main">🚀 BINGO AUTOMÁTICO</div>
                 </div>
             </div>
+
+            <div class="hero-cta" style="margin-top:10px; background:linear-gradient(160deg,#2ecc71,#1a8f4e);" onclick="navTabTo('isla-screen')">
+                <div class="hero-cta-inner">
+                    <div class="hc-sub">EXPLORA</div>
+                    <div class="hc-main">🏝️ MI ISLA</div>
+                </div>
+            </div>
         </div>
 
         <div style="display:none;">
@@ -2386,6 +2324,23 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
             <div id="mission-progress-bar"></div>
             <div id="mission-progress-text">0 / 3</div>
             <button id="mission-claim-btn" onclick="claimMission()" disabled>Reclamar</button>
+        </div>
+    </div>
+
+    <!-- PANTALLA MI ISLA (3D) -->
+    <div id="isla-screen" class="screen" style="padding:0; background:#0a1622;">
+        <div class="top-bar" style="border-radius:0; margin:0; position:absolute; top:0; left:0; right:0; z-index:5;">
+            <span style="cursor:pointer; color:#58a6ff;" onclick="navTabTo('main-screen')">⬅ Volver</span>
+            <span style="color:#fff; font-weight:800;">🏝️ Mi Isla</span>
+            <span></span>
+        </div>
+        <div id="isla-hint" style="position:absolute; top:52px; left:0; right:0; text-align:center; z-index:5; color:#fff; font-size:12px; background:rgba(0,0,0,.35); padding:6px 10px; pointer-events:none;">
+            Arrastra para rotar · Toca los objetos para recolectar
+        </div>
+        <div id="isla-canvas-wrap" style="position:absolute; top:0; left:0; right:0; bottom:0;"></div>
+        <div id="isla-loading" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; font-family:sans-serif; z-index:6; background:#0a1622;">
+            <div style="font-size:40px;">🏝️</div>
+            <div style="margin-top:10px; font-size:13px; opacity:.8;">Cargando isla...</div>
         </div>
     </div>
 
@@ -2923,6 +2878,7 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
             </div>
         </div>
         <div class="pb-arena" id="pb-arena">
+        <div id="pb-3d-bg" style="position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;"></div>
             <div class="pb-fighter" id="pb-p-fighter">
                 <div class="pb-turn-glow">▼</div>
                 <div class="pb-sprite" id="pb-p-sprite">🐾</div>
@@ -2938,11 +2894,11 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
         </div>
         <div class="pb-log" id="pb-log">¡Elige tu ataque!</div>
         <div class="pb-tabs">
-            <div class="pb-tab active">ATAQUES</div>
-            <div class="pb-tab">TUS MASCOTAS</div>
+            <div class="pb-tab active" id="pb-tab-atk" onclick="pbSwitchTab('atk')">ATAQUES</div>
+            <div class="pb-tab" id="pb-tab-team" onclick="pbSwitchTab('team')">TUS MASCOTAS</div>
         </div>
         <div class="pb-skills-panel">
-            <div class="pb-skills-hint">Elige el ataque que quieres que ejecute tu mascota</div>
+            <div class="pb-skills-hint" id="pb-skills-hint">Elige el ataque que quieres que ejecute tu mascota</div>
             <div class="pb-skills" id="pb-skills"></div>
         </div>
         <div class="pb-info-overlay" id="pb-info-overlay" onclick="pbToggleSkillInfo(false)">
@@ -4019,6 +3975,7 @@ function normalizeElementKey(k){
 // elegido todavía, usa por defecto las listas debil/resiste que ya traía cada elemento.
 function getElementRelation(defKey, atkKey) {
     defKey = normalizeElementKey(defKey); atkKey = normalizeElementKey(atkKey);
+    if (defKey === atkKey && atkKey !== 'normal') return 'sin'; // mismo elemento vs mismo elemento = daño cero/nulo (regla fija, no editable por error en Admin); Golpe (normal) es la única forma de dañar en ese caso
     if (CONFIG && CONFIG.elementRelations && CONFIG.elementRelations[defKey] && CONFIG.elementRelations[defKey][atkKey]) {
         return CONFIG.elementRelations[defKey][atkKey];
     }
@@ -5713,9 +5670,10 @@ function navTabTo(screenId) {
 }
 function goToScreen(screenId, isReplace) {
     stopAutoBingo();
+    if (screenId !== 'isla-screen') stopIslaLoop();
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
-    document.body.classList.toggle('no-scroll-fixed-screen', screenId === 'pet-battle-screen');
+    document.body.classList.toggle('no-scroll-fixed-screen', screenId === 'pet-battle-screen' || screenId === 'isla-screen');
 
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const map = {'main-screen':'nav-inicio','store-screen':'nav-tienda','game-screen':'nav-juego','campaign-screen':'nav-campaña','missions-screen':'nav-missions','vippass-screen':'nav-vippass','mascota-screen':'nav-mascota'};
@@ -5730,8 +5688,320 @@ function goToScreen(screenId, isReplace) {
     if (screenId === 'vippass-screen') renderVipPassScreen();
     if (screenId === 'rankings-screen') { renderRankingsScreen(); renderFriendsList(); }
     if (screenId === 'mascota-screen') renderMascotaScreen();
+    if (screenId === 'isla-screen') renderIslaScreen();
 
     if (!isReplace) { historyStack.push(screenId); history.pushState({screen: screenId}, '', ''); }
+}
+
+/* ================= MI ISLA (escena 3D con Three.js) ================= */
+let islaThreeLoading = false;
+let islaSceneReady = false;
+let islaRAF = null;
+let isla = {}; // guarda scene, camera, renderer, objetos clicables, etc.
+
+function ensureThreeLoaded(cb) {
+    if (window.THREE) { cb(); return; }
+    if (islaThreeLoading) { setTimeout(() => ensureThreeLoaded(cb), 200); return; }
+    islaThreeLoading = true;
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+    s.onload = () => { islaThreeLoading = false; cb(); };
+    s.onerror = () => {
+        islaThreeLoading = false;
+        const l = document.getElementById('isla-loading');
+        if (l) l.innerHTML = '<div style="padding:20px;text-align:center;font-size:13px;">⚠️ No se pudo cargar el motor 3D.<br>Revisa tu conexión a internet.</div>';
+    };
+    document.head.appendChild(s);
+}
+
+function renderIslaScreen() {
+    ensureThreeLoaded(() => {
+        if (!islaSceneReady) buildIslaScene();
+        const l = document.getElementById('isla-loading');
+        if (l) l.style.display = 'none';
+        startIslaLoop();
+    });
+}
+
+function buildIslaScene() {
+    const wrap = document.getElementById('isla-canvas-wrap');
+    if (!wrap) return;
+    const W = wrap.clientWidth || window.innerWidth;
+    const H = wrap.clientHeight || window.innerHeight;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x3aa0d8);
+    scene.fog = new THREE.Fog(0x3aa0d8, 18, 32);
+
+    const d = 8;
+    const aspect = W / H;
+    const camera = new THREE.OrthographicCamera(-d*aspect, d*aspect, d, -d, 0.1, 100);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    wrap.innerHTML = '';
+    wrap.appendChild(renderer.domElement);
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0x2a5a3a, 1.1);
+    scene.add(hemi);
+    const sun = new THREE.DirectionalLight(0xfff2d0, 1.2);
+    sun.position.set(8, 14, 6);
+    sun.castShadow = true;
+    sun.shadow.mapSize.set(1024, 1024);
+    sun.shadow.camera.left = -10; sun.shadow.camera.right = 10;
+    sun.shadow.camera.top = 10; sun.shadow.camera.bottom = -10;
+    scene.add(sun);
+
+    // Agua
+    const water = new THREE.Mesh(
+        new THREE.CircleGeometry(20, 32),
+        new THREE.MeshStandardMaterial({ color: 0x1f7fb0 })
+    );
+    water.rotation.x = -Math.PI/2;
+    water.position.y = -0.15;
+    water.receiveShadow = true;
+    scene.add(water);
+
+    // Isla (arena)
+    const sand = new THREE.Mesh(
+        new THREE.CylinderGeometry(6.2, 6.6, 0.6, 40),
+        new THREE.MeshStandardMaterial({ color: 0xe6d19a })
+    );
+    sand.position.y = -0.05;
+    sand.receiveShadow = true;
+    scene.add(sand);
+
+    // Pasto central
+    const grass = new THREE.Mesh(
+        new THREE.CylinderGeometry(4, 4.3, 0.35, 40),
+        new THREE.MeshStandardMaterial({ color: 0x6bbf5a })
+    );
+    grass.position.y = 0.18;
+    grass.receiveShadow = true;
+    scene.add(grass);
+
+    function addShadow(m) { m.castShadow = true; m.receiveShadow = true; return m; }
+
+    function buildPalm(x, z, s) {
+        const g = new THREE.Group();
+        const trunk = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.09, 0.14, 1.8, 8),
+            new THREE.MeshStandardMaterial({ color: 0x8a6238 })
+        ));
+        trunk.position.y = 0.9;
+        trunk.rotation.z = 0.08;
+        g.add(trunk);
+        for (let i = 0; i < 5; i++) {
+            const frond = addShadow(new THREE.Mesh(
+                new THREE.ConeGeometry(0.5, 1.1, 6),
+                new THREE.MeshStandardMaterial({ color: 0x2f9e44 })
+            ));
+            const ang = (i / 5) * Math.PI * 2;
+            frond.position.set(Math.cos(ang)*0.25, 1.85, Math.sin(ang)*0.25);
+            frond.rotation.x = Math.PI/2.4;
+            frond.rotation.z = ang;
+            g.add(frond);
+        }
+        g.position.set(x, 0.35, z);
+        g.scale.setScalar(s || 1);
+        return g;
+    }
+
+    function buildRock(x, z) {
+        const rock = addShadow(new THREE.Mesh(
+            new THREE.DodecahedronGeometry(0.55),
+            new THREE.MeshStandardMaterial({ color: 0x8a8a85 })
+        ));
+        rock.position.set(x, 0.55, z);
+        return rock;
+    }
+
+    function buildHut(x, z) {
+        const g = new THREE.Group();
+        const base = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.9, 0.9, 1.1, 10),
+            new THREE.MeshStandardMaterial({ color: 0xceab7a })
+        ));
+        base.position.y = 0.55;
+        g.add(base);
+        const roof = addShadow(new THREE.Mesh(
+            new THREE.ConeGeometry(1.25, 1.1, 10),
+            new THREE.MeshStandardMaterial({ color: 0xa2622f })
+        ));
+        roof.position.y = 1.65;
+        g.add(roof);
+        g.position.set(x, 0.35, z);
+        return g;
+    }
+
+    function buildChest(x, z) {
+        const g = new THREE.Group();
+        const base = addShadow(new THREE.Mesh(
+            new THREE.BoxGeometry(0.7, 0.4, 0.5),
+            new THREE.MeshStandardMaterial({ color: 0x7a4a24 })
+        ));
+        base.position.y = 0.55;
+        g.add(base);
+        const lid = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.25, 0.25, 0.7, 12, 1, false, 0, Math.PI),
+            new THREE.MeshStandardMaterial({ color: 0xffd24a })
+        ));
+        lid.rotation.z = Math.PI/2;
+        lid.position.y = 0.76;
+        g.add(lid);
+        g.position.set(x, 0.35, z);
+        return g;
+    }
+
+    // Objetos clicables: id único + método de recompensa
+    const clickable = [];
+    function addClickable(mesh, id, kind) {
+        mesh.traverse ? mesh.traverse(o => { if (o.isMesh) o.userData.islaId = id; }) : (mesh.userData.islaId = id);
+        mesh.userData.islaId = id;
+        scene.add(mesh);
+        clickable.push({ id, mesh, kind });
+    }
+
+    addClickable(buildHut(-2.3, -1.5), 'cabana', 'gold');
+    addClickable(buildPalm(2.4, -2.2, 1), 'palmera1', 'gold');
+    addClickable(buildPalm(3.2, 1.6, 0.9), 'palmera2', 'gold');
+    addClickable(buildPalm(-3.0, 2.6, 1.1), 'palmera3', 'gold');
+    addClickable(buildRock(1.0, 2.8), 'roca', 'gold');
+    addClickable(buildChest(0, 0.4), 'cofre', 'gems');
+
+    camera.position.set(10, 10, 10);
+    camera.lookAt(0, 0.5, 0);
+
+    // Interacción: arrastrar rota cámara, tocar (sin arrastrar) activa el objeto
+    let isDown = false, moved = false, lastX = 0, angleY = Math.atan2(10,10), radius = Math.sqrt(200);
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+
+    function updateCam() {
+        camera.position.x = radius * Math.sin(angleY);
+        camera.position.z = radius * Math.cos(angleY);
+        camera.position.y = 10;
+        camera.lookAt(0, 0.5, 0);
+    }
+
+    function onDown(e) {
+        isDown = true; moved = false;
+        lastX = (e.touches ? e.touches[0].clientX : e.clientX);
+    }
+    function onMove(e) {
+        if (!isDown) return;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX);
+        if (Math.abs(x - lastX) > 3) moved = true;
+        angleY -= (x - lastX) * 0.008;
+        lastX = x;
+        updateCam();
+    }
+    function onUp(e) {
+        if (!isDown) return;
+        isDown = false;
+        if (!moved) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const cx = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
+            const cy = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY);
+            pointer.x = ((cx - rect.left) / rect.width) * 2 - 1;
+            pointer.y = -((cy - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(pointer, camera);
+            const hits = raycaster.intersectObjects(scene.children, true);
+            for (const h of hits) {
+                if (h.object.userData && h.object.userData.islaId) {
+                    collectIslandObject(h.object.userData.islaId, h.object);
+                    break;
+                }
+            }
+        }
+    }
+
+    const dom = renderer.domElement;
+    dom.addEventListener('mousedown', onDown);
+    dom.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    dom.addEventListener('touchstart', onDown, { passive: true });
+    dom.addEventListener('touchmove', onMove, { passive: true });
+    dom.addEventListener('touchend', onUp);
+
+    updateCam();
+
+    isla = { scene, camera, renderer, wrap, clickable, resizeHandler: null };
+
+    isla.resizeHandler = () => {
+        const w2 = wrap.clientWidth || window.innerWidth;
+        const h2 = wrap.clientHeight || window.innerHeight;
+        const a2 = w2 / h2;
+        camera.left = -d*a2; camera.right = d*a2; camera.top = d; camera.bottom = -d;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w2, h2);
+    };
+    window.addEventListener('resize', isla.resizeHandler);
+
+    islaSceneReady = true;
+}
+
+function startIslaLoop() {
+    if (!islaSceneReady) return;
+    if (islaRAF) return;
+    let t = 0;
+    function loop() {
+        islaRAF = requestAnimationFrame(loop);
+        t += 0.015;
+        if (isla.scene) {
+            isla.scene.traverse(o => {
+                if (o.userData && o.userData.islaId) {
+                    o.position.y = (o.userData.baseY == null ? (o.userData.baseY = o.position.y) : o.userData.baseY) + Math.sin(t*2 + (o.id||0)) * 0.03;
+                }
+            });
+        }
+        isla.renderer.render(isla.scene, isla.camera);
+    }
+    loop();
+}
+
+function stopIslaLoop() {
+    if (islaRAF) { cancelAnimationFrame(islaRAF); islaRAF = null; }
+}
+
+function collectIslandObject(id, meshHit) {
+    if (!state) return;
+    state.islandCollected = state.islandCollected || {};
+    if (state.islandCollected[id] === todayStr()) {
+        showToast('Ya recolectaste esto hoy, vuelve mañana 🌙', 'info');
+        return;
+    }
+    state.islandCollected[id] = todayStr();
+    const item = isla.clickable.find(c => c.id === id);
+    const kind = item ? item.kind : 'gold';
+    let msg;
+    if (kind === 'gems') {
+        const gems = 3 + Math.floor(Math.random() * 6);
+        state.gems += gems;
+        msg = `+${gems} 💎 ¡encontraste el cofre!`;
+    } else {
+        const gold = 40 + Math.floor(Math.random() * 120);
+        state.gold += gold;
+        msg = `+${gold} 🪙`;
+    }
+    saveState();
+    refreshAllUI();
+    showToast(msg, 'success');
+
+    // Rebote visual del objeto tocado
+    if (item && item.mesh) {
+        const mesh = item.mesh;
+        const origScale = mesh.scale.x;
+        let s = 1;
+        const bounce = setInterval(() => {
+            s += 0.15;
+            const v = origScale * (1 + Math.sin(s) * 0.25 * Math.max(0, 1 - s/Math.PI));
+            mesh.scale.setScalar(v);
+            if (s >= Math.PI) { clearInterval(bounce); mesh.scale.setScalar(origScale); }
+        }, 30);
+    }
 }
 
 // Altura de viewport estable en px (evita el "salto" de 100vh al girar la pantalla
@@ -8362,13 +8632,13 @@ function renderAdminElementos() {
                 <div style="background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:8px; margin-bottom:10px">
                     <div style="font-weight:800; font-size:12px; margin-bottom:6px">${info.label} <span style="color:#8b949e; font-weight:400">(${inThisLevel.length}/3)</span></div>
                     <div style="display:flex; flex-wrap:wrap; gap:6px">
-                        ${Object.keys(ELEMENTS).map(k => {
+                        ${Object.keys(ELEMENTS).filter(k => k !== key).map(k => {
                             const other = ELEMENTS[k];
                             const otherImg = CONFIG.elementImages[k];
                             const on = inThisLevel.includes(k);
                             return `<button class="admin-add-btn" style="padding:5px 9px; border-radius:16px; font-size:10px; font-weight:800; display:flex; align-items:center; gap:4px; border:2px solid ${on?'#fff':'#30363d'}; background:${on?info.color:'#21262d'}; color:#fff" onclick="toggleElementRelationAdmin('${k}','${key}','${lvl}')">
                                 <span style="width:14px; height:14px; display:inline-flex">${otherImg ? `<img src="${otherImg}" style="width:100%; height:100%; object-fit:contain">` : `<span style="font-size:11px">${other.icon}</span>`}</span>
-                                ${other.label}${k===key ? ' (mismo)' : ''}
+                                ${other.label}
                             </button>`;
                         }).join('')}
                     </div>
@@ -11093,6 +11363,7 @@ function openPetBattle(mascotaId) {
         goToScreen('pet-battle-screen');
         pbTryLandscape();
         pbBuildStars();
+        pbInit3DBg();
         pbRenderFighters();
         pbRenderSkills();
         const vsGatoEgipto = enemyTeam.some(f => f && f.def && f.def.id === 'gato_egipto');
@@ -11131,7 +11402,46 @@ function pbRenderTeams(){
         }).join('');
     }
 }
-function pbSwitchPlayer(idx){
+// Pestañas ATAQUES / TUS MASCOTAS dentro de la Arena de Batalla. "atk" muestra las
+// habilidades normales; "team" muestra la lista de tus otras mascotas para cambiar
+// de forma voluntaria (gasta el turno) mientras tu mascota activa sigue con vida.
+function pbSwitchTab(which){
+    if(!PB || PB.over) return;
+    const atkTab = document.getElementById('pb-tab-atk');
+    const teamTab = document.getElementById('pb-tab-team');
+    const hint = document.getElementById('pb-skills-hint');
+    if(which==='team'){
+        if(PB.turn!=='player'){ showToast('⏳ Espera tu turno para cambiar de mascota.'); return; }
+        if(atkTab) atkTab.classList.remove('active');
+        if(teamTab) teamTab.classList.add('active');
+        if(hint) hint.textContent = 'Elige a qué mascota quieres cambiar (gasta tu turno)';
+        pbRenderTeamPicker(false);
+    } else {
+        if(teamTab) teamTab.classList.remove('active');
+        if(atkTab) atkTab.classList.add('active');
+        if(hint) hint.textContent = 'Elige el ataque que quieres que ejecute tu mascota';
+        pbRenderSkills();
+    }
+}
+// Dibuja la lista de mascotas del equipo dentro del mismo panel de habilidades
+// (#pb-skills). forced=true = tu mascota activa cayó y DEBES elegir otra (no gasta
+// turno extra); forced=false = cambio voluntario desde la pestaña "TUS MASCOTAS"
+// (si tu mascota sigue viva, cambiar le cede el turno al rival).
+function pbRenderTeamPicker(forced){
+    const wrap = document.getElementById('pb-skills');
+    if(!wrap || !PB || !PB.playerTeam) return;
+    wrap.innerHTML = PB.playerTeam.map((f,i)=>{
+        const dead = f.hp<=0;
+        const isActive = i===PB.playerIdx;
+        const disabled = dead || (!forced && isActive);
+        const status = dead ? '💀 KO' : (isActive ? '⚔️ En combate' : `${f.hp.toLocaleString('es')}/${f.hpMax.toLocaleString('es')} HP`);
+        return `<button class="pb-skill-btn" style="border-left:3px solid ${dead?'#8b949e':'#22c55e'};" ${disabled?'disabled':''} onclick="pbSwitchPlayer(${i}, ${!!forced})">
+            <span class="pb-skill-ic" style="font-size:22px;">${f.def.emoji||'🐾'}</span>
+            <span class="pb-skill-txt"><span style="font-weight:900;">${f.name} · Etapa ${f.stage}</span><span class="pb-skill-desc">${status}</span></span>
+        </button>`;
+    }).join('');
+}
+function pbSwitchPlayer(idx, forced){
     if(!PB || PB.over) return;
     const next = PB.playerTeam[idx];
     if(!next || next.hp<=0) return;
@@ -11142,13 +11452,29 @@ function pbSwitchPlayer(idx){
     const ps = document.getElementById('pb-p-sprite');
     if(ps){ ps.style.opacity='1'; ps.style.display=''; }
     pbRenderFighters();
-    pbRenderSkills();
     const chooser = document.getElementById('pb-team-chooser');
     if(chooser) chooser.remove();
     pbSetLog(`¡Ve, ${PB.player.name}!`);
-    PB.turn = 'enemy';
-    pbSetTurnUI('enemy');
-    setTimeout(pbEnemyMove, 800);
+    if(typeof pbRenderTeams==='function') pbRenderTeams();
+    // Volver a la pestaña de ataques siempre que se cambia de mascota
+    const atkTab = document.getElementById('pb-tab-atk');
+    const teamTab = document.getElementById('pb-tab-team');
+    if(atkTab) atkTab.classList.add('active');
+    if(teamTab) teamTab.classList.remove('active');
+    if(forced){
+        // Cambio obligatorio (tu mascota cayó): eliges reemplazo y AÚN te toca atacar,
+        // no se pierde turno extra por el cambio.
+        pbRenderSkills();
+        PB.turn = 'player';
+        pbSetTurnUI('player');
+    } else {
+        // Cambio voluntario con tu mascota anterior todavía viva: el cambio gasta el
+        // turno y el rival ataca a continuación.
+        pbRenderSkills();
+        PB.turn = 'enemy';
+        pbSetTurnUI('enemy');
+        setTimeout(pbEnemyMove, 800);
+    }
 }
 function pbHandlePlayerDeath(){
     const anyAlive = PB.playerTeam.some(f=>f.hp>0);
@@ -11182,7 +11508,7 @@ function pbShowTeamChooser(){
             const dead = f.hp<=0;
             const isActive = i===PB.playerIdx;
             const status = dead ? 'KO' : (isActive ? 'En combate' : f.hp+'/'+f.hpMax+' HP');
-            return `<button class="pb-chooser-btn ${dead?'dead':''} ${isActive?'active':''}" ${dead||isActive?'disabled':''} onclick="pbSwitchPlayer(${i})">
+            return `<button class="pb-chooser-btn ${dead?'dead':''} ${isActive?'active':''}" ${dead||isActive?'disabled':''} onclick="pbSwitchPlayer(${i}, true)">
                 <span>${f.def.emoji||'🐾'} ${f.name} Etapa ${f.stage}</span>
                 <span style="font-size:11px;">${status}</span>
             </button>`;
@@ -11195,6 +11521,7 @@ function pbShowTeamChooser(){
 
 function closePetBattle() {
     PB = null;
+    pbStop3DLoop();
     pbToggleSkillInfo(false);
     pbRestoreOrientation();
     goToScreen('mascota-screen');
@@ -11307,18 +11634,10 @@ function pbRenderSkills() {
             try {
                 const unlocked = player.stage >= sk.minStage;
                 let skillElemKey = (sk.element && sk.element !== 'normal') ? sk.element : player.element1;
-                if ((!sk.element || sk.element === 'normal') && player.element2) {
-                    if (player.id === 'aguila' || (player.def && player.def.id === 'aguila')) {
-                        if (idx === 0) skillElemKey = 'mitico';
-                        else if (idx === 1) skillElemKey = 'viento';
-                        else if (idx === 2) skillElemKey = 'electrico';
-                        else skillElemKey = 'mitico';
-                    } else {
-                        skillElemKey = (idx % 2 === 0) ? player.element1 : player.element2;
-                    }
-                }
                 const elData = ELEMENTS[skillElemKey] || ELEMENTS[player.element1] || {icon:'✨', color:'#FFD700', bg:'#222'};
-                const skillIcon = elData.icon || '⚔️';
+                const skillIcon = elData.img
+                    ? `<img src="${elData.img}" style="width:100%;height:100%;object-fit:contain;">`
+                    : (elData.icon || '⚔️');
                 const petId = player.id || (player.def && player.def.id) || '';
                 const gifUrl = skillGifFor(petId, idx);
                 const skillMedia = gifUrl ? `<img src="${gifUrl}" style="width:100%;height:100%;object-fit:contain;background:transparent;">` : skillIcon;
@@ -11361,7 +11680,7 @@ function pbRenderSkills() {
         }).join('') + (function(){
             let effB = 1, previewHtmlB = '';
             try {
-                effB = elementDamageMult(player.element1, enemy ? enemy.element1 : null);
+                effB = elementDamageMult('normal', enemy ? enemy.element1 : null);
                 if (enemy) {
                     let pv = player.ataque * PB_BASIC_ATTACK.mult - (enemy.defensa * 0.025);
                     pv = Math.max(player.ataque * 0.25, pv);
@@ -11524,28 +11843,50 @@ function pbSpawnHitBurst(prefix, elKey, count, petId) {
     const fighterEl = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
     if (!fighterEl) return;
     fighterEl.style.position = 'relative';
+
+    // Onda de choque (shockwave) en el punto de impacto
+    const ring = document.createElement('div');
+    ring.className = 'pb-shockwave';
+    fighterEl.appendChild(ring);
+    setTimeout(() => ring.remove(), 500);
+
     const burst = document.createElement('div');
     burst.className = 'pb-hit-burst';
     const colors = pbBurstColorsForElement(elKey);
     const emojis = petId && PB_PET_PARTICLES[petId];
-    const n = count || 8;
+    const n = (count || 8) + 4; // más partículas para que se sienta más "jugoso"
     for (let i = 0; i < n; i++) {
         const dot = document.createElement('span');
-        const angle = (Math.PI * 2 * i) / n;
-        const dist = 26 + Math.random() * 22;
+        const angle = (Math.PI * 2 * i) / n + (Math.random() * 0.3 - 0.15);
+        const dist = 30 + Math.random() * 34;
+        const size = 5 + Math.random() * 6;
         dot.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
         dot.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+        dot.style.setProperty('--rot2', (Math.random() * 540 - 270) + 'deg');
+        dot.style.width = size + 'px';
+        dot.style.height = size + 'px';
         if (emojis) {
             dot.className = 'emoji';
             dot.textContent = emojis[i % emojis.length];
         } else {
             dot.style.background = colors[i % colors.length];
+            dot.style.boxShadow = '0 0 8px 2px ' + colors[i % colors.length];
         }
         dot.style.animationDelay = (Math.random() * 0.05) + 's';
         burst.appendChild(dot);
     }
     fighterEl.appendChild(burst);
     setTimeout(() => burst.remove(), 1500);
+
+    // Sacudida de pantalla en TODO golpe, escalada por intensidad (antes solo en crítico/ultimate)
+    const arenaEl = document.getElementById('pb-arena');
+    if (arenaEl) {
+        const shakeClass = n >= 18 ? 'pb-screen-shake-big' : (n >= 14 ? 'pb-screen-shake' : 'pb-screen-shake-light');
+        arenaEl.classList.remove('pb-screen-shake', 'pb-screen-shake-light', 'pb-screen-shake-big');
+        void arenaEl.offsetWidth;
+        arenaEl.classList.add(shakeClass);
+        setTimeout(() => arenaEl.classList.remove(shakeClass), 400);
+    }
 }
 
 // Lanza una lluvia/ráfaga de partículas físicas (emojis) desde el centro del layer indicado,
@@ -12207,14 +12548,16 @@ function pbShowEffectBanner(elemMult, isCrit, isDeathBlow) {
     setTimeout(() => { if (span.parentNode) span.parentNode.removeChild(span); }, 1150);
 }
 
-function pbShowDamage(prefix, amount, isCrit) {
+function pbShowDamage(prefix, amount, isCrit, elemMult) {
     const fighterEl = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
     if (!fighterEl) return;
     const isNoDmg = !amount || amount <= 0;
+    const isWeak = !isNoDmg && elemMult === 0.5;
     const pop = document.createElement('div');
-    pop.className = 'pb-dmg-pop' + (isCrit ? ' crit' : '') + (isNoDmg ? ' nodmg' : '');
+    pop.className = 'pb-dmg-pop' + (isCrit ? ' crit' : '') + (isNoDmg ? ' nodmg' : '') + (isWeak ? ' weak' : '');
     pop.textContent = isNoDmg ? 'SIN DAÑO' : ((isCrit ? '¡CRÍTICO! ' : '') + '-' + Math.round(amount));
     pop.style.left = '50%'; pop.style.top = '10px'; pop.style.transform = 'translateX(-50%)';
+    pop.style.setProperty('--wob', (Math.random() * 16 - 8) + 'deg');
     fighterEl.style.position = 'relative';
     fighterEl.appendChild(pop);
     setTimeout(() => pop.remove(), 2000);
@@ -12359,7 +12702,7 @@ function pbPlayerMove(skillIdx) {
     }
     setTimeout(() => {
         if (isUlt && arena) arena.classList.remove('pb-slowmo');
-        let _skillElem = (sk.element && sk.element !== 'normal') ? sk.element : PB.player.element1; if((!sk.element || sk.element === 'normal') && PB.player.element2){ if((PB.player.id==='aguila'|| (PB.player.def&&PB.player.def.id==='aguila'))){ if(tier===0) _skillElem='mitico'; else if(tier===1) _skillElem='viento'; else if(tier===2) _skillElem='electrico'; else _skillElem='mitico'; } else { _skillElem = (tier%2===0)?PB.player.element1:PB.player.element2; } } const _origElem = PB.player.element1; PB.player.element1 = _skillElem; const { dmg, isCrit, isDeathBlow, elemMult } = pbComputeDamage(PB.player, PB.enemy, sk.mult, sk.ultimate, tier); PB.player.element1 = _origElem;
+        let _skillElem = (sk.element === 'normal') ? 'normal' : (sk.element || PB.player.element1); const _origElem = PB.player.element1; PB.player.element1 = _skillElem; const { dmg, isCrit, isDeathBlow, elemMult } = pbComputeDamage(PB.player, PB.enemy, sk.mult, sk.ultimate, tier); PB.player.element1 = _origElem; PB.player.element1 = _origElem;
         pbApplyShieldDamage(PB.enemy, dmg, PB.player);
         pbUpdateHpBar('e', PB.enemy);
         pbUpdateStatBars(PB.player, PB.enemy);
@@ -12369,7 +12712,7 @@ function pbPlayerMove(skillIdx) {
         pbShowSkillGifOverlay(PB.player.def.id, tier, 'e', isUlt);
         pbPlayHitEffect('e', PB.player.element1, tier, isCrit, isDeathBlow);
         pbSpawnHitBurst('e', PB.player.element1, isDeathBlow || tier === 3 ? 14 : (isCrit || tier === 2 ? 10 : 6), PB.player.def.id);
-        pbShowDamage('e', dmg, isCrit);
+        pbShowDamage('e', dmg, isCrit, elemMult);
         pbShowEffectBanner(elemMult, isCrit, isDeathBlow);
         if (isUlt) { pbAddUltCharge(4, PB.player.def.id); } else { pbAddUltCharge(tier + 1, PB.player.def.id); }
         pbSetLog(`${PB.player.name} usó ${sk.name}${elemMult === 2 ? ' ¡SUPER EFECTIVO!' : elemMult === 0.5 ? ' (poco efectivo)' : ''}${isDeathBlow ? ' — ¡GOLPE DE MUERTE!' : ''}${abilityFx ? (abilityFx.type === 'robar' ? ` — ¡Robó ${abilityFx.amount} HP!` : ` — ¡Curó ${abilityFx.amount} HP!`) : ''}`);
@@ -12419,7 +12762,7 @@ function pbEnemyMove() {
         pbShowSkillGifOverlay(PB.enemy.def.id, tier, 'p', isUlt);
         pbPlayHitEffect('p', PB.enemy.element1, tier, isCrit, isDeathBlow);
         pbSpawnHitBurst('p', PB.enemy.element1, isDeathBlow || tier === 3 ? 14 : (isCrit || tier === 2 ? 10 : 6), PB.enemy.def.id);
-        pbShowDamage('p', dmg, isCrit);
+        pbShowDamage('p', dmg, isCrit, elemMult);
         pbShowEffectBanner(elemMult, isCrit, isDeathBlow);
         pbSetLog(`${PB.enemy.name} usó ${sk.name}${elemMult === 2 ? ' ¡SUPER EFECTIVO!' : elemMult === 0.5 ? ' (poco efectivo)' : ''}${isDeathBlow ? ' — ¡GOLPE DE MUERTE!' : ''}${abilityFx ? (abilityFx.type === 'robar' ? ` — ¡Robó ${abilityFx.amount} HP!` : ` — ¡Curó ${abilityFx.amount} HP!`) : ''}`);
         if(typeof pbRenderTeams==='function') pbRenderTeams();
@@ -13276,514 +13619,6 @@ document.addEventListener('click', function _unlockAudio(){
 }, {once:true});
 
 
-let v9Data = JSON.parse(localStorage.getItem('v9_data')||'{}');
-if(!v9Data.misiones) v9Data={ misiones:[{id:'win3', txt:'Gana 3 batallas', cur:0, tot:3, done:false},{id:'crit2', txt:'Haz 2 críticos', cur:0, tot:2, done:false},{id:'ult1', txt:'Usa 1 Ultimate', cur:0, tot:1, done:false}], racha:v9Data.racha||0, lastDay:v9Data.lastDay||'', pase: {lvl:1, xp:0}, cofres:[{t:'Comun', ready:true},{t:'Raro', ready:false}], shop:[{name:'Skin Dragon Dorado', price:200, icon:'🐉'},{name:'Rastro Legendario', price:120, icon:'✨'}], gemas: v9Data.gemas||350, ranking:[{name:'Tú', score:0},{name:'Phoenix', score:1250},{name:'Luna', score:980}] };
-
-function v9Save(){ localStorage.setItem('v9_data', JSON.stringify(v9Data)); }
-function v9Open(){ document.getElementById('v9-modal').classList.add('open'); v9Tab('misiones'); v9CheckRacha(); }
-function v9Close(){ document.getElementById('v9-modal').classList.remove('open'); }
-function v9Tab(t){
-  document.querySelectorAll('.v9-tab').forEach(el=>el.classList.remove('active'));
-  [...document.querySelectorAll('.v9-tab')].find(el=>el.textContent.toLowerCase().includes(t.slice(0,3)))?.classList.add('active');
-  const body=document.getElementById('v9-body');
-  if(t==='misiones'){
-    body.innerHTML='<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;"><b>🔥 Racha: '+v9Data.racha+' días</b><span>💎 '+v9Data.gemas+'</span></div>' + v9Data.misiones.map(m=>'<div class="v9-card"><div style="display:flex; justify-content:space-between;"><span>'+m.txt+'</span><span>'+m.cur+'/'+m.tot+'</span></div><div class="v9-progress"><div class="v9-progress-fill" style="width:'+(m.cur/m.tot*100)+'%"></div></div>'+(m.done?'<button style="margin-top:6px; width:100%; background:#FFD700; border:none; padding:6px; border-radius:8px; font-weight:900;" onclick="v9Claim(\''+m.id+'\')">RECLAMAR 50💎</button>':'')+'</div>').join('') + '<div class="v9-card"><b>📦 Cofres</b>'+v9Data.cofres.map(c=>'<div style="margin-top:6px; display:flex; justify-content:space-between;"><span>'+c.t+(c.ready?' ✅':' ⏳ 3h')+'</span><button onclick="v9OpenChest(\''+c.t+'\')" style="background:'+(c.ready?'#00FF88':'#30363d')+'; border:none; padding:4px 10px; border-radius:8px;">ABRIR</button></div>').join('')+'</div>';
-  }
-  if(t==='ruleta'){
-    body.innerHTML='<h3 style="text-align:center; color:#FFD700;">🎡 RULETA DIARIA</h3><div class="v9-roulette" id="v9-wheel"></div><button id="v9-spin-btn" style="width:100%; background:linear-gradient(135deg,#FFD700,#FF6A00); border:none; padding:12px; border-radius:12px; font-weight:900; font-size:16px;" onclick="v9Spin()">GIRAR GRATIS</button><p style="text-align:center; font-size:11px; color:#8b949e; margin-top:8px;">Vuelve mañana para otro tiro. 7 días seguidos = legendario garantizado</p>';
-  }
-  if(t==='pase'){
-    body.innerHTML='<h3 style="color:#FFD700;">🏆 PASE DE BATALLA S1</h3><div class="v9-card"><div>Nivel '+v9Data.pase.lvl+' - XP '+v9Data.pase.xp+'/100</div><div class="v9-progress"><div class="v9-progress-fill" style="width:'+v9Data.pase.xp+'%"></div></div></div>' + Array.from({length:6}, (_,i)=>'<div class="v9-card" style="display:flex; justify-content:space-between; opacity:'+(i < v9Data.pase.lvl ? '1':'0.5')+'"><span>Nv '+(i+1)+': '+(i%2===0?'50💎':'Skin '+(i+1))+'</span><span>'+(i < v9Data.pase.lvl ? '✅':'🔒')+'</span></div>').join('') + '<button style="width:100%; background:#8A2BE2; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:8px;">COMPRAR PREMIUM 299💎</button>';
-  }
-  if(t==='tienda'){
-    body.innerHTML='<h3 style="color:#00FF88;">🛒 TIENDA - Cambia en: <span id="v9-timer">05:59:12</span></h3>' + v9Data.shop.map(s=>'<div class="v9-card" style="display:flex; justify-content:space-between; align-items:center;"><div><div style="font-size:22px;">'+s.icon+'</div><div style="font-weight:800;">'+s.name+'</div></div><button onclick="v9Buy(\''+s.name+'\', '+s.price+')" style="background:#FFD700; border:none; padding:8px 14px; border-radius:8px; font-weight:900;">'+s.price+'💎</button></div>').join('');
-  }
-  if(t==='ranking'){
-    body.innerHTML='<h3>🏅 RANKING SEMANAL</h3>' + v9Data.ranking.sort((a,b)=>b.score-a.score).map((r,i)=>'<div class="v9-card" style="display:flex; justify-content:space-between;"><span>'+(i+1)+'. '+(r.name==='Tú' ? '<b style="color:#FFD700;">TÚ</b>' : r.name)+'</span><span>'+r.score+' pts</span></div>').join('') + '<div style="margin-top:10px; font-size:10px; color:#8b949e;">Gana batallas para subir. Top 1 gana skin exclusiva</div>';
-  }
-}
-function v9CheckRacha(){
-  const today=new Date().toDateString();
-  if(v9Data.lastDay!==today){
-    const yesterday=new Date(); yesterday.setDate(yesterday.getDate()-1);
-    if(v9Data.lastDay===yesterday.toDateString()) v9Data.racha++; else if(v9Data.lastDay!==''){} else v9Data.racha=1;
-    if(v9Data.lastDay==='') v9Data.racha=1;
-    v9Data.lastDay=today; v9Save();
-  }
-}
-function v9Claim(id){
-  const m=v9Data.misiones.find(x=>x.id===id); if(!m) return;
-  v9Data.gemas+=50; m.done=false; m.cur=0; v9Save(); v9Tab('misiones'); pbAchievement('¡+50 GEMAS!');
-}
-function v9Spin(){
-  const wheel=document.getElementById('v9-wheel'); const btn=document.getElementById('v9-spin-btn');
-  if(!wheel) return;
-  btn.disabled=true; btn.textContent='GIRANDO...';
-  const rot = 720 + Math.random()*1440;
-  wheel.style.transform='rotate('+rot+'deg)';
-  setTimeout(()=>{
-    const rewards=[20,50,10,100,30,200]; const r=rewards[Math.floor(Math.random()*rewards.length)];
-    v9Data.gemas+=r; v9Save(); pbAchievement('¡GANASTE '+r+'💎!'); btn.textContent='¡GANASTE '+r+'💎!'; setTimeout(()=>v9Tab('ruleta'), 1500);
-  }, 3100);
-}
-function v9Buy(name, price){
-  if(v9Data.gemas<price){ pbAchievement('¡FALTAN GEMAS!'); return; }
-  v9Data.gemas-=price; v9Save(); pbAchievement('¡COMPRADO '+name+'!'); v9Tab('tienda');
-}
-function v9OpenChest(t){
-  v9Data.gemas+=30; v9Save(); pbAchievement('¡COFRE '+t+': +30💎!'); v9Tab('misiones');
-}
-// Hooks en batalla
-function v9HookBattleEnd(won){
-  if(won){ v9Data.misiones.forEach(m=>{ if(m.id==='win3' && m.cur<m.tot){ m.cur++; if(m.cur>=m.tot) m.done=true; } }); v9Data.pase.xp+=20; if(v9Data.pase.xp>=100){ v9Data.pase.lvl++; v9Data.pase.xp=0; } v9Data.ranking[0].score+=25; }
-  v9Save();
-}
-function v9HookCrit(){ v9Data.misiones.forEach(m=>{ if(m.id==='crit2' && m.cur<m.tot){ m.cur++; if(m.cur>=m.tot) m.done=true; } }); v9Save(); }
-function v9HookUlt(){ v9Data.misiones.forEach(m=>{ if(m.id==='ult1' && m.cur<m.tot){ m.cur++; if(m.cur>=m.tot) m.done=true; } }); v9Save(); }
-
-
-// v10 MEGA
-let v10Data = JSON.parse(localStorage.getItem('v10_data')||'{}');
-if(!v10Data.eggs) v10Data={ eggs:[{id:1, time: Date.now()+2*60*60*1000, type:'Raro'},{id:2, time: Date.now()+30*1000, type:'Comun'}], fusions:0, ivs: {}, clan:{name:'Phoenix Legends', members:12, bossHp:10000, bossMax:10000, warIn: '2h 14m'}, rogue:{floor:0, buffs:[]}, gacha:{pity:0}, settings:{music:true, voice:true, vibra:true, quality:'Alta'}, cloudCode:'JORGE-'+Math.floor(1000+Math.random()*8000), gold:1250, dust:80 };
-
-function v10Save(){ localStorage.setItem('v10_data', JSON.stringify(v10Data)); localStorage.setItem('v9_data', JSON.stringify(v9Data)); }
-
-function v10RenderExtra(tab){
-  const body=document.getElementById('v9-body');
-  if(tab==='huevos'){
-    body.innerHTML='<h3>🥚 INCUBADORA</h3><div>'+v10Data.eggs.map(e=>{ const left=Math.max(0, Math.floor((e.time-Date.now())/1000)); const m=Math.floor(left/60); const s=left%60; return '<div class="v9-card"><div class="v10-egg" onclick="v10Hatch('+e.id+')">'+(left<=0?'🐣':'🥚')+'</div><div><b>'+e.type+'</b> - '+(left<=0?'<span style="color:#00FF88;">¡LISTO!</span>': m+'m '+s+'s')+'</div><div style="font-size:10px; color:#8b949e;">IVs aleatorios 0-15 al eclosionar</div></div>'; }).join('')+'</div><button onclick="v10AddEgg()" style="width:100%; background:#FFD700; border:none; padding:10px; border-radius:10px; font-weight:900;">+ NUEVO HUEVO (5 victorias)</button><div class="v9-card" style="margin-top:10px;"><b>🔬 FUSIÓN</b><div style="font-size:11px; margin-top:4px;">2 mascotas iguales + 100💎 = shiny +10% stats</div><button onclick="v10Fuse()" style="margin-top:6px; background:#8A2BE2; color:#fff; border:none; padding:8px; border-radius:8px; width:100%;">FUSIONAR</button><div>Fusiones: '+v10Data.fusions+'</div></div>';
-  }
-  if(tab==='clan'){
-    body.innerHTML='<h3>🛡️ CLAN: '+v10Data.clan.name+'</h3><div class="v9-card">Miembros: '+v10Data.clan.members+'/15<br>Guerra en: '+v10Data.clan.warIn+'</div><div class="v9-card"><b>👹 BOSS RAID - KRONOS TITÁN</b><div class="v10-boss-bar" style="margin:8px 0;"><div class="v10-boss-fill" id="v10-boss-fill" style="width:'+(v10Data.clan.bossHp/v10Data.clan.bossMax*100)+'%"></div></div><div>'+v10Data.clan.bossHp+' / '+v10Data.clan.bossMax+' HP</div><button onclick="v10HitBoss()" style="width:100%; background:#FF1744; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:8px; font-weight:900;">¡ATACAR! -250 HP (ganas 20💎)</button><div style="font-size:10px; color:#8b949e; margin-top:6px;">Si el clan lo derrota, todos ganan 200💎</div></div><div class="v9-card"><b>⚔️ DUELO AMISTOSO</b><div>Código sala: <b>PHX-'+Math.floor(1000+Math.random()*9000)+'</b></div><button style="width:100%; margin-top:6px; background:#21262d; color:#fff; border:1px solid #30363d; padding:8px; border-radius:8px;">CREAR SALA</button></div>';
-  }
-  if(tab==='roguelike'){
-    body.innerHTML='<h3>🗼 TORRE ROGUELIKE</h3><div class="v9-card">Piso: '+v10Data.rogue.floor+'/10<br>Buffs: '+(v10Data.rogue.buffs.join(', ')||'ninguno')+'</div><div class="v9-card"><b>Elige buff al ganar:</b><div style="margin-top:8px;"><span class="v10-rogue-buff" onclick="v10PickBuff(\'+20% FUEGO\')">🔥 +20% FUEGO</span><span class="v10-rogue-buff" onclick="v10PickBuff(\'+15% VIDA\')">❤️ +15% VIDA</span><span class="v10-rogue-buff" onclick="v10PickBuff(\'CURA 30%\')">💚 CURA 30%</span></div></div><button onclick="v10StartRogue()" style="width:100%; background:linear-gradient(135deg,#00E5FF,#8A2BE2); border:none; padding:12px; border-radius:12px; font-weight:900; color:#fff;">ENTRAR TORRE (piso '+(v10Data.rogue.floor+1)+')</button><div class="v9-card" style="margin-top:10px;"><b>🏆 TORNEO AUTOMÁTICO</b><div>Próximo en: 1h 42m<br>8 jugadores, eliminación directa<br>Premio: 500💎</div><button style="width:100%; margin-top:6px; background:#FFD700; border:none; padding:8px; border-radius:8px; font-weight:900;">INSCRIBIRSE</button></div>';
-  }
-  if(tab==='gacha'){
-    const pity=v10Data.gacha.pity;
-    body.innerHTML='<h3>🎰 GACHA - PITY '+pity+'/10</h3><div class="v9-card"><div style="font-size:48px; text-align:center;">✨</div><div style="text-align:center;">10 tiros = legendaria garantizada</div><div class="v9-progress" style="margin:8px 0;"><div class="v9-progress-fill" style="width:'+(pity*10)+'%"></div></div><button onclick="v10Gacha(1)" style="width:48%; background:#21262d; color:#fff; border:1px solid #FFD700; padding:10px; border-radius:10px;">1 TIRO 50💎</button><button onclick="v10Gacha(10)" style="width:48%; float:right; background:#FFD700; border:none; padding:10px; border-radius:10px; font-weight:900;">10 TIROS 450💎</button><div style="clear:both;"></div></div><div class="v9-card"><b>💡 OFERTA PERSONALIZADA</b><div style="margin-top:6px;">Vemos que usas Dragón mucho</div><div style="background:linear-gradient(135deg,#BF360C,#FF6A00); padding:8px; border-radius:8px; margin-top:6px; text-align:center; font-weight:900;">PACK DRAGÓN<br>Skin + 500💎<br>S/9.90</div></div>';
-  }
-  if(tab==='ajustes'){
-    body.innerHTML='<h3>⚙️ AJUSTES</h3><div class="v9-card">'+
-    '<div class="v10-setting-row"><span>🎵 Música</span><span><input type="checkbox" '+(v10Data.settings.music?'checked':'')+' onchange="v10Data.settings.music=this.checked; v10Save()"></span></div>'+
-    '<div class="v10-setting-row"><span>🗣️ Voz</span><span><input type="checkbox" '+(v10Data.settings.voice?'checked':'')+' onchange="v10Data.settings.voice=this.checked; v10Save()"></span></div>'+
-    '<div class="v10-setting-row"><span>📳 Vibración</span><span><input type="checkbox" '+(v10Data.settings.vibra?'checked':'')+' onchange="v10Data.settings.vibra=this.checked; v10Save()"></span></div>'+
-    '<div class="v10-setting-row"><span>📺 Calidad</span><span><select onchange="v10Data.settings.quality=this.value; v10Save()"><option '+(v10Data.settings.quality==='Alta'?'selected':'')+'>Alta</option><option '+(v10Data.settings.quality==='Baja'?'selected':'')+'>Baja</option></select></span></div>'+
-    '</div><div class="v9-card"><b>☁️ NUBE - Sin login</b><div style="font-size:12px; margin:6px 0;">Tu código: <b style="color:#FFD700; font-size:16px;">'+v10Data.cloudCode+'</b></div><div style="font-size:10px; color:#8b949e;">Guárdalo, en otro cel pon este código y recuperas todo</div><button onclick="navigator.clipboard.writeText(\''+v10Data.cloudCode+'\'); pbAchievement(\'¡CÓDIGO COPIADO!\')" style="width:100%; margin-top:6px; background:#161b22; border:1px solid #FFD700; color:#FFD700; padding:8px; border-radius:8px;">COPIAR CÓDIGO</button><div style="margin-top:8px;"><input id="v10-cloud-in" placeholder="Pega código aquí" style="width:70%; background:#0d1117; border:1px solid #30363d; color:#fff; padding:6px; border-radius:6px;"><button onclick="v10LoadCloud()" style="width:28%; float:right; background:#FFD700; border:none; padding:6px; border-radius:6px;">CARGAR</button></div></div><div class="v9-card"><b>🎓 TUTORIAL</b><button onclick="localStorage.removeItem(\'v10_tut\'); pbAchievement(\'¡TUTORIAL REINICIADO!\')" style="width:100%; background:#21262d; color:#fff; border:none; padding:8px; border-radius:8px; margin-top:6px;">REINICIAR TUTORIAL</button></div>';
-  }
-}
-
-function v10Hatch(id){
-  const egg=v10Data.eggs.find(e=>e.id===id);
-  if(!egg) return;
-  if(Date.now()<egg.time){ pbAchievement('¡AÚN NO ECLOSIONA!'); return; }
-  const ivA=Math.floor(Math.random()*16), ivD=Math.floor(Math.random()*16);
-  v10Data.eggs=v10Data.eggs.filter(e=>e.id!==id);
-  v9Data.gemas+=20; v10Save();
-  pbAchievement('¡ECLOSIONÓ! IV '+ivA+'/15 ATK '+ivD+'/15 DEF +20💎');
-  v10RenderExtra('huevos');
-}
-function v10AddEgg(){ v10Data.eggs.push({id:Date.now(), time:Date.now()+2*60*60*1000, type:'Raro'}); v10Save(); v10RenderExtra('huevos'); pbAchievement('¡HUEVO AÑADIDO!'); }
-function v10Fuse(){ if(v9Data.gemas<100){ pbAchievement('¡FALTAN 100💎!'); return; } v9Data.gemas-=100; v10Data.fusions++; v10Save(); pbAchievement('¡FUSIÓN SHINY +10%!'); v10RenderExtra('huevos'); }
-function v10HitBoss(){ if(v10Data.clan.bossHp<=0){ pbAchievement('¡BOSS YA DERROTADO!'); return; } v10Data.clan.bossHp=Math.max(0, v10Data.clan.bossHp-250); v9Data.gemas+=20; v10Save(); if(v10Data.clan.bossHp===0){ v9Data.gemas+=200; pbAchievement('¡CLAN GANÓ! +200💎 PARA TODOS!'); } else { pbAchievement('¡-250 HP BOSS! +20💎'); } v10RenderExtra('clan'); }
-function v10PickBuff(b){ v10Data.rogue.buffs.push(b); v10Data.rogue.floor++; v10Save(); pbAchievement('¡BUFF '+b+'! PISO '+v10Data.rogue.floor); v10RenderExtra('roguelike'); }
-function v10StartRogue(){ pbAchievement('¡ENTRANDO PISO '+(v10Data.rogue.floor+1)+'!'); v9Close(); }
-function v10Gacha(n){
-  const cost=n===1?50:450;
-  if(v9Data.gemas<cost){ pbAchievement('¡FALTAN GEMAS!'); return; }
-  v9Data.gemas-=cost; v10Data.gacha.pity+=n;
-  let gotLeg=false;
-  if(v10Data.gacha.pity>=10){ gotLeg=true; v10Data.gacha.pity=0; }
-  else if(Math.random()<0.1){ gotLeg=true; }
-  v10Save();
-  if(gotLeg) pbAchievement('¡¡¡LEGENDARIA!!! ✨🐉');
-  else pbAchievement('¡'+n+' x COMÚN/RARO!');
-  v10RenderExtra('gacha');
-}
-function v10LoadCloud(){ const code=document.getElementById('v10-cloud-in').value; if(!code){ pbAchievement('¡PEGA CÓDIGO!'); return; } v10Data.cloudCode=code; v10Save(); pbAchievement('¡PROGRESO CARGADO!'); }
-
-
-// v11 TOP 10 PAYING
-let v11Data = JSON.parse(localStorage.getItem('v11_data')||'{}');
-if(!v11Data.medals) v11Data={ battles: parseInt(localStorage.getItem('v9_data')?JSON.parse(localStorage.getItem('v9_data')).ranking?.[0]?.score||0 :0), medals:[], story: {cur:1, done:[]}, event:{hp:5000, max:5000}, streakRewards:[] };
-
-function v11Save(){ localStorage.setItem('v11_data', JSON.stringify(v11Data)); }
-
-function v11CheckMedals(){
-  const b=v11Data.battles;
-  const newMedals=[];
-  if(b>=100 && !v11Data.medals.includes('100')) newMedals.push('100');
-  if(b>=500 && !v11Data.medals.includes('500')) newMedals.push('500');
-  if(b>=1000 && !v11Data.medals.includes('1000')) newMedals.push('1000');
-  newMedals.forEach(m=>{ v11Data.medals.push(m); v9Data.gemas+=100; pbAchievement('¡MEDALLA '+m+' BATALLAS! +100💎'); });
-  if(newMedals.length) v11Save();
-}
-
-function v11RenderTop10(tab){
-  const body=document.getElementById('v9-body');
-  if(tab==='evento'){
-    body.innerHTML='<div class="v11-event-banner">🎃 EVENTO HALLOWEEN - BOSS CALABAZA 🎃</div><div class="v9-card"><div style="font-size:48px; text-align:center;">🎃👹</div><div class="v10-boss-bar"><div class="v10-boss-fill" style="width:'+(v11Data.event.hp/v11Data.event.max*100)+'%; background:linear-gradient(90deg,#FF6A00,#FFD700);"></div></div><div style="text-align:center; margin:6px 0;">'+v11Data.event.hp+' / '+v11Data.event.max+' HP</div><button onclick="v11HitEvent()" style="width:100%; background:#FF6A00; color:#fff; border:none; padding:12px; border-radius:10px; font-weight:900;">¡ATACAR CALABAZA! -300 HP +30💎</button><div style="font-size:10px; color:#8b949e; margin-top:6px; text-align:center;">Evento termina en: 2d 14h. Si lo derrotas: Skin Calabaza Legendaria</div></div><div class="v9-card"><b>🏆 RANKING EVENTO</b><div>1. Tú - '+(5000-v11Data.event.hp)+' daño</div><div>2. Phoenix - 2100</div><div>3. Luna - 1800</div></div>';
-  }
-  if(tab==='historia'){
-    let islands='';
-    for(let i=1;i<=20;i++){
-      const done=v11Data.story.done.includes(i);
-      const isBoss=i%5===0;
-      const isCur=i===v11Data.story.cur;
-      islands+='<div class="v11-island '+(done?'done':'')+' '+(isBoss?'boss':'')+'" onclick="v11PlayIsland('+i+')" style="'+(isCur?'border-color:#FFD700; box-shadow:0 0 10px #FFD700;':'')+'">'+(isBoss?'👹':done?'✅':'🏝️')+'<div style="font-size:8px; line-height:10px;">'+i+'</div></div>';
-    }
-    body.innerHTML='<h3>🗺️ MODO HISTORIA - 20 ISLAS</h3><div style="text-align:center;">'+islands+'</div><div class="v9-card" style="margin-top:10px;"><b>Isla '+(v11Data.story.cur)+'</b><div>Bioma: '+(v11Data.story.cur%3===0?'Volcán 🌋':v11Data.story.cur%2===0?'Bosque 🌲':'Desierto 🏜️')+'</div><div>Boss: '+(v11Data.story.cur%5===0?'JEFE FINAL':'Mini Boss')+'</div><button onclick="v11PlayIsland('+v11Data.story.cur+')" style="width:100%; margin-top:8px; background:#00E5FF; border:none; padding:10px; border-radius:10px; font-weight:900;">JUGAR ISLA '+v11Data.story.cur+'</button></div>';
-  }
-  if(tab==='medallas'){
-    body.innerHTML='<h3>🏅 MEDALLAS</h3><div class="v9-card">Batallas totales: '+v11Data.battles+'</div>' + 
-    [{n:'100', d:'Veterano'}, {n:'500', d:'Leyenda'}, {n:'1000', d:'Dios'}].map(m=>'<div class="v9-card" style="opacity:'+(v11Data.medals.includes(m.n)?'1':'0.4')+'"><div style="display:flex; justify-content:space-between;"><span>'+m.n+' batallas - '+m.d+'</span><span>'+(v11Data.medals.includes(m.n)?'✅':'🔒')+'</span></div><div style="font-size:10px;">Recompensa: 100💎 + marco exclusivo</div></div>').join('') +
-    '<div class="v9-card"><b>📹 COMPARTIR FINISHER</b><div style="font-size:11px; margin:6px 0;">Tu último finisher se puede compartir como video 5s para TikTok</div><button onclick="v11ShareFinisher()" style="width:100%; background:#000; color:#fff; border:1px solid #FF0050; padding:10px; border-radius:10px;">📤 COMPARTIR EN TIKTOK (5s)</button></div>';
-  }
-}
-
-function v11HitEvent(){
-  if(v11Data.event.hp<=0){ pbAchievement('¡EVENTO YA COMPLETADO!'); return; }
-  v11Data.event.hp=Math.max(0, v11Data.event.hp-300);
-  v9Data.gemas+=30; v11Save(); v9Data.misiones && v9Save();
-  localStorage.setItem('v9_data', JSON.stringify(v9Data));
-  if(v11Data.event.hp===0){ v9Data.gemas+=500; pbAchievement('¡BOSS CALABAZA DERROTADO! +500💎 + SKIN LEGENDARIA!'); }
-  else pbAchievement('¡-300 HP! +30💎');
-  v11RenderTop10('evento');
-}
-function v11PlayIsland(i){
-  if(i>v11Data.story.cur){ pbAchievement('¡COMPLETA ANTERIORES!'); return; }
-  pbAchievement('¡ENTRANDO ISLA '+i+'!');
-  v9Close();
-  // Simula victoria historia
-  setTimeout(()=>{
-    if(!v11Data.story.done.includes(i)){ v11Data.story.done.push(i); if(i===v11Data.story.cur) v11Data.story.cur++; v9Data.gemas+=40; v11Data.battles++; v11CheckMedals(); v11Save(); localStorage.setItem('v9_data', JSON.stringify(v9Data)); }
-  }, 1500);
-}
-function v11ShareFinisher(){
-  // Crea canvas 5s simulado
-  try{
-    const c=document.createElement('canvas'); c.width=360; c.height=640;
-    const ctx=c.getContext('2d');
-    ctx.fillStyle='#000'; ctx.fillRect(0,0,360,640);
-    ctx.fillStyle='#FFD700'; ctx.font='bold 32px Arial'; ctx.fillText('FINISHER!', 100, 300);
-    ctx.fillStyle='#fff'; ctx.font='18px Arial'; ctx.fillText('Super Bingo Rey', 100, 340);
-    const url=c.toDataURL();
-    const a=document.createElement('a'); a.href=url; a.download='finisher.png'; a.click();
-    pbAchievement('¡IMAGEN FINISHER DESCARGADA! Súbela a TikTok');
-  }catch(e){ pbAchievement('¡COPIADO! Pega en TikTok'); }
-}
-
-// Mejorar huevos a 3 rarezas reales
-function v11UpgradeEggs(){
-  if(!v10Data.eggs) return;
-  v10Data.eggs.forEach(e=>{
-    if(!e.rarity){
-      const r=Math.random();
-      if(r<0.6){ e.rarity='Comun'; e.time=Date.now()+30*60*1000; }
-      else if(r<0.9){ e.rarity='Raro'; e.time=Date.now()+2*60*60*1000; }
-      else { e.rarity='Legendario'; e.time=Date.now()+8*60*60*1000; }
-    }
-  });
-  v10Save();
-}
-v11UpgradeEggs();
-
-// Streak 7 días = legendaria
-function v11CheckStreak7(){
-  if(v9Data.racha>=7 && !v11Data.streakRewards.includes(7)){
-    v11Data.streakRewards.push(7); v9Data.gemas+=300; v11Save(); localStorage.setItem('v9_data', JSON.stringify(v9Data)); pbAchievement('¡7 DÍAS SEGUIDOS! ¡LEGENDARIA +300💎!');
-  }
-}
-setTimeout(v11CheckStreak7, 1000);
-
-// Extender tabs
-setTimeout(()=>{
-  const extra=document.getElementById('v10-extra-tabs');
-  if(extra && !document.getElementById('v11-extra')){
-    const div=document.createElement('div'); div.id='v11-extra'; div.style.display='flex'; div.style.width='100%';
-    div.innerHTML='<div class="v9-tab" onclick="v11RenderTop10(\'evento\')">EVENTO</div><div class="v9-tab" onclick="v11RenderTop10(\'historia\')">HISTORIA</div><div class="v9-tab" onclick="v11RenderTop10(\'medallas\')">MEDALLAS</div>';
-    extra.parentNode.insertBefore(div, extra.nextSibling);
-  }
-}, 900);
-
-
-// v12 HABITATS + GRANJA
-let v12Data = JSON.parse(localStorage.getItem('v12_data')||'{}');
-if(!v12Data.habs) v12Data={ habs:[{id:1, elem:'Fuego', lvl:1, gold:0, cap:500, drags:1},{id:2, elem:'Agua', lvl:1, gold:120, cap:500, drags:0},{id:3, elem:'Planta', lvl:1, gold:0, cap:500, drags:0}], farms:[{id:1, crop:null, ready:0},{id:2, crop:null, ready:0}], food: 500, lastTick: Date.now() };
-
-function v12Tick(){
-  const now=Date.now(); const diff=Math.floor((now - v12Data.lastTick)/60000); // min
-  if(diff>0){
-    v12Data.habs.forEach(h=>{ if(h.drags>0){ h.gold=Math.min(h.cap, h.gold + diff*10*h.lvl*h.drags); } });
-    v12Data.lastTick=now; v12Save();
-  }
-}
-function v12Save(){ localStorage.setItem('v12_data', JSON.stringify(v12Data)); }
-setInterval(v12Tick, 60000); v12Tick();
-
-function v12Render(tab){
-  const body=document.getElementById('v9-body');
-  if(tab==='ciudad'){
-    v12Tick();
-    let totalGold=v12Data.habs.reduce((s,h)=>s+h.gold,0);
-    body.innerHTML='<div style="display:flex; justify-content:space-between;"><b>🏘️ CIUDAD - Hábitats</b><span>💰 '+totalGold+' oro</span></div><div style="font-size:10px; color:#8b949e;">Generan 10 oro/min por dragón. Offline también.</div><div style="margin:8px 0;">'+v12Data.habs.map(h=>'<div class="v12-habitat lvl'+h.lvl+'"><div style="font-size:22px;">'+(h.elem==='Fuego'?'🔥':h.elem==='Agua'?'💧':'🌿')+'</div><div style="font-size:10px; font-weight:800;">'+h.elem+' Lv'+h.lvl+'</div><div style="font-size:9px;">'+h.gold+'/'+h.cap+'</div><div style="font-size:8px;">'+h.drags+' dragones</div><button onclick="v12Collect('+h.id+')" style="font-size:8px; margin-top:2px; background:#FFD700; border:none; border-radius:6px; padding:2px 6px;">RECOLECTAR</button></div>').join('')+'</div><button onclick="v12CollectAll()" style="width:100%; background:#FFD700; border:none; padding:10px; border-radius:10px; font-weight:900;">RECOLECTAR TODO '+totalGold+' 💰</button><div style="margin-top:10px;"><b>🌾 GRANJAS DE COMIDA</b><div>Comida: '+v12Data.food+' 🍖</div>'+v12Data.farms.map(f=>{ const left=Math.max(0, Math.floor((f.ready-Date.now())/1000)); return '<div class="v12-farm"><div>Granja '+f.id+': '+(f.crop? (left<=0?'¡LISTO! '+f.crop.amt+' 🍖':'Creciendo '+left+'s') : 'Vacía')+'</div>'+(f.crop && left<=0?'<button onclick="v12Harvest('+f.id+')" style="background:#00FF88; border:none; padding:6px 10px; border-radius:8px; margin-top:4px;">COSECHAR</button>':'<div style="margin-top:4px;"><button onclick="v12Plant('+f.id+',30,100)" style="font-size:10px; margin:2px; padding:4px 6px;">30s 100</button><button onclick="v12Plant('+f.id+',300,500)" style="font-size:10px; margin:2px; padding:4px 6px;">5m 500</button><button onclick="v12Plant('+f.id+',7200,2000)" style="font-size:10px; margin:2px; padding:4px 6px;">2h 2000</button></div>')+'</div>'; }).join('')+'</div>';
-  }
-}
-function v12Collect(id){ const h=v12Data.habs.find(x=>x.id===id); if(!h) return; v9Data.gemas+=Math.floor(h.gold/10); h.gold=0; v12Save(); localStorage.setItem('v9_data', JSON.stringify(v9Data)); pbAchievement('¡'+Math.floor(h.gold/10)+'💎 recolectado!'); v12Render('ciudad'); }
-function v12CollectAll(){ let g=0; v12Data.habs.forEach(h=>{ g+=h.gold; h.gold=0; }); v9Data.gemas+=Math.floor(g/10); v12Save(); localStorage.setItem('v9_data', JSON.stringify(v9Data)); pbAchievement('¡TODO RECOLECTADO '+Math.floor(g/10)+'💎!'); v12Render('ciudad'); }
-function v12Plant(id, sec, amt){ const f=v12Data.farms.find(x=>x.id===id); f.crop={amt:amt}; f.ready=Date.now()+sec*1000; v12Save(); v12Render('ciudad'); }
-
-// v13-v20 FINAL DRAGON CITY KILLER
-let v13Data = JSON.parse(localStorage.getItem('v13_data')||'{}');
-if(!v13Data.levels) v13Data={ levels:{'dragon':5}, book:{owned:12, total:150, families:{'Fuego':3,'Agua':2}}, liga:{name:'Bronce', trophies:450, league:1}, cruces:[], carrera:{node:1, done:false}, rescate:{keys:3, maxKeys:6}, alianza:{points:3200, goal:10000} };
-
-function v13Save(){ localStorage.setItem('v13_data', JSON.stringify(v13Data)); }
-
-function v13FeedDragon(){
-  if(v12Data.food<100){ pbAchievement('¡FALTA COMIDA! Planta en CIUDAD'); return; }
-  v12Data.food-=100; v13Data.levels['dragon']++; v12Save(); v13Save(); pbAchievement('¡DRAGÓN Nv'+v13Data.levels['dragon']+'! +2% stats');
-  v20Render('granja');
-}
-
-function v14Cruzar(){
-  const a=document.getElementById('v14-a')?.value||'Fuego'; const b=document.getElementById('v14-b')?.value||'Agua';
-  const key=a+'+'+b;
-  const results={'Fuego+Agua':'Nube 8h','Fuego+Planta':'Lava 12h','Agua+Planta':'Hielo 10h'};
-  const res=results[key]||results[b+'+'+a]||'Raro 6h';
-  v13Data.cruces.push({parents:key, result:res, ready:Date.now()+2*60*1000}); // 2min demo en vez de 8h para probar
-  v13Save(); pbAchievement('¡CRUCE '+key+' = '+res+'!'); v20Render('cruce');
-}
-
-function v17AdvanceCarrera(){
-  v13Data.carrera.node++; if(v13Data.carrera.node>6){ v13Data.carrera.done=true; v9Data.gemas+=500; localStorage.setItem('v9_data', JSON.stringify(v9Data)); pbAchievement('¡CARRERA HEROICA COMPLETADA! DRAGÓN HEROICO +500💎!'); } else { v9Data.gemas+=50; localStorage.setItem('v9_data', JSON.stringify(v9Data)); pbAchievement('¡NODO '+v13Data.carrera.node+' COMPLETADO! +50💎'); }
-  v13Save(); v20Render('carrera');
-}
-
-function v18RescueKey(){ if(v13Data.rescate.keys>=6){ pbAchievement('¡LLAVES LLENAS!'); return; } v13Data.rescate.keys++; v13Save(); v20Render('rescate'); }
-
-function v19AddPoints(){ v13Data.alianza.points+=500; if(v13Data.alianza.points>=v13Data.alianza.goal){ v9Data.gemas+=200; localStorage.setItem('v9_data', JSON.stringify(v9Data)); pbAchievement('¡COFRE ALIANZA COMPLETADO! +200💎 TODOS!'); v13Data.alianza.points=0; } v13Save(); v20Render('alianza'); }
-
-function v20Render(tab){
-  const body=document.getElementById('v9-body');
-  if(tab==='granja'){
-    body.innerHTML='<h3>🍖 GRANJA LVL - Alimentar</h3><div class="v9-card">Dragón Nv '+v13Data.levels['dragon']+' - Stats +'+(v13Data.levels['dragon']*2)+'%<br>Comida: '+v12Data.food+' 🍖<br><button onclick="v13FeedDragon()" style="width:100%; background:#00FF88; border:none; padding:10px; border-radius:10px; font-weight:900; margin-top:8px;">ALIMENTAR 100🍖 → +1 NIVEL</button></div><div class="v9-card"><b>📚 LIBRO DRAGÓN</b><br>'+v13Data.book.owned+'/'+v13Data.book.total+' dragones<br>Familias: Fuego '+v13Data.book.families['Fuego']+'/10, Agua '+v13Data.book.families['Agua']+'/10<br><div class="v9-progress"><div class="v9-progress-fill" style="width:'+(v13Data.book.owned/v13Data.book.total*100)+'%"></div></div><div style="font-size:10px; margin-top:4px;">Completa familia = 100💎</div></div>';
-  }
-  if(tab==='cruce'){
-    const list=v13Data.cruces.map(c=>{ const left=Math.max(0, Math.floor((c.ready-Date.now())/1000)); return '<div class="v9-card">'+c.parents+' → '+c.result+' '+(left<=0?'✅ LISTO':'⏳ '+left+'s')+'</div>'; }).join('');
-    body.innerHTML='<h3>🧬 CRUCE - Como Dragon City</h3><div class="v9-card"><div style="display:flex; gap:8px;"><select id="v14-a"><option>Fuego</option><option>Agua</option><option>Planta</option></select><span>+</span><select id="v14-b"><option>Agua</option><option>Fuego</option><option>Planta</option></select></div><button onclick="v14Cruzar()" style="width:100%; background:#8A2BE2; color:#fff; border:none; padding:10px; border-radius:10px; margin-top:8px; font-weight:900;">CRUZAR (2min demo)</button><div style="font-size:10px; color:#8b949e; margin-top:6px;">En real: 8h cruce + 8h huevo. 100 combinaciones secretas</div></div>'+list+'<div class="v9-card"><b>🏆 LIGAS ARENAS</b><br>Liga: '+v13Data.liga.name+'<br>Trofeos: '+v13Data.liga.trophies+'<br><div style="font-size:10px;">Cada 3 días recompensa según liga. Pierdes bajas.</div><button onclick="v13Data.liga.trophies+=25; v13Save(); v20Render(\'cruce\'); pbAchievement(\'+25 TROFEOS!\')" style="margin-top:6px; background:#FFD700; border:none; padding:8px; border-radius:8px; width:100%;">GANAR +25</button></div>';
-  }
-  if(tab==='carrera'){
-    body.innerHTML='<h3>🏁 CARRERA HEROICA 7 DÍAS</h3><div class="v11-event-banner">PREMIO: DRAGÓN HEROICO EXCLUSIVO</div><div style="display:flex; gap:6px; overflow-x:auto; padding:8px 0;">'+[1,2,3,4,5,6].map(i=>'<div style="min-width:60px; height:60px; border-radius:50%; background:'+(i<v13Data.carrera.node?'#00FF88':i===v13Data.carrera.node?'#FFD700':'#21262d')+'; display:flex; align-items:center; justify-content:center; font-weight:900; border:2px solid '+(i===v13Data.carrera.node?'#FF6A00':'#30363d')+';">'+(i<v13Data.carrera.node?'✅':i)+'</div>').join('')+'</div><div class="v9-card"><b>Nodo '+v13Data.carrera.node+'/6</b><div>Misiones: Gana 3 batallas, Cruza 1 vez, Alimenta 5 veces</div><button onclick="v17AdvanceCarrera()" style="width:100%; background:#FFD700; border:none; padding:10px; border-radius:10px; margin-top:8px; font-weight:900;">COMPLETAR NODO +50💎</button><div style="font-size:10px; color:#8b949e; margin-top:6px;">Esta mecánica factura 40% en Dragon City</div></div>';
-  }
-  if(tab==='rescate'){
-    body.innerHTML='<h3>🔑 RESCATE + TORRE 100</h3><div class="v9-card"><b>Rescate Dragón Legendario</b><br>Llaves: '+v13Data.rescate.keys+'/'+v13Data.rescate.maxKeys+'<br><div style="font-size:10px;">1 llave cada 8h</div><button onclick="v18RescueKey()" style="margin-top:6px; background:#00E5FF; border:none; padding:8px; border-radius:8px; width:100%;">RECLAMAR LLAVE +1</button><button onclick="if(v13Data.rescate.keys>0){ v13Data.rescate.keys--; v9Data.gemas+=30; localStorage.setItem(\'v9_data\', JSON.stringify(v9Data)); v13Save(); pbAchievement(\'¡RESCATE! +30💎\'); v20Render(\'rescate\'); }" style="margin-top:6px; background:#FF6A00; border:none; padding:8px; border-radius:8px; width:100%;">RESCATAR -1 LLAVE</button></div><div class="v9-card"><b>🗼 TORRE 100 PISOS</b><br>Piso actual: '+v10Data.rogue.floor+'/100<br>Cada 5 pisos jefe<br><button onclick="v10PickBuff(\'+10%\'); v20Render(\'rescate\')" style="width:100%; background:#8A2BE2; color:#fff; border:none; padding:8px; border-radius:8px;">SUBIR PISO</button></div>';
-  }
-  if(tab==='alianza'){
-    body.innerHTML='<h3>🤝 ALIANZA + COMERCIO</h3><div class="v9-card"><b>Cofre Alianza</b><br>'+v13Data.alianza.points+'/'+v13Data.alianza.goal+' puntos<br><div class="v9-progress"><div class="v9-progress-fill" style="width:'+(v13Data.alianza.points/v13Data.alianza.goal*100)+'%"></div></div><button onclick="v19AddPoints()" style="width:100%; background:#FFD700; border:none; padding:8px; border-radius:10px; margin-top:8px; font-weight:900;">DONAR +500 PTS</button><div style="font-size:10px; margin-top:4px;">Si llega a 10000, todos +200💎</div></div><div class="v9-card"><b>🔄 Comercio Orbes</b><br>Pides 5 orbes Dragón, das 5 orbes Panda<br><button style="width:100%; background:#21262d; color:#fff; border:1px solid #30363d; padding:8px; border-radius:8px;">INTERCAMBIAR ORBES</button></div><div class="v9-card"><b>📺 Ads x2 + Oferta 0.99€</b><br><button onclick="v9Data.gemas*=2; localStorage.setItem(\'v9_data\', JSON.stringify(v9Data)); pbAchievement(\'¡X2 GEMAS POR ANUNCIO!\')" style="width:100%; background:#000; color:#fff; border:1px solid #FF0050; padding:8px; border-radius:8px;">VER ANUNCIO X2 RECOMPENSA</button><div style="margin-top:8px; background:linear-gradient(135deg,#FF6A00,#FFD700); padding:8px; border-radius:8px; text-align:center; font-weight:900; color:#000;">OFERTA VUELVE PRONTO<br>500💎 + Heroico<br>S/0.99 ¡Solo hoy!</div></div>';
-  }
-}
-
-// Add v13-v20 tabs
-setTimeout(()=>{
-  const c=document.getElementById('v12-extra');
-  if(c && !document.getElementById('v20-extra')){
-    const d=document.createElement('div'); d.id='v20-extra'; d.style.display='flex'; d.style.flexWrap='wrap'; d.style.width='100%';
-    d.innerHTML='<div class="v9-tab" onclick="v20Render(\'granja\')">GRANJA</div><div class="v9-tab" onclick="v20Render(\'cruce\')">CRUCE</div><div class="v9-tab" onclick="v20Render(\'carrera\')">HEROICA</div><div class="v9-tab" onclick="v20Render(\'rescate\')">RESCATE</div><div class="v9-tab" onclick="v20Render(\'alianza\')">ALIANZA</div>';
-    c.parentNode.insertBefore(d, c.nextSibling);
-  }
-}, 1100);
-
-// === V20.1 FUNCIONAL REAL ===
-function vFuncInit(){
-  // Hacer que habitats y farms funcionen en tiempo real
-  setInterval(()=>{
-    v12Tick();
-    // Actualizar UI si está abierta
-    const body=document.getElementById('v9-body');
-    if(body && body.innerHTML.includes('CIUDAD')){ /* no re-render para no parpadear */ }
-    // Check farm ready
-    v12Data.farms.forEach(f=>{
-      if(f.crop && Date.now()>=f.ready && !f.notified){
-        f.notified=true; v12Save();
-        try{ pbAchievement('¡GRANJA '+f.id+' LISTA! '+f.crop.amt+'🍖'); if(v12Data.settings?.vibra!==false) navigator.vibrate?.(100); }catch(e){}
-      }
-    });
-    // Check cruces ready
-    v13Data.cruces.forEach(c=>{
-      if(c.ready && Date.now()>=c.ready && !c.notified){
-        c.notified=true; v13Save();
-        pbAchievement('¡CRUCE '+c.parents+' LISTO! '+c.result+' 🥚');
-        // Convertir en huevo
-        v10Data.eggs.push({id:Date.now(), time:Date.now()+60000, type:c.result, rarity:'Raro'});
-        v10Save();
-      }
-    });
-    // Check eggs ready
-    v10Data.eggs.forEach(e=>{
-      if(Date.now()>=e.time && !e.notified){
-        e.notified=true; v10Save();
-        pbAchievement('¡HUEVO '+e.type+' LISTO PARA ECLOSIONAR! 🐣');
-      }
-    });
-  }, 2000);
-
-  // Conectar alimentacion a batalla real
-  try{
-    const origGetDamage = window.pbGetElementalMultiplier || null;
-    // Hook simple: aumentar daño segun nivel dragon
-    window.getDragonLevelBonus = ()=> 1 + (v13Data.levels['dragon']||0)*0.02;
-  }catch(e){}
-  
-  // Si hay API de daño en tu juego, parcheamos
-  try{
-    // Buscar donde calculas daño final y multiplicar
-    setTimeout(()=>{
-      // Intenta parchar pbApplyDamage si existe
-      if(window.pbApplyDamage){
-        const orig=window.pbApplyDamage;
-        window.pbApplyDamage = function(dmg, elem){
-          const bonus = window.getDragonLevelBonus ? window.getDragonLevelBonus() : 1;
-          return orig(Math.floor(dmg*bonus), elem);
-        };
-      }
-    }, 1500);
-  }catch(e){}
-}
-
-setTimeout(vFuncInit, 1000);
-
-// Fix recolectar que si funciona con animacion
-const origCollect = v12Collect;
-v12Collect = function(id){
-  const h=v12Data.habs.find(x=>x.id===id); if(!h || h.gold<=0){ pbAchievement('¡SIN ORO!'); return; }
-  const gems=Math.floor(h.gold/10);
-  // Animacion monedas
-  for(let i=0;i<5;i++){
-    const m=document.createElement('div'); m.textContent='💰'; m.style.position='fixed'; m.style.left=(20+Math.random()*60)+'%'; m.style.top='60%'; m.style.fontSize='24px'; m.style.zIndex='9999'; m.style.animation='eggWobble 1s forwards'; document.body.appendChild(m); setTimeout(()=>m.remove(), 1000);
-  }
-  v9Data.gemas+=gems; h.gold=0; v12Save(); localStorage.setItem('v9_data', JSON.stringify(v9Data));
-  pbAchievement('¡+'+gems+'💎 RECOLECTADO!');
-  v12Render('ciudad');
-};
-
-// Fix plant que descuenta oro y funciona
-const origPlant = v12Plant;
-v12Plant = function(id, sec, amt){
-  const f=v12Data.farms.find(x=>x.id===id);
-  if(f.crop){ pbAchievement('¡OCUPADA!'); return; }
-  f.crop={amt:amt}; f.ready=Date.now()+sec*1000; f.notified=false; v12Save(); v12Render('ciudad');
-  pbAchievement('¡PLANTADO! Listo en '+sec+'s');
-};
-
-const origHarvest = v12Harvest;
-v12Harvest = function(id){
-  const f=v12Data.farms.find(x=>x.id===id); if(!f || !f.crop) return;
-  if(Date.now()<f.ready){ pbAchievement('¡FALTAN '+Math.floor((f.ready-Date.now())/1000)+'s!'); return; }
-  v12Data.food+=f.crop.amt; const amt=f.crop.amt; f.crop=null; f.ready=0; f.notified=false; v12Save();
-  pbAchievement('¡+'+amt+'🍖 COSECHADO! Total '+v12Data.food);
-  v12Render('ciudad');
-};
-
-// Fix cruce funcional con oro
-const origCruzar = v14Cruzar;
-v14Cruzar = function(){
-  const a=document.getElementById('v14-a')?.value||'Fuego'; const b=document.getElementById('v14-b')?.value||'Agua';
-  if(v12Data.food<50){ pbAchievement('¡FALTA 50🍖 PARA CRUZAR!'); return; }
-  v12Data.food-=50; v12Save();
-  const key=a+'+'+b;
-  const results={'Fuego+Agua':'Nube','Fuego+Planta':'Lava','Agua+Planta':'Hielo','Fuego+Fuego':'Fuego Doble','Agua+Agua':'Mar'};
-  const res=results[key]||results[b+'+'+a]||'Híbrido Raro';
-  const secs = res.includes('Híbrido')? 60 : 120; // 1-2 min demo (en prod 8h)
-  v13Data.cruces.push({parents:key, result:res, ready:Date.now()+secs*1000, notified:false});
-  v13Save(); pbAchievement('¡CRUZANDO '+key+' → '+res+' en '+secs+'s! -50🍖');
-  v20Render('cruce');
-};
-
-// Fix alimentar funcional
-const origFeed = v13FeedDragon;
-v13FeedDragon = function(){
-  if(v12Data.food<100){ pbAchievement('¡FALTA 100🍖! Planta en CIUDAD'); return; }
-  v12Data.food-=100; v13Data.levels['dragon']=(v13Data.levels['dragon']||1)+1;
-  v12Save(); v13Save();
-  // Aumentar drags en habitat fuego
-  const habFuego=v12Data.habs.find(h=>h.elem==='Fuego'); if(habFuego) habFuego.drags=Math.min(5, (habFuego.drags||1)+0.2);
-  pbAchievement('¡DRAGÓN Nv'+v13Data.levels['dragon']+'! Daño x'+ (1+v13Data.levels['dragon']*0.02).toFixed(2));
-  v20Render('granja');
-};
-
-// Fix huevos eclosion que da dragon real
-const origHatch = v10Hatch;
-v10Hatch = function(id){
-  const egg=v10Data.eggs.find(e=>e.id===id);
-  if(!egg) return;
-  if(Date.now()<egg.time){ pbAchievement('¡FALTAN '+Math.floor((egg.time-Date.now())/1000)+'s!'); return; }
-  const ivA=Math.floor(Math.random()*16), ivD=Math.floor(Math.random()*16);
-  v10Data.eggs=v10Data.eggs.filter(e=>e.id!==id);
-  v9Data.gemas+=20;
-  // Añadir dragon a habitat
-  const hab=v12Data.habs[0]; hab.drags=Math.min(5, hab.drags+1);
-  v13Data.book.owned=Math.min(v13Data.book.total, v13Data.book.owned+1);
-  v12Save(); v10Save(); v13Save(); localStorage.setItem('v9_data', JSON.stringify(v9Data));
-  pbAchievement('¡ECLOSIONÓ '+egg.type+'! IV '+ivA+'/'+ivD+' +20💎 +1 DRAGÓN');
-  v10RenderExtra('huevos');
-};
-
-console.log('V20.1 FUNCIONAL CARGADO');
-
-
-function v12Harvest(id){ const f=v12Data.farms.find(x=>x.id===id); if(!f || !f.crop) return; if(Date.now()<f.ready){ pbAchievement('¡AÚN CRECE!'); return; } v12Data.food+=f.crop.amt; f.crop=null; f.ready=0; v12Save(); pbAchievement('¡+'+f.crop?.amt+' COMIDA!'); v12Render('ciudad'); }
-
-// Add tab
-setTimeout(()=>{
-  const extra2=document.getElementById('v11-extra');
-  if(extra2 && !document.getElementById('v12-extra')){
-    const d=document.createElement('div'); d.id='v12-extra'; d.style.display='flex'; d.style.width='100%';
-    d.innerHTML='<div class="v9-tab" onclick="v12Render(\'ciudad\')">CIUDAD</div>';
-    extra2.parentNode.insertBefore(d, extra2.nextSibling);
-  }
-}, 1000);
-
-// Hook batallas para medallas
-const _origHook = v9HookBattleEnd;
-v9HookBattleEnd = function(won){
-  _origHook(won);
-  if(won){ v11Data.battles++; v11CheckMedals(); v11Save(); }
-}
-
-// Extender v9Tab para incluir nuevos
-const origV9Tab = v9Tab;
-v9Tab = function(t){
-  if(['huevos','clan','roguelike','gacha','ajustes'].includes(t)){ 
-    document.querySelectorAll('.v9-tab').forEach(el=>el.classList.remove('active'));
-    v10RenderExtra(t); 
-    return;
-  }
-  origV9Tab(t);
-}
-
-// Agregar tabs extra dinámicamente
-setTimeout(()=>{
-  const tabs=document.querySelector('.v9-tabs');
-  if(tabs && !document.getElementById('v10-extra-tabs')){
-    const extra=document.createElement('div'); extra.id='v10-extra-tabs'; extra.style.display='flex'; extra.style.width='100%';
-    extra.innerHTML='<div class="v9-tab" onclick="v9Tab(\'huevos\')">HUEVOS</div><div class="v9-tab" onclick="v9Tab(\'clan\')">CLAN</div><div class="v9-tab" onclick="v9Tab(\'roguelike\')">TORRE</div><div class="v9-tab" onclick="v9Tab(\'gacha\')">GACHA</div><div class="v9-tab" onclick="v9Tab(\'ajustes\')">AJUSTES</div>';
-    tabs.parentNode.insertBefore(extra, tabs.nextSibling);
-  }
-}, 800);
-
-// Tutorial primera vez
-if(!localStorage.getItem('v10_tut')){
-  setTimeout(()=>{ pbAchievement('¡BIENVENIDO! Toca 🎁 para ver novedades'); localStorage.setItem('v10_tut','1'); }, 2000);
-}
-
-// Conectar con eventos existentes
-try{
-  const origUpdate=window.pbUpdateUltMeter;
-  if(origUpdate){
-    // ya existe
-  }
-}catch(e){}
-
 // === v8.0 ALL-IN SYSTEMS ===
 const PB_BIOME_MAP = {
   eden:'forest', panda:'forest', pollito:'forest', iguana:'forest', capibara:'forest',
@@ -13796,7 +13631,132 @@ function pbApplyBiome(petId){
   arena.classList.remove('biome-forest','biome-volcano','biome-void','biome-ice','biome-divine');
   const biome = PB_BIOME_MAP[petId] || (petId==='seraph'?'divine':null);
   if(biome) arena.classList.add('biome-'+biome);
+  pbSet3DBiome(biome || 'forest');
 }
+
+/* ================= FONDO 3D DE LA ARENA (Three.js) ================= */
+const PB_BIOME_3D = {
+  forest:  { fog:0x0a2a0a, ground:0x1B5E20, ring:0x4caf50, particle:'🍃' },
+  volcano: { fog:0x2a0e08, ground:0x8a2c0f, ring:0xff6a00, particle:'🔥' },
+  void:    { fog:0x05061a, ground:0x1A237E, ring:0x8a5cff, particle:'✨' },
+  ice:     { fog:0x0a2436, ground:0x01579B, ring:0x81D4FA, particle:'❄️' },
+  divine:  { fog:0x2a1440, ground:0xFF6A00, ring:0xFFD700, particle:'⭐' }
+};
+let pb3D = null, pb3DRAF = null, pb3DReady = false;
+
+function pbInit3DBg() {
+  ensureThreeLoaded(() => {
+    if (!pb3DReady) pbBuild3DBg();
+    pbStart3DLoop();
+  });
+}
+
+function pbBuild3DBg() {
+  const wrap = document.getElementById('pb-3d-bg');
+  if (!wrap || typeof THREE === 'undefined') return;
+  const W = wrap.clientWidth || window.innerWidth;
+  const H = wrap.clientHeight || 200;
+
+  const scene = new THREE.Scene();
+  const theme = PB_BIOME_3D.forest;
+  scene.fog = new THREE.Fog(theme.fog, 6, 16);
+  scene.background = new THREE.Color(theme.fog);
+
+  const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 50);
+  camera.position.set(0, 2.6, 7);
+  camera.lookAt(0, 0.8, 0);
+
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
+  renderer.setSize(W, H);
+  wrap.innerHTML = '';
+  wrap.appendChild(renderer.domElement);
+
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x101010, 1.0);
+  scene.add(hemi);
+  const key = new THREE.DirectionalLight(0xffffff, 0.9);
+  key.position.set(3, 6, 4);
+  scene.add(key);
+
+  // Plataforma flotante donde "pisan" las siluetas de los luchadores
+  const platform = new THREE.Mesh(
+    new THREE.CylinderGeometry(3.4, 3.8, 0.4, 24),
+    new THREE.MeshStandardMaterial({ color: theme.ground, roughness: 0.7 })
+  );
+  platform.position.y = -0.6;
+  scene.add(platform);
+
+  const ring = new THREE.Mesh(
+    new THREE.TorusGeometry(3.45, 0.05, 8, 40),
+    new THREE.MeshBasicMaterial({ color: theme.ring })
+  );
+  ring.rotation.x = Math.PI / 2;
+  ring.position.y = -0.38;
+  scene.add(ring);
+
+  // Partículas ambientales flotantes (emoji sprites vía Points simulado con sprites simples)
+  const particleGroup = new THREE.Group();
+  const pGeo = new THREE.SphereGeometry(0.04, 6, 6);
+  const pMat = new THREE.MeshBasicMaterial({ color: theme.ring });
+  const particles = [];
+  for (let i = 0; i < 26; i++) {
+    const m = new THREE.Mesh(pGeo, pMat);
+    m.position.set((Math.random()-0.5)*7, Math.random()*4 - 0.4, (Math.random()-0.5)*4 - 1);
+    particleGroup.add(m);
+    particles.push({ mesh: m, speed: 0.2 + Math.random()*0.4, offset: Math.random()*10 });
+  }
+  scene.add(particleGroup);
+
+  pb3D = { scene, camera, renderer, wrap, platform, ring, particleGroup, particles, theme,
+           resizeHandler: null };
+
+  pb3D.resizeHandler = () => {
+    const w2 = wrap.clientWidth || window.innerWidth;
+    const h2 = wrap.clientHeight || 200;
+    camera.aspect = w2 / h2;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w2, h2);
+  };
+  window.addEventListener('resize', pb3D.resizeHandler);
+
+  pb3DReady = true;
+}
+
+function pbSet3DBiome(biome) {
+  if (!pb3DReady) { pbInit3DBg(); return; }
+  const theme = PB_BIOME_3D[biome] || PB_BIOME_3D.forest;
+  if (!pb3D) return;
+  pb3D.theme = theme;
+  pb3D.scene.fog.color.set(theme.fog);
+  pb3D.scene.background.set(theme.fog);
+  pb3D.platform.material.color.set(theme.ground);
+  pb3D.ring.material.color.set(theme.ring);
+  pb3D.particles.forEach(p => p.mesh.material.color.set(theme.ring));
+}
+
+function pbStart3DLoop() {
+  if (!pb3DReady || pb3DRAF) return;
+  let t = 0;
+  function loop() {
+    pb3DRAF = requestAnimationFrame(loop);
+    t += 0.012;
+    if (pb3D) {
+      pb3D.platform.rotation.y = t * 0.15;
+      pb3D.ring.rotation.z = t * 0.3;
+      pb3D.particles.forEach(p => {
+        p.mesh.position.y += Math.sin(t*2 + p.offset) * 0.0025;
+        p.mesh.position.x += Math.cos(t*0.5 + p.offset) * 0.001;
+      });
+      pb3D.renderer.render(pb3D.scene, pb3D.camera);
+    }
+  }
+  loop();
+}
+
+function pbStop3DLoop() {
+  if (pb3DRAF) { cancelAnimationFrame(pb3DRAF); pb3DRAF = null; }
+}
+
 function pbAnimeText(txt, color){
   const arena=document.getElementById('pb-arena'); if(!arena) return;
   const el=document.createElement('div'); el.className='pb-anime-text';
@@ -14135,22 +14095,9 @@ pbTriggerPetFx = function(a,b,c,d){
 </script>
 
 
-<div id="v9-hub-btn" onclick="v9Open()">🎁</div>
 <div id="img-zoom-modal" onclick="if(event.target===this) closeImageZoom()">
     <button id="img-zoom-close" onclick="closeImageZoom()">✕</button>
     <img id="img-zoom-content" src="">
-</div>
-<div id="v9-modal" onclick="if(event.target===this) v9Close()">
-  <div class="v9-panel">
-    <div class="v9-tabs">
-      <div class="v9-tab active" onclick="v9Tab('misiones')">MISIONES</div>
-      <div class="v9-tab" onclick="v9Tab('ruleta')">RULETA</div>
-      <div class="v9-tab" onclick="v9Tab('pase')">PASE</div>
-      <div class="v9-tab" onclick="v9Tab('tienda')">TIENDA</div>
-      <div class="v9-tab" onclick="v9Tab('ranking')">RANK</div>
-    </div>
-    <div class="v9-body" id="v9-body"></div>
-  </div>
 </div>
 
 </body>
