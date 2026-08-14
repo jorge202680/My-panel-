@@ -4,10 +4,10 @@
   "description": "Super Bingo Rey - Juego de mascotas, elementos y eventos",
   "start_url": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "landscape",
-  "background_color": "#1a0b2e",
-  "theme_color": "#6d28d9",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "icons": [
     {
       "src": "icon-192.png",
