@@ -2186,28 +2186,48 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 @media (orientation: landscape){
     #pet-battle-screen.active{
         display:grid !important;
-        grid-template-columns: 1fr 200px !important;
-        grid-template-rows: auto auto auto 1fr !important;
-        grid-template-areas: "top top" "hp hp" "log log" "arena skills" !important;
+        grid-template-columns: 1fr !important;
+        grid-template-rows: auto auto 1fr auto !important;
+        grid-template-areas: "top" "hp" "arena" "skills" !important;
+        /* Reserva el espacio real de la barra de navegación/gestos de Android
+           (izq/der según cómo esté rotado el teléfono) para que ninguna columna
+           quede oculta o cortada debajo de esos botones del sistema. */
+        padding-left: env(safe-area-inset-left) !important;
+        padding-right: env(safe-area-inset-right) !important;
+        box-sizing: border-box !important;
     }
     #pet-battle-screen .pb-topbar{ grid-area:top !important; padding:4px 12px 0 !important; }
     #pet-battle-screen .pb-hpbars{ grid-area:hp !important; padding:2px 10px 0 !important; gap:8px !important; }
     #pet-battle-screen .pb-hpcard{ padding:4px 8px !important; }
     #pet-battle-screen .pb-hp-name{ font-size:11px !important; }
-    #pet-battle-screen .pb-log{ grid-area:log !important; font-size:10px !important; margin:1px 15px 0 !important; min-height:12px !important; }
+    /* Las insignias de elemento se generan con estilo en línea bastante grandes
+       (min-width:48px) para que se vea bien la imagen subida por el admin; en
+       vertical hay espacio de sobra, pero en horizontal esto hacía que la
+       tarjeta de vida creciera mucho de alto (los elementos se envolvían en
+       2 filas) y empujaba la arena y las habilidades fuera de la pantalla,
+       sin poder hacer scroll para verlas. Se fuerzan pequeñas solo aquí. */
+    #pet-battle-screen .pb-hp-elems{ max-width:none !important; flex-wrap:nowrap !important; gap:2px !important; }
+    #pet-battle-screen .pb-elem-badge{ min-width:18px !important; width:18px !important; height:18px !important; padding:1px !important; border-radius:5px !important; }
+    #pet-battle-screen .pb-elem-badge img{ width:100% !important; height:100% !important; }
+    #pet-battle-screen .pb-elem-badge span:first-child{ font-size:9px !important; }
+    #pet-battle-screen .pb-elem-badge span:last-child{ font-size:4.5px !important; }
+    #pet-battle-screen .pb-log{ display:none !important; }
     #pet-battle-screen .pb-tabs{ display:none !important; }
-    #pet-battle-screen .pb-arena{ grid-area:arena !important; min-height:0 !important; padding:4px 10px 4px !important; }
-    #pet-battle-screen .pb-skills-panel{ grid-area:skills !important; max-height:none !important; height:100% !important; margin:6px 10px 6px 0 !important; overflow:hidden !important; box-sizing:border-box !important; display:flex !important; flex-direction:column !important; padding:6px !important; }
+    #pet-battle-screen .pb-arena{ grid-area:arena !important; min-height:60px !important; padding:2px 16px 0 !important; }
+    /* Panel de habilidades como una sola fila ancha abajo (estilo Dragon City de
+       la referencia), en vez de columna angosta al costado: así cada botón
+       tiene espacio real para su ícono y su nombre completo. */
+    #pet-battle-screen .pb-skills-panel{ grid-area:skills !important; max-height:none !important; height:auto !important; margin:0 8px !important; margin-bottom:max(4px, env(safe-area-inset-bottom)) !important; overflow:visible !important; box-sizing:border-box !important; padding:5px !important; }
     #pet-battle-screen .pb-skills-hint{ display:none !important; }
-    #pet-battle-screen .pb-skills{ display:grid !important; grid-template-columns:1fr 1fr !important; grid-template-rows:1fr 1fr auto !important; gap:4px !important; height:100% !important; }
-    #pet-battle-screen .pb-skill-btn{ flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; padding:2px 2px !important; gap:1px !important; height:100% !important; width:100% !important; min-height:0 !important; }
-    #pet-battle-screen .pb-skill-basic{ padding:3px 4px !important; }
+    #pet-battle-screen .pb-skills{ display:flex !important; flex-direction:row !important; gap:5px !important; height:auto !important; }
+    #pet-battle-screen .pb-skill-btn{ flex:1 1 0 !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; padding:4px 2px !important; gap:2px !important; height:64px !important; min-height:0 !important; min-width:0 !important; overflow:hidden !important; }
+    #pet-battle-screen .pb-skill-basic{ padding:4px 2px !important; }
     #pet-battle-screen .pb-skill-desc{ display:none !important; }
-    #pet-battle-screen .pb-skill-btn .pb-skill-ic{ width:28px !important; height:28px !important; display:flex !important; align-items:center !important; justify-content:center !important; background:transparent !important; border-radius:8px !important; }
-    #pet-battle-screen .pb-skill-ic{ width:16px !important; height:16px !important; font-size:9px !important; }
-    #pet-battle-screen .pb-skill-btn .pb-skill-txt{ align-items:center !important; }
-    #pet-battle-screen .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:9.5px !important; white-space:normal !important; text-align:center !important; line-height:1.1 !important; overflow:visible !important; }
-    #pet-battle-screen .pb-skill-btn .pb-skill-lock{ font-size:6.5px !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-ic{ width:26px !important; height:26px !important; display:flex !important; align-items:center !important; justify-content:center !important; background:transparent !important; border-radius:8px !important; flex-shrink:0 !important; }
+    #pet-battle-screen .pb-skill-ic{ width:15px !important; height:15px !important; font-size:9px !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-txt{ align-items:center !important; width:100% !important; min-width:0 !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:8.5px !important; white-space:normal !important; text-align:center !important; line-height:1.05 !important; overflow:hidden !important; text-overflow:ellipsis !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; width:100% !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-lock{ font-size:6px !important; }
     .pb-info-overlay{ padding-top:44px !important; }
 
     #main-screen .hero-rainbow-bg{
@@ -2231,6 +2251,19 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
     #main-screen .hero-cta[onclick*="isla-screen"]{ grid-area: cta2 !important; margin-top: 8px !important; }
 
     .screen.active:not(#pet-battle-screen){ max-width: 720px !important; margin-left: auto !important; margin-right: auto !important; }
+
+    /* Mundo de Mascotas (pantalla de subir de nivel/evolución): en horizontal
+       hay poca altura disponible, así que se compacta para que la fila de
+       botones de abajo (regalo/energía/confirmar/cerrar) no quede cortada
+       fuera de la pantalla. */
+    #mascota-screen.active{ padding-left: max(10px, env(safe-area-inset-left)) !important; padding-right: max(10px, env(safe-area-inset-right)) !important; padding-top:4px !important; padding-bottom:6px !important; }
+    #mascota-screen .mh-stage{ padding:2px 10px 0 !important; }
+    #mascota-screen .mh-pet-wrap{ width:100px !important; height:100px !important; }
+    #mascota-screen .mh-pet-wrap img, #mascota-screen .mh-pet-wrap .mh-pet-emoji{ width:85px !important; height:85px !important; }
+    #mascota-screen .mh-scale-card{ margin:2px auto !important; padding:4px 10px !important; }
+    #mascota-screen .mh-actions{ padding:4px 15px !important; gap:6px !important; }
+    #mascota-screen .mh-action-btn{ padding:6px 4px 4px !important; font-size:9px !important; }
+    #mascota-screen .mh-bonus-card{ padding:4px 10px !important; margin:2px auto !important; }
 }
 
 </style>
