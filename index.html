@@ -1095,59 +1095,6 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-info-txt b{ display:block; font-size:12px; color:#2e1f10; }
 .pb-info-txt.locked{ opacity:.55; }
 
-/* ---- Modo horizontal: layout en grilla, cada zona con su espacio fijo garantizado ----
-   Las 4 habilidades se acomodan en una grilla 2x2 fija que siempre cabe completa,
-   sin necesidad de deslizar/buscar para ver las que faltan. */
-@media (orientation: landscape){
-    #pet-battle-screen.active{
-        display:grid;
-        grid-template-columns: 1fr 200px;
-        grid-template-rows: auto auto auto 1fr;
-        grid-template-areas: "top top" "hp hp" "log log" "arena skills";
-    }
-    .pb-topbar{ grid-area:top; padding:4px 12px 0; }
-    .pb-hpbars{ grid-area:hp; padding:2px 10px 0; gap:8px; }
-    .pb-hpcard{ padding:4px 8px; }
-    .pb-hp-name{ font-size:11px; }
-    .pb-log{ grid-area:log; font-size:10px; margin:1px 15px 0; min-height:12px; }
-    .pb-tabs{ display:none; }
-    .pb-arena{ grid-area:arena; min-height:0 !important; padding:4px 10px 4px; }
-    .pb-skills-panel{ grid-area:skills; max-height:none; height:100%; margin:6px 10px 6px 0; overflow:hidden; box-sizing:border-box; display:flex; flex-direction:column; padding:6px; }
-    .pb-skills-hint{ display:none; }
-    .pb-skills{ display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr auto; gap:4px; height:100%; }
-    .pb-skill-btn{ flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2px 2px; gap:1px; height:100%; width:100%; min-height:0; }
-    .pb-skill-basic{ padding:3px 4px !important; }
-    .pb-skill-desc{ display:none; }
-    .pb-skill-btn .pb-skill-ic{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:8px;}
-.pb-skill-ic{ width:16px; height:16px; font-size:9px; }
-    .pb-skill-btn .pb-skill-txt{ align-items:center; }
-    .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:9.5px; white-space:normal; text-align:center; line-height:1.1; overflow:visible; }
-    .pb-skill-btn .pb-skill-lock{ font-size:6.5px; }
-    .pb-info-overlay{ padding-top:44px; }
-}
-
-/* ---- Pantalla principal en horizontal: dos columnas alineadas para aprovechar el ancho ---- */
-@media (orientation: landscape){
-    #main-screen .hero-rainbow-bg{
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas:
-            "top    orbit"
-            "level  orbit"
-            "cta1   orbit"
-            "cta2   orbit";
-        align-items: center;
-        gap: 4px 14px;
-        padding-top: 8px;
-    }
-    #main-screen .hero-topbar{ grid-area: top; }
-    #main-screen #app-version-label{ display:none; }
-    #main-screen .userlvl-widget{ grid-area: level; margin: 4px 0 0 !important; }
-    #main-screen .hero-title-wrap{ display:none; }
-    #main-screen .hero-orbit{ grid-area: orbit; width: min(220px, 38vh); }
-    #main-screen .hero-cta[onclick*="game-screen"]{ grid-area: cta1; margin-top: 8px !important; }
-    #main-screen .hero-cta[onclick*="isla-screen"]{ grid-area: cta2; margin-top: 8px !important; }
-}
 .pb-pillar{ position:absolute; top:0; bottom:0; width:64px; background:linear-gradient(180deg,#c0392b,#7a0d13);
     box-shadow:inset 0 0 18px rgba(0,0,0,.5); opacity:.9; z-index:1; }
 .pb-pillar::before{ content:''; position:absolute; inset:0; background-image:repeating-linear-gradient(0deg, rgba(255,215,140,.1) 0 3px, transparent 3px 26px), repeating-linear-gradient(90deg, rgba(255,215,140,.08) 0 3px, transparent 3px 26px); }
@@ -2232,6 +2179,59 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-skill-btn.cooling { pointer-events:none; opacity:0.5; }
 .pb-skill-btn .pb-cooldown { position:absolute; inset:0; background:conic-gradient(rgba(0,0,0,0.8) var(--cd, 0deg), transparent 0deg); border-radius:10px; }
 
+/* ==========================================================================
+   HORIZONTAL — reglas al FINAL de la hoja a propósito, para que ninguna regla
+   anterior (definida más arriba en este archivo) las vuelva a pisar.
+   ========================================================================== */
+@media (orientation: landscape){
+    #pet-battle-screen.active{
+        display:grid !important;
+        grid-template-columns: 1fr 200px !important;
+        grid-template-rows: auto auto auto 1fr !important;
+        grid-template-areas: "top top" "hp hp" "log log" "arena skills" !important;
+    }
+    #pet-battle-screen .pb-topbar{ grid-area:top !important; padding:4px 12px 0 !important; }
+    #pet-battle-screen .pb-hpbars{ grid-area:hp !important; padding:2px 10px 0 !important; gap:8px !important; }
+    #pet-battle-screen .pb-hpcard{ padding:4px 8px !important; }
+    #pet-battle-screen .pb-hp-name{ font-size:11px !important; }
+    #pet-battle-screen .pb-log{ grid-area:log !important; font-size:10px !important; margin:1px 15px 0 !important; min-height:12px !important; }
+    #pet-battle-screen .pb-tabs{ display:none !important; }
+    #pet-battle-screen .pb-arena{ grid-area:arena !important; min-height:0 !important; padding:4px 10px 4px !important; }
+    #pet-battle-screen .pb-skills-panel{ grid-area:skills !important; max-height:none !important; height:100% !important; margin:6px 10px 6px 0 !important; overflow:hidden !important; box-sizing:border-box !important; display:flex !important; flex-direction:column !important; padding:6px !important; }
+    #pet-battle-screen .pb-skills-hint{ display:none !important; }
+    #pet-battle-screen .pb-skills{ display:grid !important; grid-template-columns:1fr 1fr !important; grid-template-rows:1fr 1fr auto !important; gap:4px !important; height:100% !important; }
+    #pet-battle-screen .pb-skill-btn{ flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; padding:2px 2px !important; gap:1px !important; height:100% !important; width:100% !important; min-height:0 !important; }
+    #pet-battle-screen .pb-skill-basic{ padding:3px 4px !important; }
+    #pet-battle-screen .pb-skill-desc{ display:none !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-ic{ width:28px !important; height:28px !important; display:flex !important; align-items:center !important; justify-content:center !important; background:transparent !important; border-radius:8px !important; }
+    #pet-battle-screen .pb-skill-ic{ width:16px !important; height:16px !important; font-size:9px !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-txt{ align-items:center !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:9.5px !important; white-space:normal !important; text-align:center !important; line-height:1.1 !important; overflow:visible !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-lock{ font-size:6.5px !important; }
+    .pb-info-overlay{ padding-top:44px !important; }
+
+    #main-screen .hero-rainbow-bg{
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-areas:
+            "top    orbit"
+            "level  orbit"
+            "cta1   orbit"
+            "cta2   orbit" !important;
+        align-items: center !important;
+        gap: 4px 14px !important;
+        padding-top: 8px !important;
+    }
+    #main-screen .hero-topbar{ grid-area: top !important; }
+    #main-screen #app-version-label{ display:none !important; }
+    #main-screen .userlvl-widget{ grid-area: level !important; margin: 4px 0 0 !important; }
+    #main-screen .hero-title-wrap{ display:none !important; }
+    #main-screen .hero-orbit{ grid-area: orbit !important; width: min(220px, 38vh) !important; }
+    #main-screen .hero-cta[onclick*="game-screen"]{ grid-area: cta1 !important; margin-top: 8px !important; }
+    #main-screen .hero-cta[onclick*="isla-screen"]{ grid-area: cta2 !important; margin-top: 8px !important; }
+
+    .screen.active:not(#pet-battle-screen){ max-width: 720px !important; margin-left: auto !important; margin-right: auto !important; }
+}
 
 </style>
 
@@ -11996,7 +11996,6 @@ function closePetBattle() {
     PB = null;
     pbStop3DLoop();
     pbToggleSkillInfo(false);
-    pbRestoreOrientation();
     goToScreen('mascota-screen');
 }
 
@@ -12200,18 +12199,14 @@ function pbToggleSkillInfo(force) {
     ov.classList.toggle('active', show);
 }
 
-// Intenta rotar/forzar horizontal la pantalla de batalla (funciona en navegadores/PWA que
-// lo permitan; si la app está empaquetada con Capacitor y el manifiesto Android está fijado
-// en "portrait", esta llamada no tendrá efecto hasta cambiar esa config nativa).
+// Intenta reforzar el horizontal (respaldo; la orientación real ya queda fija por el manifest.json
+// del APK). Ya no se desbloquea en ningún punto de la app para que nunca regrese sola a vertical.
 async function pbTryLandscape() {
     try {
         if (screen.orientation && screen.orientation.lock) {
             await screen.orientation.lock('landscape');
         }
     } catch (e) { /* orientación no bloqueable en este contexto, se ignora */ }
-}
-function pbRestoreOrientation() {
-    try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) { /* no-op */ }
 }
 
 function pbSetLog(txt) { const l = document.getElementById('pb-log'); if (l) l.textContent = txt; }
