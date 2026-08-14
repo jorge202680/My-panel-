@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Súper Bingo Rey — v2.9 (Batalla: corregido el motivo real de que varias habilidades hicieran el mismo efecto — 12 mascotas legendarias/sagradas (Kronos, Nihil, Edén, Ignis Prime, Seraph, Anubis, Quetzal, Cósmico, Fénix Negro, Gato Supremo, Gato Egipcio Supremo/Egipcio) usan nombres de efecto que no encajaban en el detector de intensidad por palabras clave, así que sus 4 habilidades caían siempre en el mismo efecto "definitivo"; ahora la intensidad de cada habilidad se toma del dato real ya definido para ella, no de adivinar por el nombre) -->
+<!-- Súper Bingo Rey — v3.0 (Batalla: "¡SÚPER EFECTIVO!" ahora se muestra en grande con destello propio en vez de perderse detrás del texto "CRÍTICO"; flash de pantalla + vibración más marcados cuando tu mascota está en HP crítico; animación de entrada al cambiar de mascota (sale del cuadrito hacia la arena); el cuadrito activo del banquillo ahora tiene contorno de color para verse a simple vista; sonido/vibración distintos para golpe normal, crítico y golpe definitivo — v2.9 previo: corregido el motivo real de que varias habilidades hicieran el mismo efecto — 12 mascotas legendarias/sagradas (Kronos, Nihil, Edén, Ignis Prime, Seraph, Anubis, Quetzal, Cósmico, Fénix Negro, Gato Supremo, Gato Egipcio Supremo/Egipcio) usan nombres de efecto que no encajaban en el detector de intensidad por palabras clave, así que sus 4 habilidades caían siempre en el mismo efecto "definitivo"; ahora la intensidad de cada habilidad se toma del dato real ya definido para ella, no de adivinar por el nombre) -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -1105,11 +1105,14 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-column.right{ right:70px; }
 .pb-stars{ position:absolute; inset:0; pointer-events:none; z-index:1; }
 .pb-stars span{ position:absolute; color:#ffd28c; opacity:.6; animation:mhTwinkle 2.2s ease-in-out infinite; }
-.pb-topbar{ position:relative; z-index:5; display:flex; align-items:center; justify-content:space-between; padding:8px 16px 3px; }
+.pb-topbar{ position:relative; z-index:5; display:grid; grid-template-columns:1fr auto 1fr; align-items:center; padding:8px 16px 3px; gap:6px; }
+.pb-topbar > *:first-child{ justify-self:start; }
+.pb-topbar > *:last-child{ justify-self:end; }
 .pb-back{ background:linear-gradient(180deg,#3aa0e8,#1c6fb8); border:2px solid rgba(255,255,255,.5); width:auto; min-width:64px; height:30px; border-radius:15px; color:#fff; font-size:12px; font-weight:900; flex-shrink:0; padding:0 12px; box-shadow:0 3px 0 rgba(0,0,0,.25); letter-spacing:.5px; }
 .pb-help-btn{ background:linear-gradient(180deg,#3aa0e8,#1c6fb8); border:2px solid rgba(255,255,255,.5); min-width:64px; height:30px; border-radius:15px; color:#fff; font-size:12px; font-weight:900; box-shadow:0 3px 0 rgba(0,0,0,.25); letter-spacing:.5px; }
 .pb-hpbars{ position:relative; z-index:5; display:flex; justify-content:space-between; gap:10px; padding:3px 14px 0; }
-.pb-hpcard{ flex:1; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.35)); border:1.5px solid rgba(255,215,150,.55); border-radius:14px; padding:5px 9px; backdrop-filter:blur(3px); position:relative; }
+.pb-hpcard{ flex:1; background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(0,0,0,.35)); border:1.5px solid rgba(255,215,150,.55); border-radius:14px; padding:5px 9px; backdrop-filter:blur(3px); position:relative; display:flex; align-items:center; gap:8px; }
+.pb-hpcard.enemy{ flex-direction:row-reverse; }
 .pb-hpcard.enemy{ text-align:right; }
 .pb-hp-name{ color:#fff; font-weight:900; font-size:11.5px; display:flex; align-items:center; gap:5px; text-shadow:0 1px 2px rgba(0,0,0,.5); }
 .pb-hpcard.enemy .pb-hp-name{ justify-content:flex-end; }
@@ -1134,6 +1137,13 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-def-fill{ background:linear-gradient(180deg,#7ac4ff,#0d6dbf); }
 .pb-stat-num{ color:#ffe9c2; font-size:9px; font-weight:800; min-width:20px; text-align:center; text-shadow:0 1px 2px rgba(0,0,0,.5); }
 .pb-hpcard.enemy .pb-stat-row{ flex-direction:row-reverse; }
+.pb-hp-body{ flex:1; min-width:0; }
+.pb-hp-portrait{ width:52px; height:52px; border-radius:50%; flex-shrink:0; overflow:hidden; background:linear-gradient(135deg,#2a2f3d,#0d1117); border:2px solid rgba(255,215,150,.75); box-shadow:0 2px 6px rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; font-size:24px; }
+.pb-hp-portrait img{ width:100%; height:100%; object-fit:cover; }
+.pb-stat-row.full{ margin-top:2px; }
+.pb-stat-label{ font-size:8px; font-weight:900; color:#ffe9c2; width:20px; flex-shrink:0; letter-spacing:.5px; text-shadow:0 1px 2px rgba(0,0,0,.5); }
+.pb-hpcard.enemy .pb-stat-label{ text-align:right; }
+.pb-stat-row .pb-hp-track{ flex:1; margin-top:0; }
 .pb-arena{ position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:space-between; padding:36px 30px 6px; transform-origin:center 65%; }
 .pb-arena::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:34px; background:linear-gradient(180deg,#c99356,#8a5f2f 55%,#5e3f1e); border-top:2px solid rgba(255,210,140,.55); box-shadow:inset 0 6px 10px rgba(0,0,0,.35); z-index:0; }
 .pb-arena.pb-zoom-hit{ animation:pbZoomHit .3s ease; }
@@ -1170,6 +1180,15 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-fighter.hit-big .pb-sprite, .pb-fighter.hit-big .pb-sprite img{ animation:pbHitBig .55s ease; }
 @keyframes pbHitBig{ 0%{transform:scale(1)} 20%{transform:scale(.82) rotate(-4deg)} 45%{transform:scale(1.12) rotate(3deg)} 70%{transform:scale(.94) rotate(-2deg)} 100%{transform:scale(1) rotate(0)} }
 .pb-fighter.life-glow .pb-sprite, .pb-fighter.life-glow .pb-sprite img{ animation:pbLifeGlow .9s ease; }
+/* Animación de entrada al cambiar de mascota: "sale" desde el cuadrito del
+   banquillo hacia la arena en vez de aparecer de golpe. */
+.pb-fighter.pet-switch-enter .pb-sprite, .pb-fighter.pet-switch-enter .pb-sprite img{ animation:pbPetSwitchEnter .5s cubic-bezier(.2,1.3,.35,1); }
+@keyframes pbPetSwitchEnter{
+    0%{ opacity:0; transform:translateY(16px) scale(.35); }
+    55%{ opacity:1; transform:translateY(-8px) scale(1.12); }
+    80%{ transform:translateY(2px) scale(.96); }
+    100%{ opacity:1; transform:translateY(0) scale(1); }
+}
 @keyframes pbLifeGlow{ 0%{ filter:brightness(1) drop-shadow(0 0 0 rgba(76,175,80,0)); } 15%{ filter:brightness(1.7) drop-shadow(0 0 18px rgba(76,175,80,.95)); } 40%{ filter:brightness(1.4) drop-shadow(0 0 12px rgba(76,175,80,.8)); } 65%{ filter:brightness(1.7) drop-shadow(0 0 18px rgba(76,175,80,.95)); } 100%{ filter:brightness(1) drop-shadow(0 0 0 rgba(76,175,80,0)); } }
 .pb-skill-btn.pb-led-active{ animation:pbSkillLed 1.1s ease; border-color:#4caf50 !important; }
 @keyframes pbSkillLed{ 0%{ box-shadow:0 0 0 rgba(76,175,80,0); } 15%{ box-shadow:0 0 22px 6px rgba(76,175,80,1); } 40%{ box-shadow:0 0 12px 3px rgba(76,175,80,.7); } 65%{ box-shadow:0 0 22px 6px rgba(76,175,80,1); } 100%{ box-shadow:0 0 0 rgba(76,175,80,0); } }
@@ -1200,6 +1219,20 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-effect-banner span.crit{ color:#FFD700; }
 .pb-effect-banner span.sin{ color:#ef4444; font-size:23px; }
 .pb-effect-banner span.debil{ color:#42A5F5; }
+/* "¡SÚPER EFECTIVO!" (ventaja de elemento) es el aviso más importante para el
+   jugador, así que se ve notablemente más grande que el resto de textos de
+   combate en vez de compartir el tamaño de "CRÍTICO". */
+.pb-effect-banner span.super{ color:#FFD700; font-size:40px; -webkit-text-stroke:2.5px #7a2d00; text-shadow:0 0 22px rgba(255,180,0,.95),0 0 42px rgba(255,120,0,.65),0 3px 0 #000; }
+.pb-super-flash{ position:fixed; inset:0; opacity:0; z-index:40; pointer-events:none; mix-blend-mode:screen; background:radial-gradient(circle, rgba(255,215,0,.9), rgba(255,140,0,.25) 60%, transparent 80%); }
+.pb-super-flash.play{ animation:pbSuperFlash .5s ease-out; }
+@keyframes pbSuperFlash{ 0%{opacity:0} 20%{opacity:.85} 100%{opacity:0} }
+/* Flash rojo de pantalla + borde pulsante en la arena cuando TU mascota está
+   a punto de caer (HP crítico), más marcado que el simple pulso de la barra. */
+.pb-hpcrit-flash{ position:fixed; inset:0; opacity:0; z-index:40; pointer-events:none; mix-blend-mode:screen; background:radial-gradient(circle, rgba(255,30,30,.05), rgba(220,0,0,.85) 100%); }
+.pb-hpcrit-flash.play{ animation:pbHpCritFlash .6s ease-out; }
+@keyframes pbHpCritFlash{ 0%{opacity:0} 25%{opacity:.9} 60%{opacity:.15} 100%{opacity:0} }
+.pb-arena.pb-hp-critical::after{ content:''; position:absolute; inset:0; pointer-events:none; z-index:39; box-shadow:inset 0 0 40px 10px rgba(220,0,0,.55); animation:pbHpCriticalVignette 1s ease-in-out infinite; }
+@keyframes pbHpCriticalVignette{ 0%,100%{ opacity:.45; } 50%{ opacity:1; } }
 @keyframes pbEffectBanner{
     0%{ opacity:0; transform:translate(-50%,0) scale(0.3) rotate(-6deg); }
     18%{ opacity:1; transform:translate(-50%,0) scale(1.15) rotate(2deg); }
@@ -1344,6 +1377,27 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-team-dot{width:26px;height:26px;border-radius:50%;background:#1a1f2a;border:1.5px solid #444;display:flex;align-items:center;justify-content:center;font-size:14px;}
 .pb-team-dot.active{border-color:#22c55e;box-shadow:0 0 6px #22c55e;}
 .pb-team-dot.dead{opacity:.3;filter:grayscale(1);}
+/* Banquillo 3v3 dentro de la arena (estilo Dragon City): dos cuadritos con las
+   otras mascotas del equipo, apilados verticalmente a cada lado. Los del
+   jugador se pueden tocar para cambiar de mascota (mismo cambio voluntario
+   que la pestaña "TUS MASCOTAS"); los del rival son solo informativos. */
+.pb-bench{ position:absolute; top:4px; display:flex; flex-direction:column; gap:6px; z-index:4; }
+.pb-bench-p{ left:4px; }
+.pb-bench-e{ right:4px; }
+.pb-bench-card{ width:38px; height:38px; border-radius:9px; background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(0,0,0,.4)); border:1.5px solid rgba(255,215,150,.55); display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; font-size:18px; box-shadow:0 2px 5px rgba(0,0,0,.4); }
+.pb-bench-p .pb-bench-card:not(.dead){ cursor:pointer; }
+.pb-bench-card img{ width:100%; height:100%; object-fit:cover; object-position:top; }
+.pb-bench-card.dead{ opacity:.35; filter:grayscale(1); }
+/* Contorno de color en el cuadrito de la mascota que está peleando ahora mismo
+   (verde en tu banquillo, rojo en el del rival) para distinguirla de un
+   vistazo de las otras mascotas guardadas en el mismo banquillo. */
+.pb-bench-card.active{ border:2px solid #22c55e; box-shadow:0 0 0 2px rgba(34,197,94,.35), 0 0 10px 2px rgba(34,197,94,.65); }
+.pb-bench-e .pb-bench-card.active{ border-color:#ef4444; box-shadow:0 0 0 2px rgba(239,68,68,.35), 0 0 10px 2px rgba(239,68,68,.65); }
+.pb-bench-p .pb-bench-card.active{ cursor:default; }
+.pb-bench-hp{ position:absolute; left:2px; right:2px; bottom:2px; height:3px; border-radius:2px; background:rgba(0,0,0,.55); overflow:hidden; }
+.pb-bench-hp-fill{ height:100%; background:linear-gradient(180deg,#8bffb0,#2eae4a); }
+.pb-bench-card.dead .pb-bench-hp-fill{ background:linear-gradient(180deg,#ffb0b0,#d32f2f); }
+.pb-bench-stage{ position:absolute; top:-4px; left:-4px; background:linear-gradient(180deg,#3a2f1f,#241c12); border:1.5px solid #d4a35a; color:#ffe0c2; font-size:8px; font-weight:900; border-radius:6px; padding:0 3px; line-height:1.3; }
 .pb-team-chooser{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:999999;display:flex;align-items:center;justify-content:center;}
 .pb-team-chooser-card{background:#161b22;border:2px solid #22c55e;border-radius:16px;padding:18px;width:92%;max-width:380px;}
 .pb-team-chooser-card h3{color:#fff;text-align:center;margin:0 0 12px;}
@@ -1720,7 +1774,7 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 
 .pb-pred-damage { position:absolute; top:-18px; left:50%; transform:translateX(-50%); background:rgba(255,23,68,0.9); color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:8px; pointer-events:none; z-index:10; }
 
-.pb-combo-history { position:absolute; top:6px; right:6px; width:110px; max-height:90px; overflow:hidden; background:rgba(0,0,0,0.55); border:1px solid #30363d; border-radius:8px; padding:4px; font-size:8px; color:#8b949e; z-index:20; }
+.pb-combo-history { position:absolute; top:6px; left:50%; transform:translateX(-50%); width:110px; max-height:56px; overflow:hidden; background:rgba(0,0,0,0.55); border:1px solid #30363d; border-radius:8px; padding:4px; font-size:8px; color:#8b949e; z-index:20; pointer-events:none; }
 .pb-combo-history div { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
 
 .pb-achievement { position:fixed; top:12%; left:50%; transform:translateX(-50%) translateY(-30px); background:linear-gradient(135deg, #FFD700, #FF6A00); color:#000; font-weight:900; padding:8px 16px; border-radius:20px; z-index:200; opacity:0; pointer-events:none; box-shadow:0 0 20px #FFD700; }
@@ -2163,7 +2217,7 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 
 .pb-pred-damage { position:absolute; top:-18px; left:50%; transform:translateX(-50%); background:rgba(255,23,68,0.9); color:#fff; font-size:10px; font-weight:800; padding:2px 6px; border-radius:8px; pointer-events:none; z-index:10; }
 
-.pb-combo-history { position:absolute; top:6px; right:6px; width:110px; max-height:90px; overflow:hidden; background:rgba(0,0,0,0.55); border:1px solid #30363d; border-radius:8px; padding:4px; font-size:8px; color:#8b949e; z-index:20; }
+.pb-combo-history { position:absolute; top:6px; left:50%; transform:translateX(-50%); width:110px; max-height:56px; overflow:hidden; background:rgba(0,0,0,0.55); border:1px solid #30363d; border-radius:8px; padding:4px; font-size:8px; color:#8b949e; z-index:20; pointer-events:none; }
 .pb-combo-history div { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:2px; }
 
 .pb-achievement { position:fixed; top:12%; left:50%; transform:translateX(-50%) translateY(-30px); background:linear-gradient(135deg, #FFD700, #FF6A00); color:#000; font-weight:900; padding:8px 16px; border-radius:20px; z-index:200; opacity:0; pointer-events:none; box-shadow:0 0 20px #FFD700; }
@@ -2187,8 +2241,8 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
     #pet-battle-screen.active{
         display:grid !important;
         grid-template-columns: 1fr !important;
-        grid-template-rows: auto auto 1fr auto !important;
-        grid-template-areas: "top" "hp" "arena" "skills" !important;
+        grid-template-rows: auto auto 1fr auto auto !important;
+        grid-template-areas: "top" "hp" "arena" "ult" "skills" !important;
         /* Reserva el espacio real de la barra de navegación/gestos de Android
            (izq/der según cómo esté rotado el teléfono) para que ninguna columna
            quede oculta o cortada debajo de esos botones del sistema. */
@@ -2196,37 +2250,64 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
         padding-right: env(safe-area-inset-right) !important;
         box-sizing: border-box !important;
     }
-    #pet-battle-screen .pb-topbar{ grid-area:top !important; padding:4px 12px 0 !important; }
-    #pet-battle-screen .pb-hpbars{ grid-area:hp !important; padding:2px 10px 0 !important; gap:8px !important; }
-    #pet-battle-screen .pb-hpcard{ padding:4px 8px !important; }
-    #pet-battle-screen .pb-hp-name{ font-size:11px !important; }
-    /* Las insignias de elemento se generan con estilo en línea bastante grandes
-       (min-width:48px) para que se vea bien la imagen subida por el admin; en
-       vertical hay espacio de sobra, pero en horizontal esto hacía que la
-       tarjeta de vida creciera mucho de alto (los elementos se envolvían en
-       2 filas) y empujaba la arena y las habilidades fuera de la pantalla,
-       sin poder hacer scroll para verlas. Se fuerzan pequeñas solo aquí. */
-    #pet-battle-screen .pb-hp-elems{ max-width:none !important; flex-wrap:nowrap !important; gap:2px !important; }
-    #pet-battle-screen .pb-elem-badge{ min-width:18px !important; width:18px !important; height:18px !important; padding:1px !important; border-radius:5px !important; }
+    /* La barra "ULTIMATE" se crea con JS y se inserta suelta en el DOM entre
+       la arena y el panel de habilidades, sin área de grid asignada: en el
+       grid de horizontal eso la dejaba caer en una celda automática fuera de
+       lugar (podía superponerse o desordenar las filas de abajo). Se le da su
+       propia fila delgada, igual que en vertical. */
+    #pet-battle-screen .pb-ult-meter-wrap{ grid-area:ult !important; margin:2px 10px !important; height:16px !important; }
+    #pet-battle-screen .pb-ult-meter-text{ font-size:9px !important; }
+    #pet-battle-screen .pb-topbar{ grid-area:top !important; padding:2px 10px 0 !important; }
+    #pet-battle-screen .pb-back, #pet-battle-screen .pb-help-btn{ height:22px !important; min-width:48px !important; font-size:9.5px !important; padding:0 8px !important; }
+    #pet-battle-screen .pb-topbar > div:first-of-type{ font-size:11px !important; }
+    #pet-battle-screen .pb-hpbars{ grid-area:hp !important; padding:0px 10px 0 !important; gap:8px !important; }
+    #pet-battle-screen .pb-hpcard{ padding:2px 7px !important; gap:5px !important; }
+    #pet-battle-screen .pb-hp-name{ font-size:10px !important; }
+    /* Ya no hace falta achicar tanto las insignias de elemento: al quitar la
+       barra de pestañas ATAQUES/TUS MASCOTAS (redundante ahora que tus
+       mascotas de repuesto están en los cuadritos de la arena) sobró alto
+       de sobra, así que los elementos pueden verse un poco más grandes. */
+    #pet-battle-screen .pb-hp-elems{ max-width:none !important; flex-wrap:nowrap !important; gap:3px !important; }
+    #pet-battle-screen .pb-hp-portrait{ width:38px !important; height:38px !important; font-size:18px !important; }
+    /* Estilo Dragon City: la tarjeta de vida en horizontal solo muestra
+       nombre + barra de HP (como en las capturas de referencia), sin las
+       filas de ATK/DEF debajo — eso era lo que más alto hacía cada tarjeta
+       y lo que más achicaba la arena. ATK/DEF se siguen viendo en vertical. */
+    #pet-battle-screen .pb-substats{ display:none !important; }
+    #pet-battle-screen .pb-stat-row.full{ margin-top:1px !important; }
+    #pet-battle-screen .pb-stat-label{ font-size:7px !important; width:16px !important; }
+    #pet-battle-screen .pb-hp-track, #pet-battle-screen .pb-stat-track{ height:5px !important; }
+    #pet-battle-screen .pb-turn-badge{ margin-top:0 !important; padding:0 6px !important; font-size:8px !important; }
+    #pet-battle-screen .pb-elem-badge{ min-width:22px !important; width:22px !important; height:22px !important; padding:1px !important; border-radius:6px !important; }
     #pet-battle-screen .pb-elem-badge img{ width:100% !important; height:100% !important; }
-    #pet-battle-screen .pb-elem-badge span:first-child{ font-size:9px !important; }
-    #pet-battle-screen .pb-elem-badge span:last-child{ font-size:4.5px !important; }
+    #pet-battle-screen .pb-elem-badge span:first-child{ font-size:10px !important; }
+    #pet-battle-screen .pb-elem-badge span:last-child{ font-size:5px !important; }
     #pet-battle-screen .pb-log{ display:none !important; }
-    #pet-battle-screen .pb-tabs{ display:none !important; }
-    #pet-battle-screen .pb-arena{ grid-area:arena !important; min-height:60px !important; padding:2px 16px 0 !important; }
+    /* La arena es la fila "1fr": ahora que las tarjetas de vida, el topbar y
+       el panel de habilidades ocupan menos alto (y ya no hay una fila de
+       pestañas aparte), toda la altura que se libera cae aquí, agrandando de
+       verdad al rinoceronte y al búho (u otras mascotas) en vez de dejarlos
+       chiquitos con aire vacío alrededor. */
+    #pet-battle-screen .pb-arena{ grid-area:arena !important; min-height:130px !important; padding:2px 16px 0 !important; }
+    /* Cuadritos del banquillo (tus otras mascotas / las del rival): con más
+       espacio libre en la arena se ven un poco más grandes, sin invadir el
+       lugar donde pelean las mascotas activas. */
+    #pet-battle-screen .pb-bench-card{ width:40px !important; height:40px !important; font-size:19px !important; border-radius:9px !important; }
+    #pet-battle-screen .pb-bench{ gap:5px !important; top:3px !important; }
     /* Panel de habilidades como una sola fila ancha abajo (estilo Dragon City de
        la referencia), en vez de columna angosta al costado: así cada botón
-       tiene espacio real para su ícono y su nombre completo. */
-    #pet-battle-screen .pb-skills-panel{ grid-area:skills !important; max-height:none !important; height:auto !important; margin:0 8px !important; margin-bottom:max(4px, env(safe-area-inset-bottom)) !important; overflow:visible !important; box-sizing:border-box !important; padding:5px !important; }
+       tiene espacio real para su ícono y su nombre completo. Los ataques
+       siempre están a la vista (ya no hay pestaña que los oculte). */
+    #pet-battle-screen .pb-skills-panel{ grid-area:skills !important; max-height:none !important; height:auto !important; margin:0 8px !important; margin-bottom:max(3px, env(safe-area-inset-bottom)) !important; overflow:visible !important; box-sizing:border-box !important; padding:4px !important; }
     #pet-battle-screen .pb-skills-hint{ display:none !important; }
-    #pet-battle-screen .pb-skills{ display:flex !important; flex-direction:row !important; gap:5px !important; height:auto !important; }
-    #pet-battle-screen .pb-skill-btn{ flex:1 1 0 !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; padding:4px 2px !important; gap:2px !important; height:64px !important; min-height:0 !important; min-width:0 !important; overflow:hidden !important; }
+    #pet-battle-screen .pb-skills{ display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; gap:5px !important; height:auto !important; }
+    #pet-battle-screen .pb-skill-btn{ flex:1 1 0 !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; text-align:center !important; padding:4px 2px !important; gap:2px !important; height:54px !important; min-height:0 !important; min-width:0 !important; overflow:hidden !important; }
     #pet-battle-screen .pb-skill-basic{ padding:4px 2px !important; }
     #pet-battle-screen .pb-skill-desc{ display:none !important; }
-    #pet-battle-screen .pb-skill-btn .pb-skill-ic{ width:26px !important; height:26px !important; display:flex !important; align-items:center !important; justify-content:center !important; background:transparent !important; border-radius:8px !important; flex-shrink:0 !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-ic{ width:23px !important; height:23px !important; display:flex !important; align-items:center !important; justify-content:center !important; background:transparent !important; border-radius:7px !important; flex-shrink:0 !important; }
     #pet-battle-screen .pb-skill-ic{ width:15px !important; height:15px !important; font-size:9px !important; }
     #pet-battle-screen .pb-skill-btn .pb-skill-txt{ align-items:center !important; width:100% !important; min-width:0 !important; }
-    #pet-battle-screen .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:8.5px !important; white-space:normal !important; text-align:center !important; line-height:1.05 !important; overflow:hidden !important; text-overflow:ellipsis !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; width:100% !important; }
+    #pet-battle-screen .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:8px !important; white-space:normal !important; text-align:center !important; line-height:1.05 !important; overflow:hidden !important; text-overflow:ellipsis !important; display:-webkit-box !important; -webkit-line-clamp:2 !important; -webkit-box-orient:vertical !important; width:100% !important; }
     #pet-battle-screen .pb-skill-btn .pb-skill-lock{ font-size:6px !important; }
     .pb-info-overlay{ padding-top:44px !important; }
 
@@ -2258,12 +2339,81 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
        fuera de la pantalla. */
     #mascota-screen.active{ padding-left: max(10px, env(safe-area-inset-left)) !important; padding-right: max(10px, env(safe-area-inset-right)) !important; padding-top:4px !important; padding-bottom:6px !important; }
     #mascota-screen .mh-stage{ padding:2px 10px 0 !important; }
-    #mascota-screen .mh-pet-wrap{ width:100px !important; height:100px !important; }
-    #mascota-screen .mh-pet-wrap img, #mascota-screen .mh-pet-wrap .mh-pet-emoji{ width:85px !important; height:85px !important; }
+    #mascota-screen .mh-pet-wrap{ width:auto !important; height:auto !important; max-width:140px !important; max-height:140px !important; }
+    #mascota-screen .mh-pet-wrap img, #mascota-screen .mh-pet-wrap .mh-pet-emoji{ width:auto !important; height:auto !important; max-width:120px !important; max-height:120px !important; }
     #mascota-screen .mh-scale-card{ margin:2px auto !important; padding:4px 10px !important; }
     #mascota-screen .mh-actions{ padding:4px 15px !important; gap:6px !important; }
     #mascota-screen .mh-action-btn{ padding:6px 4px 4px !important; font-size:9px !important; }
     #mascota-screen .mh-bonus-card{ padding:4px 10px !important; margin:2px auto !important; }
+
+    /* Pantalla de ALIMENTAR (tarjeta estilo Dragon City): estaba diseñada solo
+       para vertical con una altura fija de 780px. El ajuste anterior achicaba
+       todos los tamaños para que "cupiera" en poca altura, pero como la tarjeta
+       quedaba con height:auto, el panel del dragón (.feeding-stage) se colapsaba
+       a su mínimo y todo (nivel, nombre, dragón, ALIMENTAR) terminaba amontonado
+       y superpuesto en una esquina, aunque sobraba espacio en la pantalla. Ahora
+       la tarjeta usa la altura real disponible (igual que en vertical) y un poco
+       más de ancho, así el dragón vuelve a tener su panel grande y cada pieza
+       recupera su lugar sin pisarse ni cortarse. */
+    /* El usuario mostró de nuevo la referencia (Dragón flamígero): ahí el
+       espacio ganado se nota porque el contenido está organizado en paneles
+       (dragón grande a la izquierda, panel de info flotante a la derecha),
+       no porque el fondo se estire vacío. Se reorganiza la tarjeta de
+       ALIMENTAR igual: nivel + nombre + progreso + botón ALIMENTAR pasan a
+       ser un panel flotante a la derecha (como el panel "ESTADOS" de la
+       referencia) y el dragón queda grande, centrado en el espacio que
+       sobra a la izquierda, con las flechas pegadas a sus costados. */
+    #feeding-modal{ --fp-panel: clamp(230px, 27vw, 330px); --fp-icons: clamp(52px, 9vw, 68px); }
+    #feeding-modal .feeding-premium-card{ width:min(97vw, 1400px) !important; max-width:none !important; height:min(96vh, 820px) !important; max-height:97vh !important; overflow:hidden !important; }
+    #feeding-modal .feeding-premium-top{ height:clamp(32px, 10vh, 48px) !important; padding:6px 14px !important; }
+    #feeding-modal .feeding-food-pill .amt{ font-size:clamp(13px, 2.4vh, 16px) !important; }
+    #feeding-modal .feeding-food-pill .lbl{ font-size:7px !important; }
+    #feeding-modal .feeding-p-btn{ width:clamp(32px,7vh,40px) !important; height:clamp(32px,7vh,40px) !important; font-size:16px !important; }
+    #feeding-modal .feeding-wood{ margin:8px 20px 0 !important; height:clamp(30px, 9vh, 46px) !important; }
+    #feeding-modal .feeding-wood-txt{ font-size:clamp(13px, 2.6vh, 16px) !important; }
+    #feeding-modal .feeding-stage{ min-height:0 !important; }
+
+    /* Dragón grande, centrado en el área libre a la izquierda del panel
+       (ancho total menos el panel de info y la columna de iconos). */
+    #feeding-modal .feeding-dragon-center{
+        width:clamp(180px, 40vh, 380px) !important; height:clamp(180px, 40vh, 380px) !important;
+        left:calc((100% - var(--fp-panel) - var(--fp-icons)) / 2) !important; top:50% !important;
+    }
+    #feeding-modal .feeding-dragon-sprite{ font-size:clamp(80px, 20vh, 150px) !important; }
+    #feeding-modal .feeding-dragon-sprite img{ width:80% !important; height:80% !important; }
+    #feeding-modal .feeding-name-pill{
+        font-size:clamp(11px, 2.4vh, 14px) !important; top:14px !important;
+        left:calc((100% - var(--fp-panel) - var(--fp-icons)) / 2) !important; transform:translateX(-50%) !important;
+    }
+    #feeding-modal .feeding-side-arrows .arr{
+        top:50% !important; width:clamp(38px,8vh,50px) !important; height:clamp(38px,8vh,50px) !important; font-size:clamp(17px,4vh,22px) !important;
+    }
+    #feeding-modal .feeding-side-arrows .arr.right{ right:calc(var(--fp-panel) + var(--fp-icons) + 24px) !important; }
+
+    /* Columna de iconos: se queda pegada al borde derecho, como en la referencia. */
+    #feeding-modal .feeding-right-bar{ width:var(--fp-icons) !important; gap:clamp(8px,2vh,14px) !important; padding:10px 5px !important; }
+    #feeding-modal .feeding-r-btn{ width:clamp(38px,7vh,48px) !important; height:clamp(38px,7vh,48px) !important; font-size:18px !important; }
+
+    /* Panel de info flotante (nivel + progreso + ALIMENTAR), estilo "ESTADOS"
+       de la referencia: tarjeta propia con fondo y bordes, apoyada contra la
+       columna de iconos, en vez de una franja angosta arriba de todo. */
+    #feeding-modal .feeding-bottom{
+        position:absolute !important; top:18px !important; right:calc(var(--fp-icons) + 14px) !important;
+        width:var(--fp-panel) !important; height:auto !important; min-height:0 !important;
+        flex-direction:column !important; align-items:stretch !important; gap:10px !important;
+        padding:16px !important; margin:0 !important;
+        background:linear-gradient(180deg,rgba(45,26,10,.92),rgba(20,12,4,.92)) !important;
+        border:2px solid #ffd700 !important; border-radius:16px !important;
+        box-shadow:0 8px 20px rgba(0,0,0,.5) !important;
+    }
+    #feeding-modal .feeding-ground-crystals{ display:none !important; }
+    #feeding-modal .feeding-lvl-card{ width:100% !important; padding:8px !important; display:flex !important; flex-direction:row !important; align-items:center !important; gap:10px !important; text-align:left !important; }
+    #feeding-modal .feeding-lvl-card .hex-top{ margin:0 !important; }
+    #feeding-modal .feeding-lvl-card .nnum{ font-size:clamp(22px, 4.5vh, 30px) !important; }
+    #feeding-modal .feeding-controls{ margin-left:0 !important; gap:8px !important; width:100% !important; }
+    #feeding-modal .feeding-prog-seg{ height:clamp(13px, 3.5vh, 19px) !important; }
+    #feeding-modal .feeding-alim-btn{ width:100% !important; justify-content:center !important; padding:clamp(8px,1.8vh,12px) 14px !important; font-size:clamp(12px,2.4vh,14px) !important; }
+    #feeding-modal .feeding-hint{ font-size:clamp(9px,1.8vh,11px) !important; align-self:center !important; }
 }
 
 </style>
@@ -2864,7 +3014,7 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
             <div class="mh-bonus-link" onclick="mhOpenCurrentDetail()">Habilidad única ›</div>
         </div>
 
-        <div id="category-symbols-bar" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:4px;background:transparent;border-radius:12px;margin:4px 12px;"></div><button id="rarity-info-btn-main" class="rarity-info-btn" onclick="showRarityPowerBarSimple()" style="margin:4px auto;display:block;font-size:11px;padding:6px 12px;">📊 Ver Fuerza por Categoría</button><div class="mh-row" id="mh-row"></div>
+        <div id="category-symbols-bar" style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;padding:4px;background:transparent;border-radius:12px;margin:4px 12px;"></div><div style="display:flex;gap:8px;justify-content:center;margin:4px 12px;flex-wrap:wrap;"><button id="rarity-info-btn-main" class="rarity-info-btn" onclick="showRarityPowerBarSimple()" style="margin:0;font-size:11px;padding:6px 12px;">📊 Ver Fuerza por Categoría</button><button id="mh-picker-btn" class="rarity-info-btn" onclick="mhOpenPetPicker()" style="margin:0;font-size:11px;padding:6px 12px;background:linear-gradient(180deg,#7c8cff,#5b6bf5);color:#fff;">🐾 Elegir mascota</button></div><div class="mh-row" id="mh-row" style="display:none"></div>
         <div class="mh-empty" id="mh-empty" style="display:none">Todavía no tienes mascotas. Toca ➕ para ver cómo conseguirlas.</div>
     </div>
 
@@ -2925,6 +3075,8 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
     <div id="pet-battle-screen" class="screen">
         <div class="pb-ult-flash" id="pb-ult-flash"></div>
         <div class="pb-crit-flash" id="pb-crit-flash"></div>
+        <div class="pb-super-flash" id="pb-super-flash"></div>
+        <div class="pb-hpcrit-flash" id="pb-hpcrit-flash"></div>
         <div class="pb-effect-banner" id="pb-effect-banner"></div>
         <div class="pb-slowmo-vignette" id="pb-slowmo-vignette"></div>
         <div class="pb-pillar left"></div>
@@ -2935,30 +3087,43 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
         <div class="pb-topbar">
             <button class="pb-back" onclick="closePetBattle()">SALIR</button>
             <div style="color:#fff; font-weight:900; font-size:13px; text-shadow:0 2px 4px rgba(0,0,0,.4)">⚔️ ARENA DE BATALLA</div>
-            <button class="pb-help-btn" onclick="pbToggleSkillInfo()">AYUDA</button>
+            <div style="display:flex; gap:6px; align-items:center;">
+                <button class="pb-help-btn" onclick="pbToggleComboHistory()" title="Ver combos">📜</button>
+                <button class="pb-help-btn" onclick="pbToggleSkillInfo()">AYUDA</button>
+            </div>
         </div>
         <div class="pb-hpbars">
             <div class="pb-hpcard" id="pb-p-hpcard">
-                <div class="pb-hp-name"><span id="pb-p-name">—</span><span class="pb-hp-star" id="pb-p-star">⭐</span></div>
-                <div class="pb-hp-elems" id="pb-p-elems"></div><div class="pb-team-dots" id="pb-p-team"></div>
-                <div class="pb-stat-row"><span class="pb-stat-ic">⚔️</span><div class="pb-stat-track"><div class="pb-stat-fill pb-atk-fill" id="pb-p-atkfill"></div></div><span class="pb-stat-num" id="pb-p-atknum">0</span></div>
-                <div class="pb-hp-track"><div class="pb-hp-chip" id="pb-p-hpchip"></div><div class="pb-hp-fill" id="pb-p-hpfill"></div></div>
-                <div class="pb-hp-num" id="pb-p-hpnum">0/0</div>
-                <div class="pb-stat-row"><span class="pb-stat-ic">🛡️</span><div class="pb-stat-track"><div class="pb-stat-fill pb-def-fill" id="pb-p-deffill"></div></div><span class="pb-stat-num" id="pb-p-defnum">0</span></div>
-                <div class="pb-turn-badge">TU TURNO</div>
+                <div class="pb-hp-portrait" id="pb-p-portrait">🐾</div>
+                <div class="pb-hp-body">
+                    <div class="pb-hp-name"><span id="pb-p-name">—</span><span class="pb-hp-star" id="pb-p-star">⭐</span></div>
+                    <div class="pb-hp-elems" id="pb-p-elems"></div>
+                    <div class="pb-stat-row full"><span class="pb-stat-label">HP</span><div class="pb-hp-track"><div class="pb-hp-chip" id="pb-p-hpchip"></div><div class="pb-hp-fill" id="pb-p-hpfill"></div></div><span class="pb-stat-num" id="pb-p-hpnum">0/0</span></div>
+                    <div class="pb-substats">
+                    <div class="pb-stat-row full"><span class="pb-stat-label">ATK</span><div class="pb-stat-track"><div class="pb-stat-fill pb-atk-fill" id="pb-p-atkfill"></div></div><span class="pb-stat-num" id="pb-p-atknum">0</span></div>
+                    <div class="pb-stat-row full"><span class="pb-stat-label">DEF</span><div class="pb-stat-track"><div class="pb-stat-fill pb-def-fill" id="pb-p-deffill"></div></div><span class="pb-stat-num" id="pb-p-defnum">0</span></div>
+                    </div>
+                    <div class="pb-turn-badge">TU TURNO</div>
+                </div>
             </div>
             <div class="pb-hpcard enemy" id="pb-e-hpcard">
-                <div class="pb-hp-name"><span class="pb-hp-star" id="pb-e-star">⭐</span><span id="pb-e-name">—</span></div>
-                <div class="pb-hp-elems" id="pb-e-elems"></div><div class="pb-team-dots" id="pb-e-team"></div>
-                <div class="pb-stat-row"><span class="pb-stat-num" id="pb-e-atknum">0</span><div class="pb-stat-track"><div class="pb-stat-fill pb-atk-fill" id="pb-e-atkfill"></div></div><span class="pb-stat-ic">⚔️</span></div>
-                <div class="pb-hp-track"><div class="pb-hp-chip" id="pb-e-hpchip"></div><div class="pb-hp-fill" id="pb-e-hpfill"></div></div>
-                <div class="pb-hp-num" id="pb-e-hpnum">0/0</div>
-                <div class="pb-stat-row"><span class="pb-stat-num" id="pb-e-defnum">0</span><div class="pb-stat-track"><div class="pb-stat-fill pb-def-fill" id="pb-e-deffill"></div></div><span class="pb-stat-ic">🛡️</span></div>
-                <div class="pb-turn-badge">SU TURNO</div>
+                <div class="pb-hp-portrait" id="pb-e-portrait">🐾</div>
+                <div class="pb-hp-body">
+                    <div class="pb-hp-name"><span class="pb-hp-star" id="pb-e-star">⭐</span><span id="pb-e-name">—</span></div>
+                    <div class="pb-hp-elems" id="pb-e-elems"></div>
+                    <div class="pb-stat-row full"><span class="pb-stat-label">HP</span><div class="pb-hp-track"><div class="pb-hp-chip" id="pb-e-hpchip"></div><div class="pb-hp-fill" id="pb-e-hpfill"></div></div><span class="pb-stat-num" id="pb-e-hpnum">0/0</span></div>
+                    <div class="pb-substats">
+                    <div class="pb-stat-row full"><span class="pb-stat-label">ATK</span><div class="pb-stat-track"><div class="pb-stat-fill pb-atk-fill" id="pb-e-atkfill"></div></div><span class="pb-stat-num" id="pb-e-atknum">0</span></div>
+                    <div class="pb-stat-row full"><span class="pb-stat-label">DEF</span><div class="pb-stat-track"><div class="pb-stat-fill pb-def-fill" id="pb-e-deffill"></div></div><span class="pb-stat-num" id="pb-e-defnum">0</span></div>
+                    </div>
+                    <div class="pb-turn-badge">SU TURNO</div>
+                </div>
             </div>
         </div>
         <div class="pb-arena" id="pb-arena">
         <div id="pb-3d-bg" style="position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden;"></div>
+            <div class="pb-bench pb-bench-p" id="pb-bench-p"></div>
+            <div class="pb-bench pb-bench-e" id="pb-bench-e"></div>
             <div class="pb-fighter" id="pb-p-fighter">
                 <div class="pb-turn-glow">▼</div>
                 <div class="pb-sprite" id="pb-p-sprite">🐾</div>
@@ -2973,10 +3138,6 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
             </div>
         </div>
         <div class="pb-log" id="pb-log">¡Elige tu ataque!</div>
-        <div class="pb-tabs">
-            <div class="pb-tab active" id="pb-tab-atk" onclick="pbSwitchTab('atk')">ATAQUES</div>
-            <div class="pb-tab" id="pb-tab-team" onclick="pbSwitchTab('team')">TUS MASCOTAS</div>
-        </div>
         <div class="pb-skills-panel">
             <div class="pb-skills-hint" id="pb-skills-hint">Elige el ataque que quieres que ejecute tu mascota</div>
             <div class="pb-skills" id="pb-skills"></div>
@@ -4364,6 +4525,33 @@ async function uploadImageToStorage(file, pathPrefix) {
     if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         throw new Error(errData.error?.message || 'Error al subir a Cloudinary');
+    }
+    const data = await res.json();
+    return data.secure_url;
+}
+
+/* ---------- Subida de modelos 3D (.glb) a Cloudinary ----------
+   Los .glb no son imágenes, así que se suben al endpoint "raw" de Cloudinary
+   (no al de "image" que usa uploadImageToStorage) para que no los rechace. */
+const MASCOTA_MODEL3D_MAX_MB = 30;
+async function uploadModelToStorage(file, pathPrefix) {
+    if (!/\.glb$/i.test(file.name)) {
+        throw new Error('El archivo debe tener formato .glb');
+    }
+    if (file.size > MASCOTA_MODEL3D_MAX_MB * 1024 * 1024) {
+        throw new Error(`El modelo 3D pesa demasiado (máx. ${MASCOTA_MODEL3D_MAX_MB}MB)`);
+    }
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    formData.append('folder', pathPrefix);
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/raw/upload`, {
+        method: 'POST',
+        body: formData
+    });
+    if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error?.message || 'Error al subir el modelo 3D a Cloudinary');
     }
     const data = await res.json();
     return data.secure_url;
@@ -9070,12 +9258,21 @@ function renderAdminMascotas() {
                 </label>
                 ${m.image ? `<button class="admin-del-btn" style="width:100%; margin-top:4px; font-size:11px; padding:4px" onclick="removeMascotaSingleImage(${idx})">🗑️ Quitar foto</button>` : ''}
             </div>
+            <div style="margin-top:10px">
+                <div style="font-size:11px; color:#8b949e; margin-bottom:4px">🧊 Modelo 3D de la mascota (.glb — opcional; si se sube, reemplaza la foto en el Hábitat y en el Detalle, con giro automático)</div>
+                <div class="admin-img-row">
+                    <div class="admin-img-preview-checker" id="mascota-model-preview-${idx}">${m.model3d ? '' : '<span style="font-size:9px;color:#555">Sin modelo 3D</span>'}</div>
+                    <input type="file" accept=".glb" onchange="uploadMascotaModel3D(${idx}, this)">
+                </div>
+                ${m.model3d ? `<button class="admin-del-btn" style="width:100%; margin-top:4px; font-size:11px; padding:4px" onclick="removeMascotaModel3D(${idx})">🗑️ Quitar modelo 3D</button>` : ''}
+            </div>
             <div style="text-align:right; margin-top:8px;">
                 <button class="admin-add-btn" style="background:#1976D2; color:#fff; border:none; padding:8px 14px; border-radius:8px; margin-right:6px" onclick="addMascotaStage(${idx})">➕ Etapa</button>
                 <button class="admin-del-btn" onclick="removeMascotaAdmin(${idx})">Eliminar</button>
             </div>
         `;
     wrap.appendChild(row);
+    if (m.model3d && window.MascotaGLB) window.MascotaGLB.mount(`mascota-model-preview-${idx}`, m.model3d);
 }
 
 let adminElementoOpenKey = null;
@@ -9293,6 +9490,36 @@ async function removeMascotaSingleImage(idx) {
     showToast('🗑️ Foto eliminada.');
 }
 
+/* Modelo 3D (.glb) de la mascota: si está presente, se usa en vez de la foto
+   tanto en la pantalla de Hábitat como en el Detalle, con giro automático. */
+async function uploadMascotaModel3D(idx, inputEl) {
+    const file = inputEl.files[0];
+    if (!file) return;
+    showToast('⏳ Subiendo modelo 3D...');
+    try {
+        const url = await uploadModelToStorage(file, 'mascotas-3d');
+        CONFIG.mascotas[idx].model3d = url;
+        await saveConfig();
+        renderAdminMascotas();
+        showToast('✅ Modelo 3D guardado en la nube.');
+    } catch (e) {
+        console.error('Error subiendo modelo 3D:', e);
+        showToast('❌ Error al subir: ' + (e.message || 'revisa Cloudinary'));
+    } finally {
+        inputEl.value = '';
+    }
+}
+
+async function removeMascotaModel3D(idx) {
+    if (!CONFIG.mascotas[idx]) return;
+    if (!confirm('¿Quitar el modelo 3D de esta mascota? Volverá a mostrarse la foto.')) return;
+    delete CONFIG.mascotas[idx].model3d;
+    if (window.MascotaGLB) window.MascotaGLB.dispose(`mascota-model-preview-${idx}`);
+    await saveConfig();
+    renderAdminMascotas();
+    showToast('🗑️ Modelo 3D eliminado.');
+}
+
 function addMascotaAdmin() {
     if (!CONFIG.mascotas) CONFIG.mascotas = [];
     const newId = 'm' + (Date.now());
@@ -9496,6 +9723,73 @@ function mhSelectPet(id) {
     renderMascotaScreen();
 }
 
+// Ventana emergente para elegir mascota: reemplaza la fila que se deslizaba
+// horizontalmente (y perdía la posición al reconstruirse) por una ventana con
+// una cuadrícula fija donde se ven todas las mascotas de un vistazo, sin scroll
+// lateral que se pueda "perder". Se abre desde el botón "Elegir mascota".
+function mhClosePetPicker() {
+    var m = document.getElementById('mh-picker-modal');
+    if (m) m.remove();
+}
+function mhPickAndClose(id) {
+    mhSelectPet(id);
+    mhClosePetPicker();
+}
+// Orden fijo de categorías (de común a más exclusiva) para agrupar la ventana
+// de "Elegir mascota" por rareza, cada una en su propia sección con encabezado.
+var MH_PICKER_RARITY_ORDER = ['comun', 'raro', 'muy_raro', 'epico', 'legendario', 'mitico', 'mitica', 'supremo'];
+function mhBuildPetPickerItem(m, equippedIds) {
+    var o = getOwnedMascota(m.id);
+    var st = o ? o.stage : 1;
+    var im = mascotaStageImage(m, st);
+    var sel = m.id === mascotaHeroSelectedId;
+    var locked = !o;
+    return '<div onclick="mhPickAndClose(\'' + m.id + '\')" style="position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 4px;border-radius:12px;cursor:pointer;background:' + (sel ? 'rgba(91,107,245,.25)' : 'rgba(255,255,255,.06)') + ';border:2px solid ' + (sel ? '#5b6bf5' : 'transparent') + ';">' +
+        '<div style="width:52px;height:52px;border-radius:11px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#eef1ff,#dbe2ff);font-size:24px;' + (locked ? 'filter:grayscale(1) brightness(.7);' : '') + '">' +
+            (im ? '<img src="' + im + '" style="width:100%;height:100%;object-fit:cover;">' : (o ? (m.emoji || '🐾') : '🔒')) +
+        '</div>' +
+        '<div style="font-size:10px;color:#fff;text-align:center;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + escapeHtml(m.name || '') + '</div>' +
+        (equippedIds.includes(m.id) ? '<span style="position:absolute;top:2px;right:2px;font-size:9px;background:rgba(0,0,0,.55);color:#fff;border-radius:6px;padding:0 3px;">✔️</span>' : '') +
+    '</div>';
+}
+function mhOpenPetPicker() {
+    mhClosePetPicker();
+    var list = CONFIG.mascotas || [];
+    var equippedIds = getEquippedMascotaIds();
+    // Agrupa las mascotas por su rareza (misma clave que usa el resto de la
+    // app en MASCOTA_RAREZAS), respetando el orden de MH_PICKER_RARITY_ORDER;
+    // cualquier rareza que no esté en esa lista cae al final igual.
+    var groups = {};
+    list.forEach(function (m) {
+        var key = m.rarity || 'comun';
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(m);
+    });
+    var orderedKeys = MH_PICKER_RARITY_ORDER.filter(function (k) { return groups[k]; });
+    Object.keys(groups).forEach(function (k) { if (orderedKeys.indexOf(k) === -1) orderedKeys.push(k); });
+    var sectionsHtml = orderedKeys.map(function (key) {
+        var info = MASCOTA_RAREZAS[key] || MASCOTA_RAREZAS.comun;
+        var itemsHtml = groups[key].map(function (m) { return mhBuildPetPickerItem(m, equippedIds); }).join('');
+        return '<div style="margin-bottom:14px;">' +
+            '<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">' +
+                '<span style="font-size:13px;">' + (info.symbol || '🐾') + '</span>' +
+                '<span style="font-size:11px;font-weight:900;letter-spacing:.4px;color:' + (info.color || '#fff') + ';">' + escapeHtml(info.label || key) + '</span>' +
+                '<span style="flex:1;height:1px;background:rgba(255,255,255,.08);"></span>' +
+            '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px;">' + itemsHtml + '</div>' +
+        '</div>';
+    }).join('');
+    var html = '<div id="mh-picker-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this) mhClosePetPicker()">' +
+        '<div style="background:#121821;border:1px solid #2b3444;border-radius:16px;width:100%;max-width:460px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.6);">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #232a35;background:#0f141e;flex-shrink:0;">' +
+                '<div style="color:#fff;font-weight:900;font-size:14px;">🐾 Elegir mascota</div>' +
+                '<button onclick="mhClosePetPicker()" style="width:30px;height:30px;border-radius:50%;border:1px solid #3a414e;background:#1a2230;color:#fff;font-weight:900;cursor:pointer;">✕</button>' +
+            '</div>' +
+            '<div style="overflow-y:auto;padding:12px;">' + sectionsHtml + '</div>' +
+        '</div></div>';
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
 function renderMascotaScreen() {
     mhBuildConfetti();
     const list = CONFIG.mascotas || [];
@@ -9539,8 +9833,17 @@ function renderMascotaScreen() {
     const glowPx = Math.round(140 + growthRatio * 120);     // el aura crece junto con la mascota
     const scaleX = (0.7 + growthRatio * 0.6).toFixed(2);    // 0.70x -> 1.30x
 
-    petWrap.innerHTML = img ? `<img src="${img}" alt="${escapeHtml(def.name)}" style="width:${petPx}px;height:${petPx}px">` : `<div class="mh-pet-emoji" style="width:${petPx}px;height:${petPx}px;font-size:${Math.round(petPx*0.6)}px">${def.emoji || '🐾'}</div>`;
-    if (img) applyPetImageFill(petWrap.querySelector('img'), img);
+    if (def.model3d && window.MascotaGLB) {
+        petWrap.style.width = '';
+        petWrap.style.height = '';
+        petWrap.innerHTML = `<div id="mh-pet-3d-inner" style="width:${petPx}px;height:${petPx}px"></div>`;
+        window.MascotaGLB.mount('mh-pet-3d-inner', def.model3d);
+    } else {
+        petWrap.style.width = '';
+        petWrap.style.height = '';
+        petWrap.innerHTML = img ? `<img src="${img}" alt="${escapeHtml(def.name)}" style="width:${petPx}px;height:${petPx}px">` : `<div class="mh-pet-emoji" style="width:${petPx}px;height:${petPx}px;font-size:${Math.round(petPx*0.6)}px">${def.emoji || '🐾'}</div>`;
+        if (img) applyPetImageFill(petWrap.querySelector('img'), img);
+    }
     mhSpawnOrbit(petPx, growthRatio);
     nameEl.textContent = ownedRec ? `${def.name} · ${stageName}` : `🔒 ${def.name}`;
 
@@ -9601,6 +9904,7 @@ function renderMascotaScreen() {
         bonusCard.style.display = 'none';
     }
 
+    const __mhRowScroll = row.scrollLeft;
     row.innerHTML = list.map(m => {
         const o = getOwnedMascota(m.id);
         const st = o ? o.stage : 1;
@@ -9612,6 +9916,10 @@ function renderMascotaScreen() {
             ${equippedIds.includes(m.id) ? '<span class="mh-row-badge">✔️</span>' : ''}
         </div>`;
     }).join('');
+    // Restaura la posición de scroll de la fila: al reconstruir el innerHTML en cada
+    // selección, el navegador reiniciaba el scroll a 0 y la mascota elegida "se perdía"
+    // de la vista si estaba desplazada hacia la derecha.
+    row.scrollLeft = __mhRowScroll;
 }
 
 /* Detecta cuánto "relleno" transparente tiene una imagen de mascota y devuelve un factor
@@ -9843,10 +10151,11 @@ function renderMascotaDetail() {
     const rareza = MASCOTA_RAREZAS[m.rarity] || MASCOTA_RAREZAS.comun;
     const currentStageInfo = stages[stage - 1] || {};
 
+    const has3d = !!(m.model3d && window.MascotaGLB);
     content.innerHTML = `
         <div style="text-align:center; padding:10px 15px">
-            <div style="width:160px; height:160px; margin:0 auto 12px; border-radius:20px; overflow:hidden; background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; font-size:70px">
-                ${img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover${owned ? '' : ';filter:grayscale(1) brightness(.6)'}">` : (m.emoji || '🐾')}
+            <div id="mascota-detail-3d-wrap" style="width:160px; height:160px; margin:0 auto 12px; border-radius:20px; overflow:hidden; background:rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; font-size:70px">
+                ${has3d ? '' : (img ? `<img src="${img}" style="width:100%;height:100%;object-fit:cover${owned ? '' : ';filter:grayscale(1) brightness(.6)'}">` : (m.emoji || '🐾'))}
             </div>
             <div style="display:inline-block; background:${rareza.color}22; border:1px solid ${rareza.color}; color:${rareza.color}; font-size:11px; font-weight:800; padding:3px 10px; border-radius:20px; margin-bottom:8px">
                 <img src="${rareza.img}" style="width:28px;height:28px;vertical-align:middle;"> Nivel máx. ${Math.max(75, m.levelMax||75)}
@@ -9935,6 +10244,7 @@ function renderMascotaDetail() {
             ${owned && stage >= 2 ? `<p>"${escapeHtml(m.story || '')}"</p>` : `<div class="mascota-story-locked">🔒 Sube de nivel (evoluciona a la 2ª etapa) para desbloquear la historia</div>`}
         </div>
     `;
+    if (has3d) window.MascotaGLB.mount('mascota-detail-3d-wrap', m.model3d);
 }
 
 function equiparMascotaActual() {
@@ -11803,7 +12113,7 @@ function pbBuildFighter(mascotaDef, ownedRec, isPlayer) {
     const stats = petBattleStats(mascotaDef, realLevel, 75);
     const img = mascotaStageImage(mascotaDef, stage);
     return {
-        def: mascotaDef, stage, maxStage: stages.length, img,
+        def: mascotaDef, stage, maxStage: stages.length, img, model3d: mascotaDef.model3d || null,
         name: mascotaDef.name, element1: mascotaDef.element1, element2: mascotaDef.element2, element3: mascotaDef.element3||null, element4: mascotaDef.element4||null,
         elements: mascotaDef.elements||[mascotaDef.element1, mascotaDef.element2, mascotaDef.element3, mascotaDef.element4].filter(Boolean),
         rarity: mascotaDef.rarity,
@@ -11859,6 +12169,7 @@ function pbGetEnemyTeam(excludeId, baseStage){
 }
 function openPetBattle(mascotaId) {
     try {
+        pbComboLog = [];
         const def = (CONFIG.mascotas || []).find(m => m.id === mascotaId);
         const owned = getOwnedMascota(mascotaId);
         if (!def || !owned) { showToast('❌ Necesitas tener esa mascota para batallar.'); return; }
@@ -11907,6 +12218,69 @@ function pbRenderTeams(){
             return `<span class="pb-team-dot ${dead?'dead':''} ${active?'active':''}">${f.def.emoji||'🐾'}</span>`;
         }).join('');
     }
+    pbRenderBench();
+}
+// Cuadritos de banquillo dentro de la arena (estilo Dragon City): muestran las
+// OTRAS 2 mascotas del equipo (la activa ya se ve grande peleando). Lado
+// jugador = tocable para cambiar (cambio voluntario, gasta turno si tu
+// mascota activa sigue viva); lado rival = solo informativo.
+function pbRenderBench(){
+    if(!PB || !PB.playerTeam) return;
+    const pBench = document.getElementById('pb-bench-p');
+    const eBench = document.getElementById('pb-bench-e');
+    // Ahora el banquillo también incluye el cuadrito de la mascota ACTIVA (con
+    // contorno de color propio) para que se note más claro cuál está peleando
+    // ahora mismo, además del sprite grande en la arena; va primero en la lista
+    // y no es clicable (ya está en combate).
+    function card(f, i, clickable, active){
+        const dead = f.hp<=0;
+        const pct = f.hpMax>0 ? Math.max(0, Math.min(100, (f.hp/f.hpMax)*100)) : 0;
+        const img = f.img ? `<img src="${f.img}">` : (f.def.emoji||'🐾');
+        const onclick = clickable && !dead && !active ? `onclick="pbBenchSwitch(${i})"` : '';
+        return `<div class="pb-bench-card ${dead?'dead':''} ${active?'active':''}" ${onclick}><span class="pb-bench-stage">${f.stage||1}</span>${img}<div class="pb-bench-hp"><div class="pb-bench-hp-fill" style="width:${pct}%"></div></div></div>`;
+    }
+    if(pBench){
+        const idx = PB.playerIdx;
+        const order = [idx, ...PB.playerTeam.map((_,i)=>i).filter(i=>i!==idx)];
+        pBench.innerHTML = order.map(i=> card(PB.playerTeam[i], i, true, i===idx)).join('');
+    }
+    if(eBench){
+        const idx = PB.enemyIdx;
+        const order = [idx, ...PB.enemyTeam.map((_,i)=>i).filter(i=>i!==idx)];
+        eBench.innerHTML = order.map(i=> card(PB.enemyTeam[i], i, false, i===idx)).join('');
+    }
+}
+function pbBenchSwitch(idx){
+    if(!PB || PB.over) return;
+    if(PB.turn!=='player'){ showToast('⏳ Espera tu turno para cambiar de mascota.'); return; }
+    const f = PB.playerTeam[idx];
+    if(!f || f.hp<=0) return;
+    pbConfirmBenchSwitch(idx, f);
+}
+// Antes de cambiar de mascota al tocar su cuadrito del banquillo, se pide
+// confirmación (evita cambios accidentales que le cedan el turno al rival).
+function pbConfirmBenchSwitch(idx, f){
+    let old = document.getElementById('pb-bench-confirm');
+    if(old) old.remove();
+    const modal = document.createElement('div');
+    modal.id = 'pb-bench-confirm';
+    modal.className = 'pb-team-chooser';
+    modal.innerHTML = `<div class="pb-team-chooser-card" style="max-width:300px; text-align:center;">
+        <h3 style="margin-bottom:14px;">¿Cambiar a ${f.name}?</h3>
+        <div style="display:flex; gap:10px; justify-content:center;">
+            <button class="pb-chooser-btn" style="flex:1; background:#22c55e; color:#0c2b02; font-weight:900; border:none; border-radius:10px; padding:10px 6px;" onclick="pbBenchSwitchConfirmed(${idx})">Sí, cambiar</button>
+            <button class="pb-chooser-btn" style="flex:1; background:#3a3f4a; color:#fff; font-weight:900; border:none; border-radius:10px; padding:10px 6px;" onclick="document.getElementById('pb-bench-confirm').remove()">Cancelar</button>
+        </div>
+    </div>`;
+    document.body.appendChild(modal);
+}
+function pbBenchSwitchConfirmed(idx){
+    const modal = document.getElementById('pb-bench-confirm');
+    if(modal) modal.remove();
+    if(!PB || PB.over) return;
+    const f = PB.playerTeam[idx];
+    if(!f || f.hp<=0) return;
+    pbSwitchPlayer(idx, false);
 }
 // Pestañas ATAQUES / TUS MASCOTAS dentro de la Arena de Batalla. "atk" muestra las
 // habilidades normales; "team" muestra la lista de tus otras mascotas para cambiar
@@ -11958,6 +12332,9 @@ function pbSwitchPlayer(idx, forced){
     const ps = document.getElementById('pb-p-sprite');
     if(ps){ ps.style.opacity='1'; ps.style.display=''; }
     pbRenderFighters();
+    // Animación de entrada: la mascota "sale" desde su cuadrito hacia la arena
+    // en vez de aparecer de golpe.
+    pbPlaySwitchEnterFx('p');
     const chooser = document.getElementById('pb-team-chooser');
     if(chooser) chooser.remove();
     pbSetLog(`¡Ve, ${PB.player.name}!`);
@@ -11997,6 +12374,7 @@ function pbHandleEnemyDeath(){
     const ef = document.getElementById('pb-e-fighter');
     if(ef){ ef.classList.remove('ko'); ef.style.opacity='1'; }
     pbRenderFighters();
+    pbPlaySwitchEnterFx('e');
     pbSetLog(`¡El rival envía a ${PB.enemy.name}!`);
     PB.turn = 'player';
     pbSetTurnUI('player');
@@ -12032,6 +12410,17 @@ function closePetBattle() {
     goToScreen('mascota-screen');
 }
 
+// Dispara la animación de "entrada" de una mascota (sale desde su cuadrito del
+// banquillo hacia la arena) justo después de cambiarla, tanto para tu equipo
+// como para el del rival.
+function pbPlaySwitchEnterFx(prefix){
+    const fEl = document.getElementById(prefix === 'p' ? 'pb-p-fighter' : 'pb-e-fighter');
+    if (!fEl) return;
+    fEl.classList.remove('pet-switch-enter');
+    void fEl.offsetWidth;
+    fEl.classList.add('pet-switch-enter');
+    setTimeout(() => fEl.classList.remove('pet-switch-enter'), 600);
+}
 function pbRenderFighters() {
     if (!PB) return;
     const { player, enemy } = PB;
@@ -12046,6 +12435,10 @@ function pbRenderFighters() {
     if(eStarEl) eStarEl.innerText = pbStageStars(enemy.def, enemy.stage);
     document.getElementById('pb-p-elems').innerHTML = pbElemBadges(player);
     document.getElementById('pb-e-elems').innerHTML = pbElemBadges(enemy);
+    const pPortrait = document.getElementById('pb-p-portrait');
+    const ePortrait = document.getElementById('pb-e-portrait');
+    if (pPortrait) pPortrait.innerHTML = player.img ? `<img src="${player.img}">` : (player.def.emoji || '🐾');
+    if (ePortrait) ePortrait.innerHTML = enemy.img ? `<img src="${enemy.img}">` : (enemy.def.emoji || '🐾');
     const pF = document.getElementById('pb-p-fighter');
     const eF = document.getElementById('pb-e-fighter');
     if(pF){ if(PB.player.hp>0){ pF.classList.remove('ko'); pF.style.opacity='1'; } }
@@ -12053,7 +12446,7 @@ function pbRenderFighters() {
     function pbSpriteSizePx(fighter){
         const totalStages = (typeof mascotaStages==='function' && fighter.def) ? mascotaStages(fighter.def).length : 13;
         const ratio = Math.max(0, Math.min(1, ((fighter.stage||1) - 1) / Math.max(1, totalStages - 1)));
-        return Math.round(70 + ratio * 70); // 70px (etapa 1, bebé) -> 140px (etapa máxima), acotado para no desbordar su casillero de 120px
+        return Math.round(130 + ratio * 100); // 130px (etapa 1, bebé) -> 230px (etapa máxima)
     }
     let pPx = pbSpriteSizePx(player);
     let ePx = pbSpriteSizePx(enemy);
@@ -12063,22 +12456,51 @@ function pbRenderFighters() {
     if (arenaEl) {
         const arenaH = arenaEl.getBoundingClientRect().height;
         if (arenaH > 20) {
-            const maxAllowed = Math.max(56, Math.round(arenaH - 34)); // deja espacio para sombra/piso
-            pPx = Math.min(pPx, maxAllowed);
-            ePx = Math.min(ePx, maxAllowed);
+            const maxAllowedH = Math.max(70, Math.round(arenaH - 18)); // deja espacio justo para sombra/piso
+            pPx = Math.min(pPx, maxAllowedH);
+            ePx = Math.min(ePx, maxAllowedH);
+        }
+        // Tampoco dejar que, entre las dos mascotas, se encimen una con otra:
+        // cada una tiene como máximo la mitad del ancho de la arena (menos el
+        // padding lateral y un margen central de aire entre ambas).
+        const arenaW = arenaEl.getBoundingClientRect().width;
+        if (arenaW > 20) {
+            const maxAllowedW = Math.max(70, Math.round(arenaW / 2 - 36));
+            pPx = Math.min(pPx, maxAllowedW);
+            ePx = Math.min(ePx, maxAllowedW);
         }
     }
-    // Nunca dejar que la mascota sea más ancha que su propio casillero (.pb-fighter, 120px fijo)
-    // para que no se desborde y tape las tarjetas de arriba ni la barra de definitiva.
-    const MAX_SPRITE_W = 112;
+    // Techo de seguridad (antes 112px fijo, muy por debajo del espacio real
+    // disponible en la mayoría de pantallas; ahora solo evita tamaños absurdos).
+    const MAX_SPRITE_W = 240;
     pPx = Math.min(pPx, MAX_SPRITE_W);
     ePx = Math.min(ePx, MAX_SPRITE_W);
+    // El "casillero" (.pb-fighter) se ajusta al tamaño real del sprite en vez de
+    // quedar fijo en 120px, para que el modelo no quede recortado visualmente
+    // ni la separación entre ambas mascotas se calcule con una caja más chica
+    // de lo que realmente se está mostrando.
+    if (pF) { pF.style.width = pPx + 'px'; pF.style.minWidth = pPx + 'px'; }
+    if (eF) { eF.style.width = ePx + 'px'; eF.style.minWidth = ePx + 'px'; }
     const pSpriteEl = document.getElementById('pb-p-sprite');
     const eSpriteEl = document.getElementById('pb-e-sprite');
-    pSpriteEl.innerHTML = player.img ? `<img src="${player.img}" style="width:${pPx}px;height:${pPx}px">` : (player.def.emoji || '🐾');
-    eSpriteEl.innerHTML = enemy.img ? `<img src="${enemy.img}" style="width:${ePx}px;height:${ePx}px">` : (enemy.def.emoji || '🐾');
-    if (player.img) applyPetImageFill(pSpriteEl.querySelector('img'), player.img);
-    if (enemy.img) applyPetImageFill(eSpriteEl.querySelector('img'), enemy.img, 'scaleX(-1)');
+    if (player.model3d && window.MascotaGLB) {
+        pSpriteEl.style.width = pPx + 'px'; pSpriteEl.style.height = pPx + 'px';
+        pSpriteEl.innerHTML = '';
+        window.MascotaGLB.mount('pb-p-sprite', player.model3d, { spin: false });
+    } else {
+        pSpriteEl.style.width = ''; pSpriteEl.style.height = '';
+        pSpriteEl.innerHTML = player.img ? `<img src="${player.img}" style="width:${pPx}px;height:${pPx}px">` : (player.def.emoji || '🐾');
+        if (player.img) applyPetImageFill(pSpriteEl.querySelector('img'), player.img);
+    }
+    if (enemy.model3d && window.MascotaGLB) {
+        eSpriteEl.style.width = ePx + 'px'; eSpriteEl.style.height = ePx + 'px';
+        eSpriteEl.innerHTML = '';
+        window.MascotaGLB.mount('pb-e-sprite', enemy.model3d, { spin: false });
+    } else {
+        eSpriteEl.style.width = ''; eSpriteEl.style.height = '';
+        eSpriteEl.innerHTML = enemy.img ? `<img src="${enemy.img}" style="width:${ePx}px;height:${ePx}px">` : (enemy.def.emoji || '🐾');
+        if (enemy.img) applyPetImageFill(eSpriteEl.querySelector('img'), enemy.img, 'scaleX(-1)');
+    }
     pbUpdateHpBar('p', player);
     pbUpdateHpBar('e', enemy);
     pbUpdateStatBars(player, enemy);
@@ -12106,6 +12528,23 @@ function pbUpdateHpBar(prefix, fighter) {
     const chip = document.getElementById(`pb-${prefix}-hpchip`);
     fill.style.width = pct + '%';
     fill.classList.toggle('low', pct <= 30);
+    // HP crítico de TU mascota: además del pulso normal de la barra, se marca
+    // con vibración + destello rojo de pantalla (una sola vez al entrar en ese
+    // rango) y un borde rojo pulsante en la arena mientras siga tan baja de vida,
+    // para que se sienta la tensión de que está a punto de caer.
+    if (prefix === 'p') {
+        const arena = document.getElementById('pb-arena');
+        const critical = pct > 0 && pct <= 20;
+        if (critical && !fighter._hpCriticalWarned) {
+            fighter._hpCriticalWarned = true;
+            const flash = document.getElementById('pb-hpcrit-flash');
+            if (flash) { flash.classList.remove('play'); void flash.offsetWidth; flash.classList.add('play'); }
+            pbVibrate([70, 50, 70, 50, 140]);
+        } else if (!critical) {
+            fighter._hpCriticalWarned = false;
+        }
+        if (arena) arena.classList.toggle('pb-hp-critical', critical);
+    }
     if (chip) {
         const prevPct = parseFloat(chip.dataset.pct != null ? chip.dataset.pct : pct);
         if (pct < prevPct) {
@@ -13008,6 +13447,23 @@ function pbPlayHitEffect(prefix, attackerElement, tier, isCrit, isDeathBlow) {
     const elColor = (ELEMENTS[attackerElement] && ELEMENTS[attackerElement].color) || '#fff';
     const arena = document.getElementById('pb-arena');
 
+    // Sonido + vibración de IMPACTO, distintos según el golpe sea normal, con
+    // ventaja de elemento (crítico) o un golpe definitivo: así se siente la
+    // diferencia incluso sin mirar el texto/flash en pantalla.
+    try {
+        const ctx = getAudioCtx();
+        if (isDeathBlow || tier === 3) {
+            pbVibrate([50, 30, 50, 30, 110]);
+            if (ctx) { playNoise(ctx, 0.35, 0.3, 500, 'lowpass'); playWarm(ctx, 90, 0.5, 0.32); }
+        } else if (isCrit || tier === 2) {
+            pbVibrate([25, 20, 55]);
+            if (ctx) { playWarm(ctx, 560, 0.16, 0.28); setTimeout(() => playWarm(ctx, 840, 0.14, 0.22), 90); }
+        } else {
+            pbVibrate([35]);
+            if (ctx) playNoise(ctx, 0.1, 0.16, 800, 'lowpass');
+        }
+    } catch (e) {}
+
     if (isDeathBlow || tier === 3) {
         fighterEl.classList.add('hit-big');
         pbSpawnHitBurst(prefix, attackerElement, 14);
@@ -13035,9 +13491,11 @@ function pbShowEffectBanner(elemMult, isCrit, isDeathBlow) {
     const wrap = document.getElementById('pb-effect-banner');
     if (!wrap) return;
     let text, cls;
+    // La ventaja de elemento (isCrit === elemMult === 2) siempre se anuncia como
+    // "¡SÚPER EFECTIVO!" en vez de "¡CRÍTICO!" (ambos textos eran para el mismo
+    // evento y el de crítico se comía siempre al otro).
     if (isDeathBlow) { text = '¡GOLPE DE MUERTE!'; cls = 'crit'; }
-    else if (isCrit) { text = '¡CRÍTICO!'; cls = 'crit'; }
-    else if (elemMult === 2) { text = '¡SÚPER EFECTIVO!'; cls = 'crit'; }
+    else if (elemMult === 2) { text = '¡SÚPER EFECTIVO!'; cls = 'super'; }
     else if (elemMult === 0) { text = 'SIN EFECTO'; cls = 'sin'; }
     else if (elemMult === 0.5) { text = 'DÉBIL'; cls = 'debil'; }
     else return; // daño normal: no se satura la pantalla con texto de más
@@ -13046,7 +13504,14 @@ function pbShowEffectBanner(elemMult, isCrit, isDeathBlow) {
     span.textContent = text;
     wrap.innerHTML = '';
     wrap.appendChild(span);
-    setTimeout(() => { if (span.parentNode) span.parentNode.removeChild(span); }, 1150);
+    // El "¡SÚPER EFECTIVO!" es el aviso de combate más importante para el
+    // jugador (le confirma que está explotando bien las ventajas de elemento),
+    // así que además del texto grande se marca con un destello de color propio.
+    if (cls === 'super') {
+        const sflash = document.getElementById('pb-super-flash');
+        if (sflash) { sflash.classList.remove('play'); void sflash.offsetWidth; sflash.classList.add('play'); }
+    }
+    setTimeout(() => { if (span.parentNode) span.parentNode.removeChild(span); }, 1300);
 }
 
 function pbShowDamage(prefix, amount, isCrit, elemMult) {
@@ -13415,6 +13880,7 @@ pbTriggerPetFx = function(attackerPrefix, defenderPrefix, petId, fxKey){
     var skillDef = skillList.find(function(s){ return s.fx === fxKey; });
     var elem = (skillDef && skillDef.element) || (petDef && petDef.elements && petDef.elements[0]) || 'naturaleza';
     pbPlayRealisticOverlay(attackerPrefix, defenderPrefix, petId, elem);
+    if (typeof pbFireProjectile === 'function') pbFireProjectile(attackerPrefix, defenderPrefix, elem);
   }catch(e){
     console.error('pbTriggerPetFx wrapped', e);
     _orig_pbTriggerPetFx(attackerPrefix, defenderPrefix, petId, fxKey);
@@ -14129,14 +14595,23 @@ const PB_BIOME_MAP = {
 };
 function pbApplyBiome(petId){
   const arena=document.getElementById('pb-arena'); if(!arena) return;
+  // Antes esto pintaba la arena de un color distinto según el elemento de la
+  // mascota (verde bosque, azul hielo, morado vacío...) mientras el resto de
+  // la pantalla (topbar, tarjetas de vida, columnas) se queda siempre en el
+  // mismo rojo/dorado de coliseo. Eso generaba el choque de dos ambientes que
+  // se veía "desconcertado". Ahora la arena usa siempre ese mismo tono único,
+  // para que toda la pantalla se sienta como un solo lugar.
   arena.classList.remove('biome-forest','biome-volcano','biome-void','biome-ice','biome-divine');
-  const biome = PB_BIOME_MAP[petId] || (petId==='seraph'?'divine':null);
-  if(biome) arena.classList.add('biome-'+biome);
-  pbSet3DBiome(biome || 'forest');
+  pbSet3DBiome('coliseo');
 }
 
 /* ================= FONDO 3D DE LA ARENA (Three.js) ================= */
 const PB_BIOME_3D = {
+  // Tono único del "Coliseo": el mismo rojo/dorado que ya usan el marco de la
+  // pantalla, las tarjetas de vida y las columnas, para que la arena 3D no
+  // choque con el resto de la pantalla (antes por defecto salía un domo verde
+  // de bosque aunque la mascota no tuviera ese elemento, y chocaba con el rojo).
+  coliseo: { fog:0x5c0a0f, ground:0x7a0d13, ring:0xffd28c, particle:'✨' },
   forest:  { fog:0x0a2a0a, ground:0x1B5E20, ring:0x4caf50, particle:'🍃' },
   volcano: { fog:0x2a0e08, ground:0x8a2c0f, ring:0xff6a00, particle:'🔥' },
   void:    { fog:0x05061a, ground:0x1A237E, ring:0x8a5cff, particle:'✨' },
@@ -14159,7 +14634,7 @@ function pbBuild3DBg() {
   const H = wrap.clientHeight || 200;
 
   const scene = new THREE.Scene();
-  const theme = PB_BIOME_3D.forest;
+  const theme = PB_BIOME_3D.coliseo;
   scene.fog = new THREE.Fog(theme.fog, 6, 16);
   scene.background = new THREE.Color(theme.fog);
 
@@ -14225,7 +14700,7 @@ function pbBuild3DBg() {
 
 function pbSet3DBiome(biome) {
   if (!pb3DReady) { pbInit3DBg(); return; }
-  const theme = PB_BIOME_3D[biome] || PB_BIOME_3D.forest;
+  const theme = PB_BIOME_3D[biome] || PB_BIOME_3D.coliseo;
   if (!pb3D) return;
   pb3D.theme = theme;
   pb3D.scene.fog.color.set(theme.fog);
@@ -14295,19 +14770,35 @@ function pbDamagePredictSetup(){
     const p=btn.querySelector('.pb-pred-damage'); if(p) p.remove();
   });
 }
-function pbEnsureComboHistory(){
-  let hist=document.getElementById('pb-combo-history');
-  if(hist) return hist;
-  const arena=document.getElementById('pb-arena'); if(!arena) return null;
-  hist=document.createElement('div'); hist.id='pb-combo-history'; hist.className='pb-combo-history';
-  hist.innerHTML='<div style="font-weight:900; color:#fff; margin-bottom:3px;">COMBOS</div>';
-  arena.appendChild(hist); return hist;
-}
+// El historial de combos ya no vive como panel fijo encima de la arena (tapaba a
+// las mascotas). Ahora se guarda en memoria y solo se muestra al tocar el botón
+// 📜 del encabezado, en una ventanita que se cierra sola.
+let pbComboLog = [];
+function pbEnsureComboHistory(){ return null; }
 function pbAddComboHistory(petId, skillName){
-  const hist=pbEnsureComboHistory(); if(!hist) return;
-  const line=document.createElement('div'); line.textContent=(petId||'').slice(0,6)+': '+skillName;
-  hist.appendChild(line);
-  if(hist.children.length>6){ hist.removeChild(hist.children[1]); }
+  pbComboLog.push({ petId: petId || '', skillName: skillName || '' });
+  if (pbComboLog.length > 6) pbComboLog.shift();
+  if (document.getElementById('pb-combo-modal')) pbRenderComboModal();
+}
+function pbRenderComboModal(){
+  const body = document.getElementById('pb-combo-modal-body'); if (!body) return;
+  body.innerHTML = pbComboLog.length
+    ? pbComboLog.map(e => '<div style="padding:4px 0;border-bottom:1px solid #232a35;color:#c9d1d9;font-size:12px;">' + escapeHtml((e.petId || '').slice(0,10)) + ': ' + escapeHtml(e.skillName) + '</div>').join('')
+    : '<div style="color:#8b949e;font-size:12px;">Todavía no hay combos en esta batalla.</div>';
+}
+function pbToggleComboHistory(){
+  const existing = document.getElementById('pb-combo-modal');
+  if (existing) { existing.remove(); return; }
+  const html = '<div id="pb-combo-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;" onclick="if(event.target===this) pbToggleComboHistory()">' +
+      '<div style="background:#121821;border:1px solid #2b3444;border-radius:14px;width:100%;max-width:280px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,.6);">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #232a35;background:#0f141e;">' +
+          '<div style="color:#fff;font-weight:900;font-size:13px;">📜 Combos</div>' +
+          '<button onclick="pbToggleComboHistory()" style="width:26px;height:26px;border-radius:50%;border:1px solid #3a414e;background:#1a2230;color:#fff;font-weight:900;cursor:pointer;font-size:12px;">✕</button>' +
+        '</div>' +
+        '<div id="pb-combo-modal-body" style="padding:10px 14px;max-height:50vh;overflow-y:auto;"></div>' +
+      '</div></div>';
+  document.body.insertAdjacentHTML('beforeend', html);
+  pbRenderComboModal();
 }
 function pbAchievement(txt){
   let ach=document.getElementById('pb-achievement');
@@ -14335,7 +14826,7 @@ function pbParallaxSetup(){
   arena.addEventListener('mouseleave', ()=>{ arena.style.transform='perspective(600px) rotateY(0) rotateX(0)'; });
 }
 // Auto init
-setTimeout(()=>{ try{ pbDamagePredictSetup(); pbParallaxSetup(); pbEnsureComboHistory(); }catch(e){} }, 1200);
+setTimeout(()=>{ try{ pbDamagePredictSetup(); pbParallaxSetup(); }catch(e){} }, 1200);
 
 // === v7.1 ULTIMATE METER SYSTEM ===
 let _ultCharge = 0;
@@ -14601,5 +15092,171 @@ pbTriggerPetFx = function(a,b,c,d){
     <img id="img-zoom-content" src="">
 </div>
 
+    <script>
+    // Oculta la barra de direcciones del navegador al probar en el celular: al primer
+    // toque en la pantalla, pide pantalla completa (el navegador exige un gesto del
+    // usuario para permitirlo, por eso no se puede hacer solo al cargar la página).
+    // Funciona en Chrome/Android. En iPhone (Safari) el navegador no deja poner en
+    // pantalla completa una pestaña normal; ahí la única forma de ocultar la barra
+    // es usar "Compartir → Agregar a pantalla de inicio" y abrir el ícono desde ahí.
+    (function () {
+        function pedirPantallaCompleta() {
+            var el = document.documentElement;
+            var req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
+            if (req) { try { req.call(el); } catch (e) {} }
+            document.removeEventListener('click', pedirPantallaCompleta);
+            document.removeEventListener('touchend', pedirPantallaCompleta);
+        }
+        document.addEventListener('click', pedirPantallaCompleta, { once: true });
+        document.addEventListener('touchend', pedirPantallaCompleta, { once: true });
+    })();
+    </script>
+
+    <!-- ---------- Visor de modelos 3D (.glb) para mascotas ----------
+         Módulo aparte (type="module") que carga Three.js + GLTFLoader desde CDN
+         y expone window.MascotaGLB.mount(containerId, url) / .dispose(containerId)
+         para que el resto del código (scripts normales) pueda mostrar el modelo 3D
+         de una mascota dentro de cualquier contenedor, igual que se hace hoy con <img>. -->
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { clone as cloneSkinnedScene } from 'three/addons/utils/SkeletonUtils.js';
+
+        const glbGltfCache = {};   // url -> gltf ya cargado (se reutiliza, no se vuelve a descargar)
+        const glbViewers = {};     // containerId -> { renderer, scene, camera, model, raf, resizeObs }
+
+        function disposeGLBViewer(containerId) {
+            const v = glbViewers[containerId];
+            if (!v) return;
+            cancelAnimationFrame(v.raf);
+            if (v.resizeObs) v.resizeObs.disconnect();
+            v.renderer.dispose();
+            if (v.renderer.domElement && v.renderer.domElement.parentNode) {
+                v.renderer.domElement.parentNode.removeChild(v.renderer.domElement);
+            }
+            delete glbViewers[containerId];
+        }
+
+        function cloneGltfScene(gltf) {
+            // Muchas mascotas traen esqueleto/huesos (SkinnedMesh) para poder animarse.
+            // Un Object3D.clone(true) normal NO reconecta la malla a los huesos clonados
+            // (el skeleton.bones sigue apuntando a los huesos originales), y el modelo se
+            // ve colapsado/deforme. SkeletonUtils.clone sí reconstruye esas referencias
+            // correctamente, y sigue funcionando igual de bien para modelos sin huesos.
+            return cloneSkinnedScene(gltf.scene);
+        }
+
+        async function mountGLB(containerId, url, opts) {
+            opts = opts || {};
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            disposeGLBViewer(containerId);
+            container.innerHTML = '';
+
+            const w = container.clientWidth || 160;
+            const h = container.clientHeight || 160;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(35, w / h, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(w, h);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+            renderer.setClearColor(0x000000, 0);
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+            container.appendChild(renderer.domElement);
+
+            scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+            const dir1 = new THREE.DirectionalLight(0xffffff, 1.4);
+            dir1.position.set(2, 4, 3);
+            scene.add(dir1);
+            const dir2 = new THREE.DirectionalLight(0xffffff, 0.5);
+            dir2.position.set(-3, -1, -2);
+            scene.add(dir2);
+
+            try {
+                let gltf = glbGltfCache[url];
+                if (!gltf) {
+                    gltf = await new Promise((resolve, reject) => {
+                        new GLTFLoader().load(url, resolve, undefined, reject);
+                    });
+                    glbGltfCache[url] = gltf;
+                }
+                const model = cloneGltfScene(gltf);
+
+                // Si el modelo es más largo "hacia adentro" (profundidad, eje Z) que
+                // "a los lados" (eje X), la cámara fija de abajo lo estaría mirando de
+                // frente/cola en vez de mostrar su costado (el lado largo y reconocible
+                // de un animal). Lo detectamos con la caja original y lo giramos 90°
+                // en Y para que ese lado largo quede de cara a la cámara.
+                const rawBox = new THREE.Box3().setFromObject(model);
+                const rawSize = new THREE.Vector3(); rawBox.getSize(rawSize);
+                if (rawSize.z > rawSize.x * 1.15) {
+                    model.rotation.y += Math.PI / 2;
+                }
+                // opts.mirror: gira 180° extra para que quede mirando hacia el lado
+                // contrario (usado en batalla para que jugador y rival se miren entre sí).
+                if (opts.mirror) model.rotation.y += Math.PI;
+
+                // Centra el modelo y lo escala para que quepa siempre en el contenedor,
+                // sin importar el tamaño real con el que fue exportado el .glb.
+                const box = new THREE.Box3().setFromObject(model);
+                const size = new THREE.Vector3(); box.getSize(size);
+                const center = new THREE.Vector3(); box.getCenter(center);
+                model.position.sub(center);
+                const maxDim = Math.max(size.x, size.y, size.z) || 1;
+                model.scale.setScalar(1.6 / maxDim);
+                scene.add(model);
+
+                camera.position.set(0, 0.25, 3);
+                camera.lookAt(0, 0, 0);
+
+                // Si el modelo trae una animación (respiración/idle, etc.), se reproduce en
+                // bucle para dar movimiento natural. opts.spin=false (batalla) desactiva el
+                // giro constante tipo "vitrina" pero conserva esta animación si existe.
+                let mixer = null;
+                if (gltf.animations && gltf.animations.length) {
+                    mixer = new THREE.AnimationMixer(model);
+                    mixer.clipAction(gltf.animations[0]).play();
+                }
+                const clock = new THREE.Clock();
+                const doSpin = opts.spin !== false;
+
+                let raf;
+                function animate() {
+                    raf = requestAnimationFrame(animate);
+                    if (doSpin) model.rotation.y += 0.012; // giro lento automático, estilo "vitrina"
+                    if (mixer) mixer.update(clock.getDelta());
+                    renderer.render(scene, camera);
+                }
+                animate();
+
+                const resizeObs = new ResizeObserver(() => {
+                    const nw = container.clientWidth || w;
+                    const nh = container.clientHeight || h;
+                    camera.aspect = nw / nh;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(nw, nh);
+                });
+                resizeObs.observe(container);
+
+                glbViewers[containerId] = { renderer, scene, camera, model, raf, resizeObs };
+                if (opts.onReady) opts.onReady(model);
+            } catch (e) {
+                console.error('Error cargando modelo 3D (.glb):', e);
+                container.innerHTML = '<span style="font-size:9px;color:#f66;text-align:center;padding:4px">❌ No se pudo cargar el modelo 3D</span>';
+                if (opts.onError) opts.onError(e);
+            }
+        }
+
+        window.MascotaGLB = { mount: mountGLB, dispose: disposeGLBViewer };
+    </script>
 </body>
 </html>
