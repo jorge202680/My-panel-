@@ -13,6 +13,18 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #0d1117; color: #fff; padding-bottom: 15px; user-select: none; }
         body.no-scroll-fixed-screen { overflow: hidden; height: 100%; touch-action: none; }
+
+/* ---------- Horizontal en toda la app ----------
+   La orientación real la fija Android de forma nativa (ver instrucciones abajo),
+   por eso aquí NO se rota el documento con CSS: ese truco rompía muchos paneles
+   de la app que usan 100vh/100vw (arena de batalla, ventanas emergentes, admin, etc.). */
+@media (orientation: landscape){
+    .screen.active:not(#pet-battle-screen){
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 /* Oculta los botones flotantes (evento y acceso admin) mientras la Arena de
    Batalla está activa: al ser position:fixed con z-index alto, quedaban tapando
    los botones de habilidad en la parte baja de la pantalla. */
@@ -1083,11 +1095,13 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
 .pb-info-txt b{ display:block; font-size:12px; color:#2e1f10; }
 .pb-info-txt.locked{ opacity:.55; }
 
-/* ---- Modo horizontal: layout en grilla, cada zona con su espacio fijo garantizado ---- */
+/* ---- Modo horizontal: layout en grilla, cada zona con su espacio fijo garantizado ----
+   Las 4 habilidades se acomodan en una grilla 2x2 fija que siempre cabe completa,
+   sin necesidad de deslizar/buscar para ver las que faltan. */
 @media (orientation: landscape){
     #pet-battle-screen.active{
         display:grid;
-        grid-template-columns: 1fr 176px;
+        grid-template-columns: 1fr 200px;
         grid-template-rows: auto auto auto 1fr;
         grid-template-areas: "top top" "hp hp" "log log" "arena skills";
     }
@@ -1098,15 +1112,41 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
     .pb-log{ grid-area:log; font-size:10px; margin:1px 15px 0; min-height:12px; }
     .pb-tabs{ display:none; }
     .pb-arena{ grid-area:arena; min-height:0 !important; padding:4px 10px 4px; }
-    .pb-skills-panel{ grid-area:skills; max-height:none; height:100%; margin:6px 10px 6px 0; overflow-y:auto; box-sizing:border-box; }
+    .pb-skills-panel{ grid-area:skills; max-height:none; height:100%; margin:6px 10px 6px 0; overflow:hidden; box-sizing:border-box; display:flex; flex-direction:column; padding:6px; }
     .pb-skills-hint{ display:none; }
-    .pb-skills{ grid-template-columns:1fr; grid-auto-rows:min-content; }
-    .pb-skill-btn{ padding:4px 6px; gap:5px; }
+    .pb-skills{ display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr auto; gap:4px; height:100%; }
+    .pb-skill-btn{ flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2px 2px; gap:1px; height:100%; width:100%; min-height:0; }
+    .pb-skill-basic{ padding:3px 4px !important; }
     .pb-skill-desc{ display:none; }
-    .pb-skill-btn .pb-skill-ic{width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:8px;}
+    .pb-skill-btn .pb-skill-ic{width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:transparent;border-radius:8px;}
 .pb-skill-ic{ width:16px; height:16px; font-size:9px; }
-    .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:10.5px; }
+    .pb-skill-btn .pb-skill-txt{ align-items:center; }
+    .pb-skill-btn .pb-skill-txt > span:first-child{ font-size:9.5px; white-space:normal; text-align:center; line-height:1.1; overflow:visible; }
+    .pb-skill-btn .pb-skill-lock{ font-size:6.5px; }
     .pb-info-overlay{ padding-top:44px; }
+}
+
+/* ---- Pantalla principal en horizontal: dos columnas alineadas para aprovechar el ancho ---- */
+@media (orientation: landscape){
+    #main-screen .hero-rainbow-bg{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "top    orbit"
+            "level  orbit"
+            "cta1   orbit"
+            "cta2   orbit";
+        align-items: center;
+        gap: 4px 14px;
+        padding-top: 8px;
+    }
+    #main-screen .hero-topbar{ grid-area: top; }
+    #main-screen #app-version-label{ display:none; }
+    #main-screen .userlvl-widget{ grid-area: level; margin: 4px 0 0 !important; }
+    #main-screen .hero-title-wrap{ display:none; }
+    #main-screen .hero-orbit{ grid-area: orbit; width: min(220px, 38vh); }
+    #main-screen .hero-cta[onclick*="game-screen"]{ grid-area: cta1; margin-top: 8px !important; }
+    #main-screen .hero-cta[onclick*="isla-screen"]{ grid-area: cta2; margin-top: 8px !important; }
 }
 .pb-pillar{ position:absolute; top:0; bottom:0; width:64px; background:linear-gradient(180deg,#c0392b,#7a0d13);
     box-shadow:inset 0 0 18px rgba(0,0,0,.5); opacity:.9; z-index:1; }
@@ -2332,10 +2372,17 @@ body.no-scroll-fixed-screen .event-fab, body.no-scroll-fixed-screen .admin-fab, 
         <div class="top-bar" style="border-radius:0; margin:0; position:absolute; top:0; left:0; right:0; z-index:5;">
             <span style="cursor:pointer; color:#58a6ff;" onclick="navTabTo('main-screen')">⬅ Volver</span>
             <span style="color:#fff; font-weight:800;">🏝️ Mi Isla</span>
-            <span></span>
+            <span id="isla-edit-toggle" style="cursor:pointer; color:#ffd24a; font-weight:800;" onclick="islaToggleEditMode()">✏️ Editar</span>
         </div>
         <div id="isla-hint" style="position:absolute; top:52px; left:0; right:0; text-align:center; z-index:5; color:#fff; font-size:12px; background:rgba(0,0,0,.35); padding:6px 10px; pointer-events:none;">
             Arrastra para rotar · Toca los objetos para recolectar
+        </div>
+        <div id="isla-edit-bar" style="display:none; position:absolute; top:88px; left:0; right:0; z-index:5; padding:8px 10px; background:rgba(0,0,0,.55); text-align:center;">
+            <button class="admin-add-btn" style="background:#2ecc71; color:#fff; padding:8px 14px; border-radius:10px; font-weight:800; margin-right:6px;" onclick="document.getElementById('isla-upload-input').click()">➕ Subir imagen</button>
+            <button class="admin-add-btn" id="isla-delete-btn" style="display:none; background:#e74c3c; color:#fff; padding:8px 14px; border-radius:10px; font-weight:800; margin-right:6px;" onclick="islaDeleteSelected()">🗑️ Eliminar</button>
+            <button class="admin-add-btn" style="background:#3d4451; color:#fff; padding:8px 14px; border-radius:10px; font-weight:800;" onclick="islaToggleEditMode()">✅ Listo</button>
+            <input type="file" id="isla-upload-input" accept="image/*" style="display:none;" onchange="islaHandleUpload(event)">
+            <div id="isla-edit-status" style="color:#ffd24a; font-size:11px; margin-top:6px;"></div>
         </div>
         <div id="isla-canvas-wrap" style="position:absolute; top:0; left:0; right:0; bottom:0;"></div>
         <div id="isla-loading" style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; flex-direction:column; color:#fff; font-family:sans-serif; z-index:6; background:#0a1622;">
@@ -5699,6 +5746,30 @@ let islaSceneReady = false;
 let islaRAF = null;
 let isla = {}; // guarda scene, camera, renderer, objetos clicables, etc.
 
+// Niveles de la Isla: XP acumulada por recolectar, cada nivel desbloquea algo nuevo
+const ISLA_LEVELS = [
+    { lvl: 1, xpNeeded: 0,   unlock: null },
+    { lvl: 2, xpNeeded: 80,  unlock: 'faro' },
+    { lvl: 3, xpNeeded: 200, unlock: 'barco' },
+    { lvl: 4, xpNeeded: 380, unlock: 'cueva' },
+    { lvl: 5, xpNeeded: 600, unlock: 'cabana_grande' }
+];
+function islaGetLevelInfo() {
+    const xp = (state && state.islandXP) || 0;
+    let info = ISLA_LEVELS[0];
+    for (const l of ISLA_LEVELS) { if (xp >= l.xpNeeded) info = l; }
+    const idx = ISLA_LEVELS.indexOf(info);
+    const next = ISLA_LEVELS[idx + 1] || null;
+    return { level: info.lvl, xp, next, unlockedIds: ISLA_LEVELS.filter(l => xp >= l.xpNeeded).map(l => l.unlock).filter(Boolean) };
+}
+function islaIsWeekend() { const d = new Date().getDay(); return d === 0 || d === 6; }
+function islaGetTimeTheme() {
+    const h = new Date().getHours();
+    if (h >= 6 && h < 17) return { name: 'dia', sky: 0x3aa0d8, fog: 0x3aa0d8, sunColor: 0xfff2d0, sunInt: 1.2, hemiInt: 1.1, hemiGround: 0x2a5a3a };
+    if (h >= 17 && h < 20) return { name: 'atardecer', sky: 0xe8804a, fog: 0xe8804a, sunColor: 0xffb066, sunInt: 1.0, hemiInt: 0.9, hemiGround: 0x5a3a2a };
+    return { name: 'noche', sky: 0x0a1830, fog: 0x0a1830, sunColor: 0x8fa8ff, sunInt: 0.35, hemiInt: 0.4, hemiGround: 0x101a30 };
+}
+
 function ensureThreeLoaded(cb) {
     if (window.THREE) { cb(); return; }
     if (islaThreeLoading) { setTimeout(() => ensureThreeLoaded(cb), 200); return; }
@@ -5716,24 +5787,43 @@ function ensureThreeLoaded(cb) {
 
 function renderIslaScreen() {
     ensureThreeLoaded(() => {
-        if (!islaSceneReady) buildIslaScene();
+        buildIslaScene(); // se reconstruye cada vez que se entra, así se ven al instante nuevos desbloqueos de nivel
         const l = document.getElementById('isla-loading');
         if (l) l.style.display = 'none';
+        islaUpdateHintBar();
         startIslaLoop();
     });
+}
+
+function islaUpdateHintBar() {
+    const hint = document.getElementById('isla-hint');
+    if (!hint) return;
+    const info = islaGetLevelInfo();
+    const nextTxt = info.next ? ` · Nivel ${info.next.lvl} en ${info.next.xpNeeded - info.xp} XP` : ' · ¡Nivel máximo!';
+    const sub = window.islaEditMode
+        ? 'Toca "➕ Subir imagen" · Toca tus imágenes para moverlas/eliminarlas'
+        : 'Arrastra para rotar · Toca los objetos para recolectar';
+    hint.innerHTML = `🏝️ Isla Nivel ${info.level}${nextTxt}<br><span style="font-size:11px;opacity:.85;">${sub}</span>`;
 }
 
 function buildIslaScene() {
     const wrap = document.getElementById('isla-canvas-wrap');
     if (!wrap) return;
+
+    // Si ya había una escena previa, se limpia bien (listener de resize y canvas)
+    if (isla && isla.resizeHandler) window.removeEventListener('resize', isla.resizeHandler);
+    wrap.innerHTML = '';
+
     const W = wrap.clientWidth || window.innerWidth;
     const H = wrap.clientHeight || window.innerHeight;
+    const info = islaGetLevelInfo();
+    const theme = islaGetTimeTheme();
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x3aa0d8);
-    scene.fog = new THREE.Fog(0x3aa0d8, 18, 32);
+    scene.background = new THREE.Color(theme.sky);
+    scene.fog = new THREE.Fog(theme.fog, 26, 46);
 
-    const d = 8;
+    const d = 12.5;
     const aspect = W / H;
     const camera = new THREE.OrthographicCamera(-d*aspect, d*aspect, d, -d, 0.1, 100);
 
@@ -5741,12 +5831,11 @@ function buildIslaScene() {
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.shadowMap.enabled = true;
-    wrap.innerHTML = '';
     wrap.appendChild(renderer.domElement);
 
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x2a5a3a, 1.1);
+    const hemi = new THREE.HemisphereLight(0xffffff, theme.hemiGround, theme.hemiInt);
     scene.add(hemi);
-    const sun = new THREE.DirectionalLight(0xfff2d0, 1.2);
+    const sun = new THREE.DirectionalLight(theme.sunColor, theme.sunInt);
     sun.position.set(8, 14, 6);
     sun.castShadow = true;
     sun.shadow.mapSize.set(1024, 1024);
@@ -5754,9 +5843,21 @@ function buildIslaScene() {
     sun.shadow.camera.top = 10; sun.shadow.camera.bottom = -10;
     scene.add(sun);
 
+    // Estrellas de noche
+    if (theme.name === 'noche') {
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = [];
+        for (let i = 0; i < 120; i++) {
+            starPos.push((Math.random()-0.5)*40, 6 + Math.random()*12, (Math.random()-0.5)*40);
+        }
+        starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos, 3));
+        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.12 }));
+        scene.add(stars);
+    }
+
     // Agua
     const water = new THREE.Mesh(
-        new THREE.CircleGeometry(20, 32),
+        new THREE.CircleGeometry(30, 40),
         new THREE.MeshStandardMaterial({ color: 0x1f7fb0 })
     );
     water.rotation.x = -Math.PI/2;
@@ -5764,9 +5865,9 @@ function buildIslaScene() {
     water.receiveShadow = true;
     scene.add(water);
 
-    // Isla (arena)
+    // Isla (arena) — más grande, con espacio de sobra
     const sand = new THREE.Mesh(
-        new THREE.CylinderGeometry(6.2, 6.6, 0.6, 40),
+        new THREE.CylinderGeometry(9.6, 10.1, 0.6, 48),
         new THREE.MeshStandardMaterial({ color: 0xe6d19a })
     );
     sand.position.y = -0.05;
@@ -5775,7 +5876,7 @@ function buildIslaScene() {
 
     // Pasto central
     const grass = new THREE.Mesh(
-        new THREE.CylinderGeometry(4, 4.3, 0.35, 40),
+        new THREE.CylinderGeometry(7.2, 7.6, 0.35, 48),
         new THREE.MeshStandardMaterial({ color: 0x6bbf5a })
     );
     grass.position.y = 0.18;
@@ -5818,29 +5919,39 @@ function buildIslaScene() {
         return rock;
     }
 
-    function buildHut(x, z) {
+    // Cabaña: mejora de tamaño/color al llegar a "cabana_grande" (nivel 5)
+    function buildHut(x, z, upgraded) {
         const g = new THREE.Group();
+        const scale = upgraded ? 1.35 : 1;
         const base = addShadow(new THREE.Mesh(
-            new THREE.CylinderGeometry(0.9, 0.9, 1.1, 10),
-            new THREE.MeshStandardMaterial({ color: 0xceab7a })
+            new THREE.CylinderGeometry(0.9*scale, 0.9*scale, 1.1*scale, upgraded ? 14 : 10),
+            new THREE.MeshStandardMaterial({ color: upgraded ? 0xe8c99a : 0xceab7a })
         ));
-        base.position.y = 0.55;
+        base.position.y = 0.55*scale;
         g.add(base);
         const roof = addShadow(new THREE.Mesh(
-            new THREE.ConeGeometry(1.25, 1.1, 10),
-            new THREE.MeshStandardMaterial({ color: 0xa2622f })
+            new THREE.ConeGeometry(1.25*scale, 1.1*scale, upgraded ? 14 : 10),
+            new THREE.MeshStandardMaterial({ color: upgraded ? 0xd4402a : 0xa2622f })
         ));
-        roof.position.y = 1.65;
+        roof.position.y = 1.65*scale;
         g.add(roof);
+        if (upgraded) {
+            const flag = addShadow(new THREE.Mesh(
+                new THREE.ConeGeometry(0.14, 0.28, 4),
+                new THREE.MeshStandardMaterial({ color: 0xffd700 })
+            ));
+            flag.position.y = 2.35*scale;
+            g.add(flag);
+        }
         g.position.set(x, 0.35, z);
         return g;
     }
 
-    function buildChest(x, z) {
+    function buildChest(x, z, golden) {
         const g = new THREE.Group();
         const base = addShadow(new THREE.Mesh(
             new THREE.BoxGeometry(0.7, 0.4, 0.5),
-            new THREE.MeshStandardMaterial({ color: 0x7a4a24 })
+            new THREE.MeshStandardMaterial({ color: golden ? 0xb8860b : 0x7a4a24 })
         ));
         base.position.y = 0.55;
         g.add(base);
@@ -5855,58 +5966,325 @@ function buildIslaScene() {
         return g;
     }
 
-    // Objetos clicables: id único + método de recompensa
+    // Faro (desbloqueo nivel 2)
+    function buildLighthouse(x, z) {
+        const g = new THREE.Group();
+        const tower = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.28, 0.36, 2.2, 12),
+            new THREE.MeshStandardMaterial({ color: 0xffffff })
+        ));
+        tower.position.y = 1.1;
+        g.add(tower);
+        for (let i = 0; i < 2; i++) {
+            const stripe = addShadow(new THREE.Mesh(
+                new THREE.CylinderGeometry(0.29, 0.33, 0.35, 12),
+                new THREE.MeshStandardMaterial({ color: 0xd4402a })
+            ));
+            stripe.position.y = 0.6 + i*0.9;
+            g.add(stripe);
+        }
+        const cabin = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.4, 0.4, 0.35, 12),
+            new THREE.MeshStandardMaterial({ color: 0xffe08a, emissive: 0xffaa00, emissiveIntensity: 0.4 })
+        ));
+        cabin.position.y = 2.35;
+        g.add(cabin);
+        const roof = addShadow(new THREE.Mesh(
+            new THREE.ConeGeometry(0.45, 0.35, 12),
+            new THREE.MeshStandardMaterial({ color: 0xd4402a })
+        ));
+        roof.position.y = 2.7;
+        g.add(roof);
+        g.position.set(x, 0.35, z);
+        return g;
+    }
+
+    // Barco varado (desbloqueo nivel 3)
+    function buildBoat(x, z) {
+        const g = new THREE.Group();
+        const hull = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.5, 0.25, 1.6, 8, 1, false, 0, Math.PI),
+            new THREE.MeshStandardMaterial({ color: 0x8a5a35 })
+        ));
+        hull.rotation.z = Math.PI/2;
+        hull.rotation.y = Math.PI/2;
+        hull.position.y = 0.35;
+        g.add(hull);
+        const mast = addShadow(new THREE.Mesh(
+            new THREE.CylinderGeometry(0.03, 0.04, 1.1, 6),
+            new THREE.MeshStandardMaterial({ color: 0x5a3a20 })
+        ));
+        mast.position.set(0, 0.9, 0);
+        mast.rotation.z = 0.25;
+        g.add(mast);
+        g.rotation.y = 0.4;
+        g.position.set(x, 0.35, z);
+        return g;
+    }
+
+    // Cueva/arco de roca (desbloqueo nivel 4)
+    function buildCave(x, z) {
+        const g = new THREE.Group();
+        const mat = new THREE.MeshStandardMaterial({ color: 0x6e6e68 });
+        const left = addShadow(new THREE.Mesh(new THREE.DodecahedronGeometry(0.5), mat));
+        left.position.set(-0.55, 0.5, 0);
+        g.add(left);
+        const right = addShadow(new THREE.Mesh(new THREE.DodecahedronGeometry(0.5), mat));
+        right.position.set(0.55, 0.5, 0);
+        g.add(right);
+        const top = addShadow(new THREE.Mesh(new THREE.DodecahedronGeometry(0.55), mat));
+        top.position.set(0, 1.15, 0);
+        top.scale.set(1.3, 0.6, 0.9);
+        g.add(top);
+        g.position.set(x, 0.35, z);
+        return g;
+    }
+
+    // Objetos clicables: id único + método de recompensa + XP que otorgan
     const clickable = [];
-    function addClickable(mesh, id, kind) {
+    function addClickable(mesh, id, kind, xp) {
         mesh.traverse ? mesh.traverse(o => { if (o.isMesh) o.userData.islaId = id; }) : (mesh.userData.islaId = id);
         mesh.userData.islaId = id;
         scene.add(mesh);
-        clickable.push({ id, mesh, kind });
+        clickable.push({ id, mesh, kind, xp: xp || 15 });
     }
 
-    addClickable(buildHut(-2.3, -1.5), 'cabana', 'gold');
-    addClickable(buildPalm(2.4, -2.2, 1), 'palmera1', 'gold');
-    addClickable(buildPalm(3.2, 1.6, 0.9), 'palmera2', 'gold');
-    addClickable(buildPalm(-3.0, 2.6, 1.1), 'palmera3', 'gold');
-    addClickable(buildRock(1.0, 2.8), 'roca', 'gold');
-    addClickable(buildChest(0, 0.4), 'cofre', 'gems');
+    addClickable(buildHut(-3.6, -2.3, info.unlockedIds.includes('cabana_grande')), 'cabana', 'gold', 15);
+    addClickable(buildPalm(3.7, -3.4, 1), 'palmera1', 'gold', 15);
+    addClickable(buildPalm(5.0, 2.5, 0.9), 'palmera2', 'gold', 15);
+    addClickable(buildPalm(-4.6, 4.0, 1.1), 'palmera3', 'gold', 15);
+    addClickable(buildRock(1.6, 4.3), 'roca', 'gold', 15);
+    addClickable(buildChest(0, 0.6), 'cofre', 'gems', 30);
 
-    camera.position.set(10, 10, 10);
+    if (info.unlockedIds.includes('faro')) addClickable(buildLighthouse(-7.1, -0.8), 'faro', 'gold', 20);
+    if (info.unlockedIds.includes('cueva')) addClickable(buildCave(-1.9, -5.4), 'cueva', 'gold', 25);
+
+    // Decoración extra sin recompensa: árboles adicionales para que la isla se vea más frondosa/verde
+    scene.add(buildPalm(-2.2, -4.6, 0.85));
+    scene.add(buildPalm(6.3, -0.8, 0.95));
+    scene.add(buildPalm(-6.0, 1.3, 0.8));
+    function buildBush(x, z, s) {
+        const g = new THREE.Group();
+        for (let i = 0; i < 3; i++) {
+            const ball = addShadow(new THREE.Mesh(
+                new THREE.SphereGeometry(0.35, 8, 8),
+                new THREE.MeshStandardMaterial({ color: 0x3f9e4c })
+            ));
+            ball.position.set((Math.random()-0.5)*0.4, 0.3 + Math.random()*0.15, (Math.random()-0.5)*0.4);
+            g.add(ball);
+        }
+        g.position.set(x, 0.35, z);
+        g.scale.setScalar(s || 1);
+        return g;
+    }
+    scene.add(buildBush(2.6, 4.8, 1));
+    scene.add(buildBush(-1.0, 3.6, 0.9));
+    scene.add(buildBush(4.6, -2.0, 1.1));
+
+    // Puerto: muelle de madera que se extiende desde la orilla hacia el agua, con postes de amarre
+    function buildDock(edgeX, edgeZ, angleRad, length) {
+        const g = new THREE.Group();
+        const plankMat = new THREE.MeshStandardMaterial({ color: 0x8a5a35 });
+        const postMat = new THREE.MeshStandardMaterial({ color: 0x5a3a20 });
+        const plank = addShadow(new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.12, length), plankMat));
+        plank.position.set(0, 0.02, length/2);
+        g.add(plank);
+        const postCount = Math.floor(length / 1.4) + 1;
+        for (let i = 0; i < postCount; i++) {
+            for (const side of [-0.85, 0.85]) {
+                const post = addShadow(new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.7, 8), postMat));
+                post.position.set(side, -0.3, 0.7 + i * 1.4);
+                g.add(post);
+            }
+        }
+        // Farol del muelle
+        const lamp = addShadow(new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9, 6), postMat));
+        lamp.position.set(0.85, 0.5, 1.4);
+        g.add(lamp);
+        const lampHead = new THREE.Mesh(new THREE.SphereGeometry(0.1, 8, 8), new THREE.MeshStandardMaterial({ color: 0xffe08a, emissive: 0xffaa00, emissiveIntensity: theme.name==='noche'?0.9:0.15 }));
+        lampHead.position.set(0.85, 0.95, 1.4);
+        g.add(lampHead);
+        // Cajas de carga en el puerto
+        for (const [cx, cz] of [[-0.5, 1.0], [-0.45, 1.5]]) {
+            const crate = addShadow(new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.32, 0.32), new THREE.MeshStandardMaterial({ color: 0x9a6a3a })));
+            crate.position.set(cx, 0.18, cz);
+            g.add(crate);
+        }
+        g.position.set(edgeX, 0.05, edgeZ);
+        g.rotation.y = angleRad;
+        return g;
+    }
+    const dockGroup = buildDock(5.6, 4.4, -Math.PI/4.4, 3.8);
+    scene.add(dockGroup);
+
+    if (info.unlockedIds.includes('barco')) {
+        const boat = buildBoat(7.8, 6.3);
+        boat.rotation.y = -Math.PI/4.4 + Math.PI/2;
+        addClickable(boat, 'barco', 'gold', 20);
+    }
+
+    // Cofre especial de fin de semana (solo sábado/domingo)
+    if (islaIsWeekend()) {
+        addClickable(buildChest(-4.8, -3.6, true), 'cofre_finde', 'gems_bonus', 40);
+    }
+
+    // Mascota real del jugador parada en la isla (si tiene imagen subida), si no, un personaje genérico
+    const petId = (state.equippedMascotas || [])[0];
+    const petDef = petId ? (CONFIG.mascotas || []).find(m => m.id === petId) : null;
+    const petImg = petDef ? mascotaStageImage(petDef, petDef.level || 1) : '';
+    if (petImg) {
+        const loader = new THREE.TextureLoader();
+        loader.load(petImg, (tex) => {
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            const ratio = (tex.image && tex.image.width) ? tex.image.width / tex.image.height : 1;
+            sprite.scale.set(1.4 * ratio, 1.4, 1);
+            sprite.position.set(0, 1.0, 4.9);
+            scene.add(sprite);
+        });
+    } else {
+        function buildCharacter(x, z) {
+            const g = new THREE.Group();
+            const body = addShadow(new THREE.Mesh(
+                new THREE.CylinderGeometry(0.25, 0.25, 0.9, 12),
+                new THREE.MeshStandardMaterial({ color: 0x4a6fa5 })
+            ));
+            body.position.y = 0.55;
+            g.add(body);
+            const head = addShadow(new THREE.Mesh(
+                new THREE.SphereGeometry(0.22, 16, 16),
+                new THREE.MeshStandardMaterial({ color: 0xf1c39a })
+            ));
+            head.position.y = 1.15;
+            g.add(head);
+            g.position.set(x, 0, z);
+            return g;
+        }
+        scene.add(buildCharacter(0, 4.9));
+    }
+
+    // Cuadrícula de construcción: solo visible en modo edición, marca el espacio donde se puede colocar imágenes
+    const BUILD_RADIUS = 7.0; // debe caber dentro del pasto (radio ~7.2)
+    let gridHelper = null;
+    if (window.islaEditMode) {
+        gridHelper = new THREE.GridHelper(BUILD_RADIUS * 1.5, 10, 0xffd24a, 0xffd24a);
+        gridHelper.position.y = 0.22;
+        gridHelper.material.opacity = 0.55;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
+        const ringGeo = new THREE.RingGeometry(BUILD_RADIUS - 0.05, BUILD_RADIUS, 48);
+        const ring = new THREE.Mesh(ringGeo, new THREE.MeshBasicMaterial({ color: 0xffd24a, side: THREE.DoubleSide, transparent: true, opacity: 0.8 }));
+        ring.rotation.x = -Math.PI/2;
+        ring.position.y = 0.23;
+        scene.add(ring);
+    }
+
+    // Objetos personalizados subidos por el jugador (imágenes propias, ubicables donde quiera)
+    const customSprites = [];
+    (state.islandCustomObjects || []).forEach(obj => {
+        const loader = new THREE.TextureLoader();
+        loader.load(obj.url, (tex) => {
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            const sprite = new THREE.Sprite(spriteMat);
+            const ratio = (tex.image && tex.image.width) ? tex.image.width / tex.image.height : 1;
+            const h = 1.5 * (obj.scale || 1);
+            sprite.scale.set(h * ratio, h, 1);
+            sprite.position.set(obj.x, h/2 + 0.2, obj.z);
+            sprite.userData.customId = obj.id;
+            scene.add(sprite);
+            customSprites.push({ id: obj.id, sprite, data: obj });
+            if (islaSelectedCustomId === obj.id) islaHighlightSprite(sprite, true);
+        });
+    });
+
+    camera.position.set(15, 15, 15);
     camera.lookAt(0, 0.5, 0);
 
-    // Interacción: arrastrar rota cámara, tocar (sin arrastrar) activa el objeto
-    let isDown = false, moved = false, lastX = 0, angleY = Math.atan2(10,10), radius = Math.sqrt(200);
+    // Interacción: arrastrar rota cámara, tocar (sin arrastrar) activa el objeto.
+    // En modo edición: tocar coloca/selecciona/arrastra tus imágenes en vez de rotar.
+    let isDown = false, moved = false, lastX = 0, angleY = Math.atan2(15,15), radius = Math.sqrt(450);
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
+    let dragTarget = null; // objeto personalizado que se está arrastrando en modo edición
 
     function updateCam() {
         camera.position.x = radius * Math.sin(angleY);
         camera.position.z = radius * Math.cos(angleY);
-        camera.position.y = 10;
+        camera.position.y = 15;
         camera.lookAt(0, 0.5, 0);
+    }
+
+    function pointerToNDC(e, useUp) {
+        const rect = renderer.domElement.getBoundingClientRect();
+        const src = useUp ? (e.changedTouches ? e.changedTouches[0] : e) : (e.touches ? e.touches[0] : e);
+        pointer.x = ((src.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -((src.clientY - rect.top) / rect.height) * 2 + 1;
+    }
+
+    function raycastGroundPoint() {
+        raycaster.setFromCamera(pointer, camera);
+        const hit = raycaster.intersectObject(grass, false);
+        if (!hit.length) return null;
+        let x = hit[0].point.x, z = hit[0].point.z;
+        const dist = Math.sqrt(x*x + z*z);
+        if (dist > BUILD_RADIUS) { const k = BUILD_RADIUS / dist; x *= k; z *= k; }
+        return { x, z };
     }
 
     function onDown(e) {
         isDown = true; moved = false;
         lastX = (e.touches ? e.touches[0].clientX : e.clientX);
+        if (window.islaEditMode) {
+            pointerToNDC(e, false);
+            raycaster.setFromCamera(pointer, camera);
+            const hits = raycaster.intersectObjects(customSprites.map(c => c.sprite));
+            dragTarget = hits.length ? customSprites.find(c => c.sprite === hits[0].object) : null;
+        }
     }
     function onMove(e) {
         if (!isDown) return;
         const x = (e.touches ? e.touches[0].clientX : e.clientX);
         if (Math.abs(x - lastX) > 3) moved = true;
-        angleY -= (x - lastX) * 0.008;
         lastX = x;
+        if (window.islaEditMode) {
+            if (dragTarget) {
+                pointerToNDC(e, false);
+                const p = raycastGroundPoint();
+                if (p) { dragTarget.sprite.position.x = p.x; dragTarget.sprite.position.z = p.z; dragTarget.data.x = p.x; dragTarget.data.z = p.z; }
+            }
+            return; // en edición nunca rota la cámara
+        }
+        angleY -= (x - lastX) * 0.008;
         updateCam();
     }
     function onUp(e) {
         if (!isDown) return;
         isDown = false;
+
+        if (window.islaEditMode) {
+            if (dragTarget) {
+                const obj = (state.islandCustomObjects || []).find(o => o.id === dragTarget.id);
+                if (obj) { obj.x = dragTarget.data.x; obj.z = dragTarget.data.z; saveState(); }
+                dragTarget = null;
+                return;
+            }
+            if (window.islaPlacingUrl) {
+                pointerToNDC(e, true);
+                const p = raycastGroundPoint();
+                if (p) islaAddCustomObjectAt(p.x, p.z);
+                return;
+            }
+            if (!moved) {
+                pointerToNDC(e, true);
+                raycaster.setFromCamera(pointer, camera);
+                const hits = raycaster.intersectObjects(customSprites.map(c => c.sprite));
+                islaSelectCustom(hits.length ? customSprites.find(c => c.sprite === hits[0].object).id : null);
+            }
+            return;
+        }
+
         if (!moved) {
-            const rect = renderer.domElement.getBoundingClientRect();
-            const cx = (e.changedTouches ? e.changedTouches[0].clientX : e.clientX);
-            const cy = (e.changedTouches ? e.changedTouches[0].clientY : e.clientY);
-            pointer.x = ((cx - rect.left) / rect.width) * 2 - 1;
-            pointer.y = -((cy - rect.top) / rect.height) * 2 + 1;
+            pointerToNDC(e, true);
             raycaster.setFromCamera(pointer, camera);
             const hits = raycaster.intersectObjects(scene.children, true);
             for (const h of hits) {
@@ -5928,7 +6306,7 @@ function buildIslaScene() {
 
     updateCam();
 
-    isla = { scene, camera, renderer, wrap, clickable, resizeHandler: null };
+    isla = { scene, camera, renderer, wrap, clickable, customSprites, resizeHandler: null };
 
     isla.resizeHandler = () => {
         const w2 = wrap.clientWidth || window.innerWidth;
@@ -5969,26 +6347,39 @@ function stopIslaLoop() {
 function collectIslandObject(id, meshHit) {
     if (!state) return;
     state.islandCollected = state.islandCollected || {};
-    if (state.islandCollected[id] === todayStr()) {
+    const cooldownKey = id === 'cofre_finde' ? (id + '_' + todayStr()) : id;
+    if (state.islandCollected[cooldownKey] === todayStr()) {
         showToast('Ya recolectaste esto hoy, vuelve mañana 🌙', 'info');
         return;
     }
-    state.islandCollected[id] = todayStr();
+    state.islandCollected[cooldownKey] = todayStr();
     const item = isla.clickable.find(c => c.id === id);
     const kind = item ? item.kind : 'gold';
+    const xpGain = item ? item.xp : 15;
     let msg;
-    if (kind === 'gems') {
-        const gems = 3 + Math.floor(Math.random() * 6);
+    if (kind === 'gems' || kind === 'gems_bonus') {
+        const gems = kind === 'gems_bonus' ? (10 + Math.floor(Math.random() * 11)) : (3 + Math.floor(Math.random() * 6));
         state.gems += gems;
-        msg = `+${gems} 💎 ¡encontraste el cofre!`;
+        msg = kind === 'gems_bonus' ? `+${gems} 💎 ¡cofre especial de fin de semana!` : `+${gems} 💎 ¡encontraste el cofre!`;
     } else {
         const gold = 40 + Math.floor(Math.random() * 120);
         state.gold += gold;
         msg = `+${gold} 🪙`;
     }
+
+    // XP de la isla y posible subida de nivel
+    state.islandXP = (state.islandXP || 0) + xpGain;
+    const beforeLevel = islaGetLevelInfoFromXp((state.islandXP || 0) - xpGain);
+    const afterLevel = islaGetLevelInfo();
+    if (afterLevel.level > beforeLevel.level) {
+        setTimeout(() => showToast(`🏝️ ¡Isla subió a Nivel ${afterLevel.level}!`, 'success'), 900);
+        setTimeout(() => buildIslaScene(), 1300); // reconstruye para mostrar lo desbloqueado al instante
+    }
+
     saveState();
     refreshAllUI();
     showToast(msg, 'success');
+    islaUpdateHintBar();
 
     // Rebote visual del objeto tocado
     if (item && item.mesh) {
@@ -6002,6 +6393,85 @@ function collectIslandObject(id, meshHit) {
             if (s >= Math.PI) { clearInterval(bounce); mesh.scale.setScalar(origScale); }
         }, 30);
     }
+}
+function islaGetLevelInfoFromXp(xp) {
+    let info = ISLA_LEVELS[0];
+    for (const l of ISLA_LEVELS) { if (xp >= l.xpNeeded) info = l; }
+    return { level: info.lvl };
+}
+
+/* ---------- Editor de Isla: subir imágenes propias y ubicarlas donde el jugador quiera ---------- */
+window.islaEditMode = false;
+window.islaPlacingUrl = null;
+let islaSelectedCustomId = null;
+
+function islaToggleEditMode() {
+    window.islaEditMode = !window.islaEditMode;
+    window.islaPlacingUrl = null;
+    islaSelectedCustomId = null;
+    const bar = document.getElementById('isla-edit-bar');
+    const toggle = document.getElementById('isla-edit-toggle');
+    const delBtn = document.getElementById('isla-delete-btn');
+    if (bar) bar.style.display = window.islaEditMode ? 'block' : 'none';
+    if (toggle) toggle.textContent = window.islaEditMode ? '✅ Salir' : '✏️ Editar';
+    if (delBtn) delBtn.style.display = 'none';
+    const status = document.getElementById('isla-edit-status');
+    if (status) status.textContent = '';
+    if (islaSceneReady) buildIslaScene();
+    islaUpdateHintBar();
+    if (window.islaEditMode) showToast('🛠️ Modo edición: toca "➕ Subir imagen" y luego toca la isla para colocarla', 'info');
+}
+
+async function islaHandleUpload(event) {
+    const file = event.target.files && event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+    const status = document.getElementById('isla-edit-status');
+    if (status) status.textContent = '⏳ Subiendo imagen...';
+    try {
+        const url = await uploadImageToStorage(file, 'isla_objetos');
+        window.islaPlacingUrl = url;
+        if (status) status.textContent = '👉 Toca la isla para colocar tu imagen';
+    } catch (e) {
+        if (status) status.textContent = '';
+        showToast('❌ No se pudo subir la imagen: ' + (e.message || 'error'), 'error');
+    }
+}
+
+function islaAddCustomObjectAt(x, z) {
+    state.islandCustomObjects = state.islandCustomObjects || [];
+    const id = 'custom_' + Date.now();
+    state.islandCustomObjects.push({ id, url: window.islaPlacingUrl, x, z, scale: 1 });
+    window.islaPlacingUrl = null;
+    const status = document.getElementById('isla-edit-status');
+    if (status) status.textContent = '✅ Imagen colocada. Puedes arrastrarla para reubicarla.';
+    saveState();
+    buildIslaScene();
+}
+
+function islaSelectCustom(id) {
+    islaSelectedCustomId = id;
+    const delBtn = document.getElementById('isla-delete-btn');
+    if (delBtn) delBtn.style.display = id ? 'inline-block' : 'none';
+    if (isla && isla.customSprites) {
+        isla.customSprites.forEach(c => islaHighlightSprite(c.sprite, c.id === id));
+    }
+}
+
+function islaHighlightSprite(sprite, on) {
+    if (!sprite || !sprite.material) return;
+    sprite.material.color.set(on ? 0xffe08a : 0xffffff);
+}
+
+function islaDeleteSelected() {
+    if (!islaSelectedCustomId || !state.islandCustomObjects) return;
+    state.islandCustomObjects = state.islandCustomObjects.filter(o => o.id !== islaSelectedCustomId);
+    islaSelectedCustomId = null;
+    saveState();
+    const delBtn = document.getElementById('isla-delete-btn');
+    if (delBtn) delBtn.style.display = 'none';
+    buildIslaScene();
+    showToast('🗑️ Imagen eliminada', 'info');
 }
 
 // Altura de viewport estable en px (evita el "salto" de 100vh al girar la pantalla
@@ -10852,6 +11322,9 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) chec
 
 /* ---------- INIT ---------- */
 window.addEventListener('load', async () => {
+    // Intenta fijar toda la app en horizontal (además del truco CSS de rotación, que es el que
+    // realmente funciona en la mayoría de navegadores móviles).
+    try { if (screen.orientation && screen.orientation.lock) { await screen.orientation.lock('landscape'); } } catch(e) { /* no soportado, se usa el CSS de respaldo */ }
     document.querySelectorAll('#app-version-label, #admin-version-label').forEach(el => { el.innerText = APP_VERSION; });
     const splashTimer = new Promise(resolve => setTimeout(resolve, 800));
     try {
