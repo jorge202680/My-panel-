@@ -1166,70 +1166,34 @@
 })();
 
 /* ============================================================
-   TABLA DE BONOS POR SALA + PREMIO + BONUS AL GANAR
+   TABLA DE BONOS POR SALA + BONUS SEPARADO (ORO) + XP SEPARADO (ESTRELLA)
    ============================================================ */
 (function () {
-
   const css = `
-    .mh-bt-openbtn{
-      display:flex; align-items:center; justify-content:center; gap:6px;
-      width:100%; margin:8px 0; padding:10px 12px; border-radius:12px; cursor:pointer;
-      font-size:11.5px; font-weight:800; letter-spacing:.03em; color:#c9d1d9;
-      background:#161b22; border:1px solid #30363d;
-    }
-    .mh-bt-overlay{
-      position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,.72);
-      display:none; align-items:center; justify-content:center; padding:14px;
-    }
+    .mh-bt-openbtn{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin:8px 0; padding:10px 12px; border-radius:12px; cursor:pointer; font-size:11.5px; font-weight:800; color:#c9d1d9; background:#161b22; border:1px solid #30363d; }
+    .mh-bt-overlay{ position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,.72); display:none; align-items:center; justify-content:center; padding:14px; }
     .mh-bt-overlay.active{ display:flex; }
-    .mh-bt-box{
-      background:#0d1117; border:1px solid #30363d; border-radius:16px;
-      max-width:440px; width:100%; max-height:86vh; overflow:auto;
-      font-family:'Geist',system-ui,-apple-system,sans-serif; color:#c9d1d9;
-    }
+    .mh-bt-box{ background:#0d1117; border:1px solid #30363d; border-radius:16px; max-width:440px; width:100%; max-height:86vh; overflow:auto; color:#c9d1d9; }
     .mh-bt-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #21262d; position:sticky; top:0; background:#0d1117; }
     .mh-bt-head h3{ margin:0; font-size:14px; font-weight:800; color:#fff; }
     .mh-bt-close{ cursor:pointer; color:#8b949e; font-size:16px; padding:2px 6px; }
-    .mh-bt-sub{ font-size:11px; color:#8b949e; padding:0 16px; margin-top:10px; }
     .mh-bt-formula{ margin:10px 16px; padding:9px 12px; border-radius:10px; background:rgba(35,134,54,.1); border:1px solid rgba(35,134,54,.35); font-size:11px; color:#4ac26b; font-weight:700; text-align:center; }
     .mh-bt-tablewrap{ overflow-x:auto; margin:10px 16px 4px; border-radius:10px; border:1px solid #21262d; }
     .mh-bt-table{ width:100%; min-width:420px; border-collapse:collapse; font-size:12.5px; }
-    .mh-bt-table thead tr{ background:#238636; color:#fff; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; }
-    .mh-bt-table th{ text-align:right; font-weight:700; padding:9px 12px; border-right:1px solid rgba(255,255,255,.1); }
+    .mh-bt-table thead tr{ background:#238636; color:#fff; font-size:10.5px; text-transform:uppercase; }
+    .mh-bt-table th{ text-align:right; padding:9px 12px; border-right:1px solid rgba(255,255,255,.1); }
     .mh-bt-table th:first-child{ text-align:left; width:70px; }
-    .mh-bt-table td{ text-align:right; padding:8px 12px; border-right:1px solid #21262d; border-bottom:1px solid #21262d; font-family:'Geist Mono',monospace; }
-    .mh-bt-table td:first-child{ text-align:left; font-weight:700; color:#fff; }
-    .mh-bt-table tbody tr:nth-child(even){ background:rgba(28,33,40,.6); }
-    .mh-bt-table tbody tr.max{ background:rgba(241,224,90,.07); }
-    .mh-bt-table tbody tr.max td:first-child{ color:#f1e05a; }
-    .mh-bt-maxtag{ font-size:9px; margin-left:6px; padding:1px 6px; border-radius:8px; background:rgba(241,224,90,.15); color:#f1e05a; font-weight:800; }
-    .mh-bt-premium-note{ font-size:10px; color:#8b949e; padding:8px 16px 16px; text-align:center; }
-
-    /* Popup de victoria con desglose */
-    .mh-win-bonus-box{
-      margin-top:12px; padding:12px; border-radius:14px;
-      background:linear-gradient(135deg,rgba(35,134,54,.12),rgba(0,0,0,.2));
-      border:1px solid rgba(74,194,107,.35); text-align:left;
-    }
-    .mh-win-row{ display:flex; justify-content:space-between; font-size:12px; font-weight:800; margin:4px 0; }
+    .mh-bt-table td{ text-align:right; padding:8px 12px; border-right:1px solid #21262d; border-bottom:1px solid #21262d; }
+    .mh-win-bonus-box{ margin-top:12px; padding:12px; border-radius:14px; background:linear-gradient(135deg,rgba(35,134,54,.15),rgba(0,0,0,.25)); border:1px solid rgba(74,194,107,.4); text-align:left; }
+    .mh-win-row{ display:flex; justify-content:space-between; font-size:12.5px; font-weight:800; margin:5px 0; }
     .mh-win-row span:first-child{ color:#8b949e; }
-    .mh-win-row.premio span:last-child{ color:#fff; }
     .mh-win-row.bonus span:last-child{ color:#4ac26b; }
-    .mh-win-row.total{ border-top:1px solid rgba(255,255,255,.12); padding-top:8px; margin-top:8px; font-size:14px; }
+    .mh-win-row.total{ border-top:1px dashed rgba(255,255,255,.15); padding-top:8px; margin-top:8px; }
     .mh-win-row.total span:last-child{ color:#f1e05a; font-size:16px; }
-
-    #bonus-summary{
-      display:block !important; padding:10px 12px !important; border-radius:12px !important;
-      background:rgba(35,134,54,.1) !important; border:1px solid rgba(35,134,54,.3) !important;
-      color:#4ac26b !important; font-weight:900 !important; font-size:12px !important; text-align:center !important;
-    }
+    #bonus-summary{ display:block !important; padding:10px 12px !important; border-radius:12px !important; background:rgba(35,134,54,.1) !important; border:1px solid rgba(35,134,54,.3) !important; color:#4ac26b !important; font-weight:900 !important; font-size:12px !important; text-align:center !important; }
   `;
-  const styleTag = document.createElement('style');
-  styleTag.textContent = css;
-  document.head.appendChild(styleTag);
-
-  const an = (n) => n.toLocaleString('es');
-
+  const s=document.createElement('style'); s.textContent=css; document.head.appendChild(s);
+  const an = (n) => (n||0).toLocaleString('es');
   const ROOMS_CONFIG = {
     clasica:  { label: 'Clásica 2k', base: 2000, maxCartas: 10 },
     oro:      { label: 'Oro 3k',     base: 3000, maxCartas: 10 },
@@ -1238,207 +1202,117 @@
     espacial: { label: 'Espacial 8k', base: 8000, maxCartas: 4  },
     aurora:   { label: 'Aurora 10k',  base: 10000, maxCartas: 4 }
   };
-
-  const ROOMS_NORMAL = [
-    { key: 'clasica', ...ROOMS_CONFIG.clasica },
-    { key: 'oro',     ...ROOMS_CONFIG.oro },
-    { key: 'neon',    ...ROOMS_CONFIG.neon },
-    { key: 'fuego',   ...ROOMS_CONFIG.fuego },
-  ];
-  const ROOMS_PREMIUM = [
-    { key: 'espacial', ...ROOMS_CONFIG.espacial },
-    { key: 'aurora',   ...ROOMS_CONFIG.aurora },
-  ];
-
   window.calculateRoomBonus = function () {
     try {
       const roomKey = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.id) ? selectedRoom.id.toLowerCase() : 'clasica';
       const count = (typeof chosenCardCount !== 'undefined') ? chosenCardCount : 1;
       const cfg = ROOMS_CONFIG[roomKey] || ROOMS_CONFIG.clasica;
-      const validCards = Math.min(count, cfg.maxCartas);
-      return validCards * cfg.base;
+      return Math.min(count, cfg.maxCartas) * cfg.base;
     } catch (e) { return 0; }
   };
-
-  window.getRoomPrizeBase = function(){
-    try{
-      const roomKey = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.id) ? selectedRoom.id.toLowerCase() : 'clasica';
-      const count = (typeof chosenCardCount !== 'undefined') ? chosenCardCount : 1;
-      // Si tu juego ya calcula premio en otra variable, úsala. Sino estimamos como base*cartas*2 por ejemplo, o tomamos de selectedRoom.prize
-      if (typeof window._lastRoundPrize === 'number') return window._lastRoundPrize;
-      if (selectedRoom && selectedRoom.prize) return selectedRoom.prize * count;
-      const cfg = ROOMS_CONFIG[roomKey] || ROOMS_CONFIG.clasica;
-      return cfg.base * count * 2; // fallback estimado
-    }catch(e){ return 0; }
-  };
-
   function buildTable(rooms, maxCartas) {
     let head = `<tr><th>Cartas</th>${rooms.map(r => `<th>${r.label}</th>`).join('')}</tr>`;
     let rows = '';
-    for (let c = 1; c <= maxCartas; c++) {
-      const isMax = c === maxCartas;
-      rows += `<tr class="${isMax ? 'max' : ''}">
-          <td>${c}${isMax ? '<span class="mh-bt-maxtag">MAX</span>' : ''}</td>
-          ${rooms.map(r => `<td>${an(c * r.base)}</td>`).join('')}
-        </tr>`;
-    }
+    for (let c = 1; c <= maxCartas; c++) rows += `<tr><td>${c}</td>${rooms.map(r => `<td>${an(c * r.base)}</td>`).join('')}</tr>`;
     return `<table class="mh-bt-table"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
   }
-
   function ensureBonusTableModal() {
     if (document.getElementById('mh-bt-overlay')) return;
     const overlay = document.createElement('div');
-    overlay.id = 'mh-bt-overlay';
-    overlay.className = 'mh-bt-overlay';
-    overlay.innerHTML = `
-      <div class="mh-bt-box">
-        <div class="mh-bt-head">
-          <h3>📊 Tabla de Bonos por Sala</h3>
-          <span class="mh-bt-close" onclick="window._mhCloseBonusTable()">✕</span>
-        </div>
-        <div class="mh-bt-sub">Desliza horizontal para ver todas las salas</div>
-        <div class="mh-bt-formula">Fórmula: Bono = Cartas × Valor base de la sala</div>
-        <div class="mh-bt-tablewrap">${buildTable(ROOMS_NORMAL, 10)}</div>
-        <div class="mh-bt-tablewrap">${buildTable(ROOMS_PREMIUM, 4)}</div>
-        <div class="mh-bt-premium-note">⚡ Salas premium con límite reducido (máx. 4 cartas)</div>
-      </div>`;
+    overlay.id = 'mh-bt-overlay'; overlay.className = 'mh-bt-overlay';
+    overlay.innerHTML = `<div class="mh-bt-box"><div class="mh-bt-head"><h3>📊 Tabla de Bonos por Sala</h3><span class="mh-bt-close" onclick="window._mhCloseBonusTable()">✕</span></div><div class="mh-bt-formula">BONUS ORO = Cartas × Valor base (aparte del premio y aparte del ⭐ XP)</div><div class="mh-bt-tablewrap">${buildTable([{label:'Clásica 2k',base:2000},{label:'Oro 3k',base:3000},{label:'Neón 4k',base:4000},{label:'Fuego 5k',base:5000}],10)}</div><div class="mh-bt-tablewrap">${buildTable([{label:'Espacial 8k',base:8000},{label:'Aurora 10k',base:10000}],4)}</div></div>`;
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) window._mhCloseBonusTable(); });
   }
-
-  window._mhCloseBonusTable = function () {
-    const el = document.getElementById('mh-bt-overlay');
-    if (el) el.classList.remove('active');
-  };
-  window._mhOpenBonusTable = function () {
-    ensureBonusTableModal();
-    document.getElementById('mh-bt-overlay').classList.add('active');
-  };
-
+  window._mhCloseBonusTable = function () { const el = document.getElementById('mh-bt-overlay'); if (el) el.classList.remove('active'); };
+  window._mhOpenBonusTable = function () { ensureBonusTableModal(); document.getElementById('mh-bt-overlay').classList.add('active'); };
   function ensureBonusTableButton() {
     if (document.getElementById('mh-bt-open-btn')) return;
     const anchor = document.getElementById('bonus-summary');
     if (!anchor) return;
     const btn = document.createElement('button');
-    btn.id = 'mh-bt-open-btn';
-    btn.className = 'mh-bt-openbtn';
-    btn.type = 'button';
+    btn.id = 'mh-bt-open-btn'; btn.className = 'mh-bt-openbtn'; btn.type = 'button';
     btn.textContent = '📊 Ver tabla de bonos por sala';
     btn.onclick = window._mhOpenBonusTable;
     anchor.insertAdjacentElement('beforebegin', btn);
   }
-
   function updateBonusUI(){
     const el = document.getElementById('bonus-summary');
     if(!el) return;
-    const bonus = window.calculateRoomBonus ? window.calculateRoomBonus() : 0;
+    const bonus = window.calculateRoomBonus();
     const count = (typeof chosenCardCount !== 'undefined') ? chosenCardCount : 1;
-    el.innerHTML = `🎁 BONUS: <b>🪙 ${an(bonus)}</b> <span style="opacity:.7">(${count} cartón${count>1?'es':''})</span>`;
+    el.innerHTML = `🎁 BONUS: <b>🪙 ${an(bonus)}</b> <span style="opacity:.7">(${count} cart.)</span> - Aparte del premio y aparte del ⭐ XP`;
   }
-
-  // Hook para mostrar desglose en popup de victoria
   function patchWinPopup(){
-    if (typeof window.openWinPopup === 'function' && !window._mhBonusWinPatched){
-      const originalOpenWinPopup = window.openWinPopup;
-      window._mhBonusWinPatched = true;
-      window.openWinPopup = function(info){
-        info = info || {};
-        // Guardar premio base que viene del juego
-        const premioBase = (info.prize || info.amount || info.gold || window.getRoomPrizeBase() || 0);
-        window._lastRoundPrize = premioBase;
-        const bonus = window.calculateRoomBonus ? window.calculateRoomBonus() : 0;
-        const total = premioBase + bonus;
-
-        // Guardamos para que endRound no lo duplique
-        window._mhLastBonus = bonus;
-        window._mhLastTotal = total;
-
-        // Llamamos original con titulo BINGO
-        const patched = Object.assign({}, info, { title: '¡BINGO!' });
-        const result = originalOpenWinPopup(patched);
-
-        // Inyectar desglose en el popup después de que se cree
-        setTimeout(()=>{
-          try{
-            const popup = document.querySelector('#win-popup, .win-popup, [id*="win"]');
-            const container = popup || document.body;
-            if (container.querySelector('.mh-win-bonus-box')) return;
-            const box = document.createElement('div');
-            box.className = 'mh-win-bonus-box';
-            box.innerHTML = `
-              <div class="mh-win-row premio"><span>🏆 PREMIO:</span><span>🪙 ${an(premioBase)}</span></div>
-              <div class="mh-win-row bonus"><span>🎁 BONUS SALA:</span><span>+🪙 ${an(bonus)}</span></div>
-              <div class="mh-win-row total"><span>💰 TOTAL GANADO:</span><span>🪙 ${an(total)}</span></div>
-            `;
-            // Intentar insertar dentro del popup de victoria
-            const target = document.querySelector('#win-popup .popup-content, .win-popup-content, #win-popup');
-            if (target) target.appendChild(box);
-            else {
-              const fallback = document.querySelector('#win-popup, .win-modal, .modal');
-              if(fallback) fallback.appendChild(box);
-            }
-          }catch(e){}
-        }, 100);
-        return result;
-      };
-    }
+    if (window._mhBonusWinPatched) return;
+    if (typeof window.openWinPopup !== 'function') return;
+    const original = window.openWinPopup;
+    window._mhBonusWinPatched = true;
+    window.openWinPopup = function(info){
+      info = info || {};
+      const premioBase = (info.prize || info.amount || info.gold || info.coins || 0);
+      const xpBase = (info.xp || info.exp || info.experience || 0);
+      const bonus = window.calculateRoomBonus();
+      const totalOro = premioBase + bonus;
+      window._mhLastBonus = bonus;
+      window._mhLastTotal = totalOro;
+      window._mhLastPremio = premioBase;
+      const patched = Object.assign({}, info, { title: '¡BINGO!' });
+      const result = original(patched);
+      setTimeout(()=>{
+        try{
+          const popup = document.querySelector('#win-popup, #winPopup, .win-popup, [id*="win"][id*="pop"], div[class*="win"][class*="pop"]');
+          if(!popup) return;
+          if(popup.querySelector('.mh-win-bonus-box')) return;
+          const box = document.createElement('div');
+          box.className = 'mh-win-bonus-box';
+          box.innerHTML = `
+            <div class="mh-win-row premio"><span>🏆 PREMIO BASE:</span><span>🪙 ${an(premioBase)}</span></div>
+            <div class="mh-win-row" style="color:#facc15"><span>⭐ XP (Experiencia):</span><span>+${an(xpBase)} ⭐</span></div>
+            <div class="mh-win-row bonus"><span>🎁 BONUS SALA (aparte):</span><span>+🪙 ${an(bonus)}</span></div>
+            <div class="mh-win-row total"><span>💰 TOTAL ORO:</span><span>🪙 ${an(totalOro)}</span></div>
+          `;
+          const btnGenial = popup.querySelector('button');
+          if(btnGenial && btnGenial.parentElement){
+            btnGenial.parentElement.insertBefore(box, btnGenial);
+          } else {
+            popup.appendChild(box);
+          }
+        }catch(e){}
+      }, 150);
+      return result;
+    };
   }
-
-  // Hook a endRound para acreditar
   if (typeof window.endRound === 'function' && !window._mhBonusAwardWired) {
     const originalEndRound = window.endRound;
     window.endRound = function (won) {
       if (won === true && typeof state !== 'undefined' && state) {
-        // Si ya tenemos bonus calculado en win popup, usamos ese
         const bonusGold = (typeof window._mhLastBonus === 'number') ? window._mhLastBonus : window.calculateRoomBonus();
         if (bonusGold > 0) {
-          // Evitar doble suma si el juego base ya dio premio, solo sumamos bonus extra
           state.gold = (state.gold || 0) + bonusGold;
           if (typeof saveState === 'function') saveState();
-          if (typeof showToast === 'function') {
-            setTimeout(() => {
-              showToast(`🎁 BONUS + PREMIO = 🪙 ${(window._mhLastTotal||bonusGold).toLocaleString('es-PE')}`);
-            }, 900);
-          }
+          setTimeout(() => { if(typeof showToast==='function') showToast(`🎁 BONUS aparte: +🪙 ${an(bonusGold)} | TOTAL ORO: 🪙 ${an(window._mhLastTotal||bonusGold)} | ⭐ XP intacto`); }, 800);
         }
       }
       return originalEndRound.apply(this, arguments);
     };
     window._mhBonusAwardWired = true;
   }
-
-  function setupBonusTable() {
-    ensureBonusTableButton();
-    updateBonusUI();
-    patchWinPopup();
+  function setup(){
+    ensureBonusTableButton(); updateBonusUI(); patchWinPopup();
     if (typeof window.openBingoLobby === 'function' && !window._mhBonusTableLobbyWired) {
-      const original = window.openBingoLobby;
-      window.openBingoLobby = function () {
-        const r = original.apply(this, arguments);
-        ensureBonusTableButton();
-        updateBonusUI();
-        patchWinPopup();
-        return r;
-      };
+      const orig = window.openBingoLobby;
+      window.openBingoLobby = function () { const r = orig.apply(this, arguments); ensureBonusTableButton(); updateBonusUI(); patchWinPopup(); return r; };
       window._mhBonusTableLobbyWired = true;
     }
-    // Actualizar cuando cambia cartones
     if (typeof window.selectCardCount === 'function' && !window._mhSelectCountBonusWired){
       const origSel = window.selectCardCount;
-      window.selectCardCount = function(){
-        const r = origSel.apply(this, arguments);
-        updateBonusUI();
-        return r;
-      };
+      window.selectCardCount = function(){ const r = origSel.apply(this, arguments); updateBonusUI(); return r; };
       window._mhSelectCountBonusWired = true;
     }
   }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupBonusTable);
-  } else {
-    setupBonusTable();
-  }
-  setTimeout(setupBonusTable, 800);
-  setInterval(updateBonusUI, 1000);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', setup);
+  else setup();
+  setTimeout(setup, 800);
+  setInterval(()=>{ updateBonusUI(); patchWinPopup(); }, 1000);
 })();
