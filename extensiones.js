@@ -789,6 +789,24 @@
         100%{ transform:scale(1) rotate(0deg); opacity:1; }
       }
       @keyframes mhFsSpin{ to{ transform:rotate(360deg); } }
+
+      /* ---- Banner de tiempo extra: la ronda sigue tras el 1er BINGO ---- */
+      #mh-bingo-grace-timer{
+        position:fixed; top:10px; left:50%; transform:translateX(-50%);
+        z-index:9998; max-width:92vw;
+        display:flex; align-items:center; gap:8px;
+        padding:9px 16px; border-radius:999px;
+        background:linear-gradient(180deg,#2fae54,#1d7a3a);
+        border:2px solid #7be3a0; color:#eafff0;
+        font-weight:800; font-size:13px; text-align:center;
+        box-shadow:0 4px 14px rgba(0,0,0,.45);
+        animation: mhGraceIn .35s ease;
+      }
+      #mh-bingo-grace-timer .mh-grace-secs{
+        display:inline-block; min-width:22px; text-align:center;
+        background:rgba(0,0,0,.25); border-radius:999px; padding:2px 8px;
+      }
+      @keyframes mhGraceIn{ from{ opacity:0; transform:translate(-50%,-10px); } to{ opacity:1; transform:translate(-50%,0); } }
     `;
     const styleTag = document.createElement('style');
     styleTag.textContent = css;
@@ -807,6 +825,11 @@
       window._mhFocusedCardIndex = 0;
       window._mhRivalAlerted = false;
       window._mhRoundSettled = false;
+      window._mhRoundFinalized = false;
+      window._mhGraceActive = false;
+      window._mhGraceWinnerCard = null;
+      window._mhClaimedCardsOrder = [];
+      clearGraceTimer();
       const result = originalStartBingoGame.apply(this, arguments);
       // Las tarjetas recién se crean dentro de startBingoGame, así que
       // esperamos un toque antes de colgarles el botón propio.
@@ -849,7 +872,7 @@
       } catch (e) {}
     }
 
-    // ---- Animación "¡BINGO!" a pantalla completa, luego el popup de premios ----
+    // ---- Animación "¡BINGO!" a pantalla completa ----
     function playFullscreenBingo(onDone) {
       const old = document.getElementById('mh-bingo-fullscreen');
       if (old) old.remove();
@@ -862,24 +885,93 @@
         if (done) return;
         done = true;
         overlay.remove();
-        onDone();
+        if (onDone) onDone();
       };
       overlay.addEventListener('animationend', finish);
       // Salvavidas por si el navegador no dispara animationend
       setTimeout(finish, 1300);
     }
 
+    // ---- Tiempo extra: al reclamar el 1er cartón, la ronda SIGUE ----
+    // (no se cierra al toque) y aparece un contador visible dando tiempo
+    // para que reclames tus otros cartones antes de que cierre de verdad.
+    // Cada cartón reclamado en ese tiempo se guarda en una lista y, al
+    // terminar el tiempo, se entrega UN premio por cada uno (más bingos
+    // en la ventana de tiempo = más premios).
+    const MH_GRACE_SECONDS = 30;
+    function clearGraceTimer() {
+      if (window._mhGraceInterval) {
+        clearInterval(window._mhGraceInterval);
+        window._mhGraceInterval = null;
+      }
+      const bar = document.getElementById('mh-bingo-grace-timer');
+      if (bar) bar.remove();
+    }
+    function updateGraceBarCount() {
+      const bar = document.getElementById('mh-bingo-grace-timer');
+      if (!bar) return;
+      const countEl = bar.querySelector('.mh-grace-count');
+      if (countEl) countEl.textContent = (window._mhClaimedCardsOrder || []).length;
+    }
+    function startGraceTimer() {
+      clearGraceTimer();
+      let secondsLeft = MH_GRACE_SECONDS;
+      const bar = document.createElement('div');
+      bar.id = 'mh-bingo-grace-timer';
+      bar.innerHTML = '🏆 <span class="mh-grace-count">1</span> BINGO — sigue jugando, ganás más — <span class="mh-grace-secs">' + secondsLeft + 's</span>';
+      document.body.appendChild(bar);
+      window._mhGraceInterval = setInterval(() => {
+        secondsLeft--;
+        const secEl = bar.querySelector('.mh-grace-secs');
+        if (secEl) secEl.textContent = Math.max(secondsLeft, 0) + 's';
+        if (secondsLeft <= 0) {
+          finalizeRound();
+        }
+      }, 1000);
+    }
+
+    // Cierra la ronda de verdad: entrega un premio (endRound real) por
+    // CADA cartón reclamado durante la ventana de tiempo, uno detrás de
+    // otro. Si solo hubo 1 cartón, se entrega 1 solo premio como antes.
+    function deliverPrizesSequentially(list, idx) {
+      if (idx >= list.length) return;
+      const cardObj = list[idx];
+      roundWinPattern = cardObj.winPattern || roundWinPattern;
+      window._mhBingoManualCall = true;
+      endRound(true);
+      window._mhBingoManualCall = false;
+      if (idx + 1 < list.length) {
+        setTimeout(() => deliverPrizesSequentially(list, idx + 1), 1800);
+      }
+    }
+    function finalizeRound() {
+      if (window._mhRoundFinalized) return;
+      window._mhRoundFinalized = true;
+      window._mhRoundSettled = true;
+      clearGraceTimer();
+      const claimed = window._mhClaimedCardsOrder || [];
+      if (claimed.length === 0) return; // salvavidas de "sin nadie completó" ya maneja esto aparte
+      deliverPrizesSequentially(claimed, 0);
+    }
+
     function claimCard(cardObj) {
       if (!cardObj || !cardObj.completed) return false;
-      roundWinPattern = cardObj.winPattern || roundWinPattern;
-      window._mhRoundSettled = true;
+      if (window._mhRoundFinalized) return false;
+      if (cardObj._mhClaimed) return false; // este cartón ya fue reclamado
+      cardObj._mhClaimed = true;
+      window._mhClaimedCardsOrder = window._mhClaimedCardsOrder || [];
+      window._mhClaimedCardsOrder.push(cardObj);
       stampCard(cardObj);
       if (typeof window._mhSpeakBingoVoice === 'function') window._mhSpeakBingoVoice();
-      playFullscreenBingo(() => {
-        window._mhBingoManualCall = true;
-        endRound(true);
-        window._mhBingoManualCall = false;
-      });
+      playFullscreenBingo();
+      if (!window._mhGraceActive) {
+        // Primer cartón reclamado de la ronda: arranca el tiempo extra,
+        // la ronda NO se cierra todavía.
+        window._mhGraceActive = true;
+        startGraceTimer();
+      } else {
+        updateGraceBarCount();
+      }
       return true;
     }
 
@@ -907,28 +999,47 @@
           };
           cardDiv.appendChild(btn);
         }
-        btn.classList.toggle('is-ready', !!cardObj.completed);
+        if (cardObj._mhClaimed) {
+          btn.disabled = true;
+          btn.textContent = '✅ Reclamado';
+          btn.classList.remove('is-ready');
+        } else {
+          btn.classList.toggle('is-ready', !!cardObj.completed);
+        }
       });
     }
     window._mhEnsurePerCardButtons = ensurePerCardButtons;
 
-    // ---- Salvavidas: si se acaban las 75 bolas, reclamar solo o cerrar sin premio ----
+    // ---- Salvavidas: si se acaban las 75 bolas, cerrar la ronda ya ----
     const originalHandleBallDraw = window.handleBallDraw;
     window.handleBallDraw = function () {
       originalHandleBallDraw.apply(this, arguments);
       // Cada bola puede completar un cartón: refrescamos el estado
       // "listo" (brillo) de cada botón propio.
       ensurePerCardButtons();
-      if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length >= 75 && !window._mhRoundSettled) {
-        window._mhRoundSettled = true;
-        const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
-        const anyCompleted = list.find(c => c.completed);
-        if (anyCompleted) {
-          claimCard(anyCompleted);
+      if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length >= 75 && !window._mhRoundFinalized) {
+        if (window._mhGraceActive) {
+          // Ya había al menos un cartón reclamado con tiempo extra
+          // corriendo: se acabaron las bolas, cerramos ya sin esperar
+          // el resto del contador (se entregan los premios juntados).
+          finalizeRound();
         } else {
-          window._mhBingoManualCall = true;
-          endRound(false);
-          window._mhBingoManualCall = false;
+          const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+          const anyCompleted = list.find(c => c.completed);
+          if (anyCompleted) {
+            anyCompleted._mhClaimed = true;
+            window._mhClaimedCardsOrder = window._mhClaimedCardsOrder || [];
+            window._mhClaimedCardsOrder.push(anyCompleted);
+            window._mhGraceActive = true;
+            stampCard(anyCompleted);
+            finalizeRound();
+          } else {
+            window._mhRoundFinalized = true;
+            window._mhRoundSettled = true;
+            window._mhBingoManualCall = true;
+            endRound(false);
+            window._mhBingoManualCall = false;
+          }
         }
       }
     };
