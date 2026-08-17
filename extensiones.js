@@ -681,53 +681,6 @@
 })();
 
 /* ============================================================
-   SELLO "BINGO" SOBRE LA TARJETA GANADORA
-   ------------------------------------------------------------
-   Envuelve evaluateCardPatterns (no la reemplaza): cuando una
-   tarjeta completa un patrón, le agrega un sello rojo "BINGO"
-   encima, como en otros juegos de bingo. No toca el popup que
-   ya existe, es un agregado visual sobre el cartón mismo.
-   ============================================================ */
-(function () {
-  const css = `
-    .mh-bingo-stamp{
-      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-14deg);
-      border:4px solid #d32f2f; color:#d32f2f; font-weight:900; font-size:20px; letter-spacing:3px;
-      padding:3px 12px; border-radius:8px; background:rgba(255,255,255,.88);
-      text-transform:uppercase; z-index:5; box-shadow:0 2px 8px rgba(0,0,0,.4);
-      animation:mhBingoStampPop .35s ease-out; pointer-events:none;
-    }
-    @keyframes mhBingoStampPop{
-      from{ transform:translate(-50%,-50%) rotate(-14deg) scale(2.2); opacity:0; }
-      to{ transform:translate(-50%,-50%) rotate(-14deg) scale(1); opacity:1; }
-    }
-  `;
-  const styleTag = document.createElement('style');
-  styleTag.textContent = css;
-  document.head.appendChild(styleTag);
-
-  if (typeof window.evaluateCardPatterns === 'function' && !window._mhBingoStampWired) {
-    const originalEvaluateCardPatterns = window.evaluateCardPatterns;
-    window.evaluateCardPatterns = function (cardObj) {
-      const result = originalEvaluateCardPatterns(cardObj);
-      try {
-        if (result && cardObj && cardObj.cells && cardObj.cells[0]) {
-          const cardDiv = cardObj.cells[0].closest('.bingo-card');
-          if (cardDiv && !cardDiv.querySelector('.mh-bingo-stamp')) {
-            const stamp = document.createElement('div');
-            stamp.className = 'mh-bingo-stamp';
-            stamp.textContent = 'BINGO';
-            cardDiv.appendChild(stamp);
-          }
-        }
-      } catch (e) {}
-      return result;
-    };
-    window._mhBingoStampWired = true;
-  }
-})();
-
-/* ============================================================
    BOTÓN MANUAL "¡BINGO!" (antes: ganaba solo, automático)
    ------------------------------------------------------------
    Antes, apenas un cartón completaba un patrón, el juego
@@ -771,6 +724,30 @@
         0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-6px); }
         40%{ transform:translateX(6px); } 60%{ transform:translateX(-4px); } 80%{ transform:translateX(4px); }
       }
+      .mh-bingo-stamp-wrap{
+        position:absolute; top:0; right:0; width:110px; height:110px;
+        overflow:hidden; z-index:6; pointer-events:none; border-radius:8px;
+      }
+      .mh-bingo-stamp{
+        position:absolute; top:16px; right:-34px; width:150px; padding:5px 0;
+        text-align:center; transform:rotate(45deg);
+        background:linear-gradient(135deg,#fff3c4,#ffd75e 35%,#d29922 75%,#a9760a);
+        color:#3b2604; font-weight:900; font-size:13px; letter-spacing:3px;
+        text-transform:uppercase; overflow:hidden;
+        box-shadow:0 3px 8px rgba(0,0,0,.5);
+        border-top:1px solid rgba(255,255,255,.7); border-bottom:1px solid rgba(0,0,0,.3);
+        animation: mhStampRibbonIn .5s cubic-bezier(.34,1.56,.64,1);
+      }
+      .mh-bingo-stamp::after{
+        content:''; position:absolute; top:0; left:-60%; width:35%; height:100%;
+        background:linear-gradient(120deg, transparent, rgba(255,255,255,.65), transparent);
+        animation: mhStampShine 1.3s ease-in-out .45s 1;
+      }
+      @keyframes mhStampRibbonIn{
+        from{ transform:rotate(45deg) scale(0); opacity:0; }
+        to{ transform:rotate(45deg) scale(1); opacity:1; }
+      }
+      @keyframes mhStampShine{ from{ left:-60%; } to{ left:130%; } }
     `;
     const styleTag = document.createElement('style');
     styleTag.textContent = css;
@@ -828,10 +805,24 @@
       }
     };
 
+    function stampCard(cardObj) {
+      try {
+        if (!cardObj || !cardObj.cells || !cardObj.cells[0]) return;
+        const cardDiv = cardObj.cells[0].closest('.bingo-card');
+        if (!cardDiv || cardDiv.querySelector('.mh-bingo-stamp-wrap')) return;
+        const wrap = document.createElement('div');
+        wrap.className = 'mh-bingo-stamp-wrap';
+        wrap.innerHTML = '<div class="mh-bingo-stamp">BINGO</div>';
+        cardDiv.appendChild(wrap);
+      } catch (e) {}
+    }
+
     function claimCard(cardObj) {
       if (!cardObj || !cardObj.completed) return false;
       roundWinPattern = cardObj.winPattern || roundWinPattern;
       window._mhRoundSettled = true;
+      stampCard(cardObj);
+      if (typeof window._mhSpeakBingoVoice === 'function') window._mhSpeakBingoVoice();
       window._mhBingoManualCall = true;
       endRound(true);
       window._mhBingoManualCall = false;
@@ -910,4 +901,239 @@
     };
     window._mhBallVoiceWired = true;
   }
+})();
+
+/* ============================================================
+   TIENDA DE VOCES DE BINGO
+   ------------------------------------------------------------
+   Voz APARTE de la que canta los números (B-13, I-22, etc.):
+   esta es la voz que grita "¡BINGO!" cuando el jugador reclama
+   la victoria con el botón. Hay varias voces con distinto tono/
+   velocidad, cada una con botón "🔊 Escuchar" para probarla
+   ANTES de comprarla, y se compran con oro o gemas. La elegida
+   queda guardada en el perfil (state.mhBingoVoices) y se usa
+   automáticamente cada vez que reclamas BINGO.
+   ============================================================ */
+(function () {
+  const BINGO_VOICES = [
+    { id: 'clasico',   name: 'Locutor Clásico',      price: 0,   currency: 'gold', pitch: 1.0, rate: 1.0,  phrase: '¡Bingo!' },
+    { id: 'anfitrion', name: 'Anfitrión de Casino',   price: 150, currency: 'gold', pitch: 0.8, rate: 0.9,  phrase: '¡Bingo! Tenemos un ganador.' },
+    { id: 'aguda',     name: 'Voz Aguda de Fiesta',   price: 150, currency: 'gold', pitch: 1.6, rate: 1.1,  phrase: '¡Bingooo! ¡Qué emoción!' },
+    { id: 'robot',     name: 'Robot Arcade',          price: 250, currency: 'gold', pitch: 0.5, rate: 0.85, phrase: 'Bin. Go. Victoria confirmada.' },
+    { id: 'dramatico', name: 'Eco Dramático',         price: 250, currency: 'gold', pitch: 1.1, rate: 0.65, phrase: 'Biiin... go...' },
+    { id: 'multitud',  name: 'Grito de Multitud',     price: 350, currency: 'gold', pitch: 1.35, rate: 1.25, phrase: '¡BINGOOOO!' },
+    { id: 'vip',       name: 'Presentador VIP',       price: 60,  currency: 'gems', pitch: 0.95, rate: 1.05, phrase: '¡Y eso es BINGO! Felicidades, campeón.' },
+  ];
+
+  function pickSpeechVoice() {
+    try {
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (!voices.length) return null;
+      const esVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('es'));
+      return (esVoices[0] || voices[0]) || null;
+    } catch (e) { return null; }
+  }
+
+  function speakVoiceProfile(v) {
+    try {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(v.phrase);
+      utter.lang = 'es-ES';
+      utter.pitch = v.pitch;
+      utter.rate = v.rate;
+      utter.volume = 1;
+      const voice = pickSpeechVoice();
+      if (voice) utter.voice = voice;
+      window.speechSynthesis.speak(utter);
+    } catch (e) {}
+  }
+
+  function getVoiceState() {
+    if (typeof state === 'undefined' || !state) return null;
+    state.mhBingoVoices = state.mhBingoVoices || { owned: ['clasico'], selected: 'clasico' };
+    if (!state.mhBingoVoices.owned.includes('clasico')) state.mhBingoVoices.owned.push('clasico');
+    if (!state.mhBingoVoices.selected) state.mhBingoVoices.selected = 'clasico';
+    return state.mhBingoVoices;
+  }
+
+  const css = `
+    .mh-voice-shop-open-btn{
+      display:block; width:100%; margin:0 0 10px; padding:10px;
+      font-size:13px; font-weight:700; color:#e6c766; background:#1c2129;
+      border:1px solid #d29922; border-radius:10px; cursor:pointer; text-align:center;
+    }
+    .mh-voice-shop-overlay{
+      display:none; position:fixed; inset:0; background:rgba(13,17,23,0.88);
+      z-index:4200; align-items:center; justify-content:center; padding:16px;
+    }
+    .mh-voice-shop-overlay.active{ display:flex; }
+    .mh-voice-shop-box{
+      width:100%; max-width:420px; max-height:82vh; overflow-y:auto;
+      background:#161b22; border:1px solid #30363d; border-radius:14px; padding:16px;
+    }
+    .mh-voice-shop-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+    .mh-voice-shop-header h3{ margin:0; color:#d29922; font-size:16px; }
+    .mh-voice-shop-close{ cursor:pointer; color:#8b949e; font-size:18px; padding:2px 6px; }
+    .mh-voice-shop-sub{ font-size:11px; color:#8b949e; margin:2px 0 12px; }
+    .mh-voice-shop-list{ display:flex; flex-direction:column; gap:8px; }
+    .mh-voice-row{
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:9px 10px;
+    }
+    .mh-voice-name{ font-size:13px; font-weight:700; color:#c9d1d9; }
+    .mh-voice-owned-tag{ font-size:9px; color:#3fb950; font-weight:700; }
+    .mh-voice-price{ font-size:11px; color:#8b949e; margin-top:2px; }
+    .mh-voice-actions{ display:flex; gap:6px; flex-shrink:0; }
+    .mh-voice-btn{
+      font-size:11px; font-weight:700; padding:6px 9px; border-radius:8px; cursor:pointer;
+      border:1px solid #30363d; background:#21262d; color:#c9d1d9;
+    }
+    .mh-voice-preview{ color:#58a6ff; border-color:#1f6feb; }
+    .mh-voice-buy{ color:#3b2604; background:linear-gradient(180deg,#ffe58a,#d29922); border-color:#ffd75e; }
+    .mh-voice-selected{ color:#3fb950; border-color:#3fb950; background:#132318; cursor:default; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  function renderVoiceShop() {
+    const vs = getVoiceState();
+    const list = document.getElementById('mh-voice-shop-list');
+    if (!vs || !list) return;
+    list.innerHTML = BINGO_VOICES.map(v => {
+      const owned = vs.owned.includes(v.id);
+      const selected = vs.selected === v.id;
+      const symbol = v.currency === 'gems' ? '💎' : '🪙';
+      const priceLabel = v.price === 0 ? 'Gratis' : `${symbol} ${v.price}`;
+      const actionBtn = selected
+        ? `<button class="mh-voice-btn mh-voice-selected" disabled>✅ En uso</button>`
+        : owned
+          ? `<button class="mh-voice-btn" onclick="window._mhUseBingoVoice('${v.id}')">Usar</button>`
+          : `<button class="mh-voice-btn mh-voice-buy" onclick="window._mhBuyBingoVoice('${v.id}')">Comprar ${priceLabel}</button>`;
+      return `<div class="mh-voice-row">
+          <div>
+            <div class="mh-voice-name">${v.name}${owned && v.price > 0 ? ' <span class="mh-voice-owned-tag">· Adquirida</span>' : ''}</div>
+            <div class="mh-voice-price">${owned ? '' : priceLabel}</div>
+          </div>
+          <div class="mh-voice-actions">
+            <button class="mh-voice-btn mh-voice-preview" onclick="window._mhPreviewBingoVoiceById('${v.id}')">🔊 Escuchar</button>
+            ${actionBtn}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function updateVoiceShopButtonLabel() {
+    const btn = document.getElementById('mh-voice-shop-open-btn');
+    const vs = getVoiceState();
+    if (!btn || !vs) return;
+    const v = BINGO_VOICES.find(x => x.id === vs.selected) || BINGO_VOICES[0];
+    btn.textContent = `🎙️ Voz de Bingo: ${v.name}`;
+  }
+
+  function ensureVoiceShopModal() {
+    if (document.getElementById('mh-voice-shop-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mh-voice-shop-overlay';
+    overlay.className = 'mh-voice-shop-overlay';
+    overlay.innerHTML = `
+      <div class="mh-voice-shop-box">
+        <div class="mh-voice-shop-header">
+          <h3>🎙️ Tienda de Voces de Bingo</h3>
+          <span class="mh-voice-shop-close" onclick="window._mhCloseVoiceShop()">✕</span>
+        </div>
+        <p class="mh-voice-shop-sub">Escucha cada voz antes de comprarla. La que elijas es la que grita "¡BINGO!" cuando reclamas la victoria.</p>
+        <div id="mh-voice-shop-list" class="mh-voice-shop-list"></div>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  function ensureVoiceShopButton() {
+    if (document.getElementById('mh-voice-shop-open-btn')) return;
+    const anchor = document.getElementById('bonus-summary');
+    if (!anchor) return;
+    const btn = document.createElement('button');
+    btn.id = 'mh-voice-shop-open-btn';
+    btn.className = 'mh-voice-shop-open-btn';
+    btn.type = 'button';
+    btn.onclick = function () {
+      ensureVoiceShopModal();
+      renderVoiceShop();
+      document.getElementById('mh-voice-shop-overlay').classList.add('active');
+    };
+    anchor.insertAdjacentElement('beforebegin', btn);
+    updateVoiceShopButtonLabel();
+  }
+
+  window._mhCloseVoiceShop = function () {
+    const el = document.getElementById('mh-voice-shop-overlay');
+    if (el) el.classList.remove('active');
+  };
+
+  window._mhPreviewBingoVoiceById = function (id) {
+    const v = BINGO_VOICES.find(x => x.id === id);
+    if (v) speakVoiceProfile(v);
+  };
+
+  window._mhBuyBingoVoice = function (id) {
+    const v = BINGO_VOICES.find(x => x.id === id);
+    const vs = getVoiceState();
+    if (!v || !vs || vs.owned.includes(id)) return;
+    const balance = v.currency === 'gems' ? (state.gems || 0) : (state.gold || 0);
+    if (balance < v.price) {
+      showToast(v.currency === 'gems' ? '❌ No tienes suficientes 💎 diamantes.' : '❌ No tienes suficiente 🪙 oro.');
+      return;
+    }
+    if (v.currency === 'gems') state.gems -= v.price; else state.gold -= v.price;
+    vs.owned.push(id);
+    vs.selected = id;
+    saveState();
+    if (typeof refreshAllUI === 'function') refreshAllUI();
+    showToast(`🎙️ ¡Voz "${v.name}" adquirida y activada!`);
+    renderVoiceShop();
+    updateVoiceShopButtonLabel();
+  };
+
+  window._mhUseBingoVoice = function (id) {
+    const vs = getVoiceState();
+    if (!vs || !vs.owned.includes(id)) return;
+    vs.selected = id;
+    saveState();
+    renderVoiceShop();
+    updateVoiceShopButtonLabel();
+    const v = BINGO_VOICES.find(x => x.id === id);
+    if (v) showToast(`🎙️ Voz activa: "${v.name}"`);
+  };
+
+  // Voz que se dispara de verdad al reclamar BINGO (llamada desde la
+  // sección del botón manual de BINGO, más arriba en este archivo).
+  window._mhSpeakBingoVoice = function () {
+    const vs = getVoiceState();
+    const v = BINGO_VOICES.find(x => x.id === (vs && vs.selected)) || BINGO_VOICES[0];
+    speakVoiceProfile(v);
+  };
+
+  function setup() {
+    ensureVoiceShopButton();
+    updateVoiceShopButtonLabel();
+    if (typeof window.openBingoLobby === 'function' && !window._mhVoiceShopLobbyWired) {
+      const originalOpenBingoLobby = window.openBingoLobby;
+      window.openBingoLobby = function () {
+        const r = originalOpenBingoLobby.apply(this, arguments);
+        ensureVoiceShopButton();
+        updateVoiceShopButtonLabel();
+        return r;
+      };
+      window._mhVoiceShopLobbyWired = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
+  setTimeout(setup, 800);
+  setTimeout(updateVoiceShopButtonLabel, 1800); // por si el state tarda en cargar (Firestore)
 })();
