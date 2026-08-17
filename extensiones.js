@@ -808,6 +808,13 @@
       const extras = claimed.slice(1);
       roundWinPattern = mainCard.winPattern || roundWinPattern;
 
+      // 🩹 FIX: acá faltaba entregar el premio principal — el temporizador de
+      // gracia terminaba y la partida se quedaba trabada sin mostrar el popup
+      // de premio. Ahora sí se llama a endRound(true) de verdad al finalizar.
+      window._mhBingoManualCall = true;
+      endRound(true);
+      window._mhBingoManualCall = false;
+
       if (extras.length && typeof state !== 'undefined' && state) {
         const bonusEach = (typeof window.calculateRoomBonus === 'function') ? window.calculateRoomBonus() : 0;
         if (bonusEach > 0) {
