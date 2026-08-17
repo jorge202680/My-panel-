@@ -709,16 +709,8 @@
     if (typeof window.endRound !== 'function' || typeof window.handleBallDraw !== 'function' ||
         typeof window.focusCard !== 'function' || typeof window.startBingoGame !== 'function') return;
 
-    // ---- Botón visual "¡BINGO!" dentro del área de juego activa ----
+    // ---- Estilos: botón por cartón + animación "¡BINGO!" pantalla completa ----
     const css = `
-      #mh-bingo-claim-btn{
-        display:block; width:100%; margin:10px 0 4px; padding:13px;
-        font-size:18px; font-weight:900; letter-spacing:2px; text-transform:uppercase;
-        color:#1a1a1a; background:linear-gradient(180deg,#ffe58a,#d29922);
-        border:2px solid #ffd75e; border-radius:12px; cursor:pointer;
-        box-shadow:0 3px 0 #8a6a12, 0 4px 10px rgba(0,0,0,.4);
-      }
-      #mh-bingo-claim-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 #8a6a12; }
       .mh-bingo-shake{ animation: mhBingoShake .4s; }
       @keyframes mhBingoShake{
         0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-6px); }
@@ -748,25 +740,61 @@
         to{ transform:rotate(45deg) scale(1); opacity:1; }
       }
       @keyframes mhStampShine{ from{ left:-60%; } to{ left:130%; } }
+
+      .bingo-card{ position:relative; }
+      .mh-bingo-card-btn{
+        display:block; width:100%; margin-top:6px; padding:8px;
+        font-size:13px; font-weight:900; letter-spacing:1px; text-transform:uppercase;
+        color:#1a1a1a; background:linear-gradient(180deg,#ffe58a,#d29922);
+        border:2px solid #ffd75e; border-radius:9px; cursor:pointer;
+        box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35);
+      }
+      .mh-bingo-card-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #8a6a12; }
+      .mh-bingo-card-btn.is-ready{
+        animation: mhCardBtnPulse 1s ease-in-out infinite;
+      }
+      @keyframes mhCardBtnPulse{
+        0%,100%{ box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35), 0 0 0 rgba(255,215,94,.6); }
+        50%{ box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35), 0 0 14px rgba(255,215,94,.9); }
+      }
+
+      /* ---- Pantalla completa "¡BINGO!" antes del popup de premios ---- */
+      #mh-bingo-fullscreen{
+        position:fixed; inset:0; z-index:99999;
+        display:flex; align-items:center; justify-content:center;
+        background:radial-gradient(circle at 50% 50%, rgba(0,0,0,.55), rgba(0,0,0,.82));
+        opacity:0; pointer-events:none;
+        animation: mhFsFade .9s ease forwards;
+      }
+      #mh-bingo-fullscreen .mh-fs-word{
+        font-size:min(20vw,110px); font-weight:900; letter-spacing:6px;
+        background:linear-gradient(180deg,#fff6cf,#ffd75e 45%,#d29922 80%,#a9760a);
+        -webkit-background-clip:text; background-clip:text; color:transparent;
+        text-shadow:0 6px 18px rgba(0,0,0,.5);
+        transform:scale(.4) rotate(-6deg); opacity:0;
+        animation: mhFsWordPop .9s cubic-bezier(.34,1.56,.64,1) forwards;
+      }
+      #mh-bingo-fullscreen .mh-fs-ray{
+        position:absolute; inset:-20%; z-index:-1;
+        background:conic-gradient(from 0deg, rgba(255,215,94,0) 0deg, rgba(255,215,94,.35) 8deg, rgba(255,215,94,0) 16deg);
+        animation: mhFsSpin 1.4s linear infinite;
+      }
+      @keyframes mhFsFade{
+        0%{ opacity:0; } 10%{ opacity:1; } 78%{ opacity:1; } 100%{ opacity:0; }
+      }
+      @keyframes mhFsWordPop{
+        0%{ transform:scale(.4) rotate(-6deg); opacity:0; }
+        55%{ transform:scale(1.12) rotate(2deg); opacity:1; }
+        75%{ transform:scale(.96) rotate(-1deg); }
+        100%{ transform:scale(1) rotate(0deg); opacity:1; }
+      }
+      @keyframes mhFsSpin{ to{ transform:rotate(360deg); } }
     `;
     const styleTag = document.createElement('style');
     styleTag.textContent = css;
     document.head.appendChild(styleTag);
 
-    function ensureBingoButton() {
-      if (document.getElementById('mh-bingo-claim-btn')) return;
-      const anchor = document.querySelector('.ball-callout-container');
-      if (!anchor) return;
-      const btn = document.createElement('button');
-      btn.id = 'mh-bingo-claim-btn';
-      btn.type = 'button';
-      btn.textContent = '🎯 ¡BINGO!';
-      btn.onclick = onBingoButtonClick;
-      anchor.insertAdjacentElement('afterend', btn);
-    }
-    ensureBingoButton();
-
-    // ---- Recordar cuál cartón está "enfocado" (el que se está jugando) ----
+    // ---- Recordar cuál cartón está "enfocado" (por si otra parte del juego lo usa) ----
     window._mhFocusedCardIndex = 0;
     const originalFocusCard = window.focusCard;
     window.focusCard = function (c) {
@@ -779,8 +807,12 @@
       window._mhFocusedCardIndex = 0;
       window._mhRivalAlerted = false;
       window._mhRoundSettled = false;
-      ensureBingoButton();
-      return originalStartBingoGame.apply(this, arguments);
+      const result = originalStartBingoGame.apply(this, arguments);
+      // Las tarjetas recién se crean dentro de startBingoGame, así que
+      // esperamos un toque antes de colgarles el botón propio.
+      setTimeout(ensurePerCardButtons, 50);
+      setTimeout(ensurePerCardButtons, 400);
+      return result;
     };
 
     // ---- Bloquear el auto-win/auto-loss: solo endRound() con permiso explícito pasa ----
@@ -792,7 +824,7 @@
       if (won === true) {
         // Victoria automática bloqueada: el cartón ya quedó marcado como
         // completado (sello/color verde), pero el jugador debe presionar
-        // "¡BINGO!" para cobrar el premio.
+        // "¡BINGO!" en la tarjeta para cobrar el premio.
         return;
       }
       // won === false: esto solo ocurre cuando el rival llega a 25/25.
@@ -800,7 +832,7 @@
       if (!window._mhRivalAlerted) {
         window._mhRivalAlerted = true;
         if (typeof showToast === 'function') {
-          showToast('🤖 Tu rival ya completó su cartón, pero la partida sigue: ¡marca y presiona BINGO en el tuyo!');
+          showToast('🤖 Tu rival ya completó su cartón, pero la partida sigue: ¡marca y presiona BINGO en tu tarjeta!');
         }
       }
     };
@@ -817,36 +849,76 @@
       } catch (e) {}
     }
 
+    // ---- Animación "¡BINGO!" a pantalla completa, luego el popup de premios ----
+    function playFullscreenBingo(onDone) {
+      const old = document.getElementById('mh-bingo-fullscreen');
+      if (old) old.remove();
+      const overlay = document.createElement('div');
+      overlay.id = 'mh-bingo-fullscreen';
+      overlay.innerHTML = '<div class="mh-fs-ray"></div><div class="mh-fs-word">¡BINGO!</div>';
+      document.body.appendChild(overlay);
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        overlay.remove();
+        onDone();
+      };
+      overlay.addEventListener('animationend', finish);
+      // Salvavidas por si el navegador no dispara animationend
+      setTimeout(finish, 1300);
+    }
+
     function claimCard(cardObj) {
       if (!cardObj || !cardObj.completed) return false;
       roundWinPattern = cardObj.winPattern || roundWinPattern;
       window._mhRoundSettled = true;
       stampCard(cardObj);
       if (typeof window._mhSpeakBingoVoice === 'function') window._mhSpeakBingoVoice();
-      window._mhBingoManualCall = true;
-      endRound(true);
-      window._mhBingoManualCall = false;
+      playFullscreenBingo(() => {
+        window._mhBingoManualCall = true;
+        endRound(true);
+        window._mhBingoManualCall = false;
+      });
       return true;
     }
 
-    function onBingoButtonClick() {
-      const idx = window._mhFocusedCardIndex || 0;
+    // ---- Botón "¡BINGO!" DENTRO de cada cartón (uno por cartón, es el único) ----
+    // Reclama directamente ese cartón, sin botón global ni necesidad de enfocarlo.
+    function ensurePerCardButtons() {
       const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
-      const cardObj = list.find(c => c.cardIndex === idx) || list[idx];
-      if (!claimCard(cardObj)) {
-        const btn = document.getElementById('mh-bingo-claim-btn');
-        if (btn) {
-          btn.classList.remove('mh-bingo-shake');
-          void btn.offsetWidth;
-          btn.classList.add('mh-bingo-shake');
+      list.forEach((cardObj) => {
+        if (!cardObj || !cardObj.cells || !cardObj.cells[0]) return;
+        const cardDiv = cardObj.cells[0].closest('.bingo-card');
+        if (!cardDiv) return;
+        let btn = cardDiv.querySelector('.mh-bingo-card-btn');
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'mh-bingo-card-btn';
+          btn.textContent = '🎯 ¡BINGO!';
+          btn.onclick = function (e) {
+            e.stopPropagation();
+            if (!claimCard(cardObj)) {
+              btn.classList.remove('mh-bingo-shake');
+              void btn.offsetWidth;
+              btn.classList.add('mh-bingo-shake');
+            }
+          };
+          cardDiv.appendChild(btn);
         }
-      }
+        btn.classList.toggle('is-ready', !!cardObj.completed);
+      });
     }
+    window._mhEnsurePerCardButtons = ensurePerCardButtons;
 
     // ---- Salvavidas: si se acaban las 75 bolas, reclamar solo o cerrar sin premio ----
     const originalHandleBallDraw = window.handleBallDraw;
     window.handleBallDraw = function () {
       originalHandleBallDraw.apply(this, arguments);
+      // Cada bola puede completar un cartón: refrescamos el estado
+      // "listo" (brillo) de cada botón propio.
+      ensurePerCardButtons();
       if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length >= 75 && !window._mhRoundSettled) {
         window._mhRoundSettled = true;
         const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
@@ -860,6 +932,12 @@
         }
       }
     };
+
+    // ---- Refresco periódico liviano ----
+    // El jugador marca casillas tocándolas (no solo al cantar bola), así
+    // que revisamos cada tanto si algún cartón ya quedó completo para
+    // crear su botón / prenderle el brillo, sin depender de otro evento.
+    setInterval(ensurePerCardButtons, 500);
 
     window._mhManualBingoWired = true;
   }
