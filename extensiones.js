@@ -895,10 +895,12 @@
     // ---- Tiempo extra: al reclamar el 1er cartón, la ronda SIGUE ----
     // (no se cierra al toque) y aparece un contador visible dando tiempo
     // para que reclames tus otros cartones antes de que cierre de verdad.
-    // Cada cartón reclamado en ese tiempo se guarda en una lista y, al
-    // terminar el tiempo, se entrega UN premio por cada uno (más bingos
-    // en la ventana de tiempo = más premios).
+    // El PRIMER cartón reclamado se lleva el premio normal de la ronda
+    // (según la sala y el multiplicador, calculado por el juego). Cada
+    // cartón EXTRA que reclames dentro de esos 30s suma un premio extra
+    // más chico (no repite el premio completo).
     const MH_GRACE_SECONDS = 30;
+    const MH_EXTRA_BINGO_PCT = 0.25; // cada bingo extra da 25% del premio base
     function clearGraceTimer() {
       if (window._mhGraceInterval) {
         clearInterval(window._mhGraceInterval);
@@ -918,7 +920,7 @@
       let secondsLeft = MH_GRACE_SECONDS;
       const bar = document.createElement('div');
       bar.id = 'mh-bingo-grace-timer';
-      bar.innerHTML = '🏆 <span class="mh-grace-count">1</span> BINGO — sigue jugando, ganás más — <span class="mh-grace-secs">' + secondsLeft + 's</span>';
+      bar.innerHTML = '🏆 <span class="mh-grace-count">1</span> BINGO — cada bingo extra suma más premio — <span class="mh-grace-secs">' + secondsLeft + 's</span>';
       document.body.appendChild(bar);
       window._mhGraceInterval = setInterval(() => {
         secondsLeft--;
@@ -930,20 +932,11 @@
       }, 1000);
     }
 
-    // Cierra la ronda de verdad: entrega un premio (endRound real) por
-    // CADA cartón reclamado durante la ventana de tiempo, uno detrás de
-    // otro. Si solo hubo 1 cartón, se entrega 1 solo premio como antes.
-    function deliverPrizesSequentially(list, idx) {
-      if (idx >= list.length) return;
-      const cardObj = list[idx];
-      roundWinPattern = cardObj.winPattern || roundWinPattern;
-      window._mhBingoManualCall = true;
-      endRound(true);
-      window._mhBingoManualCall = false;
-      if (idx + 1 < list.length) {
-        setTimeout(() => deliverPrizesSequentially(list, idx + 1), 1800);
-      }
-    }
+    // Cierra la ronda de verdad: el PRIMER cartón reclamado dispara el
+    // endRound real (premio de la ronda con multiplicador, tal cual el
+    // juego original). Luego, por cada cartón EXTRA reclamado en la
+    // ventana de tiempo, se suma directo a state.gold un % de ese mismo
+    // premio (premio extra más chico), con un toast propio.
     function finalizeRound() {
       if (window._mhRoundFinalized) return;
       window._mhRoundFinalized = true;
@@ -951,7 +944,31 @@
       clearGraceTimer();
       const claimed = window._mhClaimedCardsOrder || [];
       if (claimed.length === 0) return; // salvavidas de "sin nadie completó" ya maneja esto aparte
-      deliverPrizesSequentially(claimed, 0);
+
+      const mainCard = claimed[0];
+      const extras = claimed.slice(1);
+      roundWinPattern = mainCard.winPattern || roundWinPattern;
+
+      const goldBefore = (typeof state !== 'undefined' && state && typeof state.gold === 'number') ? state.gold : null;
+      window._mhBingoManualCall = true;
+      endRound(true); // premio general de la ronda (sala + multiplicador), como siempre
+      window._mhBingoManualCall = false;
+
+      if (extras.length && goldBefore !== null && typeof state !== 'undefined' && state) {
+        const basePrize = Math.max(0, (state.gold || 0) - goldBefore);
+        const bonusEach = Math.round(basePrize * MH_EXTRA_BINGO_PCT);
+        if (bonusEach > 0) {
+          extras.forEach((cardObj, i) => {
+            setTimeout(() => {
+              state.gold = (state.gold || 0) + bonusEach;
+              if (typeof window.saveState === 'function') window.saveState();
+              if (typeof showToast === 'function') {
+                showToast('🎉 ¡Bingo extra! +🪙 ' + bonusEach.toLocaleString('es-PE'));
+              }
+            }, 1500 + i * 900);
+          });
+        }
+      }
     }
 
     function claimCard(cardObj) {
