@@ -1343,3 +1343,156 @@
   setTimeout(setup, 800);
   setTimeout(updateVoiceShopButtonLabel, 1800); // por si el state tarda en cargar (Firestore)
 })();
+
+/* ============================================================
+   TABLA DE BONOS POR SALA
+   ------------------------------------------------------------
+   Panel informativo (botón + modal) que muestra cuánto bono se
+   gana según la cantidad de cartas jugadas en cada sala. Fórmula:
+   bono = cartas × valor base de la sala.
+
+   Salas normales (hasta 10 cartas):
+     Clásica 2.000/carta · Oro 3.000/carta · Neón 4.000/carta · Fuego 5.000/carta
+   Salas premium (límite reducido, hasta 4 cartas):
+     Espacial 8.000/carta · Aurora 10.000/carta
+
+   Es solo informativo (no descuenta ni entrega nada): muestra al
+   jugador la tabla para que sepa qué gana antes de jugar. Se abre
+   con un botón junto al resumen de bonos de la sala de Bingo.
+   ============================================================ */
+(function () {
+
+  const css = `
+    .mh-bt-openbtn{
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      width:100%; margin:8px 0; padding:10px 12px; border-radius:12px; cursor:pointer;
+      font-size:11.5px; font-weight:800; letter-spacing:.03em; color:#c9d1d9;
+      background:#161b22; border:1px solid #30363d;
+    }
+    .mh-bt-overlay{
+      position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,.72);
+      display:none; align-items:center; justify-content:center; padding:14px;
+    }
+    .mh-bt-overlay.active{ display:flex; }
+    .mh-bt-box{
+      background:#0d1117; border:1px solid #30363d; border-radius:16px;
+      max-width:440px; width:100%; max-height:86vh; overflow:auto;
+      font-family:'Geist',system-ui,-apple-system,sans-serif; color:#c9d1d9;
+    }
+    .mh-bt-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #21262d; position:sticky; top:0; background:#0d1117; }
+    .mh-bt-head h3{ margin:0; font-size:14px; font-weight:800; color:#fff; }
+    .mh-bt-close{ cursor:pointer; color:#8b949e; font-size:16px; padding:2px 6px; }
+    .mh-bt-sub{ font-size:11px; color:#8b949e; padding:0 16px; margin-top:10px; }
+    .mh-bt-formula{ margin:10px 16px; padding:9px 12px; border-radius:10px; background:rgba(35,134,54,.1); border:1px solid rgba(35,134,54,.35); font-size:11px; color:#4ac26b; font-weight:700; text-align:center; }
+    .mh-bt-tablewrap{ overflow-x:auto; margin:10px 16px 4px; border-radius:10px; border:1px solid #21262d; }
+    .mh-bt-table{ width:100%; min-width:420px; border-collapse:collapse; font-size:12.5px; }
+    .mh-bt-table thead tr{ background:#238636; color:#fff; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; }
+    .mh-bt-table th{ text-align:right; font-weight:700; padding:9px 12px; border-right:1px solid rgba(255,255,255,.1); }
+    .mh-bt-table th:first-child{ text-align:left; width:70px; }
+    .mh-bt-table td{ text-align:right; padding:8px 12px; border-right:1px solid #21262d; border-bottom:1px solid #21262d; font-family:'Geist Mono',monospace; }
+    .mh-bt-table td:first-child{ text-align:left; font-weight:700; color:#fff; }
+    .mh-bt-table tbody tr:nth-child(even){ background:rgba(28,33,40,.6); }
+    .mh-bt-table tbody tr.max{ background:rgba(241,224,90,.07); }
+    .mh-bt-table tbody tr.max td:first-child{ color:#f1e05a; }
+    .mh-bt-maxtag{ font-size:9px; margin-left:6px; padding:1px 6px; border-radius:8px; background:rgba(241,224,90,.15); color:#f1e05a; font-weight:800; }
+    .mh-bt-premium-note{ font-size:10px; color:#8b949e; padding:8px 16px 16px; text-align:center; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  const an = (n) => n.toLocaleString('es');
+
+  // Salas normales: hasta 10 cartas.
+  const ROOMS_NORMAL = [
+    { key: 'clasica', label: 'Clásica 2k', base: 2000 },
+    { key: 'oro',     label: 'Oro 3k',     base: 3000 },
+    { key: 'neon',    label: 'Neón 4k',    base: 4000 },
+    { key: 'fuego',   label: 'Fuego 5k',   base: 5000 },
+  ];
+  const MAX_NORMAL = 10;
+
+  // Salas premium: límite reducido, hasta 4 cartas.
+  const ROOMS_PREMIUM = [
+    { key: 'espacial', label: 'Espacial 8k', base: 8000 },
+    { key: 'aurora',   label: 'Aurora 10k',  base: 10000 },
+  ];
+  const MAX_PREMIUM = 4;
+
+  function buildTable(rooms, maxCartas) {
+    let head = `<tr><th>Cartas</th>${rooms.map(r => `<th>${r.label}</th>`).join('')}</tr>`;
+    let rows = '';
+    for (let c = 1; c <= maxCartas; c++) {
+      const isMax = c === maxCartas;
+      rows += `<tr class="${isMax ? 'max' : ''}">
+          <td>${c}${isMax ? '<span class="mh-bt-maxtag">MAX</span>' : ''}</td>
+          ${rooms.map(r => `<td>${an(c * r.base)}</td>`).join('')}
+        </tr>`;
+    }
+    return `<table class="mh-bt-table"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function ensureBonusTableModal() {
+    if (document.getElementById('mh-bt-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mh-bt-overlay';
+    overlay.className = 'mh-bt-overlay';
+    overlay.innerHTML = `
+      <div class="mh-bt-box">
+        <div class="mh-bt-head">
+          <h3>📊 Tabla de Bonos por Sala</h3>
+          <span class="mh-bt-close" onclick="window._mhCloseBonusTable()">✕</span>
+        </div>
+        <div class="mh-bt-sub">Desliza horizontal para ver todas las salas</div>
+        <div class="mh-bt-formula">Fórmula: Bono = Cartas × Valor base de la sala</div>
+        <div class="mh-bt-tablewrap">${buildTable(ROOMS_NORMAL, MAX_NORMAL)}</div>
+        <div class="mh-bt-tablewrap">${buildTable(ROOMS_PREMIUM, MAX_PREMIUM)}</div>
+        <div class="mh-bt-premium-note">⚡ Salas premium con límite reducido (máx. ${MAX_PREMIUM} cartas)</div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) window._mhCloseBonusTable(); });
+  }
+
+  window._mhCloseBonusTable = function () {
+    const el = document.getElementById('mh-bt-overlay');
+    if (el) el.classList.remove('active');
+  };
+
+  window._mhOpenBonusTable = function () {
+    ensureBonusTableModal();
+    document.getElementById('mh-bt-overlay').classList.add('active');
+  };
+
+  function ensureBonusTableButton() {
+    if (document.getElementById('mh-bt-open-btn')) return;
+    const anchor = document.getElementById('bonus-summary');
+    if (!anchor) return;
+    const btn = document.createElement('button');
+    btn.id = 'mh-bt-open-btn';
+    btn.className = 'mh-bt-openbtn';
+    btn.type = 'button';
+    btn.textContent = '📊 Ver tabla de bonos por sala';
+    btn.onclick = window._mhOpenBonusTable;
+    anchor.insertAdjacentElement('beforebegin', btn);
+  }
+
+  function setupBonusTable() {
+    ensureBonusTableButton();
+    if (typeof window.openBingoLobby === 'function' && !window._mhBonusTableLobbyWired) {
+      const original = window.openBingoLobby;
+      window.openBingoLobby = function () {
+        const r = original.apply(this, arguments);
+        ensureBonusTableButton();
+        return r;
+      };
+      window._mhBonusTableLobbyWired = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupBonusTable);
+  } else {
+    setupBonusTable();
+  }
+  setTimeout(setupBonusTable, 800);
+})();
