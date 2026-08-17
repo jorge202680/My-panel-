@@ -34,43 +34,12 @@
   styleTag.textContent = css;
   document.head.appendChild(styleTag);
 
-  // ---- EJEMPLO: agregar una función nueva propia ----
-  // function miFuncionNueva() {
-  //   showToast('¡Funciona desde el archivo conectado!');
-  // }
-  // window.miFuncionNueva = miFuncionNueva; // la hace visible para onclick="" en el HTML
-
-  // ---- EJEMPLO: mejorar/envolver una función que ya existe ----
-  // Esto ejecuta primero lo original y después le agrega algo extra,
-  // sin borrar ni reescribir el código de allá.
-  //
-  // if (typeof window.renderMascotaScreen === 'function') {
-  //   const original = window.renderMascotaScreen;
-  //   window.renderMascotaScreen = function (...args) {
-  //     original(...args);
-  //     // acá tu agregado extra
-  //   };
-  // }
-
   console.log('extensiones.js conectado correctamente ✅');
 
 })();
 
 /* ============================================================
    SISTEMA EQUIPO CON NIVELES (mascotas)
-   ------------------------------------------------------------
-   Amplía el modal EQUIPO original (Collar Guardián, Armadura
-   Ónix, Amuleto Fuego) sumando 2 objetos nuevos (Botas del
-   Viento, Corona Legendaria) y un sistema de NIVELES: cada
-   objeto equipado se puede MEJORAR gastando 🪙 oro (💎 gemas
-   para la Corona Legendaria), subiendo su % de bono hasta
-   nivel 5. Incluye modal de confirmación de gasto, contador de
-   EQUIPADOS y bonus de set cuando los 5 están equipados.
-
-   Usa el state y las funciones reales de tu app (state.gold,
-   state.gems, saveState, getMascotaGear, toggleMascotaGear,
-   MASCOTA_GEAR_DEFS) así que descuenta recursos de verdad y
-   queda guardado/sincronizado como el resto de tus datos.
    ============================================================ */
 (function () {
 
@@ -169,7 +138,6 @@
   styleTag.textContent = css;
   document.head.appendChild(styleTag);
 
-  // ---- 2 objetos nuevos, sumados a los 3 que ya existían ----
   if (typeof MASCOTA_GEAR_DEFS !== 'undefined') {
     if (!MASCOTA_GEAR_DEFS.botas) {
       MASCOTA_GEAR_DEFS.botas = { name: 'Botas del Viento', icon: '👢', desc: 'Aumenta la probabilidad de golpe crítico', stat: 'critico', pct: 5, bonus: '+5% Crítico' };
@@ -179,8 +147,6 @@
     }
   }
 
-  // Config de niveles: cuánto sube el % por nivel y cuánto cuesta mejorar.
-  // badge = sigla que se muestra al lado del nombre: TV=Vida, TD=Defensa, TA=Ataque, TC=Crítico, TT=Todo
   const GEAR_LVL_CFG = {
     collar:   { maxLvl: 5, pctPerLvl: 5,  costGold: 400, costGems: 0,  iconClass: 'ic-collar',   label: 'Vida',    badge: 'TV' },
     armadura: { maxLvl: 5, pctPerLvl: 6,  costGold: 500, costGems: 0,  iconClass: 'ic-armadura', label: 'Defensa', badge: 'TD' },
@@ -189,7 +155,6 @@
     corona:   { maxLvl: 5, pctPerLvl: 3,  costGold: 0,   costGems: 25, iconClass: 'ic-corona',   label: 'Todo',    badge: 'TT' },
   };
 
-  // Bonus de set progresivo: no hace falta tener los 5 para empezar a ganar algo.
   function setBonusPct(equipCount) {
     if (equipCount >= 5) return 10;
     if (equipCount >= 3) return 5;
@@ -209,8 +174,6 @@
     return { gold: cfg.costGold * nextLvl, gems: cfg.costGems * nextLvl };
   }
 
-  // Recalcula los % reales según el nivel de cada objeto (reemplaza el
-  // cálculo original que usaba un % fijo).
   window.mascotaGearMults = function (id) {
     const g = getMascotaGear(id);
     const lv = getGearLevels(id);
@@ -220,17 +183,12 @@
     if (g.armadura) defensa += pctOf('armadura');
     if (g.amuleto) ataque += pctOf('amuleto');
     if (g.corona) { vida += pctOf('corona'); ataque += pctOf('corona'); defensa += pctOf('corona'); }
-    // Bonus de set progresivo: 3/5 equipados = +5%, 5/5 = +10%.
     const equipCount = Object.keys(MASCOTA_GEAR_DEFS).filter(s => g[s]).length;
     const setPct = setBonusPct(equipCount) / 100;
     if (setPct > 0) { vida += setPct; ataque += setPct; defensa += setPct; }
     return { vida, ataque, defensa };
   };
 
-  // ---- CRÍTICO: stat nuevo e independiente de vida/ataque/defensa ----
-  // Base 5% para toda mascota + lo que sumen las Botas del Viento por nivel
-  // + el mismo bonus de set progresivo (3/5 = +5%, 5/5 = +10%) que ya usan
-  // los otros stats. Tope 100%.
   const CRITICO_BASE_PCT = 5;
   window.mascotaCriticoPct = function (id) {
     const g = getMascotaGear(id);
@@ -269,9 +227,6 @@
     const cost = gearUpgradeCost(slot, nextLvl);
     let old = document.getElementById('mh-gear-upgrade-confirm');
     if (old) old.remove();
-    // Se busca la tarjeta del panel EQUIPO ya abierto (mh-sheet-card) para
-    // meter la confirmación ADENTRO de ese mismo panel, no como overlay de
-    // pantalla completa por fuera de él.
     const sheetCard = document.querySelector('#mh-sheet-ov .mh-sheet-card');
     if (!sheetCard) return;
     sheetCard.style.position = 'relative';
@@ -312,7 +267,6 @@
   window.mhConfirmUpgrade = mhConfirmUpgrade;
   window.mhDoUpgrade = mhDoUpgrade;
 
-  // Reemplaza el render del modal EQUIPO por la versión con niveles.
   window.mhRenderGearModal = function () {
     const box = document.getElementById('mh-gear-modal-body');
     if (!box) return;
@@ -330,7 +284,6 @@
       const pctActual = cfg.pctPerLvl * nivel;
       const pctSiguiente = cfg.pctPerLvl * Math.min(nivel + 1, cfg.maxLvl);
       const maxed = nivel >= cfg.maxLvl;
-      const nextCost = maxed ? null : gearUpgradeCost(slot, nivel + 1);
       const pips = Array.from({ length: cfg.maxLvl }).map((_, i) =>
         `<span class="mh-gear-pip ${i < nivel ? 'filled' : ''}"></span>`).join('');
       return `<div class="mh-gear-item ${on ? 'on' : ''}">
@@ -354,7 +307,6 @@
     const setPct = setBonusPct(equipCount);
     document.querySelectorAll('#mh-gear-headcount-val').forEach(el => el.textContent = equipCount + '/5');
 
-    // "Base" = stat sin el bono de equipo, para mostrarla debajo del valor final.
     const gearMult = mascotaGearMults(mascotaHeroSelectedId);
     const baseVida = Math.round(cs.vidaMax / gearMult.vida);
     const baseAtaque = Math.round(cs.ataque / gearMult.ataque);
@@ -409,13 +361,6 @@
         </div>`;
   };
 
-  // ---- Conecta el % de Crítico a la Arena de Batalla de verdad ----
-  // Envuelve pbComputeDamage (ya calcula daño elemental) sin tocar nada de
-  // lo original: después del cálculo normal, tira el dado del crítico según
-  // el % real de la mascota atacante, y si sale, multiplica el daño. Reusa
-  // el flag "isCrit" que el juego ya usa para los efectos visuales de golpe
-  // crítico (pbPlayHitEffect, pbShowDamage, etc.), así el golpe se ve y se
-  // siente como crítico de verdad, no solo en el número.
   const CRIT_DAMAGE_MULT = 1.5;
   if (typeof window.pbComputeDamage === 'function' && !window._mhCriticoWired) {
     const originalComputeDamage = window.pbComputeDamage;
@@ -438,14 +383,6 @@
 
 /* ============================================================
    FRANJA DE "NUEVA ACTUALIZACIÓN" ARRIBA
-   ------------------------------------------------------------
-   El juego ya detecta solo cuando hay una versión nueva (revisa
-   cada 5 min y al volver a la pestaña) y activa el botón flotante
-   #update-fab. Esto NO toca esa detección: solo agrega una franja
-   fija arriba de la pantalla que aparece/desaparece en espejo con
-   ese mismo botón, para que sea más visible. El usuario sigue
-   jugando normal; la franja queda ahí hasta que toca "ACTUALIZAR"
-   (usa la misma applyAppUpdate() que ya existe).
    ============================================================ */
 (function () {
 
@@ -488,14 +425,6 @@
 
 /* ============================================================
    TARJETAS DE BINGO ESTILO CLÁSICO
-   ------------------------------------------------------------
-   Solo CSS: no toca generateAllCards ni la lógica del juego.
-   - Fondo blanco tipo cartón real, con borde celeste.
-   - Encabezado B-I-N-G-O con cada letra de un color (azul, rojo,
-     verde, violeta, rojo), como un cartón de bingo tradicional.
-   - Números marcados como bolita roja con número blanco, en vez
-     del relleno de color plano que traía cada tarjeta.
-   - Casilla FREE con estrella dorada en vez del texto "FREE".
    ============================================================ */
 (function () {
 
@@ -523,7 +452,6 @@
       color:#16233f !important; font-weight:900 !important; border-radius:5px !important;
     }
 
-    /* Bolita roja para los números marcados, igual en las 4 tarjetas de color */
     .card-rojo .b-cell.marked, .card-azul .b-cell.marked,
     .card-verde .b-cell.marked, .card-amarillo .b-cell.marked{
       background:radial-gradient(circle at 35% 30%, #ff6b5e, #d32f2f 70%) !important;
@@ -531,7 +459,6 @@
       border-radius:50% !important; box-shadow:inset 0 -2px 4px rgba(0,0,0,.25), 0 1px 3px rgba(0,0,0,.4);
     }
 
-    /* Casilla FREE con estrella dorada */
     .b-cell.free{ color:transparent !important; position:relative; background:#fff8e1 !important; border-color:#f2c94c !important; }
     .b-cell.free::after{
       content:'⭐'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
@@ -546,11 +473,6 @@
 
 /* ============================================================
    AL GANAR SIEMPRE DICE "¡BINGO!"
-   ------------------------------------------------------------
-   El popup de victoria mostraba el nombre del patrón que
-   completaste (ej: "LÍNEA", "DIAGONAL", "CARTÓN LLENO") como
-   título. Esto envuelve openWinPopup para forzar siempre el
-   título "¡BINGO!", sin tocar el resto (oro, xp, pozo, etc.).
    ============================================================ */
 (function () {
   if (typeof window.openWinPopup === 'function' && !window._mhBingoTitleWired) {
@@ -564,34 +486,22 @@
 })();
 
 /* ============================================================
-   MÁXIMO DE CARTONES: 10 (antes 16)
-   ------------------------------------------------------------
-   No toca la lógica del juego, solo reordena la selección:
-   - Saca la opción "12 Cartones".
-   - Convierte el botón "16 Cartones" en "10 Cartones".
-   - Ajusta QUICK_CARD_STEPS (array real que usa el juego) y el
-     slider para que el máximo real sea 10, no solo visual.
-   - Agrega el precio de 10 cartones a cada sala, calculado igual
-     que los demás (precio por cartón × 10), así el costo no
-     queda en 0 al elegir 10.
+   MÁXIMO DE CARTONES: 10
    ============================================================ */
 (function () {
   function setupMaxTenCards() {
     if (window._mhMaxTenCardsWired) return;
     if (typeof QUICK_CARD_STEPS === 'undefined' || typeof ROOMS === 'undefined') return;
 
-    // 1) Steps reales que usa el juego para calcular/premiar: [1,2,4,8,10]
     QUICK_CARD_STEPS.length = 0;
     QUICK_CARD_STEPS.push(1, 2, 4, 8, 10);
 
-    // 2) Precio de 10 cartones en cada sala = precio de 1 cartón × 10
     ROOMS.forEach(room => {
       if (room.cardCosts && room.cardCosts[1] && room.cardCosts[10] === undefined) {
         room.cardCosts[10] = room.cardCosts[1] * 10;
       }
     });
 
-    // 3) Botones: sacar "12", convertir "16" en "10"
     const grid = document.querySelector('.cards-options-grid');
     if (grid) {
       const btn12 = grid.querySelector('[onclick="selectCardCount(12, this)"]');
@@ -605,29 +515,19 @@
       }
     }
 
-    // 4) Slider: máximo real ahora tiene 5 pasos (índices 0..4)
     const slider = document.getElementById('quick-card-slider');
     if (slider) slider.max = String(QUICK_CARD_STEPS.length - 1);
 
-    // 5) Texto descriptivo de "hasta 16" -> "hasta 10"
     document.querySelectorAll('#lobby-modal p').forEach(p => {
       if (p.textContent.includes('hasta 16 tarjetas')) {
         p.textContent = p.textContent.replace('hasta 16 tarjetas', 'hasta 10 tarjetas');
       }
     });
 
-    // 6) El botón "⚡ Máx. Cartones (16)" seguía diciendo 16
     document.querySelectorAll('.qb-max').forEach(btn => {
       btn.textContent = btn.textContent.replace('(16)', '(10)');
     });
 
-    // 7) CAUSA REAL de que se siguiera viendo "16": al renombrar el botón,
-    //    el <span> de precio quedó con id="cost-label-10" pero su TEXTO
-    //    seguía diciendo "Premio x16 (¡Máximo!)", porque la función del
-    //    juego refreshCardCostLabels() recorre una lista fija [1,2,4,8,12,16]
-    //    que nunca incluyó el 10, así que ese span nunca se actualizaba.
-    //    Enganchamos esa función para que también recalcule el label 10
-    //    cada vez que se recalculan precios (cambio de sala, descuento VIP...).
     if (typeof window.refreshCardCostLabels === 'function' && !window._mhRefreshLabelsWired) {
       const originalRefreshCardCostLabels = window.refreshCardCostLabels;
       window.refreshCardCostLabels = function () {
@@ -649,10 +549,9 @@
         el.innerText = discount > 0 ? `🪙 ${finalCost} (antes ${cost})` : `🪙 ${finalCost}`;
       };
       window._mhRefreshLabelsWired = true;
-      window.refreshCardCostLabels(); // primera pasada por si el lobby ya estaba abierto
+      window.refreshCardCostLabels();
     }
 
-    // 8) El toast de "Máx. Cartones" también decía "(16)" fijo en el texto
     if (typeof window.quickMaxCards === 'function' && !window._mhQuickMaxWired) {
       window.quickMaxCards = function () {
         const slider2 = document.getElementById('quick-card-slider');
@@ -663,7 +562,6 @@
       window._mhQuickMaxWired = true;
     }
 
-    // 9) Si alguien quedó con más de 10 elegidos de antes, lo bajamos a 10
     if (typeof chosenCardCount !== 'undefined' && chosenCardCount > 10) {
       chosenCardCount = 10;
     }
@@ -676,32 +574,11 @@
   } else {
     setupMaxTenCards();
   }
-  // Por si el lobby se arma/repinta después de cargar la página
   setTimeout(setupMaxTenCards, 800);
 })();
 
 /* ============================================================
-   BOTÓN MANUAL "¡BINGO!" (antes: ganaba solo, automático)
-   ------------------------------------------------------------
-   Antes, apenas un cartón completaba un patrón, el juego
-   terminaba la ronda solo (endRound(true) automático). Ahora:
-   - El cartón se sigue marcando como completado igual que antes
-     (sello, color verde, "¡LÍNEA!"/"¡CARTÓN LLENO!", etc.) pero
-     la ronda YA NO termina sola.
-   - Aparece un botón "🎯 ¡BINGO!" fijo debajo de la bola cantada.
-     Al presionarlo, se revisa el CARTÓN ENFOCADO (el que se ve /
-     el único si solo hay 1 cartón, o el último que tocaste en la
-     tira de pestañas): si ya completó un patrón, se declara la
-     victoria normal (mismo popup y premio de siempre). Si no,
-     no pasa nada (sin penalización).
-   - Si no presionas a tiempo y el rival "completa" su cartón
-     primero, la partida YA NO se corta: solo se avisa una vez y
-     puedes seguir marcando/reclamando otros patrones.
-   - Salvavidas: si se acaban las 75 bolas sin que hayas
-     presionado el botón, se reclama automáticamente el mejor
-     cartón ya completado (para que no pierdas un premio ganado
-     por no haber alcanzado a tocar el botón); si ninguno se
-     completó, la ronda cierra sin premio.
+   BOTÓN MANUAL "¡BINGO!"
    ============================================================ */
 (function () {
   function setupManualBingo() {
@@ -709,7 +586,6 @@
     if (typeof window.endRound !== 'function' || typeof window.handleBallDraw !== 'function' ||
         typeof window.focusCard !== 'function' || typeof window.startBingoGame !== 'function') return;
 
-    // ---- Estilos: botón por cartón + animación "¡BINGO!" pantalla completa ----
     const css = `
       .mh-bingo-shake{ animation: mhBingoShake .4s; }
       @keyframes mhBingoShake{
@@ -746,7 +622,7 @@
         display:block; width:100%; margin-top:6px; padding:8px;
         font-size:13px; font-weight:900; letter-spacing:1px; text-transform:uppercase;
         color:#1a1a1a; background:linear-gradient(180deg,#ffe58a,#d29922);
-        border:2px solid #ffd75e; border-radius:9px; cursor:pointer;
+        border:2px solid #ffd75e; border-radius:99px; cursor:pointer;
         box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35);
       }
       .mh-bingo-card-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #8a6a12; }
@@ -758,7 +634,6 @@
         50%{ box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35), 0 0 14px rgba(255,215,94,.9); }
       }
 
-      /* ---- Pantalla completa "¡BINGO!" antes del popup de premios ---- */
       #mh-bingo-fullscreen{
         position:fixed; inset:0; z-index:99999;
         display:flex; align-items:center; justify-content:center;
@@ -790,7 +665,6 @@
       }
       @keyframes mhFsSpin{ to{ transform:rotate(360deg); } }
 
-      /* ---- Banner de tiempo extra: la ronda sigue tras el 1er BINGO ---- */
       #mh-bingo-grace-timer{
         position:fixed; top:10px; left:50%; transform:translateX(-50%);
         z-index:9998; max-width:92vw;
@@ -812,7 +686,6 @@
     styleTag.textContent = css;
     document.head.appendChild(styleTag);
 
-    // ---- Recordar cuál cartón está "enfocado" (por si otra parte del juego lo usa) ----
     window._mhFocusedCardIndex = 0;
     const originalFocusCard = window.focusCard;
     window.focusCard = function (c) {
@@ -831,27 +704,19 @@
       window._mhClaimedCardsOrder = [];
       clearGraceTimer();
       const result = originalStartBingoGame.apply(this, arguments);
-      // Las tarjetas recién se crean dentro de startBingoGame, así que
-      // esperamos un toque antes de colgarles el botón propio.
       setTimeout(ensurePerCardButtons, 50);
       setTimeout(ensurePerCardButtons, 400);
       return result;
     };
 
-    // ---- Bloquear el auto-win/auto-loss: solo endRound() con permiso explícito pasa ----
     const originalEndRound = window.endRound;
     window.endRound = function (won) {
       if (window._mhBingoManualCall) {
         return originalEndRound.apply(this, arguments);
       }
       if (won === true) {
-        // Victoria automática bloqueada: el cartón ya quedó marcado como
-        // completado (sello/color verde), pero el jugador debe presionar
-        // "¡BINGO!" en la tarjeta para cobrar el premio.
         return;
       }
-      // won === false: esto solo ocurre cuando el rival llega a 25/25.
-      // Ya no cortamos la partida, solo avisamos una vez.
       if (!window._mhRivalAlerted) {
         window._mhRivalAlerted = true;
         if (typeof showToast === 'function') {
@@ -872,7 +737,6 @@
       } catch (e) {}
     }
 
-    // ---- Animación "¡BINGO!" a pantalla completa ----
     function playFullscreenBingo(onDone) {
       const old = document.getElementById('mh-bingo-fullscreen');
       if (old) old.remove();
@@ -888,19 +752,11 @@
         if (onDone) onDone();
       };
       overlay.addEventListener('animationend', finish);
-      // Salvavidas por si el navegador no dispara animationend
       setTimeout(finish, 1300);
     }
 
-    // ---- Tiempo extra: al reclamar el 1er cartón, la ronda SIGUE ----
-    // (no se cierra al toque) y aparece un contador visible dando tiempo
-    // para que reclames tus otros cartones antes de que cierre de verdad.
-    // El PRIMER cartón reclamado se lleva el premio normal de la ronda
-    // (según la sala y el multiplicador, calculado por el juego). Cada
-    // cartón EXTRA que reclames dentro de esos 30s suma un premio extra
-    // más chico (no repite el premio completo).
     const MH_GRACE_SECONDS = 30;
-    const MH_EXTRA_BINGO_PCT = 0.25; // cada bingo extra da 25% del premio base
+    const MH_EXTRA_BINGO_PCT = 0.25;
     function clearGraceTimer() {
       if (window._mhGraceInterval) {
         clearInterval(window._mhGraceInterval);
@@ -932,18 +788,13 @@
       }, 1000);
     }
 
-    // Cierra la ronda de verdad: el PRIMER cartón reclamado dispara el
-    // endRound real (premio de la ronda con multiplicador, tal cual el
-    // juego original). Luego, por cada cartón EXTRA reclamado en la
-    // ventana de tiempo, se suma directo a state.gold un % de ese mismo
-    // premio (premio extra más chico), con un toast propio.
     function finalizeRound() {
       if (window._mhRoundFinalized) return;
       window._mhRoundFinalized = true;
       window._mhRoundSettled = true;
       clearGraceTimer();
       const claimed = window._mhClaimedCardsOrder || [];
-      if (claimed.length === 0) return; // salvavidas de "sin nadie completó" ya maneja esto aparte
+      if (claimed.length === 0) return;
 
       const mainCard = claimed[0];
       const extras = claimed.slice(1);
@@ -951,7 +802,7 @@
 
       const goldBefore = (typeof state !== 'undefined' && state && typeof state.gold === 'number') ? state.gold : null;
       window._mhBingoManualCall = true;
-      endRound(true); // premio general de la ronda (sala + multiplicador), como siempre
+      endRound(true);
       window._mhBingoManualCall = false;
 
       if (extras.length && goldBefore !== null && typeof state !== 'undefined' && state) {
@@ -974,7 +825,7 @@
     function claimCard(cardObj) {
       if (!cardObj || !cardObj.completed) return false;
       if (window._mhRoundFinalized) return false;
-      if (cardObj._mhClaimed) return false; // este cartón ya fue reclamado
+      if (cardObj._mhClaimed) return false;
       cardObj._mhClaimed = true;
       window._mhClaimedCardsOrder = window._mhClaimedCardsOrder || [];
       window._mhClaimedCardsOrder.push(cardObj);
@@ -982,8 +833,6 @@
       if (typeof window._mhSpeakBingoVoice === 'function') window._mhSpeakBingoVoice();
       playFullscreenBingo();
       if (!window._mhGraceActive) {
-        // Primer cartón reclamado de la ronda: arranca el tiempo extra,
-        // la ronda NO se cierra todavía.
         window._mhGraceActive = true;
         startGraceTimer();
       } else {
@@ -992,8 +841,6 @@
       return true;
     }
 
-    // ---- Botón "¡BINGO!" DENTRO de cada cartón (uno por cartón, es el único) ----
-    // Reclama directamente ese cartón, sin botón global ni necesidad de enfocarlo.
     function ensurePerCardButtons() {
       const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
       list.forEach((cardObj) => {
@@ -1027,18 +874,12 @@
     }
     window._mhEnsurePerCardButtons = ensurePerCardButtons;
 
-    // ---- Salvavidas: si se acaban las 75 bolas, cerrar la ronda ya ----
     const originalHandleBallDraw = window.handleBallDraw;
     window.handleBallDraw = function () {
       originalHandleBallDraw.apply(this, arguments);
-      // Cada bola puede completar un cartón: refrescamos el estado
-      // "listo" (brillo) de cada botón propio.
       ensurePerCardButtons();
       if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length >= 75 && !window._mhRoundFinalized) {
         if (window._mhGraceActive) {
-          // Ya había al menos un cartón reclamado con tiempo extra
-          // corriendo: se acabaron las bolas, cerramos ya sin esperar
-          // el resto del contador (se entregan los premios juntados).
           finalizeRound();
         } else {
           const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
@@ -1061,10 +902,6 @@
       }
     };
 
-    // ---- Refresco periódico liviano ----
-    // El jugador marca casillas tocándolas (no solo al cantar bola), así
-    // que revisamos cada tanto si algún cartón ya quedó completo para
-    // crear su botón / prenderle el brillo, sin depender de otro evento.
     setInterval(ensurePerCardButtons, 500);
 
     window._mhManualBingoWired = true;
@@ -1080,12 +917,6 @@
 
 /* ============================================================
    VOZ QUE CANTA CADA BOLA
-   ------------------------------------------------------------
-   Envuelve handleBallDraw (no la reemplaza): además de todo lo
-   que ya hacía (sonido, animación, chequeo de patrones), usa la
-   voz del dispositivo (SpeechSynthesis, ya se usa en otra parte
-   del juego) para decir en voz alta la letra y el número, por
-   ejemplo "B, 13". Si el navegador no soporta voz, no rompe nada.
    ============================================================ */
 (function () {
   if (typeof window.handleBallDraw === 'function' && !window._mhBallVoiceWired) {
@@ -1111,14 +942,6 @@
 
 /* ============================================================
    TIENDA DE VOCES DE BINGO
-   ------------------------------------------------------------
-   Voz APARTE de la que canta los números (B-13, I-22, etc.):
-   esta es la voz que grita "¡BINGO!" cuando el jugador reclama
-   la victoria con el botón. Hay varias voces con distinto tono/
-   velocidad, cada una con botón "🔊 Escuchar" para probarla
-   ANTES de comprarla, y se compran con oro o gemas. La elegida
-   queda guardada en el perfil (state.mhBingoVoices) y se usa
-   automáticamente cada vez que reclamas BINGO.
    ============================================================ */
 (function () {
   const BINGO_VOICES = [
@@ -1312,8 +1135,6 @@
     if (v) showToast(`🎙️ Voz activa: "${v.name}"`);
   };
 
-  // Voz que se dispara de verdad al reclamar BINGO (llamada desde la
-  // sección del botón manual de BINGO, más arriba en este archivo).
   window._mhSpeakBingoVoice = function () {
     const vs = getVoiceState();
     const v = BINGO_VOICES.find(x => x.id === (vs && vs.selected)) || BINGO_VOICES[0];
@@ -1341,24 +1162,11 @@
     setup();
   }
   setTimeout(setup, 800);
-  setTimeout(updateVoiceShopButtonLabel, 1800); // por si el state tarda en cargar (Firestore)
+  setTimeout(updateVoiceShopButtonLabel, 1800);
 })();
 
 /* ============================================================
-   TABLA DE BONOS POR SALA
-   ------------------------------------------------------------
-   Panel informativo (botón + modal) que muestra cuánto bono se
-   gana según la cantidad de cartas jugadas en cada sala. Fórmula:
-   bono = cartas × valor base de la sala.
-
-   Salas normales (hasta 10 cartas):
-     Clásica 2.000/carta · Oro 3.000/carta · Neón 4.000/carta · Fuego 5.000/carta
-   Salas premium (límite reducido, hasta 4 cartas):
-     Espacial 8.000/carta · Aurora 10.000/carta
-
-   Es solo informativo (no descuenta ni entrega nada): muestra al
-   jugador la tabla para que sepa qué gana antes de jugar. Se abre
-   con un botón junto al resumen de bonos de la sala de Bingo.
+   TABLA DE BONOS POR SALA (ACTIVADA Y FUNCIONAL)
    ============================================================ */
 (function () {
 
@@ -1403,21 +1211,42 @@
 
   const an = (n) => n.toLocaleString('es');
 
-  // Salas normales: hasta 10 cartas.
-  const ROOMS_NORMAL = [
-    { key: 'clasica', label: 'Clásica 2k', base: 2000 },
-    { key: 'oro',     label: 'Oro 3k',     base: 3000 },
-    { key: 'neon',    label: 'Neón 4k',    base: 4000 },
-    { key: 'fuego',   label: 'Fuego 5k',   base: 5000 },
-  ];
-  const MAX_NORMAL = 10;
+  // Configuración de salas y valores base
+  const ROOMS_CONFIG = {
+    clasica:  { label: 'Clásica 2k', base: 2000, maxCartas: 10 },
+    oro:      { label: 'Oro 3k',     base: 3000, maxCartas: 10 },
+    neon:     { label: 'Neón 4k',    base: 4000, maxCartas: 10 },
+    fuego:    { label: 'Fuego 5k',   base: 5000, maxCartas: 10 },
+    espacial: { label: 'Espacial 8k', base: 8000, maxCartas: 4  },
+    aurora:   { label: 'Aurora 10k',  base: 10000, maxCartas: 4 }
+  };
 
-  // Salas premium: límite reducido, hasta 4 cartas.
-  const ROOMS_PREMIUM = [
-    { key: 'espacial', label: 'Espacial 8k', base: 8000 },
-    { key: 'aurora',   label: 'Aurora 10k',  base: 10000 },
+  const ROOMS_NORMAL = [
+    { key: 'clasica', ...ROOMS_CONFIG.clasica },
+    { key: 'oro',     ...ROOMS_CONFIG.oro },
+    { key: 'neon',    ...ROOMS_CONFIG.neon },
+    { key: 'fuego',   ...ROOMS_CONFIG.fuego },
   ];
-  const MAX_PREMIUM = 4;
+
+  const ROOMS_PREMIUM = [
+    { key: 'espacial', ...ROOMS_CONFIG.espacial },
+    { key: 'aurora',   ...ROOMS_CONFIG.aurora },
+  ];
+
+  // Cálculo del bono automático
+  window.calculateRoomBonus = function () {
+    try {
+      const roomKey = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.id) 
+        ? selectedRoom.id.toLowerCase() 
+        : 'clasica';
+      const count = (typeof chosenCardCount !== 'undefined') ? chosenCardCount : 1;
+      const cfg = ROOMS_CONFIG[roomKey] || ROOMS_CONFIG.clasica;
+      const validCards = Math.min(count, cfg.maxCartas);
+      return validCards * cfg.base;
+    } catch (e) {
+      return 0;
+    }
+  };
 
   function buildTable(rooms, maxCartas) {
     let head = `<tr><th>Cartas</th>${rooms.map(r => `<th>${r.label}</th>`).join('')}</tr>`;
@@ -1445,9 +1274,9 @@
         </div>
         <div class="mh-bt-sub">Desliza horizontal para ver todas las salas</div>
         <div class="mh-bt-formula">Fórmula: Bono = Cartas × Valor base de la sala</div>
-        <div class="mh-bt-tablewrap">${buildTable(ROOMS_NORMAL, MAX_NORMAL)}</div>
-        <div class="mh-bt-tablewrap">${buildTable(ROOMS_PREMIUM, MAX_PREMIUM)}</div>
-        <div class="mh-bt-premium-note">⚡ Salas premium con límite reducido (máx. ${MAX_PREMIUM} cartas)</div>
+        <div class="mh-bt-tablewrap">${buildTable(ROOMS_NORMAL, 10)}</div>
+        <div class="mh-bt-tablewrap">${buildTable(ROOMS_PREMIUM, 4)}</div>
+        <div class="mh-bt-premium-note">⚡ Salas premium con límite reducido (máx. 4 cartas)</div>
       </div>`;
     document.body.appendChild(overlay);
     overlay.addEventListener('click', (e) => { if (e.target === overlay) window._mhCloseBonusTable(); });
@@ -1474,6 +1303,27 @@
     btn.textContent = '📊 Ver tabla de bonos por sala';
     btn.onclick = window._mhOpenBonusTable;
     anchor.insertAdjacentElement('beforebegin', btn);
+  }
+
+  // Hook directo a endRound para acredite el oro
+  if (typeof window.endRound === 'function' && !window._mhBonusAwardWired) {
+    const originalEndRound = window.endRound;
+    window.endRound = function (won) {
+      if (won === true && typeof state !== 'undefined' && state) {
+        const bonusGold = window.calculateRoomBonus();
+        if (bonusGold > 0) {
+          state.gold = (state.gold || 0) + bonusGold;
+          if (typeof saveState === 'function') saveState();
+          if (typeof showToast === 'function') {
+            setTimeout(() => {
+              showToast(`🎁 ¡Bono de Sala aplicado! +🪙 ${bonusGold.toLocaleString('es-PE')}`);
+            }, 800);
+          }
+        }
+      }
+      return originalEndRound.apply(this, arguments);
+    };
+    window._mhBonusAwardWired = true;
   }
 
   function setupBonusTable() {
