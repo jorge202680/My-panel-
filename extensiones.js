@@ -75,42 +75,68 @@
 (function () {
 
   const css = `
+    #mh-sheet-ov .mh-sheet-card{
+      background:rgba(13,26,32,.94) !important;
+      border:1px solid rgba(0,255,204,.3) !important;
+      border-radius:22px !important;
+      box-shadow:0 0 0 1px rgba(0,255,204,.15), 0 0 40px rgba(0,255,204,.18), inset 0 1px 0 rgba(255,255,255,.1) !important;
+      backdrop-filter:blur(20px) !important;
+    }
     .mh-gear-item{
-      padding:14px !important;
-      border-radius:18px !important;
-      gap:14px !important;
-      margin-bottom:12px !important;
-      border:1px solid rgba(255,255,255,.08) !important;
-      background:rgba(255,255,255,.035) !important;
+      position:relative;
+      padding:12px !important;
+      border-radius:16px !important;
+      gap:12px !important;
+      margin-bottom:10px !important;
+      border:1px solid rgba(255,255,255,.06) !important;
+      background:rgba(0,0,0,.28) !important;
       flex-wrap:wrap !important;
     }
     .mh-gear-item.on{
-      background:rgba(0,255,208,.10) !important;
-      border-color:rgba(0,255,208,.45) !important;
-      box-shadow:0 0 20px rgba(0,255,208,.18) !important;
+      background:linear-gradient(135deg, rgba(0,255,204,.08), rgba(0,180,255,.05)) !important;
+      border-color:rgba(0,255,204,.35) !important;
+      box-shadow:0 0 18px rgba(0,255,204,.15), inset 0 1px 0 rgba(255,255,255,.06) !important;
     }
     .mh-gear-ic{
-      width:52px !important;
-      height:52px !important;
-      border-radius:14px !important;
-      font-size:24px !important;
-      background:#0b0f1c !important;
-      border:1px solid rgba(255,255,255,.12) !important;
+      width:44px !important;
+      height:44px !important;
+      border-radius:12px !important;
+      font-size:21px !important;
+      background:linear-gradient(160deg,#12232a,#0a1418) !important;
+      border:1px solid rgba(0,255,204,.2) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
     }
-    .mh-gear-name{ font-size:14.5px !important; }
-    .mh-gear-bonus{ font-size:11px !important; margin-top:2px !important; }
-    .mh-gear-desc{ font-size:10.5px !important; margin-top:1px !important; }
-    .mh-gear-switch{ width:54px !important; height:30px !important; }
-    .mh-gear-knob{ width:24px !important; height:24px !important; }
-    .mh-gear-lvlrow{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; padding-top:8px; border-top:1px dashed rgba(255,255,255,.1); }
-    .mh-gear-lvlbadge{ font-size:10.5px; font-weight:900; color:#ffd166; background:rgba(255,209,102,.12); border:1px solid rgba(255,209,102,.35); border-radius:8px; padding:2px 7px; }
-    .mh-gear-upbtn{ font-size:10.5px; font-weight:900; color:#0c2b02; background:linear-gradient(90deg,#22c55e,#16a34a); border:none; border-radius:9px; padding:6px 12px; cursor:pointer; }
-    .mh-gear-upbtn.max{ background:#3a3f4a; color:#9aa3b5; }
-    .mh-gear-upcost{ font-size:10px; color:#8b9dc3; }
-    .mh-gear-summary{ display:flex; justify-content:space-between; font-size:11px; color:#fff; font-weight:800; margin-top:4px; }
-    .mh-gear-setbox{ margin-top:8px; text-align:center; font-size:11px; font-weight:800; padding:8px; border-radius:10px; }
-    .mh-gear-setbox.off{ color:#8b9dc3; background:rgba(255,255,255,.04); }
-    .mh-gear-setbox.on{ color:#ffd166; background:rgba(255,209,102,.12); border:1px solid rgba(255,209,102,.4); }
+    .mh-gear-name{ font-size:13.5px !important; letter-spacing:.02em !important; }
+    .mh-gear-bonus{ font-size:10.5px !important; margin-top:2px !important; font-weight:900 !important; }
+    .mh-gear-bonus.on{ color:#5eead4 !important; }
+    .mh-gear-desc{ font-size:10px !important; margin-top:1px !important; color:#6b7d8f !important; }
+    .mh-gear-switch{ width:48px !important; height:27px !important; }
+    .mh-gear-switch.on{ background:linear-gradient(90deg,#22d3ee,#2dd4bf) !important; box-shadow:0 0 12px rgba(45,212,191,.6) !important; }
+    .mh-gear-knob{ width:21px !important; height:21px !important; }
+    .mh-gear-lvlrow{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,.06); }
+    .mh-gear-lvlbadge{ font-size:10px; font-weight:900; letter-spacing:.08em; color:#9ef3e3; background:rgba(0,255,204,.08); border:1px solid rgba(0,255,204,.25); border-radius:20px; padding:3px 9px; }
+    .mh-gear-upbtn{
+      font-size:10px; font-weight:900; letter-spacing:.06em; color:#000;
+      background:linear-gradient(90deg,#fcd34d,#fbbf24,#f97316);
+      border:1px solid rgba(255,236,150,.8); border-radius:999px; padding:7px 13px; cursor:pointer;
+      box-shadow:0 0 14px rgba(251,191,36,.5), inset 0 1px 0 rgba(255,255,255,.6);
+    }
+    .mh-gear-upbtn.max{ background:rgba(255,255,255,.06); color:#6b7d8f; border-color:rgba(255,255,255,.1); box-shadow:none; }
+    .mh-gear-statgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:12px; }
+    .mh-gear-statcard{ border-radius:14px; padding:10px 6px; text-align:center; backdrop-filter:blur(6px); }
+    .mh-gear-statcard.vida{ background:linear-gradient(160deg,rgba(16,35,29,.9),rgba(13,30,24,.9)); border:1px solid rgba(52,211,153,.25); box-shadow:0 0 0 1px rgba(0,255,160,.08); }
+    .mh-gear-statcard.ataque{ background:linear-gradient(160deg,rgba(38,26,20,.9),rgba(31,21,16,.9)); border:1px solid rgba(251,146,60,.25); box-shadow:0 0 0 1px rgba(255,120,69,.08); }
+    .mh-gear-statcard.defensa{ background:linear-gradient(160deg,rgba(20,30,47,.9),rgba(18,26,42,.9)); border:1px solid rgba(56,189,248,.25); box-shadow:0 0 0 1px rgba(90,168,255,.08); }
+    .mh-gear-static{ width:26px; height:26px; margin:0 auto 4px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; }
+    .mh-gear-statcard.vida .mh-gear-static{ background:linear-gradient(160deg,#6ee7b7,#0d9488); }
+    .mh-gear-statcard.ataque .mh-gear-static{ background:linear-gradient(160deg,#fdba74,#dc2626); }
+    .mh-gear-statcard.defensa .mh-gear-static{ background:linear-gradient(160deg,#7dd3fc,#4338ca); }
+    .mh-gear-statlbl{ font-size:8.5px; letter-spacing:.1em; color:#6b7d8f; text-transform:uppercase; font-weight:800; }
+    .mh-gear-statval{ font-size:12.5px; font-weight:900; color:#fff; margin-top:1px; }
+    .mh-gear-summary{ display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#9ef3e3; font-weight:900; letter-spacing:.06em; margin-top:12px; padding:9px 12px; border-radius:12px; background:rgba(0,255,204,.06); border:1px solid rgba(0,255,204,.18); }
+    .mh-gear-setbox{ margin-top:8px; text-align:center; font-size:11px; font-weight:900; padding:9px; border-radius:12px; letter-spacing:.02em; }
+    .mh-gear-setbox.off{ color:#6b7d8f; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
+    .mh-gear-setbox.on{ color:#fde68a; background:linear-gradient(90deg,rgba(251,191,36,.12),rgba(249,115,22,.12)); border:1px solid rgba(251,191,36,.4); box-shadow:0 0 16px rgba(251,191,36,.2); }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
@@ -177,14 +203,14 @@
     const modal = document.createElement('div');
     modal.id = 'mh-gear-upgrade-confirm';
     modal.style.cssText = 'position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px;';
-    modal.innerHTML = `<div style="background:#12151c;border:1px solid #2a2f3a;border-radius:16px;padding:18px;max-width:300px;width:100%;text-align:center;">
-        <div style="font-size:14px;font-weight:900;color:#fff;margin-bottom:4px">MEJORA DE BONUS</div>
-        <div style="font-size:12px;color:#8b9dc3;margin-bottom:10px">${escapeHtml(MASCOTA_GEAR_DEFS[slot].name)} → Nivel ${nextLvl}</div>
-        <div style="font-size:13px;font-weight:800;color:#ffd166;margin-bottom:2px">COSTO: ${cost.gold ? cost.gold.toLocaleString('es') + ' 🪙' : cost.gems + ' 💎'}</div>
-        <div style="font-size:10px;color:#8b9dc3;margin-bottom:14px">SE DESCONTARÁ AL CONFIRMAR</div>
+    modal.innerHTML = `<div style="background:rgba(13,26,32,.96);border:1px solid rgba(0,255,204,.3);border-radius:20px;padding:20px;max-width:300px;width:100%;text-align:center;box-shadow:0 0 40px rgba(0,255,204,.2), inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+        <div style="font-size:11px;letter-spacing:.14em;color:#9ef3e3;font-weight:900;margin-bottom:6px">MEJORA DE BONUS</div>
+        <div style="font-size:13px;color:#fff;font-weight:800;margin-bottom:12px">${escapeHtml(MASCOTA_GEAR_DEFS[slot].name)} → Nivel ${nextLvl}</div>
+        <div style="font-size:15px;font-weight:900;color:#fde68a;margin-bottom:2px">${cost.gold ? cost.gold.toLocaleString('es') + ' 🪙' : cost.gems + ' 💎'}</div>
+        <div style="font-size:9.5px;letter-spacing:.08em;color:#6b7d8f;margin-bottom:16px">SE DESCONTARÁ AL CONFIRMAR</div>
         <div style="display:flex;gap:10px;justify-content:center;">
-          <button style="flex:1;background:#3a3f4a;color:#fff;font-weight:900;border:none;border-radius:10px;padding:10px 6px;cursor:pointer" onclick="document.getElementById('mh-gear-upgrade-confirm').remove()">CANCELAR</button>
-          <button style="flex:1;background:linear-gradient(90deg,#22c55e,#16a34a);color:#0c2b02;font-weight:900;border:none;border-radius:10px;padding:10px 6px;cursor:pointer" onclick="mhDoUpgrade('${id}','${slot}')">CONFIRMAR</button>
+          <button style="flex:1;background:rgba(255,255,255,.06);color:#fff;font-weight:900;font-size:11px;letter-spacing:.06em;border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:11px 6px;cursor:pointer" onclick="document.getElementById('mh-gear-upgrade-confirm').remove()">CANCELAR</button>
+          <button style="flex:1;background:linear-gradient(90deg,#22d3ee,#2dd4bf);color:#04201c;font-weight:900;font-size:11px;letter-spacing:.06em;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:11px 6px;cursor:pointer;box-shadow:0 0 14px rgba(45,212,191,.5)" onclick="mhDoUpgrade('${id}','${slot}')">CONFIRMAR</button>
         </div>
       </div>`;
     document.body.appendChild(modal);
@@ -250,13 +276,24 @@
     const setOn = equipCount >= 5;
 
     box.innerHTML = items + `
-        <div class="mh-sheet-box" style="margin-top:2px">
-            <span>ESTADÍSTICAS ACTUALES</span>
-            <div class="mh-gear-summary" style="color:#fff"><span>Vida Máx</span><span>${cs.vidaMax.toLocaleString('es')}</span></div>
-            <div class="mh-gear-summary" style="color:#8a5cff"><span>Ataque</span><span>${cs.ataque.toLocaleString('es')}</span></div>
-            <div class="mh-gear-summary" style="color:#00b4ff"><span>Defensa</span><span>${cs.defensa.toLocaleString('es')}</span></div>
-            <div class="mh-gear-summary" style="color:#ffd166;margin-top:8px;padding-top:6px;border-top:1px dashed rgba(255,255,255,.1)"><span>EQUIPADOS</span><span>${equipCount}/5</span></div>
+        <div class="mh-gear-statgrid">
+            <div class="mh-gear-statcard vida">
+                <div class="mh-gear-static">❤️</div>
+                <div class="mh-gear-statlbl">VIDA</div>
+                <div class="mh-gear-statval">${cs.vidaMax.toLocaleString('es')}</div>
+            </div>
+            <div class="mh-gear-statcard ataque">
+                <div class="mh-gear-static">⚔️</div>
+                <div class="mh-gear-statlbl">ATAQUE</div>
+                <div class="mh-gear-statval">${cs.ataque.toLocaleString('es')}</div>
+            </div>
+            <div class="mh-gear-statcard defensa">
+                <div class="mh-gear-static">🛡️</div>
+                <div class="mh-gear-statlbl">DEFENSA</div>
+                <div class="mh-gear-statval">${cs.defensa.toLocaleString('es')}</div>
+            </div>
         </div>
+        <div class="mh-gear-summary"><span>EQUIPADOS</span><span>${equipCount}/5</span></div>
         <div class="mh-gear-setbox ${setOn ? 'on' : 'off'}">${setOn ? '⚡ El poder del Rey del Bingo — bonus de set +10% activo' : 'Sin bonus de set (equipá los 5 objetos)'}</div>`;
   };
 
