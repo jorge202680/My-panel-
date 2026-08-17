@@ -111,6 +111,7 @@
     .mh-gear-ic.ic-botas{ background:linear-gradient(160deg,#fcd34d,#d97706) !important; }
     .mh-gear-ic.ic-corona{ background:linear-gradient(160deg,#d8b4fe,#7e22ce) !important; }
     .mh-gear-name{ font-size:13.5px !important; letter-spacing:.02em !important; }
+    .mh-gear-badge{ display:inline-block; font-size:8.5px; font-weight:900; letter-spacing:.06em; color:#9ef3e3; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:1px 7px; vertical-align:middle; }
     .mh-gear-bonus{ font-size:10.5px !important; margin-top:2px !important; font-weight:900 !important; }
     .mh-gear-bonus.on{ color:#5eead4 !important; }
     .mh-gear-bonus .arrow-next{ color:#6b7d8f; font-weight:700; }
@@ -156,6 +157,13 @@
     .mh-gear-setbox{ margin-top:8px; text-align:center; font-size:11px; font-weight:900; padding:9px; border-radius:12px; letter-spacing:.02em; }
     .mh-gear-setbox.off{ color:#6b7d8f; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
     .mh-gear-setbox.on{ color:#fde68a; background:linear-gradient(90deg,rgba(251,191,36,.12),rgba(249,115,22,.12)); border:1px solid rgba(251,191,36,.4); box-shadow:0 0 16px rgba(251,191,36,.2); }
+    .mh-gear-critrow{ display:flex; gap:8px; margin-top:8px; }
+    .mh-gear-critcard{ flex:1; display:flex; align-items:center; gap:8px; border-radius:14px; padding:10px 12px; background:linear-gradient(160deg,rgba(41,30,15,.9),rgba(31,23,13,.9)); border:1px solid rgba(251,191,36,.25); box-shadow:0 0 0 1px rgba(255,180,0,.08); }
+    .mh-gear-critcard .mh-gear-statval{ color:#fcd34d; }
+    .mh-gear-bonustotal{ flex:1; border-radius:14px; padding:10px 12px; background:rgba(0,0,0,.25); border:1px solid rgba(255,255,255,.08); }
+    .mh-gear-bonusbar{ width:100%; height:6px; border-radius:999px; background:rgba(255,255,255,.08); margin:6px 0 4px; overflow:hidden; }
+    .mh-gear-bonusbar-fill{ height:100%; background:linear-gradient(90deg,#22d3ee,#2dd4bf); box-shadow:0 0 8px rgba(45,212,191,.6); }
+    .mh-gear-bonusval{ font-size:10.5px; font-weight:900; color:#9ef3e3; }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
@@ -164,7 +172,7 @@
   // ---- 2 objetos nuevos, sumados a los 3 que ya existían ----
   if (typeof MASCOTA_GEAR_DEFS !== 'undefined') {
     if (!MASCOTA_GEAR_DEFS.botas) {
-      MASCOTA_GEAR_DEFS.botas = { name: 'Botas del Viento', icon: '👢', desc: 'Aumenta la resistencia máxima', stat: 'defensa', pct: 8, bonus: '+8% Defensa' };
+      MASCOTA_GEAR_DEFS.botas = { name: 'Botas del Viento', icon: '👢', desc: 'Aumenta la probabilidad de golpe crítico', stat: 'critico', pct: 5, bonus: '+5% Crítico' };
     }
     if (!MASCOTA_GEAR_DEFS.corona) {
       MASCOTA_GEAR_DEFS.corona = { name: 'Corona Legendaria', icon: '👑', desc: 'El poder del Rey del Bingo', stat: 'todas', pct: 6, bonus: '+6% Vida/Ataque/Defensa' };
@@ -172,12 +180,13 @@
   }
 
   // Config de niveles: cuánto sube el % por nivel y cuánto cuesta mejorar.
+  // badge = sigla que se muestra al lado del nombre: TV=Vida, TD=Defensa, TA=Ataque, TC=Crítico, TT=Todo
   const GEAR_LVL_CFG = {
-    collar:   { maxLvl: 5, pctPerLvl: 5,  costGold: 400, costGems: 0,  iconClass: 'ic-collar',   label: 'Vida'     },
-    armadura: { maxLvl: 5, pctPerLvl: 6,  costGold: 500, costGems: 0,  iconClass: 'ic-armadura', label: 'Defensa'  },
-    amuleto:  { maxLvl: 5, pctPerLvl: 7,  costGold: 600, costGems: 0,  iconClass: 'ic-amuleto',  label: 'Ataque'   },
-    botas:    { maxLvl: 5, pctPerLvl: 5,  costGold: 550, costGems: 0,  iconClass: 'ic-botas',    label: 'Crítico'  },
-    corona:   { maxLvl: 5, pctPerLvl: 3,  costGold: 0,   costGems: 25, iconClass: 'ic-corona',   label: 'Todo'     },
+    collar:   { maxLvl: 5, pctPerLvl: 5,  costGold: 400, costGems: 0,  iconClass: 'ic-collar',   label: 'Vida',    badge: 'TV' },
+    armadura: { maxLvl: 5, pctPerLvl: 6,  costGold: 500, costGems: 0,  iconClass: 'ic-armadura', label: 'Defensa', badge: 'TD' },
+    amuleto:  { maxLvl: 5, pctPerLvl: 7,  costGold: 600, costGems: 0,  iconClass: 'ic-amuleto',  label: 'Ataque',  badge: 'TA' },
+    botas:    { maxLvl: 5, pctPerLvl: 5,  costGold: 550, costGems: 0,  iconClass: 'ic-botas',    label: 'Crítico', badge: 'TC' },
+    corona:   { maxLvl: 5, pctPerLvl: 3,  costGold: 0,   costGems: 25, iconClass: 'ic-corona',   label: 'Todo',    badge: 'TT' },
   };
 
   // Bonus de set progresivo: no hace falta tener los 5 para empezar a ganar algo.
@@ -210,13 +219,27 @@
     if (g.collar) vida += pctOf('collar');
     if (g.armadura) defensa += pctOf('armadura');
     if (g.amuleto) ataque += pctOf('amuleto');
-    if (g.botas) defensa += pctOf('botas');
     if (g.corona) { vida += pctOf('corona'); ataque += pctOf('corona'); defensa += pctOf('corona'); }
     // Bonus de set progresivo: 3/5 equipados = +5%, 5/5 = +10%.
     const equipCount = Object.keys(MASCOTA_GEAR_DEFS).filter(s => g[s]).length;
     const setPct = setBonusPct(equipCount) / 100;
     if (setPct > 0) { vida += setPct; ataque += setPct; defensa += setPct; }
     return { vida, ataque, defensa };
+  };
+
+  // ---- CRÍTICO: stat nuevo e independiente de vida/ataque/defensa ----
+  // Base 5% para toda mascota + lo que sumen las Botas del Viento por nivel
+  // + el mismo bonus de set progresivo (3/5 = +5%, 5/5 = +10%) que ya usan
+  // los otros stats. Tope 100%.
+  const CRITICO_BASE_PCT = 5;
+  window.mascotaCriticoPct = function (id) {
+    const g = getMascotaGear(id);
+    const lv = getGearLevels(id);
+    let critico = CRITICO_BASE_PCT;
+    if (g.botas) critico += GEAR_LVL_CFG.botas.pctPerLvl * lv.botas;
+    const equipCount = Object.keys(MASCOTA_GEAR_DEFS).filter(s => g[s]).length;
+    critico += setBonusPct(equipCount);
+    return Math.min(100, critico);
   };
 
   window.mhOpenGearModal = function () {
@@ -313,7 +336,7 @@
       return `<div class="mh-gear-item ${on ? 'on' : ''}">
           <div class="mh-gear-ic ${cfg.iconClass}">${def.icon}</div>
           <div style="flex:1">
-              <div class="mh-gear-name">${escapeHtml(def.name)}</div>
+              <div class="mh-gear-name">${escapeHtml(def.name)} <span class="mh-gear-badge">${cfg.badge}</span></div>
               <div class="mh-gear-bonus ${on ? 'on' : 'off'}">+${pctActual}% ${escapeHtml(cfg.label)} ${!maxed ? `<span class="arrow-next">→ +${pctSiguiente}%</span>` : ''}</div>
               <div class="mh-gear-desc">${escapeHtml(def.desc)}</div>
           </div>
@@ -339,6 +362,7 @@
     const pctVida = Math.round((gearMult.vida - 1) * 100);
     const pctAtaque = Math.round((gearMult.ataque - 1) * 100);
     const pctDefensa = Math.round((gearMult.defensa - 1) * 100);
+    const critico = window.mascotaCriticoPct(mascotaHeroSelectedId);
 
     box.innerHTML = items + `
         <div class="mh-gear-statshead">
@@ -367,7 +391,97 @@
                 ${pctDefensa > 0 ? `<div class="mh-gear-statpct">+${pctDefensa}%</div>` : ''}
                 <div class="mh-gear-statbase">base ${baseDefensa.toLocaleString('es')}</div>
             </div>
+        </div>
+        <div class="mh-gear-critrow">
+            <div class="mh-gear-critcard">
+                <div class="mh-gear-static" style="margin:0">⚡</div>
+                <div style="flex:1">
+                    <div class="mh-gear-statlbl">CRÍTICO</div>
+                    <div class="mh-gear-statval">${critico}%</div>
+                </div>
+                <div class="mh-gear-statbase">base ${CRITICO_BASE_PCT}%</div>
+            </div>
+            <div class="mh-gear-bonustotal">
+                <div class="mh-gear-statlbl">BONUS TOTAL</div>
+                <div class="mh-gear-bonusbar"><div class="mh-gear-bonusbar-fill" style="width:${Math.min(100, critico)}%"></div></div>
+                <div class="mh-gear-bonusval">${critico}% ACTIVO</div>
+            </div>
         </div>`;
   };
+
+  // ---- Conecta el % de Crítico a la Arena de Batalla de verdad ----
+  // Envuelve pbComputeDamage (ya calcula daño elemental) sin tocar nada de
+  // lo original: después del cálculo normal, tira el dado del crítico según
+  // el % real de la mascota atacante, y si sale, multiplica el daño. Reusa
+  // el flag "isCrit" que el juego ya usa para los efectos visuales de golpe
+  // crítico (pbPlayHitEffect, pbShowDamage, etc.), así el golpe se ve y se
+  // siente como crítico de verdad, no solo en el número.
+  const CRIT_DAMAGE_MULT = 1.5;
+  if (typeof window.pbComputeDamage === 'function' && !window._mhCriticoWired) {
+    const originalComputeDamage = window.pbComputeDamage;
+    window.pbComputeDamage = function (attacker, defender, skillMult, isUltimate, skillTier, attackElement) {
+      const result = originalComputeDamage(attacker, defender, skillMult, isUltimate, skillTier, attackElement);
+      try {
+        const atkId = attacker && attacker.def && attacker.def.id;
+        const critPct = (atkId && typeof window.mascotaCriticoPct === 'function') ? window.mascotaCriticoPct(atkId) : CRITICO_BASE_PCT;
+        if (result.dmg > 0 && Math.random() * 100 < critPct) {
+          result.dmg = Math.round(result.dmg * CRIT_DAMAGE_MULT);
+          result.isCrit = true;
+        }
+      } catch (e) {}
+      return result;
+    };
+    window._mhCriticoWired = true;
+  }
+
+})();
+
+/* ============================================================
+   FRANJA DE "NUEVA ACTUALIZACIÓN" ARRIBA
+   ------------------------------------------------------------
+   El juego ya detecta solo cuando hay una versión nueva (revisa
+   cada 5 min y al volver a la pestaña) y activa el botón flotante
+   #update-fab. Esto NO toca esa detección: solo agrega una franja
+   fija arriba de la pantalla que aparece/desaparece en espejo con
+   ese mismo botón, para que sea más visible. El usuario sigue
+   jugando normal; la franja queda ahí hasta que toca "ACTUALIZAR"
+   (usa la misma applyAppUpdate() que ya existe).
+   ============================================================ */
+(function () {
+
+  const css = `
+    #mh-update-banner{
+      display:none; position:fixed; top:0; left:0; right:0; z-index:3000;
+      align-items:center; justify-content:center; gap:10px;
+      background:linear-gradient(90deg,#22d3ee,#2dd4bf); color:#04201c;
+      font-weight:900; font-size:12.5px; letter-spacing:.02em;
+      padding:10px 14px; box-shadow:0 2px 12px rgba(0,0,0,.35);
+    }
+    #mh-update-banner.show{ display:flex; }
+    #mh-update-banner .mh-upd-btn{
+      background:#04201c; color:#5eead4; border:none; border-radius:999px;
+      padding:6px 14px; font-weight:900; font-size:11px; letter-spacing:.04em; cursor:pointer;
+    }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  if (!document.getElementById('mh-update-banner')) {
+    const bar = document.createElement('div');
+    bar.id = 'mh-update-banner';
+    bar.innerHTML = `<span>🆕 Hay una nueva actualización</span><button class="mh-upd-btn" onclick="applyAppUpdate()">ACTUALIZAR</button>`;
+    document.body.appendChild(bar);
+  }
+
+  const fab = document.getElementById('update-fab');
+  if (fab) {
+    const syncBanner = () => {
+      const banner = document.getElementById('mh-update-banner');
+      if (banner) banner.classList.toggle('show', fab.classList.contains('active'));
+    };
+    syncBanner();
+    new MutationObserver(syncBanner).observe(fab, { attributes: true, attributeFilter: ['class'] });
+  }
 
 })();
