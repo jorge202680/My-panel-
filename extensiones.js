@@ -102,19 +102,27 @@
       height:44px !important;
       border-radius:12px !important;
       font-size:21px !important;
-      background:linear-gradient(160deg,#12232a,#0a1418) !important;
-      border:1px solid rgba(0,255,204,.2) !important;
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.06) !important;
+      border:1px solid rgba(255,255,255,.15) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12) !important;
     }
+    .mh-gear-ic.ic-collar{ background:linear-gradient(160deg,#5eead4,#0f766e) !important; }
+    .mh-gear-ic.ic-armadura{ background:linear-gradient(160deg,#93c5fd,#1e3a5f) !important; }
+    .mh-gear-ic.ic-amuleto{ background:linear-gradient(160deg,#fca5a5,#b91c1c) !important; }
+    .mh-gear-ic.ic-botas{ background:linear-gradient(160deg,#fcd34d,#d97706) !important; }
+    .mh-gear-ic.ic-corona{ background:linear-gradient(160deg,#d8b4fe,#7e22ce) !important; }
     .mh-gear-name{ font-size:13.5px !important; letter-spacing:.02em !important; }
     .mh-gear-bonus{ font-size:10.5px !important; margin-top:2px !important; font-weight:900 !important; }
     .mh-gear-bonus.on{ color:#5eead4 !important; }
+    .mh-gear-bonus .arrow-next{ color:#6b7d8f; font-weight:700; }
     .mh-gear-desc{ font-size:10px !important; margin-top:1px !important; color:#6b7d8f !important; }
     .mh-gear-switch{ width:48px !important; height:27px !important; }
     .mh-gear-switch.on{ background:linear-gradient(90deg,#22d3ee,#2dd4bf) !important; box-shadow:0 0 12px rgba(45,212,191,.6) !important; }
     .mh-gear-knob{ width:21px !important; height:21px !important; }
     .mh-gear-lvlrow{ width:100%; display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,.06); }
-    .mh-gear-lvlbadge{ font-size:10px; font-weight:900; letter-spacing:.08em; color:#9ef3e3; background:rgba(0,255,204,.08); border:1px solid rgba(0,255,204,.25); border-radius:20px; padding:3px 9px; }
+    .mh-gear-pips{ display:flex; align-items:center; gap:6px; }
+    .mh-gear-pip{ width:8px; height:8px; transform:rotate(45deg); border-radius:2px; background:rgba(255,255,255,.12); }
+    .mh-gear-pip.filled{ background:#22d3ee; box-shadow:0 0 6px rgba(34,211,238,.8); }
+    .mh-gear-lvltxt{ font-size:10px; font-weight:900; letter-spacing:.06em; color:#9ef3e3; }
     .mh-gear-upbtn{
       font-size:10px; font-weight:900; letter-spacing:.06em; color:#000;
       background:linear-gradient(90deg,#fcd34d,#fbbf24,#f97316);
@@ -133,6 +141,17 @@
     .mh-gear-statcard.defensa .mh-gear-static{ background:linear-gradient(160deg,#7dd3fc,#4338ca); }
     .mh-gear-statlbl{ font-size:8.5px; letter-spacing:.1em; color:#6b7d8f; text-transform:uppercase; font-weight:800; }
     .mh-gear-statval{ font-size:12.5px; font-weight:900; color:#fff; margin-top:1px; }
+    .mh-gear-statpct{ font-size:9.5px; font-weight:900; margin-top:2px; }
+    .mh-gear-statcard.vida .mh-gear-statpct{ color:#5eead4; }
+    .mh-gear-statcard.ataque .mh-gear-statpct{ color:#fb923c; }
+    .mh-gear-statcard.defensa .mh-gear-statpct{ color:#7dd3fc; }
+    .mh-gear-statbase{ font-size:8px; color:#4b5a6b; margin-top:1px; }
+    .mh-gear-statshead{ display:flex; align-items:center; justify-content:space-between; margin-top:14px; margin-bottom:2px; }
+    .mh-gear-statshead-title{ font-size:10.5px; font-weight:900; letter-spacing:.1em; color:#9ef3e3; }
+    .mh-gear-setpill{ display:flex; align-items:center; gap:5px; font-size:9px; font-weight:900; color:#9ef3e3; background:rgba(0,255,204,.06); border:1px solid rgba(0,255,204,.3); border-radius:999px; padding:5px 11px; box-shadow:0 0 10px rgba(0,255,204,.15); }
+    .mh-gear-headcount{ text-align:right; }
+    .mh-gear-headcount-lbl{ font-size:8px; letter-spacing:.14em; color:#6b7d8f; font-weight:800; }
+    .mh-gear-headcount-val{ font-size:20px; font-weight:900; color:#5eead4; line-height:1.1; }
     .mh-gear-summary{ display:flex; justify-content:space-between; align-items:center; font-size:11px; color:#9ef3e3; font-weight:900; letter-spacing:.06em; margin-top:12px; padding:9px 12px; border-radius:12px; background:rgba(0,255,204,.06); border:1px solid rgba(0,255,204,.18); }
     .mh-gear-setbox{ margin-top:8px; text-align:center; font-size:11px; font-weight:900; padding:9px; border-radius:12px; letter-spacing:.02em; }
     .mh-gear-setbox.off{ color:#6b7d8f; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); }
@@ -154,12 +173,19 @@
 
   // Config de niveles: cuánto sube el % por nivel y cuánto cuesta mejorar.
   const GEAR_LVL_CFG = {
-    collar:   { maxLvl: 5, pctPerLvl: 5,  costGold: 400, costGems: 0  },
-    armadura: { maxLvl: 5, pctPerLvl: 6,  costGold: 500, costGems: 0  },
-    amuleto:  { maxLvl: 5, pctPerLvl: 7,  costGold: 600, costGems: 0  },
-    botas:    { maxLvl: 5, pctPerLvl: 6,  costGold: 550, costGems: 0  },
-    corona:   { maxLvl: 5, pctPerLvl: 8,  costGold: 0,   costGems: 25 },
+    collar:   { maxLvl: 5, pctPerLvl: 5,  costGold: 400, costGems: 0,  iconClass: 'ic-collar',   label: 'Vida'     },
+    armadura: { maxLvl: 5, pctPerLvl: 6,  costGold: 500, costGems: 0,  iconClass: 'ic-armadura', label: 'Defensa'  },
+    amuleto:  { maxLvl: 5, pctPerLvl: 7,  costGold: 600, costGems: 0,  iconClass: 'ic-amuleto',  label: 'Ataque'   },
+    botas:    { maxLvl: 5, pctPerLvl: 5,  costGold: 550, costGems: 0,  iconClass: 'ic-botas',    label: 'Crítico'  },
+    corona:   { maxLvl: 5, pctPerLvl: 3,  costGold: 0,   costGems: 25, iconClass: 'ic-corona',   label: 'Todo'     },
   };
+
+  // Bonus de set progresivo: no hace falta tener los 5 para empezar a ganar algo.
+  function setBonusPct(equipCount) {
+    if (equipCount >= 5) return 10;
+    if (equipCount >= 3) return 5;
+    return 0;
+  }
 
   function getGearLevels(id) {
     if (!state.mascotaGearLvl) state.mascotaGearLvl = {};
@@ -186,10 +212,30 @@
     if (g.amuleto) ataque += pctOf('amuleto');
     if (g.botas) defensa += pctOf('botas');
     if (g.corona) { vida += pctOf('corona'); ataque += pctOf('corona'); defensa += pctOf('corona'); }
-    // Bonus de set: los 5 objetos equipados a la vez → +10% extra a todo.
+    // Bonus de set progresivo: 3/5 equipados = +5%, 5/5 = +10%.
     const equipCount = Object.keys(MASCOTA_GEAR_DEFS).filter(s => g[s]).length;
-    if (equipCount >= 5) { vida += 0.10; ataque += 0.10; defensa += 0.10; }
+    const setPct = setBonusPct(equipCount) / 100;
+    if (setPct > 0) { vida += setPct; ataque += setPct; defensa += setPct; }
     return { vida, ataque, defensa };
+  };
+
+  window.mhOpenGearModal = function () {
+    const owned = getOwnedMascota(mascotaHeroSelectedId);
+    if (!owned) { showToast('❌ Primero debes adquirir esta mascota.'); return; }
+    mhOpenSheet(`
+        <div class="mh-sheet-head" style="justify-content:space-between">
+            <div style="display:flex;align-items:center;gap:10px">
+                <div class="mh-sheet-ic">🪖</div>
+                <div><div class="mh-sheet-title">EQUIPO</div><div class="mh-sheet-sub">Objetos equipables · Nivel Pro</div></div>
+            </div>
+            <div class="mh-gear-headcount">
+                <div class="mh-gear-headcount-lbl">EQUIPADOS</div>
+                <div class="mh-gear-headcount-val" id="mh-gear-headcount-val">0/5</div>
+            </div>
+        </div>
+        <div id="mh-gear-modal-body"></div>
+        <button class="mh-sheet-close" onclick="mhCloseSheet()" style="margin-top:10px">CERRAR</button>`);
+    mhRenderGearModal();
   };
 
   function mhConfirmUpgrade(id, slot) {
@@ -259,48 +305,69 @@
       const on = !!g[slot];
       const nivel = lv[slot];
       const pctActual = cfg.pctPerLvl * nivel;
+      const pctSiguiente = cfg.pctPerLvl * Math.min(nivel + 1, cfg.maxLvl);
       const maxed = nivel >= cfg.maxLvl;
       const nextCost = maxed ? null : gearUpgradeCost(slot, nivel + 1);
+      const pips = Array.from({ length: cfg.maxLvl }).map((_, i) =>
+        `<span class="mh-gear-pip ${i < nivel ? 'filled' : ''}"></span>`).join('');
       return `<div class="mh-gear-item ${on ? 'on' : ''}">
-          <div class="mh-gear-ic">${def.icon}</div>
+          <div class="mh-gear-ic ${cfg.iconClass}">${def.icon}</div>
           <div style="flex:1">
               <div class="mh-gear-name">${escapeHtml(def.name)}</div>
-              <div class="mh-gear-bonus ${on ? 'on' : 'off'}">+${pctActual}% ${escapeHtml(def.stat === 'todas' ? 'Vida/Ataque/Defensa' : def.stat)}</div>
+              <div class="mh-gear-bonus ${on ? 'on' : 'off'}">+${pctActual}% ${escapeHtml(cfg.label)} ${!maxed ? `<span class="arrow-next">→ +${pctSiguiente}%</span>` : ''}</div>
               <div class="mh-gear-desc">${escapeHtml(def.desc)}</div>
           </div>
           <button onclick="toggleMascotaGear('${mascotaHeroSelectedId}','${slot}')" class="mh-gear-switch ${on ? 'on' : 'off'}"><div class="mh-gear-knob"></div></button>
           <div class="mh-gear-lvlrow">
-              <span class="mh-gear-lvlbadge">LVL ${nivel}${maxed ? ' (MÁX)' : '/' + cfg.maxLvl}</span>
+              <div class="mh-gear-pips">${pips}<span class="mh-gear-lvltxt">LVL ${nivel}/${cfg.maxLvl}</span></div>
               ${maxed
-                ? `<button class="mh-gear-upbtn max" disabled>NIVEL MÁXIMO</button>`
-                : `<button class="mh-gear-upbtn" onclick="mhConfirmUpgrade('${mascotaHeroSelectedId}','${slot}')">MEJORAR · ${nextCost.gold ? nextCost.gold.toLocaleString('es') + '🪙' : nextCost.gems + '💎'}</button>`}
+                ? `<button class="mh-gear-upbtn max" disabled>MÁXIMO</button>`
+                : `<button class="mh-gear-upbtn" onclick="mhConfirmUpgrade('${mascotaHeroSelectedId}','${slot}')">MEJORAR</button>`}
           </div>
       </div>`;
     }).join('');
 
     const equipCount = Object.keys(MASCOTA_GEAR_DEFS).filter(s => g[s]).length;
-    const setOn = equipCount >= 5;
+    const setPct = setBonusPct(equipCount);
+    document.querySelectorAll('#mh-gear-headcount-val').forEach(el => el.textContent = equipCount + '/5');
+
+    // "Base" = stat sin el bono de equipo, para mostrarla debajo del valor final.
+    const gearMult = mascotaGearMults(mascotaHeroSelectedId);
+    const baseVida = Math.round(cs.vidaMax / gearMult.vida);
+    const baseAtaque = Math.round(cs.ataque / gearMult.ataque);
+    const baseDefensa = Math.round(cs.defensa / gearMult.defensa);
+    const pctVida = Math.round((gearMult.vida - 1) * 100);
+    const pctAtaque = Math.round((gearMult.ataque - 1) * 100);
+    const pctDefensa = Math.round((gearMult.defensa - 1) * 100);
 
     box.innerHTML = items + `
+        <div class="mh-gear-statshead">
+            <span class="mh-gear-statshead-title">ESTADÍSTICAS ACTUALES</span>
+            ${setPct > 0 ? `<span class="mh-gear-setpill">⚡ SET EQUIPO +${setPct}% TODO</span>` : ''}
+        </div>
         <div class="mh-gear-statgrid">
             <div class="mh-gear-statcard vida">
                 <div class="mh-gear-static">❤️</div>
                 <div class="mh-gear-statlbl">VIDA</div>
                 <div class="mh-gear-statval">${cs.vidaMax.toLocaleString('es')}</div>
+                ${pctVida > 0 ? `<div class="mh-gear-statpct">+${pctVida}%</div>` : ''}
+                <div class="mh-gear-statbase">base ${baseVida.toLocaleString('es')}</div>
             </div>
             <div class="mh-gear-statcard ataque">
                 <div class="mh-gear-static">⚔️</div>
                 <div class="mh-gear-statlbl">ATAQUE</div>
                 <div class="mh-gear-statval">${cs.ataque.toLocaleString('es')}</div>
+                ${pctAtaque > 0 ? `<div class="mh-gear-statpct">+${pctAtaque}%</div>` : ''}
+                <div class="mh-gear-statbase">base ${baseAtaque.toLocaleString('es')}</div>
             </div>
             <div class="mh-gear-statcard defensa">
                 <div class="mh-gear-static">🛡️</div>
                 <div class="mh-gear-statlbl">DEFENSA</div>
                 <div class="mh-gear-statval">${cs.defensa.toLocaleString('es')}</div>
+                ${pctDefensa > 0 ? `<div class="mh-gear-statpct">+${pctDefensa}%</div>` : ''}
+                <div class="mh-gear-statbase">base ${baseDefensa.toLocaleString('es')}</div>
             </div>
-        </div>
-        <div class="mh-gear-summary"><span>EQUIPADOS</span><span>${equipCount}/5</span></div>
-        <div class="mh-gear-setbox ${setOn ? 'on' : 'off'}">${setOn ? '⚡ El poder del Rey del Bingo — bonus de set +10% activo' : 'Sin bonus de set (equipá los 5 objetos)'}</div>`;
+        </div>`;
   };
 
 })();
