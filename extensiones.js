@@ -765,7 +765,6 @@
     }
 
     const MH_GRACE_SECONDS = 30;
-    const MH_EXTRA_BINGO_PCT = 0.25;
     function clearGraceTimer() {
       if (window._mhGraceInterval) {
         clearInterval(window._mhGraceInterval);
@@ -809,14 +808,8 @@
       const extras = claimed.slice(1);
       roundWinPattern = mainCard.winPattern || roundWinPattern;
 
-      const goldBefore = (typeof state !== 'undefined' && state && typeof state.gold === 'number') ? state.gold : null;
-      window._mhBingoManualCall = true;
-      endRound(true);
-      window._mhBingoManualCall = false;
-
-      if (extras.length && goldBefore !== null && typeof state !== 'undefined' && state) {
-        const basePrize = Math.max(0, (state.gold || 0) - goldBefore);
-        const bonusEach = Math.round(basePrize * MH_EXTRA_BINGO_PCT);
+      if (extras.length && typeof state !== 'undefined' && state) {
+        const bonusEach = (typeof window.calculateRoomBonus === 'function') ? window.calculateRoomBonus() : 0;
         if (bonusEach > 0) {
           extras.forEach((cardObj, i) => {
             setTimeout(() => {
@@ -1222,25 +1215,13 @@
   }
   window.calculateRoomBonus = calculateRoomBonus;
 
-  // Acredita el Bono de Sala de verdad (una sola vez, antes de que corra el
-  // resto del flujo de victoria), y lo deja guardado para mostrarlo en el popup.
-  if (typeof window.endRound === 'function' && !window._mhRoomBonusAwardWired) {
-    const originalEndRound = window.endRound;
-    window.endRound = function (won) {
-      window._mhLastRoomBonus = 0;
-      if (won === true && typeof state !== 'undefined' && state) {
-        const bonusGold = calculateRoomBonus();
-        if (bonusGold > 0) {
-          state.gold = (state.gold || 0) + bonusGold;
-          if (typeof saveState === 'function') saveState();
-          window._mhLastRoomBonus = bonusGold;
-        }
-      }
-      return originalEndRound.apply(this, arguments);
-    };
-    window._mhRoomBonusAwardWired = true;
-  }
-
+  // IMPORTANTE: el Bono de Sala se acredita ACÁ, adentro de openWinPopup,
+  // no envolviendo endRound. openWinPopup solo se llama UNA VEZ, en el
+  // momento exacto en que la victoria ya fue confirmada de verdad (tu
+  // sistema de "presionar BINGO" llama a endRound(true) varias veces
+  // internamente para bloquear victorias no confirmadas, y envolver
+  // endRound directamente hacía que el bono se sumara de más o en el
+  // momento equivocado — por eso el total salía mal).
   if (typeof window.openWinPopup === 'function' && !window._mhWinBreakdownWired) {
     const originalOpenWinPopup = window.openWinPopup;
     window.openWinPopup = function (info) {
@@ -1256,7 +1237,14 @@
         let basePrize = Math.round(roomBase * cardsPlayed * patternMult);
         if (!(basePrize > 0) || basePrize > gameReward) basePrize = gameReward;
         const bonusMultis = Math.max(0, gameReward - basePrize);
-        const roomBonus = (typeof window._mhLastRoomBonus === 'number') ? window._mhLastRoomBonus : 0;
+
+        // Acredita el Bono de Sala una sola vez, justo acá.
+        const roomBonus = calculateRoomBonus();
+        if (roomBonus > 0 && typeof state !== 'undefined' && state) {
+          state.gold = (state.gold || 0) + roomBonus;
+          if (typeof saveState === 'function') saveState();
+          if (typeof refreshAllUI === 'function') refreshAllUI();
+        }
         const total = gameReward + roomBonus;
 
         // Actualiza el número grande del popup para que refleje el total real (incluye Bono de Sala)
@@ -1283,4 +1271,459 @@
     };
     window._mhWinBreakdownWired = true;
   }
+})();
+
+
+/* ============================================================
+   COSTO TOTAL VISIBLE SOBRE EL BOTÓN "COMENZAR BINGO"
+   ------------------------------------------------------------
+   Muestra, justo antes del botón verde, cuánto se va a gastar
+   en total (costo de cartones + costo de la apuesta elegida) y
+   avisa que se descuenta del saldo al confirmar. Usa las mismas
+   funciones reales del juego (currentCardEntryCost, CONFIG,
+   state.gold) así que el número siempre es el costo real —no
+   un valor fijo—, y ya sabés que startBingoGame() SÍ descuenta
+   ese monto de tu saldo al arrancar la partida.
+   ============================================================ */
+(function () {
+
+  const css = `
+    .mh-cost-banner{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin:8px 0; padding:11px 14px; border-radius:12px;
+      background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.35);
+    }
+    .mh-cost-banner .lbl{ font-size:11px; color:#8b949e; font-weight:700; }
+    .mh-cost-banner .val{ font-size:15px; color:#4ade80; font-weight:900; }
+    .mh-cost-banner.low{ background:rgba(248,113,113,.08); border-color:rgba(248,113,113,.4); }
+    .mh-cost-banner.low .val{ color:#f87171; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  const an = (n) => n.toLocaleString('es');
+
+  function computeTotalCost() {
+    if (typeof currentCardEntryCost !== 'function' || typeof selectedRoom === 'undefined') return null;
+    if (!selectedRoom) return null;
+    const entryCost = currentCardEntryCost();
+    const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { cost: 0 };
+    return entryCost + (tier.cost || 0);
+  }
+
+  function ensureCostBanner() {
+    const btn = document.querySelector('.game-action-btn[onclick="startBingoGame()"]');
+    if (!btn) return;
+    let banner = document.getElementById('mh-cost-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'mh-cost-banner';
+      banner.className = 'mh-cost-banner';
+      btn.insertAdjacentElement('beforebegin', banner);
+    }
+    const total = computeTotalCost();
+    if (total === null) return;
+    const alcanza = (state.gold || 0) >= total;
+    banner.classList.toggle('low', !alcanza);
+    banner.innerHTML = `<span class="lbl">💸 Vas a gastar</span><span class="val">🪙 ${an(total)}${!alcanza ? ' · Saldo insuficiente' : ''}</span>`;
+  }
+
+  // Se refresca cada vez que cambian cartones, apuesta, sala, etc.
+  ['selectCardCount', 'selectBetTier', 'openBingoLobby', 'updateRiskReturnBox'].forEach(fnName => {
+    if (typeof window[fnName] === 'function' && !window['_mhCostWired_' + fnName]) {
+      const original = window[fnName];
+      window[fnName] = function () {
+        const r = original.apply(this, arguments);
+        ensureCostBanner();
+        return r;
+      };
+      window['_mhCostWired_' + fnName] = true;
+    }
+  });
+
+  function setupCostBanner() { ensureCostBanner(); }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCostBanner);
+  } else {
+    setupCostBanner();
+  }
+  setTimeout(setupCostBanner, 800);
+  setInterval(ensureCostBanner, 1500); // por si cambia el saldo (compras, recompensas) mientras está abierto el lobby
+})();
+(function () {
+  const BINGO_VOICES = [
+    { id: 'clasico',   name: 'Locutor Clásico',      price: 0,   currency: 'gold', pitch: 1.0, rate: 1.0,  phrase: '¡Bingo!' },
+    { id: 'anfitrion', name: 'Anfitrión de Casino',   price: 150, currency: 'gold', pitch: 0.8, rate: 0.9,  phrase: '¡Bingo! Tenemos un ganador.' },
+    { id: 'aguda',     name: 'Voz Aguda de Fiesta',   price: 150, currency: 'gold', pitch: 1.6, rate: 1.1,  phrase: '¡Bingooo! ¡Qué emoción!' },
+    { id: 'robot',     name: 'Robot Arcade',          price: 250, currency: 'gold', pitch: 0.5, rate: 0.85, phrase: 'Bin. Go. Victoria confirmada.' },
+    { id: 'dramatico', name: 'Eco Dramático',         price: 250, currency: 'gold', pitch: 1.1, rate: 0.65, phrase: 'Biiin... go...' },
+    { id: 'multitud',  name: 'Grito de Multitud',     price: 350, currency: 'gold', pitch: 1.35, rate: 1.25, phrase: '¡BINGOOOO!' },
+    { id: 'vip',       name: 'Presentador VIP',       price: 60,  currency: 'gems', pitch: 0.95, rate: 1.05, phrase: '¡Y eso es BINGO! Felicidades, campeón.' },
+  ];
+
+  function pickSpeechVoice() {
+    try {
+      const voices = window.speechSynthesis.getVoices() || [];
+      if (!voices.length) return null;
+      const esVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('es'));
+      return (esVoices[0] || voices[0]) || null;
+    } catch (e) { return null; }
+  }
+
+  function speakVoiceProfile(v) {
+    try {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(v.phrase);
+      utter.lang = 'es-ES';
+      utter.pitch = v.pitch;
+      utter.rate = v.rate;
+      utter.volume = 1;
+      const voice = pickSpeechVoice();
+      if (voice) utter.voice = voice;
+      window.speechSynthesis.speak(utter);
+    } catch (e) {}
+  }
+
+  function getVoiceState() {
+    if (typeof state === 'undefined' || !state) return null;
+    state.mhBingoVoices = state.mhBingoVoices || { owned: ['clasico'], selected: 'clasico' };
+    if (!state.mhBingoVoices.owned.includes('clasico')) state.mhBingoVoices.owned.push('clasico');
+    if (!state.mhBingoVoices.selected) state.mhBingoVoices.selected = 'clasico';
+    return state.mhBingoVoices;
+  }
+
+  const css = `
+    .mh-voice-shop-open-btn{
+      display:block; width:100%; margin:0 0 10px; padding:10px;
+      font-size:13px; font-weight:700; color:#e6c766; background:#1c2129;
+      border:1px solid #d29922; border-radius:10px; cursor:pointer; text-align:center;
+    }
+    .mh-voice-shop-overlay{
+      display:none; position:fixed; inset:0; background:rgba(13,17,23,0.88);
+      z-index:4200; align-items:center; justify-content:center; padding:16px;
+    }
+    .mh-voice-shop-overlay.active{ display:flex; }
+    .mh-voice-shop-box{
+      width:100%; max-width:420px; max-height:82vh; overflow-y:auto;
+      background:#161b22; border:1px solid #30363d; border-radius:14px; padding:16px;
+    }
+    .mh-voice-shop-header{ display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
+    .mh-voice-shop-header h3{ margin:0; color:#d29922; font-size:16px; }
+    .mh-voice-shop-close{ cursor:pointer; color:#8b949e; font-size:18px; padding:2px 6px; }
+    .mh-voice-shop-sub{ font-size:11px; color:#8b949e; margin:2px 0 12px; }
+    .mh-voice-shop-list{ display:flex; flex-direction:column; gap:8px; }
+    .mh-voice-row{
+      display:flex; align-items:center; justify-content:space-between; gap:8px;
+      background:#0d1117; border:1px solid #30363d; border-radius:10px; padding:9px 10px;
+    }
+    .mh-voice-name{ font-size:13px; font-weight:700; color:#c9d1d9; }
+    .mh-voice-owned-tag{ font-size:9px; color:#3fb950; font-weight:700; }
+    .mh-voice-price{ font-size:11px; color:#8b949e; margin-top:2px; }
+    .mh-voice-actions{ display:flex; gap:6px; flex-shrink:0; }
+    .mh-voice-btn{
+      font-size:11px; font-weight:700; padding:6px 9px; border-radius:8px; cursor:pointer;
+      border:1px solid #30363d; background:#21262d; color:#c9d1d9;
+    }
+    .mh-voice-preview{ color:#58a6ff; border-color:#1f6feb; }
+    .mh-voice-buy{ color:#3b2604; background:linear-gradient(180deg,#ffe58a,#d29922); border-color:#ffd75e; }
+    .mh-voice-selected{ color:#3fb950; border-color:#3fb950; background:#132318; cursor:default; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  function renderVoiceShop() {
+    const vs = getVoiceState();
+    const list = document.getElementById('mh-voice-shop-list');
+    if (!vs || !list) return;
+    list.innerHTML = BINGO_VOICES.map(v => {
+      const owned = vs.owned.includes(v.id);
+      const selected = vs.selected === v.id;
+      const symbol = v.currency === 'gems' ? '💎' : '🪙';
+      const priceLabel = v.price === 0 ? 'Gratis' : `${symbol} ${v.price}`;
+      const actionBtn = selected
+        ? `<button class="mh-voice-btn mh-voice-selected" disabled>✅ En uso</button>`
+        : owned
+          ? `<button class="mh-voice-btn" onclick="window._mhUseBingoVoice('${v.id}')">Usar</button>`
+          : `<button class="mh-voice-btn mh-voice-buy" onclick="window._mhBuyBingoVoice('${v.id}')">Comprar ${priceLabel}</button>`;
+      return `<div class="mh-voice-row">
+          <div>
+            <div class="mh-voice-name">${v.name}${owned && v.price > 0 ? ' <span class="mh-voice-owned-tag">· Adquirida</span>' : ''}</div>
+            <div class="mh-voice-price">${owned ? '' : priceLabel}</div>
+          </div>
+          <div class="mh-voice-actions">
+            <button class="mh-voice-btn mh-voice-preview" onclick="window._mhPreviewBingoVoiceById('${v.id}')">🔊 Escuchar</button>
+            ${actionBtn}
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function updateVoiceShopButtonLabel() {
+    const btn = document.getElementById('mh-voice-shop-open-btn');
+    const vs = getVoiceState();
+    if (!btn || !vs) return;
+    const v = BINGO_VOICES.find(x => x.id === vs.selected) || BINGO_VOICES[0];
+    btn.textContent = `🎙️ Voz de Bingo: ${v.name}`;
+  }
+
+  function ensureVoiceShopModal() {
+    if (document.getElementById('mh-voice-shop-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mh-voice-shop-overlay';
+    overlay.className = 'mh-voice-shop-overlay';
+    overlay.innerHTML = `
+      <div class="mh-voice-shop-box">
+        <div class="mh-voice-shop-header">
+          <h3>🎙️ Tienda de Voces de Bingo</h3>
+          <span class="mh-voice-shop-close" onclick="window._mhCloseVoiceShop()">✕</span>
+        </div>
+        <p class="mh-voice-shop-sub">Escucha cada voz antes de comprarla. La que elijas es la que grita "¡BINGO!" cuando reclamas la victoria.</p>
+        <div id="mh-voice-shop-list" class="mh-voice-shop-list"></div>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  function ensureVoiceShopButton() {
+    if (document.getElementById('mh-voice-shop-open-btn')) return;
+    const anchor = document.getElementById('bonus-summary');
+    if (!anchor) return;
+    const btn = document.createElement('button');
+    btn.id = 'mh-voice-shop-open-btn';
+    btn.className = 'mh-voice-shop-open-btn';
+    btn.type = 'button';
+    btn.onclick = function () {
+      ensureVoiceShopModal();
+      renderVoiceShop();
+      document.getElementById('mh-voice-shop-overlay').classList.add('active');
+    };
+    anchor.insertAdjacentElement('beforebegin', btn);
+    updateVoiceShopButtonLabel();
+  }
+
+  window._mhCloseVoiceShop = function () {
+    const el = document.getElementById('mh-voice-shop-overlay');
+    if (el) el.classList.remove('active');
+  };
+
+  window._mhPreviewBingoVoiceById = function (id) {
+    const v = BINGO_VOICES.find(x => x.id === id);
+    if (v) speakVoiceProfile(v);
+  };
+
+  window._mhBuyBingoVoice = function (id) {
+    const v = BINGO_VOICES.find(x => x.id === id);
+    const vs = getVoiceState();
+    if (!v || !vs || vs.owned.includes(id)) return;
+    const balance = v.currency === 'gems' ? (state.gems || 0) : (state.gold || 0);
+    if (balance < v.price) {
+      showToast(v.currency === 'gems' ? '❌ No tienes suficientes 💎 diamantes.' : '❌ No tienes suficiente 🪙 oro.');
+      return;
+    }
+    if (v.currency === 'gems') state.gems -= v.price; else state.gold -= v.price;
+    vs.owned.push(id);
+    vs.selected = id;
+    saveState();
+    if (typeof refreshAllUI === 'function') refreshAllUI();
+    showToast(`🎙️ ¡Voz "${v.name}" adquirida y activada!`);
+    renderVoiceShop();
+    updateVoiceShopButtonLabel();
+  };
+
+  window._mhUseBingoVoice = function (id) {
+    const vs = getVoiceState();
+    if (!vs || !vs.owned.includes(id)) return;
+    vs.selected = id;
+    saveState();
+    renderVoiceShop();
+    updateVoiceShopButtonLabel();
+    const v = BINGO_VOICES.find(x => x.id === id);
+    if (v) showToast(`🎙️ Voz activa: "${v.name}"`);
+  };
+
+  // Voz que se dispara de verdad al reclamar BINGO (llamada desde la
+  // sección del botón manual de BINGO, más arriba en este archivo).
+  window._mhSpeakBingoVoice = function () {
+    const vs = getVoiceState();
+    const v = BINGO_VOICES.find(x => x.id === (vs && vs.selected)) || BINGO_VOICES[0];
+    speakVoiceProfile(v);
+  };
+
+  function setup() {
+    ensureVoiceShopButton();
+    updateVoiceShopButtonLabel();
+    if (typeof window.openBingoLobby === 'function' && !window._mhVoiceShopLobbyWired) {
+      const originalOpenBingoLobby = window.openBingoLobby;
+      window.openBingoLobby = function () {
+        const r = originalOpenBingoLobby.apply(this, arguments);
+        ensureVoiceShopButton();
+        updateVoiceShopButtonLabel();
+        return r;
+      };
+      window._mhVoiceShopLobbyWired = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setup);
+  } else {
+    setup();
+  }
+  setTimeout(setup, 800);
+  setTimeout(updateVoiceShopButtonLabel, 1800); // por si el state tarda en cargar (Firestore)
+})();
+
+/* ============================================================
+   TABLA DE BONOS POR SALA
+   ------------------------------------------------------------
+   Panel informativo (botón + modal) que muestra cuánto bono se
+   gana según la cantidad de cartas jugadas en cada sala. Fórmula:
+   bono = cartas × valor base de la sala.
+
+   Salas normales (hasta 10 cartas):
+     Clásica 2.000/carta · Oro 3.000/carta · Neón 4.000/carta · Fuego 5.000/carta
+   Salas premium (límite reducido, hasta 4 cartas):
+     Espacial 8.000/carta · Aurora 10.000/carta
+
+   Es solo informativo (no descuenta ni entrega nada): muestra al
+   jugador la tabla para que sepa qué gana antes de jugar. Se abre
+   con un botón junto al resumen de bonos de la sala de Bingo.
+   ============================================================ */
+(function () {
+
+  const css = `
+    .mh-bt-openbtn{
+      display:flex; align-items:center; justify-content:center; gap:6px;
+      width:100%; margin:8px 0; padding:10px 12px; border-radius:12px; cursor:pointer;
+      font-size:11.5px; font-weight:800; letter-spacing:.03em; color:#c9d1d9;
+      background:#161b22; border:1px solid #30363d;
+    }
+    .mh-bt-overlay{
+      position:fixed; inset:0; z-index:9998; background:rgba(0,0,0,.72);
+      display:none; align-items:center; justify-content:center; padding:14px;
+    }
+    .mh-bt-overlay.active{ display:flex; }
+    .mh-bt-box{
+      background:#0d1117; border:1px solid #30363d; border-radius:16px;
+      max-width:440px; width:100%; max-height:86vh; overflow:auto;
+      font-family:'Geist',system-ui,-apple-system,sans-serif; color:#c9d1d9;
+    }
+    .mh-bt-head{ display:flex; align-items:center; justify-content:space-between; padding:14px 16px; border-bottom:1px solid #21262d; position:sticky; top:0; background:#0d1117; }
+    .mh-bt-head h3{ margin:0; font-size:14px; font-weight:800; color:#fff; }
+    .mh-bt-close{ cursor:pointer; color:#8b949e; font-size:16px; padding:2px 6px; }
+    .mh-bt-sub{ font-size:11px; color:#8b949e; padding:0 16px; margin-top:10px; }
+    .mh-bt-formula{ margin:10px 16px; padding:9px 12px; border-radius:10px; background:rgba(35,134,54,.1); border:1px solid rgba(35,134,54,.35); font-size:11px; color:#4ac26b; font-weight:700; text-align:center; }
+    .mh-bt-tablewrap{ overflow-x:auto; margin:10px 16px 4px; border-radius:10px; border:1px solid #21262d; }
+    .mh-bt-table{ width:100%; min-width:420px; border-collapse:collapse; font-size:12.5px; }
+    .mh-bt-table thead tr{ background:#238636; color:#fff; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; }
+    .mh-bt-table th{ text-align:right; font-weight:700; padding:9px 12px; border-right:1px solid rgba(255,255,255,.1); }
+    .mh-bt-table th:first-child{ text-align:left; width:70px; }
+    .mh-bt-table td{ text-align:right; padding:8px 12px; border-right:1px solid #21262d; border-bottom:1px solid #21262d; font-family:'Geist Mono',monospace; }
+    .mh-bt-table td:first-child{ text-align:left; font-weight:700; color:#fff; }
+    .mh-bt-table tbody tr:nth-child(even){ background:rgba(28,33,40,.6); }
+    .mh-bt-table tbody tr.max{ background:rgba(241,224,90,.07); }
+    .mh-bt-table tbody tr.max td:first-child{ color:#f1e05a; }
+    .mh-bt-maxtag{ font-size:9px; margin-left:6px; padding:1px 6px; border-radius:8px; background:rgba(241,224,90,.15); color:#f1e05a; font-weight:800; }
+    .mh-bt-premium-note{ font-size:10px; color:#8b949e; padding:8px 16px 16px; text-align:center; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  const an = (n) => n.toLocaleString('es');
+
+  // Salas normales: hasta 10 cartas.
+  const ROOMS_NORMAL = [
+    { key: 'clasica', label: 'Clásica 2k', base: 2000 },
+    { key: 'oro',     label: 'Oro 3k',     base: 3000 },
+    { key: 'neon',    label: 'Neón 4k',    base: 4000 },
+    { key: 'fuego',   label: 'Fuego 5k',   base: 5000 },
+  ];
+  const MAX_NORMAL = 10;
+
+  // Salas premium: límite reducido, hasta 4 cartas.
+  const ROOMS_PREMIUM = [
+    { key: 'espacial', label: 'Espacial 8k', base: 8000 },
+    { key: 'aurora',   label: 'Aurora 10k',  base: 10000 },
+  ];
+  const MAX_PREMIUM = 4;
+
+  function buildTable(rooms, maxCartas) {
+    let head = `<tr><th>Cartas</th>${rooms.map(r => `<th>${r.label}</th>`).join('')}</tr>`;
+    let rows = '';
+    for (let c = 1; c <= maxCartas; c++) {
+      const isMax = c === maxCartas;
+      rows += `<tr class="${isMax ? 'max' : ''}">
+          <td>${c}${isMax ? '<span class="mh-bt-maxtag">MAX</span>' : ''}</td>
+          ${rooms.map(r => `<td>${an(c * r.base)}</td>`).join('')}
+        </tr>`;
+    }
+    return `<table class="mh-bt-table"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  }
+
+  function ensureBonusTableModal() {
+    if (document.getElementById('mh-bt-overlay')) return;
+    const overlay = document.createElement('div');
+    overlay.id = 'mh-bt-overlay';
+    overlay.className = 'mh-bt-overlay';
+    overlay.innerHTML = `
+      <div class="mh-bt-box">
+        <div class="mh-bt-head">
+          <h3>📊 Tabla de Bonos por Sala</h3>
+          <span class="mh-bt-close" onclick="window._mhCloseBonusTable()">✕</span>
+        </div>
+        <div class="mh-bt-sub">Desliza horizontal para ver todas las salas</div>
+        <div class="mh-bt-formula">Fórmula: Bono = Cartas × Valor base de la sala</div>
+        <div class="mh-bt-tablewrap">${buildTable(ROOMS_NORMAL, MAX_NORMAL)}</div>
+        <div class="mh-bt-tablewrap">${buildTable(ROOMS_PREMIUM, MAX_PREMIUM)}</div>
+        <div class="mh-bt-premium-note">⚡ Salas premium con límite reducido (máx. ${MAX_PREMIUM} cartas)</div>
+      </div>`;
+    document.body.appendChild(overlay);
+    overlay.addEventListener('click', (e) => { if (e.target === overlay) window._mhCloseBonusTable(); });
+  }
+
+  window._mhCloseBonusTable = function () {
+    const el = document.getElementById('mh-bt-overlay');
+    if (el) el.classList.remove('active');
+  };
+
+  window._mhOpenBonusTable = function () {
+    ensureBonusTableModal();
+    document.getElementById('mh-bt-overlay').classList.add('active');
+  };
+
+  function ensureBonusTableButton() {
+    if (document.getElementById('mh-bt-open-btn')) return;
+    const anchor = document.getElementById('bonus-summary');
+    if (!anchor) return;
+    const btn = document.createElement('button');
+    btn.id = 'mh-bt-open-btn';
+    btn.className = 'mh-bt-openbtn';
+    btn.type = 'button';
+    btn.textContent = '📊 Ver tabla de bonos por sala';
+    btn.onclick = window._mhOpenBonusTable;
+    anchor.insertAdjacentElement('beforebegin', btn);
+  }
+
+  function setupBonusTable() {
+    ensureBonusTableButton();
+    if (typeof window.openBingoLobby === 'function' && !window._mhBonusTableLobbyWired) {
+      const original = window.openBingoLobby;
+      window.openBingoLobby = function () {
+        const r = original.apply(this, arguments);
+        ensureBonusTableButton();
+        return r;
+      };
+      window._mhBonusTableLobbyWired = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupBonusTable);
+  } else {
+    setupBonusTable();
+  }
+  setTimeout(setupBonusTable, 800);
 })();
