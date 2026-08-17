@@ -485,3 +485,150 @@
   }
 
 })();
+
+/* ============================================================
+   TARJETAS DE BINGO ESTILO CLÁSICO
+   ------------------------------------------------------------
+   Solo CSS: no toca generateAllCards ni la lógica del juego.
+   - Fondo blanco tipo cartón real, con borde celeste.
+   - Encabezado B-I-N-G-O con cada letra de un color (azul, rojo,
+     verde, violeta, rojo), como un cartón de bingo tradicional.
+   - Números marcados como bolita roja con número blanco, en vez
+     del relleno de color plano que traía cada tarjeta.
+   - Casilla FREE con estrella dorada en vez del texto "FREE".
+   ============================================================ */
+(function () {
+
+  const css = `
+    .bingo-card{
+      background:linear-gradient(160deg,#eef4ff,#dbe8ff) !important;
+      border:3px solid #3b6fe0 !important;
+      box-shadow:0 3px 10px rgba(0,0,0,.35);
+    }
+    .bingo-header-row{
+      background:transparent !important; gap:3px !important; padding:0 !important;
+    }
+    .bingo-header-row span{
+      color:#fff !important; border-radius:5px; padding:3px 0; font-size:10px !important;
+    }
+    .bingo-header-row span:nth-child(1){ background:#2e6bff; }
+    .bingo-header-row span:nth-child(2){ background:#e53935; }
+    .bingo-header-row span:nth-child(3){ background:#2fa84f; }
+    .bingo-header-row span:nth-child(4){ background:#9c27b0; }
+    .bingo-header-row span:nth-child(5){ background:#e53935; }
+
+    .bingo-grid{ gap:3px !important; }
+    .b-cell{
+      background:#ffffff !important; border:1px solid #c7d6f5 !important;
+      color:#16233f !important; font-weight:900 !important; border-radius:5px !important;
+    }
+
+    /* Bolita roja para los números marcados, igual en las 4 tarjetas de color */
+    .card-rojo .b-cell.marked, .card-azul .b-cell.marked,
+    .card-verde .b-cell.marked, .card-amarillo .b-cell.marked{
+      background:radial-gradient(circle at 35% 30%, #ff6b5e, #d32f2f 70%) !important;
+      border-color:#a30000 !important; color:#fff !important;
+      border-radius:50% !important; box-shadow:inset 0 -2px 4px rgba(0,0,0,.25), 0 1px 3px rgba(0,0,0,.4);
+    }
+
+    /* Casilla FREE con estrella dorada */
+    .b-cell.free{ color:transparent !important; position:relative; background:#fff8e1 !important; border-color:#f2c94c !important; }
+    .b-cell.free::after{
+      content:'⭐'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      font-size:13px; color:#f2b90c;
+    }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+})();
+
+/* ============================================================
+   AL GANAR SIEMPRE DICE "¡BINGO!"
+   ------------------------------------------------------------
+   El popup de victoria mostraba el nombre del patrón que
+   completaste (ej: "LÍNEA", "DIAGONAL", "CARTÓN LLENO") como
+   título. Esto envuelve openWinPopup para forzar siempre el
+   título "¡BINGO!", sin tocar el resto (oro, xp, pozo, etc.).
+   ============================================================ */
+(function () {
+  if (typeof window.openWinPopup === 'function' && !window._mhBingoTitleWired) {
+    const originalOpenWinPopup = window.openWinPopup;
+    window.openWinPopup = function (info) {
+      const patched = Object.assign({}, info, { title: '¡BINGO!' });
+      return originalOpenWinPopup(patched);
+    };
+    window._mhBingoTitleWired = true;
+  }
+})();
+
+/* ============================================================
+   MÁXIMO DE CARTONES: 10 (antes 16)
+   ------------------------------------------------------------
+   No toca la lógica del juego, solo reordena la selección:
+   - Saca la opción "12 Cartones".
+   - Convierte el botón "16 Cartones" en "10 Cartones".
+   - Ajusta QUICK_CARD_STEPS (array real que usa el juego) y el
+     slider para que el máximo real sea 10, no solo visual.
+   - Agrega el precio de 10 cartones a cada sala, calculado igual
+     que los demás (precio por cartón × 10), así el costo no
+     queda en 0 al elegir 10.
+   ============================================================ */
+(function () {
+  function setupMaxTenCards() {
+    if (window._mhMaxTenCardsWired) return;
+    if (typeof QUICK_CARD_STEPS === 'undefined' || typeof ROOMS === 'undefined') return;
+
+    // 1) Steps reales que usa el juego para calcular/premiar: [1,2,4,8,10]
+    QUICK_CARD_STEPS.length = 0;
+    QUICK_CARD_STEPS.push(1, 2, 4, 8, 10);
+
+    // 2) Precio de 10 cartones en cada sala = precio de 1 cartón × 10
+    ROOMS.forEach(room => {
+      if (room.cardCosts && room.cardCosts[1] && room.cardCosts[10] === undefined) {
+        room.cardCosts[10] = room.cardCosts[1] * 10;
+      }
+    });
+
+    // 3) Botones: sacar "12", convertir "16" en "10"
+    const grid = document.querySelector('.cards-options-grid');
+    if (grid) {
+      const btn12 = grid.querySelector('[onclick="selectCardCount(12, this)"]');
+      if (btn12) btn12.remove();
+      const btn16 = grid.querySelector('[onclick="selectCardCount(16, this)"]');
+      if (btn16) {
+        btn16.setAttribute('onclick', 'selectCardCount(10, this)');
+        const span = btn16.querySelector('span');
+        if (span) span.id = 'cost-label-10';
+        btn16.childNodes[0].nodeValue = '10 Cartones';
+      }
+    }
+
+    // 4) Slider: máximo real ahora tiene 5 pasos (índices 0..4)
+    const slider = document.getElementById('quick-card-slider');
+    if (slider) slider.max = String(QUICK_CARD_STEPS.length - 1);
+
+    // 5) Texto descriptivo de "hasta 16" -> "hasta 10"
+    document.querySelectorAll('#lobby-modal p').forEach(p => {
+      if (p.textContent.includes('hasta 16 tarjetas')) {
+        p.textContent = p.textContent.replace('hasta 16 tarjetas', 'hasta 10 tarjetas');
+      }
+    });
+
+    // 6) Si alguien quedó con más de 10 elegidos de antes, lo bajamos a 10
+    if (typeof chosenCardCount !== 'undefined' && chosenCardCount > 10) {
+      chosenCardCount = 10;
+    }
+
+    window._mhMaxTenCardsWired = true;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupMaxTenCards);
+  } else {
+    setupMaxTenCards();
+  }
+  // Por si el lobby se arma/repinta después de cargar la página
+  setTimeout(setupMaxTenCards, 800);
+})();
