@@ -815,20 +815,10 @@
       endRound(true);
       window._mhBingoManualCall = false;
 
-      if (extras.length && typeof state !== 'undefined' && state) {
-        const bonusEach = (typeof window.calculateRoomBonus === 'function') ? window.calculateRoomBonus() : 0;
-        if (bonusEach > 0) {
-          extras.forEach((cardObj, i) => {
-            setTimeout(() => {
-              state.gold = (state.gold || 0) + bonusEach;
-              if (typeof window.saveState === 'function') window.saveState();
-              if (typeof showToast === 'function') {
-                showToast('🎉 ¡Bingo extra! +🪙 ' + bonusEach.toLocaleString('es-PE'));
-              }
-            }, 1500 + i * 900);
-          });
-        }
-      }
+      // Los cartones extra reclamados durante la gracia ya quedan
+      // registrados (cuentan como "bingo confirmado" en pantalla), pero no
+      // otorgan oro aparte: el único premio real es el que calcula el juego
+      // original para el cartón principal (mostrado en el popup de arriba).
     }
 
     function claimCard(cardObj) {
@@ -1203,24 +1193,8 @@
 
   const an = (n) => Math.round(n).toLocaleString('es');
 
-  // Bono fijo por sala, definido por vos. Cambiá acá los montos si querés ajustarlos.
-  const ROOM_BONUS_CONFIG = {
-    clasica:  { base: 2000  },
-    oro:      { base: 3000  },
-    neon:     { base: 4000  },
-    fuego:    { base: 5000  },
-    espacial: { base: 8000  },
-    aurora:   { base: 10000 },
-  };
-
-  function calculateRoomBonus() {
-    try {
-      const roomKey = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.id) ? selectedRoom.id.toLowerCase() : 'clasica';
-      const cfg = ROOM_BONUS_CONFIG[roomKey] || ROOM_BONUS_CONFIG.clasica;
-      return cfg.base; // valor fijo, no se multiplica por cartones
-    } catch (e) { return 0; }
-  }
-  window.calculateRoomBonus = calculateRoomBonus;
+  // (La función de bono fijo por sala se sacó de acá: ver el nuevo sistema de
+  // "Patrón Especial del Turno" más abajo, que reemplaza al Bono de Sala.)
 
   // IMPORTANTE: el Bono de Sala se acredita ACÁ, adentro de openWinPopup,
   // no envolviendo endRound. openWinPopup solo se llama UNA VEZ, en el
@@ -1245,8 +1219,16 @@
         if (!(basePrize > 0) || basePrize > gameReward) basePrize = gameReward;
         const bonusMultis = Math.max(0, gameReward - basePrize);
 
-        // Acredita el Bono de Sala una sola vez, justo acá.
-        const roomBonus = calculateRoomBonus();
+        // 🎯 Bono de Sala nuevo: +20% del premio, SOLO si ganaste con el
+        // patrón especial anunciado antes de empezar la ronda (una fila al
+        // azar o las 4 esquinas — se elige cada vez que abrís el lobby). Si
+        // ganás de cualquier otra forma, el premio normal se paga igual,
+        // pero sin este extra.
+        const winningPatternId = (typeof roundWinPattern !== 'undefined' && roundWinPattern && roundWinPattern.id) || null;
+        const specialId = window._mhSpecialPatternId || null;
+        const specialLabel = window._mhSpecialPatternLabel || '';
+        const matchedSpecial = specialId && winningPatternId === specialId;
+        const roomBonus = matchedSpecial ? Math.round(gameReward * 0.20) : 0;
         if (roomBonus > 0 && typeof state !== 'undefined' && state) {
           state.gold = (state.gold || 0) + roomBonus;
           if (typeof saveState === 'function') saveState();
@@ -1254,7 +1236,7 @@
         }
         const total = gameReward + roomBonus;
 
-        // Actualiza el número grande del popup para que refleje el total real (incluye Bono de Sala)
+        // Actualiza el número grande del popup para que refleje el total real (incluye Bono de Sala si aplica)
         const goldEl = document.getElementById('win-popup-gold');
         if (goldEl) goldEl.innerText = '+' + an(total);
 
@@ -1269,7 +1251,11 @@
           }
           let rows = `<div class="mh-win-row"><span>🎯 Premio base:</span><span>🪙 ${an(basePrize)}</span></div>`;
           if (bonusMultis > 0) rows += `<div class="mh-win-row bonus"><span>🎁 Bonus (VIP/apuesta/mascota):</span><span>+🪙 ${an(bonusMultis)}</span></div>`;
-          if (roomBonus > 0) rows += `<div class="mh-win-row sala"><span>🏛️ Bono de Sala:</span><span>+🪙 ${an(roomBonus)}</span></div>`;
+          if (matchedSpecial) {
+            rows += `<div class="mh-win-row sala"><span>🏛️ Bono de Sala (${escapeHtml(specialLabel)} ✓ +20%):</span><span>+🪙 ${an(roomBonus)}</span></div>`;
+          } else if (specialLabel) {
+            rows += `<div class="mh-win-row" style="color:#8b949e;font-weight:700"><span>🏛️ Bono de Sala:</span><span>No (necesitabas ${escapeHtml(specialLabel)})</span></div>`;
+          }
           rows += `<div class="mh-win-row total"><span>💰 Total:</span><span>🪙 ${an(total)}</span></div>`;
           box.innerHTML = rows;
         }
@@ -1733,4 +1719,83 @@
     setupBonusTable();
   }
   setTimeout(setupBonusTable, 800);
+})();
+
+/* ============================================================
+   PATRÓN ESPECIAL DEL TURNO → BONO DE SALA (+20%)
+   ------------------------------------------------------------
+   Cada vez que entrás al lobby de una sala, se elige al azar UN
+   patrón especial para esa ronda: o una fila concreta (varía
+   cada vez) o las 4 esquinas. Se anuncia ANTES de empezar, junto
+   a la apuesta.
+
+   Si ganás completando justo ESE patrón → Bono de Sala +20% del
+   premio (se ve y se paga en el popup de victoria).
+   Si ganás de cualquier OTRA forma (columna, diagonal, otra fila,
+   cartón lleno) → el premio normal se paga igual, pero SIN el
+   Bono de Sala. Bono de sala y premio por ganar son cosas
+   distintas, como pediste.
+   ============================================================ */
+(function () {
+
+  const css = `
+    .mh-special-banner{
+      display:flex; flex-direction:column; gap:2px;
+      margin:8px 0; padding:11px 14px; border-radius:12px;
+      background:rgba(56,189,248,.08); border:1px solid rgba(56,189,248,.35);
+    }
+    .mh-special-banner b{ color:#7dd3fc; }
+    .mh-special-banner .sub{ font-size:9.5px; color:#8b949e; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  const ROW_LABELS = ['Fila 1 (arriba)', 'Fila 2', 'Fila 3 (centro)', 'Fila 4', 'Fila 5 (abajo)'];
+
+  function pickSpecialPattern() {
+    if (Math.random() < 0.5) {
+      window._mhSpecialPatternId = 'corners';
+      window._mhSpecialPatternLabel = '4 Esquinas';
+    } else {
+      const i = Math.floor(Math.random() * 5);
+      window._mhSpecialPatternId = 'row' + i;
+      window._mhSpecialPatternLabel = ROW_LABELS[i];
+    }
+  }
+
+  function ensureSpecialBanner() {
+    const anchor = document.getElementById('bonus-summary');
+    if (!anchor) return;
+    let banner = document.getElementById('mh-special-pattern-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'mh-special-pattern-banner';
+      banner.className = 'mh-special-banner';
+      anchor.insertAdjacentElement('beforebegin', banner);
+    }
+    banner.innerHTML = `
+      <span>🎯 Para ganar el <b>Bono de Sala (+20%)</b> completa: <b>${escapeHtml(window._mhSpecialPatternLabel || '')}</b></span>
+      <span class="sub">Si ganás de otra forma, tu premio normal se paga igual — solo que sin este extra.</span>`;
+  }
+
+  function setupSpecialPattern() {
+    if (typeof window.openBingoLobby === 'function' && !window._mhSpecialPatternLobbyWired) {
+      const original = window.openBingoLobby;
+      window.openBingoLobby = function () {
+        const r = original.apply(this, arguments);
+        pickSpecialPattern();
+        ensureSpecialBanner();
+        return r;
+      };
+      window._mhSpecialPatternLobbyWired = true;
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupSpecialPattern);
+  } else {
+    setupSpecialPattern();
+  }
+  setTimeout(setupSpecialPattern, 800);
 })();
