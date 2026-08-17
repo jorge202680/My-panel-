@@ -616,7 +616,54 @@
       }
     });
 
-    // 6) Si alguien quedó con más de 10 elegidos de antes, lo bajamos a 10
+    // 6) El botón "⚡ Máx. Cartones (16)" seguía diciendo 16
+    document.querySelectorAll('.qb-max').forEach(btn => {
+      btn.textContent = btn.textContent.replace('(16)', '(10)');
+    });
+
+    // 7) CAUSA REAL de que se siguiera viendo "16": al renombrar el botón,
+    //    el <span> de precio quedó con id="cost-label-10" pero su TEXTO
+    //    seguía diciendo "Premio x16 (¡Máximo!)", porque la función del
+    //    juego refreshCardCostLabels() recorre una lista fija [1,2,4,8,12,16]
+    //    que nunca incluyó el 10, así que ese span nunca se actualizaba.
+    //    Enganchamos esa función para que también recalcule el label 10
+    //    cada vez que se recalculan precios (cambio de sala, descuento VIP...).
+    if (typeof window.refreshCardCostLabels === 'function' && !window._mhRefreshLabelsWired) {
+      const originalRefreshCardCostLabels = window.refreshCardCostLabels;
+      window.refreshCardCostLabels = function () {
+        originalRefreshCardCostLabels.apply(this, arguments);
+        const el = document.getElementById('cost-label-10');
+        if (!el) return;
+        const btn = el.closest('.card-opt-btn');
+        const available = !selectedRoom || !selectedRoom.cardCosts || selectedRoom.cardCosts[10] !== undefined;
+        const cost = (selectedRoom && selectedRoom.cardCosts) ? selectedRoom.cardCosts[10] : undefined;
+        if (!available) {
+          el.innerText = 'No disponible';
+          if (btn) { btn.style.opacity = '0.35'; btn.style.cursor = 'not-allowed'; btn.onclick = null; btn.classList.remove('selected'); }
+          return;
+        }
+        if (btn) { btn.style.opacity = ''; btn.style.cursor = ''; btn.onclick = () => selectCardCount(10, btn); }
+        if (cost === undefined) { el.innerText = 'Premio x10 (¡Máximo!)'; return; }
+        const discount = (typeof vipCardCostDiscount === 'function') ? vipCardCostDiscount() : 0;
+        const finalCost = Math.round(cost * (1 - discount));
+        el.innerText = discount > 0 ? `🪙 ${finalCost} (antes ${cost})` : `🪙 ${finalCost}`;
+      };
+      window._mhRefreshLabelsWired = true;
+      window.refreshCardCostLabels(); // primera pasada por si el lobby ya estaba abierto
+    }
+
+    // 8) El toast de "Máx. Cartones" también decía "(16)" fijo en el texto
+    if (typeof window.quickMaxCards === 'function' && !window._mhQuickMaxWired) {
+      window.quickMaxCards = function () {
+        const slider2 = document.getElementById('quick-card-slider');
+        if (slider2) slider2.value = QUICK_CARD_STEPS.length - 1;
+        onQuickCardSlider(QUICK_CARD_STEPS.length - 1);
+        showToast('⚡ Cartones al máximo (10).');
+      };
+      window._mhQuickMaxWired = true;
+    }
+
+    // 9) Si alguien quedó con más de 10 elegidos de antes, lo bajamos a 10
     if (typeof chosenCardCount !== 'undefined' && chosenCardCount > 10) {
       chosenCardCount = 10;
     }
@@ -631,4 +678,236 @@
   }
   // Por si el lobby se arma/repinta después de cargar la página
   setTimeout(setupMaxTenCards, 800);
+})();
+
+/* ============================================================
+   SELLO "BINGO" SOBRE LA TARJETA GANADORA
+   ------------------------------------------------------------
+   Envuelve evaluateCardPatterns (no la reemplaza): cuando una
+   tarjeta completa un patrón, le agrega un sello rojo "BINGO"
+   encima, como en otros juegos de bingo. No toca el popup que
+   ya existe, es un agregado visual sobre el cartón mismo.
+   ============================================================ */
+(function () {
+  const css = `
+    .mh-bingo-stamp{
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) rotate(-14deg);
+      border:4px solid #d32f2f; color:#d32f2f; font-weight:900; font-size:20px; letter-spacing:3px;
+      padding:3px 12px; border-radius:8px; background:rgba(255,255,255,.88);
+      text-transform:uppercase; z-index:5; box-shadow:0 2px 8px rgba(0,0,0,.4);
+      animation:mhBingoStampPop .35s ease-out; pointer-events:none;
+    }
+    @keyframes mhBingoStampPop{
+      from{ transform:translate(-50%,-50%) rotate(-14deg) scale(2.2); opacity:0; }
+      to{ transform:translate(-50%,-50%) rotate(-14deg) scale(1); opacity:1; }
+    }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  if (typeof window.evaluateCardPatterns === 'function' && !window._mhBingoStampWired) {
+    const originalEvaluateCardPatterns = window.evaluateCardPatterns;
+    window.evaluateCardPatterns = function (cardObj) {
+      const result = originalEvaluateCardPatterns(cardObj);
+      try {
+        if (result && cardObj && cardObj.cells && cardObj.cells[0]) {
+          const cardDiv = cardObj.cells[0].closest('.bingo-card');
+          if (cardDiv && !cardDiv.querySelector('.mh-bingo-stamp')) {
+            const stamp = document.createElement('div');
+            stamp.className = 'mh-bingo-stamp';
+            stamp.textContent = 'BINGO';
+            cardDiv.appendChild(stamp);
+          }
+        }
+      } catch (e) {}
+      return result;
+    };
+    window._mhBingoStampWired = true;
+  }
+})();
+
+/* ============================================================
+   BOTÓN MANUAL "¡BINGO!" (antes: ganaba solo, automático)
+   ------------------------------------------------------------
+   Antes, apenas un cartón completaba un patrón, el juego
+   terminaba la ronda solo (endRound(true) automático). Ahora:
+   - El cartón se sigue marcando como completado igual que antes
+     (sello, color verde, "¡LÍNEA!"/"¡CARTÓN LLENO!", etc.) pero
+     la ronda YA NO termina sola.
+   - Aparece un botón "🎯 ¡BINGO!" fijo debajo de la bola cantada.
+     Al presionarlo, se revisa el CARTÓN ENFOCADO (el que se ve /
+     el único si solo hay 1 cartón, o el último que tocaste en la
+     tira de pestañas): si ya completó un patrón, se declara la
+     victoria normal (mismo popup y premio de siempre). Si no,
+     no pasa nada (sin penalización).
+   - Si no presionas a tiempo y el rival "completa" su cartón
+     primero, la partida YA NO se corta: solo se avisa una vez y
+     puedes seguir marcando/reclamando otros patrones.
+   - Salvavidas: si se acaban las 75 bolas sin que hayas
+     presionado el botón, se reclama automáticamente el mejor
+     cartón ya completado (para que no pierdas un premio ganado
+     por no haber alcanzado a tocar el botón); si ninguno se
+     completó, la ronda cierra sin premio.
+   ============================================================ */
+(function () {
+  function setupManualBingo() {
+    if (window._mhManualBingoWired) return;
+    if (typeof window.endRound !== 'function' || typeof window.handleBallDraw !== 'function' ||
+        typeof window.focusCard !== 'function' || typeof window.startBingoGame !== 'function') return;
+
+    // ---- Botón visual "¡BINGO!" dentro del área de juego activa ----
+    const css = `
+      #mh-bingo-claim-btn{
+        display:block; width:100%; margin:10px 0 4px; padding:13px;
+        font-size:18px; font-weight:900; letter-spacing:2px; text-transform:uppercase;
+        color:#1a1a1a; background:linear-gradient(180deg,#ffe58a,#d29922);
+        border:2px solid #ffd75e; border-radius:12px; cursor:pointer;
+        box-shadow:0 3px 0 #8a6a12, 0 4px 10px rgba(0,0,0,.4);
+      }
+      #mh-bingo-claim-btn:active{ transform:translateY(2px); box-shadow:0 1px 0 #8a6a12; }
+      .mh-bingo-shake{ animation: mhBingoShake .4s; }
+      @keyframes mhBingoShake{
+        0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-6px); }
+        40%{ transform:translateX(6px); } 60%{ transform:translateX(-4px); } 80%{ transform:translateX(4px); }
+      }
+    `;
+    const styleTag = document.createElement('style');
+    styleTag.textContent = css;
+    document.head.appendChild(styleTag);
+
+    function ensureBingoButton() {
+      if (document.getElementById('mh-bingo-claim-btn')) return;
+      const anchor = document.querySelector('.ball-callout-container');
+      if (!anchor) return;
+      const btn = document.createElement('button');
+      btn.id = 'mh-bingo-claim-btn';
+      btn.type = 'button';
+      btn.textContent = '🎯 ¡BINGO!';
+      btn.onclick = onBingoButtonClick;
+      anchor.insertAdjacentElement('afterend', btn);
+    }
+    ensureBingoButton();
+
+    // ---- Recordar cuál cartón está "enfocado" (el que se está jugando) ----
+    window._mhFocusedCardIndex = 0;
+    const originalFocusCard = window.focusCard;
+    window.focusCard = function (c) {
+      window._mhFocusedCardIndex = c;
+      return originalFocusCard.apply(this, arguments);
+    };
+
+    const originalStartBingoGame = window.startBingoGame;
+    window.startBingoGame = function () {
+      window._mhFocusedCardIndex = 0;
+      window._mhRivalAlerted = false;
+      window._mhRoundSettled = false;
+      ensureBingoButton();
+      return originalStartBingoGame.apply(this, arguments);
+    };
+
+    // ---- Bloquear el auto-win/auto-loss: solo endRound() con permiso explícito pasa ----
+    const originalEndRound = window.endRound;
+    window.endRound = function (won) {
+      if (window._mhBingoManualCall) {
+        return originalEndRound.apply(this, arguments);
+      }
+      if (won === true) {
+        // Victoria automática bloqueada: el cartón ya quedó marcado como
+        // completado (sello/color verde), pero el jugador debe presionar
+        // "¡BINGO!" para cobrar el premio.
+        return;
+      }
+      // won === false: esto solo ocurre cuando el rival llega a 25/25.
+      // Ya no cortamos la partida, solo avisamos una vez.
+      if (!window._mhRivalAlerted) {
+        window._mhRivalAlerted = true;
+        if (typeof showToast === 'function') {
+          showToast('🤖 Tu rival ya completó su cartón, pero la partida sigue: ¡marca y presiona BINGO en el tuyo!');
+        }
+      }
+    };
+
+    function claimCard(cardObj) {
+      if (!cardObj || !cardObj.completed) return false;
+      roundWinPattern = cardObj.winPattern || roundWinPattern;
+      window._mhRoundSettled = true;
+      window._mhBingoManualCall = true;
+      endRound(true);
+      window._mhBingoManualCall = false;
+      return true;
+    }
+
+    function onBingoButtonClick() {
+      const idx = window._mhFocusedCardIndex || 0;
+      const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+      const cardObj = list.find(c => c.cardIndex === idx) || list[idx];
+      if (!claimCard(cardObj)) {
+        const btn = document.getElementById('mh-bingo-claim-btn');
+        if (btn) {
+          btn.classList.remove('mh-bingo-shake');
+          void btn.offsetWidth;
+          btn.classList.add('mh-bingo-shake');
+        }
+      }
+    }
+
+    // ---- Salvavidas: si se acaban las 75 bolas, reclamar solo o cerrar sin premio ----
+    const originalHandleBallDraw = window.handleBallDraw;
+    window.handleBallDraw = function () {
+      originalHandleBallDraw.apply(this, arguments);
+      if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length >= 75 && !window._mhRoundSettled) {
+        window._mhRoundSettled = true;
+        const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+        const anyCompleted = list.find(c => c.completed);
+        if (anyCompleted) {
+          claimCard(anyCompleted);
+        } else {
+          window._mhBingoManualCall = true;
+          endRound(false);
+          window._mhBingoManualCall = false;
+        }
+      }
+    };
+
+    window._mhManualBingoWired = true;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupManualBingo);
+  } else {
+    setupManualBingo();
+  }
+  setTimeout(setupManualBingo, 800);
+})();
+
+/* ============================================================
+   VOZ QUE CANTA CADA BOLA
+   ------------------------------------------------------------
+   Envuelve handleBallDraw (no la reemplaza): además de todo lo
+   que ya hacía (sonido, animación, chequeo de patrones), usa la
+   voz del dispositivo (SpeechSynthesis, ya se usa en otra parte
+   del juego) para decir en voz alta la letra y el número, por
+   ejemplo "B, 13". Si el navegador no soporta voz, no rompe nada.
+   ============================================================ */
+(function () {
+  if (typeof window.handleBallDraw === 'function' && !window._mhBallVoiceWired) {
+    const originalHandleBallDraw = window.handleBallDraw;
+    window.handleBallDraw = function () {
+      originalHandleBallDraw.apply(this, arguments);
+      try {
+        if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length > 0 && window.speechSynthesis) {
+          const n = drawnNumbers[drawnNumbers.length - 1];
+          const letter = (typeof letterForNumber === 'function') ? letterForNumber(n) : '';
+          speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(`${letter}, ${n}`);
+          utter.lang = 'es-ES';
+          utter.rate = 1;
+          utter.volume = 0.9;
+          speechSynthesis.speak(utter);
+        }
+      } catch (e) {}
+    };
+    window._mhBallVoiceWired = true;
+  }
 })();
