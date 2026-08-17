@@ -200,10 +200,16 @@
     const cost = gearUpgradeCost(slot, nextLvl);
     let old = document.getElementById('mh-gear-upgrade-confirm');
     if (old) old.remove();
+    // Se busca la tarjeta del panel EQUIPO ya abierto (mh-sheet-card) para
+    // meter la confirmación ADENTRO de ese mismo panel, no como overlay de
+    // pantalla completa por fuera de él.
+    const sheetCard = document.querySelector('#mh-sheet-ov .mh-sheet-card');
+    if (!sheetCard) return;
+    sheetCard.style.position = 'relative';
     const modal = document.createElement('div');
     modal.id = 'mh-gear-upgrade-confirm';
-    modal.style.cssText = 'position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:16px;';
-    modal.innerHTML = `<div style="background:rgba(13,26,32,.96);border:1px solid rgba(0,255,204,.3);border-radius:20px;padding:20px;max-width:300px;width:100%;text-align:center;box-shadow:0 0 40px rgba(0,255,204,.2), inset 0 1px 0 rgba(255,255,255,.08);backdrop-filter:blur(20px);">
+    modal.style.cssText = 'position:absolute;inset:0;z-index:50;background:rgba(4,10,16,.88);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px;border-radius:22px;';
+    modal.innerHTML = `<div style="background:rgba(13,26,32,.96);border:1px solid rgba(0,255,204,.3);border-radius:20px;padding:20px;max-width:270px;width:100%;text-align:center;box-shadow:0 0 40px rgba(0,255,204,.2), inset 0 1px 0 rgba(255,255,255,.08);">
         <div style="font-size:11px;letter-spacing:.14em;color:#9ef3e3;font-weight:900;margin-bottom:6px">MEJORA DE BONUS</div>
         <div style="font-size:13px;color:#fff;font-weight:800;margin-bottom:12px">${escapeHtml(MASCOTA_GEAR_DEFS[slot].name)} → Nivel ${nextLvl}</div>
         <div style="font-size:15px;font-weight:900;color:#fde68a;margin-bottom:2px">${cost.gold ? cost.gold.toLocaleString('es') + ' 🪙' : cost.gems + ' 💎'}</div>
@@ -213,7 +219,7 @@
           <button style="flex:1;background:linear-gradient(90deg,#22d3ee,#2dd4bf);color:#04201c;font-weight:900;font-size:11px;letter-spacing:.06em;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:11px 6px;cursor:pointer;box-shadow:0 0 14px rgba(45,212,191,.5)" onclick="mhDoUpgrade('${id}','${slot}')">CONFIRMAR</button>
         </div>
       </div>`;
-    document.body.appendChild(modal);
+    sheetCard.appendChild(modal);
   }
 
   function mhDoUpgrade(id, slot) {
