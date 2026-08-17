@@ -1175,17 +1175,14 @@
 })();
 
 /* ============================================================
-   DESGLOSE DEL PREMIO EN EL POPUP: PREMIO BASE + BONUS
+   DESGLOSE DEL PREMIO EN EL POPUP: PREMIO BASE + BONUS + BONO DE SALA
    ------------------------------------------------------------
-   Ojo: el bloque anterior ("Tabla de Bonos por Sala") usaba
-   valores inventados (no los reales de tus salas) y además
-   sumaba ese oro inventado ENCIMA del premio real cada vez que
-   ganabas — eso duplicaba oro de más. Lo reemplazo por esto:
-   descompone el premio REAL que ya calcula el juego (reward)
-   en "Premio base" (sala × cartones × patrón) y "Bonus" (todo
-   lo demás: apuesta, VIP, mascota, etc.), sin inventar ni sumar
-   oro de más — solo muestra el desglose de lo que ya ganaste,
-   directo adentro del popup "¡Tú Ganas!".
+   "Premio base" = sala × cartones × patrón (lo que da el juego
+   sin nada activado). "Bonus" = todo lo que ya venía multiplicado
+   en el premio real por VIP/apuesta/mascota. "Bono de Sala" = el
+   bono FIJO que vos configuraste por sala (Clásica 2000, Oro 3000,
+   Neón 4000, Fuego 5000, Espacial 8000, Aurora 10000), que se
+   suma aparte y de verdad a tu oro, no es solo visual.
    ============================================================ */
 (function () {
   const css = `
@@ -1196,6 +1193,7 @@
     }
     .mh-win-row{ display:flex; justify-content:space-between; font-size:12px; font-weight:800; margin:3px 0; color:#5c4200; }
     .mh-win-row.bonus span:last-child{ color:#1d7a3a; }
+    .mh-win-row.sala span:last-child{ color:#8a5a00; }
     .mh-win-row.total{ border-top:1px solid rgba(90,60,0,.25); padding-top:6px; margin-top:6px; font-size:13px; }
     .mh-win-row.total span:last-child{ color:#8a5a00; font-size:15px; }
   `;
@@ -1205,21 +1203,65 @@
 
   const an = (n) => Math.round(n).toLocaleString('es');
 
+  // Bono fijo por sala, definido por vos. Cambiá acá los montos si querés ajustarlos.
+  const ROOM_BONUS_CONFIG = {
+    clasica:  { base: 2000  },
+    oro:      { base: 3000  },
+    neon:     { base: 4000  },
+    fuego:    { base: 5000  },
+    espacial: { base: 8000  },
+    aurora:   { base: 10000 },
+  };
+
+  function calculateRoomBonus() {
+    try {
+      const roomKey = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.id) ? selectedRoom.id.toLowerCase() : 'clasica';
+      const cfg = ROOM_BONUS_CONFIG[roomKey] || ROOM_BONUS_CONFIG.clasica;
+      return cfg.base; // valor fijo, no se multiplica por cartones
+    } catch (e) { return 0; }
+  }
+  window.calculateRoomBonus = calculateRoomBonus;
+
+  // Acredita el Bono de Sala de verdad (una sola vez, antes de que corra el
+  // resto del flujo de victoria), y lo deja guardado para mostrarlo en el popup.
+  if (typeof window.endRound === 'function' && !window._mhRoomBonusAwardWired) {
+    const originalEndRound = window.endRound;
+    window.endRound = function (won) {
+      window._mhLastRoomBonus = 0;
+      if (won === true && typeof state !== 'undefined' && state) {
+        const bonusGold = calculateRoomBonus();
+        if (bonusGold > 0) {
+          state.gold = (state.gold || 0) + bonusGold;
+          if (typeof saveState === 'function') saveState();
+          window._mhLastRoomBonus = bonusGold;
+        }
+      }
+      return originalEndRound.apply(this, arguments);
+    };
+    window._mhRoomBonusAwardWired = true;
+  }
+
   if (typeof window.openWinPopup === 'function' && !window._mhWinBreakdownWired) {
     const originalOpenWinPopup = window.openWinPopup;
     window.openWinPopup = function (info) {
       info = info || {};
       const result = originalOpenWinPopup(info);
       try {
-        const totalReward = info.gold || 0;
+        const gameReward = info.gold || 0;
         const roomBase = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.baseWinReward) || 0;
         const cardsPlayed = (typeof playerCardData !== 'undefined' && playerCardData && playerCardData.length)
           || (typeof chosenCardCount !== 'undefined' ? chosenCardCount : 1);
         const patternMult = (typeof roundWinPattern !== 'undefined' && roundWinPattern && roundWinPattern.mult) || 1;
 
         let basePrize = Math.round(roomBase * cardsPlayed * patternMult);
-        if (!(basePrize > 0) || basePrize > totalReward) basePrize = totalReward;
-        const bonus = Math.max(0, totalReward - basePrize);
+        if (!(basePrize > 0) || basePrize > gameReward) basePrize = gameReward;
+        const bonusMultis = Math.max(0, gameReward - basePrize);
+        const roomBonus = (typeof window._mhLastRoomBonus === 'number') ? window._mhLastRoomBonus : 0;
+        const total = gameReward + roomBonus;
+
+        // Actualiza el número grande del popup para que refleje el total real (incluye Bono de Sala)
+        const goldEl = document.getElementById('win-popup-gold');
+        if (goldEl) goldEl.innerText = '+' + an(total);
 
         const extraEl = document.getElementById('win-popup-extra');
         if (extraEl && extraEl.parentElement) {
@@ -1230,11 +1272,11 @@
             box.className = 'mh-win-bonus-box';
             extraEl.insertAdjacentElement('afterend', box);
           }
-          box.innerHTML = bonus > 0
-            ? `<div class="mh-win-row"><span>🎯 Premio base:</span><span>🪙 ${an(basePrize)}</span></div>
-               <div class="mh-win-row bonus"><span>🎁 Bonus:</span><span>+🪙 ${an(bonus)}</span></div>
-               <div class="mh-win-row total"><span>💰 Total:</span><span>🪙 ${an(totalReward)}</span></div>`
-            : '';
+          let rows = `<div class="mh-win-row"><span>🎯 Premio base:</span><span>🪙 ${an(basePrize)}</span></div>`;
+          if (bonusMultis > 0) rows += `<div class="mh-win-row bonus"><span>🎁 Bonus (VIP/apuesta/mascota):</span><span>+🪙 ${an(bonusMultis)}</span></div>`;
+          if (roomBonus > 0) rows += `<div class="mh-win-row sala"><span>🏛️ Bono de Sala:</span><span>+🪙 ${an(roomBonus)}</span></div>`;
+          rows += `<div class="mh-win-row total"><span>💰 Total:</span><span>🪙 ${an(total)}</span></div>`;
+          box.innerHTML = rows;
         }
       } catch (e) {}
       return result;
