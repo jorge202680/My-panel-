@@ -2826,7 +2826,22 @@
        tarjeta terminaba más alta que la pantalla y se cortaba abajo).
        Se le pone un máximo de ancho fijo para que no crezca de más,
        juegues con 1 o con 2. */
-    #active-game-area .cards-container .bingo-card{ flex:0 1 260px !important; max-width:260px !important; min-width:0 !important; }
+    #active-game-area .cards-container .bingo-card{ flex:0 1 260px !important; max-width:260px !important; width:260px !important; min-width:0 !important; box-sizing:border-box !important; }
+    /* 🩹 FIX 2: lo de arriba no alcanzaba con 1 sola tarjeta porque el
+       juego recalcula el tamaño de la GRILLA interna (.bingo-grid) y de
+       cada celda (.b-cell) en píxeles fijos según el ancho disponible
+       del contenedor — y como con 1 tarjeta ese ancho es mayor, calcula
+       celdas más grandes y la tarjeta termina siendo más ancha que los
+       260px de arriba (el max-width no puede achicar una grilla con
+       columnas en px fijos). Se fuerza la grilla a columnas flexibles
+       (1fr) y las celdas a ancho automático, para que siempre quepan
+       dentro de los 260px de la tarjeta, sea 1 o 2 tarjetas. */
+    #active-game-area .cards-container .bingo-card .bingo-grid{
+      display:grid !important; grid-template-columns:repeat(5,1fr) !important; width:100% !important;
+    }
+    #active-game-area .cards-container .bingo-card .b-cell{
+      width:auto !important; height:auto !important; aspect-ratio:1 / 1 !important;
+    }
     #active-game-area #mh-call-panel{ order:5; flex:0 0 150px !important; }
     #active-game-area .chat-panel{ order:6; flex-basis:100% !important; }
 
@@ -2859,6 +2874,46 @@
   document.head.appendChild(styleTag);
 
   const LETTER_COLORS = { B: '#e0234f', I: '#d29922', N: '#2ea043', G: '#1f8fd6', O: '#a23fd6' };
+
+  /* 🩹 FIX 3 (refuerzo por JS): si el juego original setea el ancho de
+     .bingo-card / .bingo-grid / .b-cell por JS con prioridad "important"
+     directo en el atributo style (style.setProperty(..., 'important')),
+     eso le gana a nuestro <style> aunque tenga !important. Por eso además
+     se re-aplican estos valores por JS cada vez que el DOM de las
+     tarjetas cambia, así siempre quedan pisados los de arriba. */
+  function forceCardSizing() {
+    document.querySelectorAll('#active-game-area .cards-container .bingo-card').forEach(card => {
+      card.style.setProperty('max-width', '260px', 'important');
+      card.style.setProperty('width', '260px', 'important');
+      card.style.setProperty('flex', '0 1 260px', 'important');
+      const grid = card.querySelector('.bingo-grid');
+      if (grid) {
+        grid.style.setProperty('grid-template-columns', 'repeat(5, 1fr)', 'important');
+        grid.style.setProperty('width', '100%', 'important');
+      }
+      card.querySelectorAll('.b-cell').forEach(cell => {
+        cell.style.setProperty('width', 'auto', 'important');
+        cell.style.setProperty('height', 'auto', 'important');
+      });
+    });
+  }
+
+  if (!window._mhCardSizingObserverWired) {
+    window._mhCardSizingObserverWired = true;
+    const cardObserver = new MutationObserver(() => forceCardSizing());
+    const wireCardObserver = () => {
+      const container = document.querySelector('#active-game-area .cards-container');
+      if (!container) return;
+      cardObserver.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+      forceCardSizing();
+    };
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wireCardObserver);
+    } else {
+      wireCardObserver();
+    }
+    setTimeout(wireCardObserver, 800);
+  }
 
   function ensurePanels() {
     const area = document.getElementById('active-game-area');
@@ -2899,6 +2954,7 @@
   function refreshCallPanel() {
     try {
       ensurePanels();
+      forceCardSizing();
       if (typeof drawnNumbers === 'undefined') return;
       const drawn = drawnNumbers || [];
       const remaining = Math.max(0, 75 - drawn.length);
