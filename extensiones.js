@@ -2509,7 +2509,7 @@
   const css = `
     .event-fab{ top:4px !important; bottom:auto !important; left:4px !important; width:34px !important; height:34px !important; font-size:15px !important; }
     .admin-fab{ top:4px !important; bottom:auto !important; left:44px !important; width:28px !important; height:28px !important; font-size:13px !important; }
-    #neon-aura-fab{ top:4px !important; bottom:auto !important; right:4px !important; width:34px !important; height:34px !important; font-size:15px !important; }
+    #neon-aura-fab{ top:-9999px !important; bottom:auto !important; right:auto !important; left:-9999px !important; width:32px !important; height:32px !important; font-size:14px !important; }
 
     body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .event-fab,
     body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .admin-fab,
@@ -2523,6 +2523,25 @@
 
   const HIDE_FABS_SCREENS = ['game-screen', 'mascota-screen', 'isla-screen', 'pet-battle-screen'];
 
+  /* La estrella (neon-aura-fab) sólo debe existir pegada debajo del
+     pill "VIP" (#display-user) de Inicio. Se calcula su posición
+     real con getBoundingClientRect en vez de un valor fijo, para que
+     no dependa de cuánto mida la pantalla ni se corra a otro lado. */
+  function positionNeonFab() {
+    try {
+      const badge = document.getElementById('display-user');
+      const fab = document.getElementById('neon-aura-fab');
+      const main = document.getElementById('main-screen');
+      if (!badge || !fab || !main || !main.classList.contains('active')) return;
+      const r = badge.getBoundingClientRect();
+      if (!r.width && !r.height) return;
+      const w = fab.offsetWidth || 32;
+      fab.style.setProperty('top', (r.bottom + 6) + 'px', 'important');
+      fab.style.setProperty('left', (r.right - w) + 'px', 'important');
+      fab.style.setProperty('right', 'auto', 'important');
+    } catch (e) {}
+  }
+
   if (typeof window.goToScreen === 'function' && !window._mhFabVisibilityWired) {
     const original = window.goToScreen;
     window.goToScreen = function (screenId, isReplace) {
@@ -2530,11 +2549,25 @@
       try {
         document.body.classList.toggle('mh-hide-fabs', HIDE_FABS_SCREENS.includes(screenId));
       } catch (e) {}
+      setTimeout(positionNeonFab, 60);
       return r;
     };
     window._mhFabVisibilityWired = true;
   }
+
+  window.addEventListener('resize', positionNeonFab);
+  window.addEventListener('orientationchange', function () { setTimeout(positionNeonFab, 200); });
+  if (!window._mhNeonFabLoopWired) {
+    setInterval(positionNeonFab, 1200);
+    window._mhNeonFabLoopWired = true;
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', positionNeonFab);
+  } else {
+    positionNeonFab();
+  }
 })();
+
 
 
 /* ============================================================
