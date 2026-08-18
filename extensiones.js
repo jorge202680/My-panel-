@@ -707,6 +707,34 @@
         background:rgba(0,0,0,.25); border-radius:999px; padding:2px 8px;
       }
       #mh-round-timeout-timer.warn{ background:linear-gradient(180deg,#dc2626,#7f1d1d); border-color:#fca5a5; animation: mhCardBtnPulse 1s ease-in-out infinite; }
+
+      /* Popup de "nadie ganó" — mismo lenguaje visual que el popup de
+         victoria del juego (tarjeta clara, redondeada), pero compacto para
+         que nunca se salga de la pantalla. */
+      #mh-nowin-overlay{
+        position:fixed; inset:0; z-index:99998;
+        display:none; align-items:center; justify-content:center;
+        background:rgba(0,0,0,.65); padding:16px; box-sizing:border-box;
+      }
+      #mh-nowin-overlay.active{ display:flex; }
+      .mh-nowin-card{
+        width:min(94vw,420px); max-height:92vh; overflow-y:auto; box-sizing:border-box;
+        background:linear-gradient(180deg,#fff6dc,#ffe9ad);
+        border-radius:18px; padding:18px 20px; text-align:center;
+        box-shadow:0 12px 40px rgba(0,0,0,.5);
+        color:#5c4200;
+      }
+      .mh-nowin-card h2{ margin:0 0 4px; font-size:19px; font-weight:900; color:#7a4a06; }
+      .mh-nowin-card .mh-nowin-sub{ font-size:11.5px; color:#8a6a2e; font-weight:700; margin-bottom:10px; }
+      .mh-nowin-icon{ font-size:40px; margin:4px 0 8px; }
+      .mh-nowin-card .mh-win-bonus-box{ margin-top:6px; }
+      .mh-nowin-btn{
+        margin-top:14px; width:100%; padding:12px; border:none; border-radius:12px;
+        background:linear-gradient(180deg,#2fae54,#1d7a3a); color:#fff;
+        font-weight:900; font-size:14px; letter-spacing:.03em; cursor:pointer;
+        box-shadow:0 3px 0 #12522a;
+      }
+      .mh-nowin-btn:active{ transform:translateY(1px); box-shadow:0 2px 0 #12522a; }
     `;
     const styleTag = document.createElement('style');
     styleTag.textContent = css;
@@ -816,16 +844,51 @@
         if (typeof saveState === 'function') saveState();
         if (typeof refreshAllUI === 'function') refreshAllUI();
       }
-      if (typeof showToast === 'function') {
-        const msg = motivo === 'tiempo'
-          ? `⏱️ Se acabaron los 45s y nadie completó el cartón. Devolución: 🪙 ${refund.toLocaleString('es')} (10% de lo gastado)`
-          : `Nadie completó el cartón. Devolución: 🪙 ${refund.toLocaleString('es')} (10% de lo gastado)`;
-        showToast(msg);
-      }
+
+      showNoWinnerPopup(motivo, costo, refund);
 
       window._mhBingoManualCall = true;
       try { endRound(false); } catch (e) {}
       window._mhBingoManualCall = false;
+    }
+
+    const an2 = (n) => Math.round(n || 0).toLocaleString('es');
+
+    function ensureNoWinOverlay() {
+      let ov = document.getElementById('mh-nowin-overlay');
+      if (ov) return ov;
+      ov = document.createElement('div');
+      ov.id = 'mh-nowin-overlay';
+      ov.innerHTML = `
+        <div class="mh-nowin-card">
+          <div class="mh-nowin-icon">⏱️</div>
+          <h2 id="mh-nowin-title">Nadie completó el cartón</h2>
+          <div class="mh-nowin-sub" id="mh-nowin-sub"></div>
+          <div class="mh-win-bonus-box" id="mh-nowin-box"></div>
+          <button type="button" class="mh-nowin-btn" id="mh-nowin-close-btn">Entendido</button>
+        </div>`;
+      document.body.appendChild(ov);
+      ov.querySelector('#mh-nowin-close-btn').onclick = function () {
+        ov.classList.remove('active');
+      };
+      return ov;
+    }
+
+    function showNoWinnerPopup(motivo, costo, refund) {
+      try {
+        const ov = ensureNoWinOverlay();
+        const subEl = ov.querySelector('#mh-nowin-sub');
+        subEl.textContent = motivo === 'tiempo'
+          ? 'Se acabaron los 45 segundos sin ningún BINGO.'
+          : 'Se acabaron las bolas sin ningún BINGO.';
+        const box = ov.querySelector('#mh-nowin-box');
+        box.innerHTML = `
+          <div class="mh-win-row"><span>💸 Gastado en la partida:</span><span>🪙 ${an2(costo)}</span></div>
+          <div class="mh-win-row bonus"><span>↩️ Devolución (10%):</span><span>+🪙 ${an2(refund)}</span></div>
+          <div class="mh-win-row total"><span>💰 Total devuelto:</span><span>🪙 ${an2(refund)}</span></div>`;
+        ov.classList.add('active');
+        if (window._mhFitPopupCardToScreen) window._mhFitPopupCardToScreen(box);
+      } catch (e) {}
     }
 
     function startRoundTimeoutTimer() {
@@ -1268,15 +1331,20 @@
 (function () {
   const css = `
     .mh-win-bonus-box{
-      margin-top:12px; padding:10px 12px; border-radius:12px;
+      margin-top:8px; padding:7px 10px; border-radius:10px;
       background:rgba(35,134,54,.1); border:1px solid rgba(35,134,54,.35);
       text-align:left;
     }
-    .mh-win-row{ display:flex; justify-content:space-between; font-size:12px; font-weight:800; margin:3px 0; color:#5c4200; }
+    .mh-win-row{ display:flex; justify-content:space-between; font-size:10.5px; font-weight:800; margin:2px 0; color:#5c4200; line-height:1.25; }
     .mh-win-row.bonus span:last-child{ color:#1d7a3a; }
     .mh-win-row.sala span:last-child{ color:#8a5a00; }
-    .mh-win-row.total{ border-top:1px solid rgba(90,60,0,.25); padding-top:6px; margin-top:6px; font-size:13px; }
-    .mh-win-row.total span:last-child{ color:#8a5a00; font-size:15px; }
+    .mh-win-row.total{ border-top:1px solid rgba(90,60,0,.25); padding-top:4px; margin-top:4px; font-size:11.5px; }
+    .mh-win-row.total span:last-child{ color:#8a5a00; font-size:13px; }
+    /* La tarjeta del popup se estaba saliendo por arriba de la pantalla en
+       celulares/horizontal por el contenido extra que agregamos — se limita
+       su alto máximo y se deja con scroll interno propio, sin tocar el
+       diseño original del juego. */
+    #win-popup-gold, #win-popup-extra{ margin-top:2px !important; margin-bottom:2px !important; }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
@@ -1327,17 +1395,19 @@
         }
         let total = gameReward + roomBonus;
 
-        // 🛡️ GARANTÍA MÍNIMA: si ganaste, el total pagado tiene que ser
-        // MAYOR a lo que gastaste para entrar a esta partida (cartones +
-        // apuesta). Si el patrón con el que ganaste vale tan poco que el
-        // premio queda por debajo del costo, se completa con oro real
-        // hasta superarlo — no es solo un número distinto en pantalla.
+        // 🛡️ GARANTÍA MÍNIMA: si ganaste, el total pagado nunca puede ser
+        // MENOR a lo que gastaste para entrar a esta partida (cartones +
+        // apuesta). El Bonus (VIP/apuesta/mascota) es un premio EXTRA
+        // aparte, no cuenta para calcular el piso: la garantía solo mira
+        // Premio base + Bono de Sala. Así, el Bonus SIEMPRE se suma
+        // completo encima del resultado, gane o no la garantía.
         const costoPartida = (typeof window._mhLastGameCost === 'number' && window._mhLastGameCost > 0)
           ? window._mhLastGameCost
           : (window._mhComputeTotalCost ? window._mhComputeTotalCost() : null);
+        const floorAmount = basePrize + roomBonus; // sin el Bonus extra
         let guaranteeTopUp = 0;
-        if (typeof costoPartida === 'number' && costoPartida > 0 && total <= costoPartida) {
-          guaranteeTopUp = (costoPartida - total) + Math.max(1, Math.round(costoPartida * 0.10));
+        if (typeof costoPartida === 'number' && costoPartida > 0 && floorAmount < costoPartida) {
+          guaranteeTopUp = costoPartida - floorAmount;
           if (typeof state !== 'undefined' && state) {
             state.gold = (state.gold || 0) + guaranteeTopUp;
             if (typeof saveState === 'function') saveState();
@@ -1371,12 +1441,36 @@
           }
           rows += `<div class="mh-win-row total"><span>💰 Total:</span><span>🪙 ${an(total)}</span></div>`;
           box.innerHTML = rows;
+          fitPopupCardToScreen(box);
         }
       } catch (e) {}
       return result;
     };
     window._mhWinBreakdownWired = true;
   }
+
+  // La tarjeta del popup se salía por arriba de la pantalla en celulares u
+  // horizontal porque el contenido que agregamos la hacía más alta que el
+  // viewport. Busca la "tarjeta" real (el recuadro angosto, no el overlay
+  // de fondo que ocupa toda la pantalla) y le pone un alto máximo con
+  // scroll propio, sin tocar nada del diseño original si no hace falta.
+  function fitPopupCardToScreen(fromEl) {
+    try {
+      let el = fromEl;
+      for (let i = 0; i < 8 && el; i++) {
+        el = el.parentElement;
+        if (!el || el === document.body) break;
+        const rect = el.getBoundingClientRect();
+        if (rect.width > 0 && rect.width < window.innerWidth * 0.96) {
+          el.style.maxHeight = '92vh';
+          el.style.overflowY = 'auto';
+          el.style.boxSizing = 'border-box';
+          break;
+        }
+      }
+    } catch (e) {}
+  }
+  window._mhFitPopupCardToScreen = fitPopupCardToScreen;
 })();
 
 
@@ -2094,11 +2188,11 @@
       // el premio real nunca queda por debajo de lo que gastás — así que
       // el número de "mínimo" que se muestra acá ya lo tiene en cuenta.
       const costoEstimado = window._mhComputeTotalCost ? window._mhComputeTotalCost() : null;
-      if (typeof costoEstimado === 'number' && costoEstimado > 0 && minReward <= costoEstimado) {
-        minReward = costoEstimado + Math.max(1, Math.round(costoEstimado * 0.10));
+      if (typeof costoEstimado === 'number' && costoEstimado > 0 && minReward < costoEstimado) {
+        minReward = costoEstimado;
       }
       rewardEl.innerText = `🪙 ${minReward.toLocaleString('es')} – ${maxReward.toLocaleString('es')}`;
-      rewardEl.title = 'Si ganás, el premio siempre queda por encima de lo que gastaste en esta partida (Garantía Mínima incluida)';
+      rewardEl.title = 'Si ganás, el premio real nunca queda por debajo de lo que gastaste en esta partida (Garantía Mínima incluida)';
     } catch (e) {}
   }
 
