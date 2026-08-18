@@ -2507,9 +2507,9 @@
    ============================================================ */
 (function () {
   const css = `
-    .event-fab{ top:4px !important; bottom:auto !important; left:4px !important; width:34px !important; height:34px !important; font-size:15px !important; }
-    .admin-fab{ top:4px !important; bottom:auto !important; left:44px !important; width:28px !important; height:28px !important; font-size:13px !important; }
-    #neon-aura-fab{ top:-9999px !important; bottom:auto !important; right:auto !important; left:-9999px !important; width:32px !important; height:32px !important; font-size:14px !important; }
+    .event-fab{ top:-9999px !important; bottom:auto !important; left:-9999px !important; right:auto !important; width:30px !important; height:30px !important; font-size:14px !important; }
+    .admin-fab{ top:-9999px !important; bottom:auto !important; left:-9999px !important; right:auto !important; width:26px !important; height:26px !important; font-size:12px !important; }
+    #neon-aura-fab{ top:-9999px !important; bottom:auto !important; right:auto !important; left:-9999px !important; width:30px !important; height:30px !important; font-size:14px !important; }
 
     body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .event-fab,
     body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .admin-fab,
@@ -2523,22 +2523,43 @@
 
   const HIDE_FABS_SCREENS = ['game-screen', 'mascota-screen', 'isla-screen', 'pet-battle-screen'];
 
-  /* La estrella (neon-aura-fab) sólo debe existir pegada debajo del
-     pill "VIP" (#display-user) de Inicio. Se calcula su posición
-     real con getBoundingClientRect en vez de un valor fijo, para que
-     no dependa de cuánto mida la pantalla ni se corra a otro lado. */
-  function positionNeonFab() {
+  /* Los 3 botones (cohete, llave y estrella) van juntos, en fila,
+     pegados debajo del pill "VIP" (#display-user) de Inicio. Se
+     calcula la posición real con getBoundingClientRect en vez de un
+     valor fijo, para que no dependa del tamaño de pantalla ni se
+     corran a otro lado. */
+  function positionFabGroup() {
     try {
       const badge = document.getElementById('display-user');
-      const fab = document.getElementById('neon-aura-fab');
+      const star = document.getElementById('neon-aura-fab');
+      const rocket = document.querySelector('.event-fab');
+      const wrench = document.querySelector('.admin-fab');
       const main = document.getElementById('main-screen');
-      if (!badge || !fab || !main || !main.classList.contains('active')) return;
+      if (!badge || !star || !main || !main.classList.contains('active')) return;
       const r = badge.getBoundingClientRect();
       if (!r.width && !r.height) return;
-      const w = fab.offsetWidth || 32;
-      fab.style.setProperty('top', (r.bottom + 6) + 'px', 'important');
-      fab.style.setProperty('left', (r.right - w) + 'px', 'important');
-      fab.style.setProperty('right', 'auto', 'important');
+      const top = r.bottom + 6;
+      const starW = star.offsetWidth || 30;
+      const gap = 6;
+      star.style.setProperty('top', top + 'px', 'important');
+      star.style.setProperty('left', (r.right - starW) + 'px', 'important');
+      star.style.setProperty('right', 'auto', 'important');
+      let cursor = r.right - starW - gap;
+      if (rocket) {
+        const w = rocket.offsetWidth || 30;
+        cursor -= w;
+        rocket.style.setProperty('top', top + 'px', 'important');
+        rocket.style.setProperty('left', cursor + 'px', 'important');
+        rocket.style.setProperty('right', 'auto', 'important');
+        cursor -= gap;
+      }
+      if (wrench) {
+        const w = wrench.offsetWidth || 26;
+        cursor -= w;
+        wrench.style.setProperty('top', top + 'px', 'important');
+        wrench.style.setProperty('left', cursor + 'px', 'important');
+        wrench.style.setProperty('right', 'auto', 'important');
+      }
     } catch (e) {}
   }
 
@@ -2549,22 +2570,22 @@
       try {
         document.body.classList.toggle('mh-hide-fabs', HIDE_FABS_SCREENS.includes(screenId));
       } catch (e) {}
-      setTimeout(positionNeonFab, 60);
+      setTimeout(positionFabGroup, 60);
       return r;
     };
     window._mhFabVisibilityWired = true;
   }
 
-  window.addEventListener('resize', positionNeonFab);
-  window.addEventListener('orientationchange', function () { setTimeout(positionNeonFab, 200); });
+  window.addEventListener('resize', positionFabGroup);
+  window.addEventListener('orientationchange', function () { setTimeout(positionFabGroup, 200); });
   if (!window._mhNeonFabLoopWired) {
-    setInterval(positionNeonFab, 1200);
+    setInterval(positionFabGroup, 1200);
     window._mhNeonFabLoopWired = true;
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', positionNeonFab);
+    document.addEventListener('DOMContentLoaded', positionFabGroup);
   } else {
-    positionNeonFab();
+    positionFabGroup();
   }
 })();
 
@@ -2738,5 +2759,141 @@
       return r;
     };
     window._mhXPChipsWired = true;
+  }
+})();
+
+
+/* ============================================================
+   PANTALLA DE JUEGO (Bingo en vivo): máximo bajado de 16 a 2
+   cartones (cambio real en index.html). Aquí solo el layout:
+   - Los cartones (ahora máx. 2) se muestran uno al lado del otro
+     en vez de apilados, y se oculta la tira de pestañas (ya no
+     hace falta con solo 2).
+   - Se agrega una columna de bolas recientes a la izquierda del
+     cartón (la actual grande arriba + últimas 4 abajo) y un panel
+     a la derecha con "Bolas restantes" + tablero de números
+     cantados (estilo cartón de control), usando los datos reales
+     del sorteo (drawnNumbers / letterForNumber).
+   Nota: esta app declara el Bingo automático (no hay botón manual
+   "BINGO!"/"FAST DAUB" como en la imagen de referencia — acá el
+   cartón se marca y valida solo), así que esos dos botones no se
+   agregan para no simular una acción que no existe.
+   ============================================================ */
+(function () {
+  const css = `
+    #active-game-area{ display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important; gap:6px !important; }
+    #active-game-area .battle-status{ order:1; flex-basis:100% !important; }
+    #active-game-area .tombola-wrap{ display:none !important; }
+    #active-game-area .ball-callout-container{ order:2; flex:0 0 78px !important; margin:0 !important; }
+    #active-game-area .card-tabs-strip{ display:none !important; }
+    #active-game-area #mh-ball-history-col{ order:3; flex:0 0 60px !important; display:flex; flex-direction:column; gap:5px; align-items:center; padding-top:4px; }
+    #active-game-area .cards-container{ order:4; display:flex !important; flex-direction:row !important; flex:1 1 260px !important; gap:6px !important; overflow-x:auto !important; }
+    #active-game-area .cards-container .bingo-card{ flex:1 1 0 !important; min-width:0 !important; }
+    #active-game-area #mh-call-panel{ order:5; flex:0 0 150px !important; }
+    #active-game-area .chat-panel{ order:6; flex-basis:100% !important; }
+
+    #mh-ball-history-col .mh-hist-ball{
+      width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+      font-size:9.5px; font-weight:900; color:#fff; border:2px solid rgba(255,255,255,.5);
+      box-shadow:0 2px 5px rgba(0,0,0,.4);
+    }
+    #mh-call-panel{
+      background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:10px;
+      padding:6px; font-size:8.5px; box-sizing:border-box;
+    }
+    #mh-call-panel .mh-remaining{
+      text-align:center; font-weight:900; font-size:10.5px; color:#ffd866; margin-bottom:5px;
+    }
+    #mh-call-grid{ display:grid; grid-template-columns:repeat(5,1fr); gap:2px; }
+    #mh-call-grid .mh-cg-head{ text-align:center; font-weight:900; font-size:8px; border-radius:3px; color:#fff; padding:1px 0; }
+    #mh-call-grid .mh-cg-cell{
+      text-align:center; font-size:7px; padding:2px 0; border-radius:3px; color:#8b949e; background:rgba(255,255,255,.04);
+    }
+    #mh-call-grid .mh-cg-cell.called{ background:#d29922; color:#1a1200; font-weight:900; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  const LETTER_COLORS = { B: '#e0234f', I: '#d29922', N: '#2ea043', G: '#1f8fd6', O: '#a23fd6' };
+
+  function ensurePanels() {
+    const area = document.getElementById('active-game-area');
+    if (!area) return;
+    if (!document.getElementById('mh-ball-history-col')) {
+      const col = document.createElement('div');
+      col.id = 'mh-ball-history-col';
+      area.appendChild(col);
+    }
+    if (!document.getElementById('mh-call-panel')) {
+      const panel = document.createElement('div');
+      panel.id = 'mh-call-panel';
+      panel.innerHTML =
+        '<div class="mh-remaining" id="mh-remaining-text">75 BOLAS RESTANTES</div>' +
+        '<div id="mh-call-grid"></div>';
+      area.appendChild(panel);
+      const grid = panel.querySelector('#mh-call-grid');
+      ['B', 'I', 'N', 'G', 'O'].forEach(l => {
+        const head = document.createElement('div');
+        head.className = 'mh-cg-head';
+        head.style.background = LETTER_COLORS[l];
+        head.textContent = l;
+        grid.appendChild(head);
+      });
+      for (let row = 0; row < 15; row++) {
+        [1, 16, 31, 46, 61].forEach(base => {
+          const n = base + row;
+          const cell = document.createElement('div');
+          cell.className = 'mh-cg-cell';
+          cell.id = 'mh-cg-' + n;
+          cell.textContent = n;
+          grid.appendChild(cell);
+        });
+      }
+    }
+  }
+
+  function refreshCallPanel() {
+    try {
+      ensurePanels();
+      if (typeof window.drawnNumbers === 'undefined') return;
+      const drawn = window.drawnNumbers || [];
+      const remaining = Math.max(0, 75 - drawn.length);
+      const rtext = document.getElementById('mh-remaining-text');
+      if (rtext) rtext.textContent = remaining + ' BOLAS RESTANTES';
+      document.querySelectorAll('#mh-call-grid .mh-cg-cell.called').forEach(c => c.classList.remove('called'));
+      drawn.forEach(n => {
+        const cell = document.getElementById('mh-cg-' + n);
+        if (cell) cell.classList.add('called');
+      });
+      const col = document.getElementById('mh-ball-history-col');
+      if (col && typeof window.letterForNumber === 'function') {
+        const last = drawn.slice(-5).reverse();
+        col.innerHTML = last.map((n, i) => {
+          const l = window.letterForNumber(n);
+          const size = i === 0 ? 38 : 26;
+          const fs = i === 0 ? 12 : 9;
+          return '<div class="mh-hist-ball" style="width:' + size + 'px;height:' + size + 'px;font-size:' + fs + 'px;background:' + LETTER_COLORS[l] + ';">' + l + n + '</div>';
+        }).join('');
+      }
+    } catch (e) {}
+  }
+
+  ['handleBallDraw', 'generateAllCards', 'startBingoGame'].forEach(fnName => {
+    if (typeof window[fnName] === 'function' && !window['_mhCallPanelWired_' + fnName]) {
+      const original = window[fnName];
+      window[fnName] = function () {
+        const r = original.apply(this, arguments);
+        setTimeout(refreshCallPanel, 30);
+        return r;
+      };
+      window['_mhCallPanelWired_' + fnName] = true;
+    }
+  });
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', refreshCallPanel);
+  } else {
+    refreshCallPanel();
   }
 })();
