@@ -2339,123 +2339,148 @@
   }
 })();
 
+
 /* ============================================================
-   LOBBY DE CARTONES ("Selecciona tus Cartones") — BOTÓN
-   "VER TODO SIN DESLIZAR"
+   REDISEÑO PERMANENTE DEL LOBBY ("Selecciona tus Cartones")
+   EN 2 COLUMNAS, PARA QUE ENTRE TODO EN PANTALLA SIN DESLIZAR
    ------------------------------------------------------------
-   Agrega un botón fijo arriba del lobby. Al tocarlo, achica todo
-   el contenido en conjunto (proporcional, con "zoom") hasta que
-   quepa completo en la pantalla sin necesitar scroll. Se puede
-   volver a tocar para regresar al tamaño normal. Mientras está
-   activada, se recalcula solo si cambiás de cartones/apuesta/etc,
-   para que nunca quede algo cortado.
+   No se recrea nada de cero (para no romper funciones del
+   juego): se MUEVEN los mismos elementos reales (cartones,
+   velocidad, apuesta, costo, botón jugar, etc.) a una nueva
+   distribución en 2 columnas + una barra inferior, y se ocultan
+   sólo los textos descriptivos largos que no son necesarios
+   para jugar. Como son los mismos elementos (mismos id/onclick),
+   todo sigue funcionando igual.
    ============================================================ */
 (function () {
   const css = `
-    #mh-lobby-fit-btn{
-      display:block; width:100%; margin:0 0 8px; padding:8px 10px; border-radius:10px;
-      border:1px solid #58a6ff; background:#132030; color:#79c0ff; font-weight:800; font-size:12px;
-      cursor:pointer; text-align:center;
+    #lobby-modal.mh-lobby-redesign{ padding:10px 12px !important; }
+    #lobby-modal.mh-lobby-redesign > p,
+    #lobby-modal.mh-lobby-redesign #jackpot-banner,
+    #lobby-modal.mh-lobby-redesign #mh-cost-banner,
+    #lobby-modal.mh-lobby-redesign .quick-bet-slider-row{ display:none !important; }
+    #lobby-modal.mh-lobby-redesign h3{ margin:0 0 8px !important; font-size:15px !important; }
+
+    .mh-lobby-cols{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .mh-lobby-col{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:8px; }
+    .mh-lobby-col .option-group{ margin:8px 0 0 !important; }
+    .mh-lobby-col .option-group:first-child{ margin-top:0 !important; }
+    .mh-lobby-col .option-group-label{ font-size:10.5px !important; margin-bottom:4px !important; }
+    .mh-lobby-col .option-row{ gap:5px !important; }
+    .mh-lobby-col .opt-chip{ padding:6px 3px !important; font-size:10px !important; }
+
+    .mh-lobby-col .cards-options-grid:not(#bet-tier-options){ gap:6px !important; margin:0 !important; }
+    .mh-lobby-col .cards-options-grid:not(#bet-tier-options) .card-opt-btn{ padding:10px 4px !important; font-size:13px !important; font-weight:800; }
+    .mh-lobby-col .cards-options-grid:not(#bet-tier-options) .card-opt-btn span{ display:none !important; }
+    .mh-lobby-col .quick-bet-panel{ padding:0 !important; margin:6px 0 0 !important; }
+    .mh-lobby-col .quick-bet-actions{ display:grid !important; grid-template-columns:1fr 1fr !important; gap:6px !important; margin-top:0 !important; }
+    .mh-lobby-col .quick-bet-actions button{ padding:8px 3px !important; font-size:9.5px !important; }
+
+    #bet-tier-options.mh-compact-tiers{ grid-template-columns:repeat(2,1fr) !important; gap:6px !important; }
+    #bet-tier-options.mh-compact-tiers .card-opt-btn{ padding:6px 4px !important; font-size:10.5px !important; }
+    #bet-tier-options.mh-compact-tiers .card-opt-btn span{ display:block !important; font-size:8.3px !important; margin-top:2px !important; opacity:.8; }
+
+    .mh-lobby-highlight{
+      margin-top:8px !important; padding:8px 10px !important; border-radius:10px !important;
+      background:linear-gradient(90deg,#ff4d4d,#ff9966) !important; border:none !important; color:#fff !important;
+      font-size:10.5px !important; font-weight:800 !important; text-align:center !important;
     }
-    #mh-lobby-fit-btn.active{ background:#1f6feb; color:#fff; border-color:#79c0ff; }
-    #lobby-modal.mh-compact{ padding:10px 12px !important; margin-bottom:8px !important; }
-    #lobby-modal.mh-compact h3{ margin:2px 0 4px !important; font-size:15px !important; }
-    #lobby-modal.mh-compact > p{ margin:2px 0 !important; font-size:10.5px !important; line-height:1.25 !important; }
-    #lobby-modal.mh-compact .jackpot-banner{ padding:6px 8px !important; font-size:11px !important; margin-bottom:6px !important; }
-    #lobby-modal.mh-compact .cards-options-grid{ gap:6px !important; margin:8px 0 !important; }
-    #lobby-modal.mh-compact .card-opt-btn{ padding:8px 4px !important; font-size:12px !important; }
-    #lobby-modal.mh-compact .card-opt-btn span{ font-size:9px !important; margin-top:2px !important; }
-    #lobby-modal.mh-compact .quick-bet-panel{ padding:8px !important; margin:8px 0 !important; }
-    #lobby-modal.mh-compact .quick-bet-slider-label{ min-width:64px !important; font-size:10.5px !important; padding:4px !important; }
-    #lobby-modal.mh-compact .quick-bet-actions{ margin-top:6px !important; gap:6px !important; }
-    #lobby-modal.mh-compact .quick-bet-actions button{ padding:7px 4px !important; font-size:10.5px !important; }
-    #lobby-modal.mh-compact .risk-return-box{ gap:6px !important; margin:8px 0 !important; }
-    #lobby-modal.mh-compact .risk-return-item{ padding:6px !important; }
-    #lobby-modal.mh-compact .risk-return-label{ font-size:9.5px !important; }
-    #lobby-modal.mh-compact .risk-return-value{ font-size:14px !important; }
-    #lobby-modal.mh-compact .option-group{ margin:8px 0 !important; }
-    #lobby-modal.mh-compact .option-group-label{ font-size:10px !important; margin-bottom:4px !important; }
-    #lobby-modal.mh-compact .option-row{ gap:6px !important; }
-    #lobby-modal.mh-compact .opt-chip{ padding:6px 4px !important; font-size:10.5px !important; }
-    #lobby-modal.mh-compact #bonus-summary{ font-size:10.5px !important; margin-bottom:6px !important; }
-    #lobby-modal.mh-compact .game-action-btn{ padding:10px !important; font-size:13px !important; margin-top:4px !important; }
+    .mh-lobby-highlight span.sub{ display:none !important; }
+
+    .mh-lobby-bottom{ display:flex; align-items:stretch; gap:8px; margin-top:10px; }
+    .mh-lobby-bottom #risk-return-box{ flex:1 1 auto; display:flex !important; gap:6px !important; margin:0 !important; }
+    .mh-lobby-bottom .risk-return-item{ flex:1; padding:6px !important; }
+    .mh-lobby-bottom .risk-return-label{ font-size:8.5px !important; }
+    .mh-lobby-bottom .risk-return-value{ font-size:14px !important; }
+    .mh-lobby-bottom .game-action-btn{ flex:0 0 auto; width:auto !important; padding:0 20px !important; margin:0 !important; font-size:13px !important; }
+
+    .mh-lobby-extras{ display:flex; align-items:center; gap:6px; margin-top:6px; flex-wrap:wrap; }
+    .mh-lobby-extras #mh-voice-shop-open-btn,
+    .mh-lobby-extras #mh-bt-open-btn{ font-size:9px !important; padding:4px 7px !important; margin:0 !important; flex:0 0 auto; }
+    .mh-lobby-extras #bonus-summary{ font-size:8.5px !important; margin:0 !important; flex:1 1 120px; }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
   document.head.appendChild(styleTag);
 
-  window._mhLobbyCompactOn = false;
-
-  function fitLobbyToScreen() {
+  function applyLobbyRedesign() {
     try {
       const modal = document.getElementById('lobby-modal');
-      if (!modal || modal.style.display === 'none' || !window._mhLobbyCompactOn) return;
-      modal.style.zoom = '1';
-      const topBar = document.querySelector('#game-screen .top-bar');
-      const topBarH = topBar ? topBar.getBoundingClientRect().height : 0;
-      const available = window.innerHeight - topBarH - 26; // 26px = margen de seguridad (padding del .screen)
-      const natural = modal.scrollHeight;
-      if (available > 100 && natural > available) {
-        const scale = Math.max(0.5, Math.min(1, available / natural));
-        modal.style.zoom = String(scale);
+      if (!modal) return;
+      modal.classList.add('mh-lobby-redesign');
+
+      let colsWrap = document.getElementById('mh-lobby-cols');
+      if (!colsWrap) {
+        const h3 = modal.querySelector('h3');
+        colsWrap = document.createElement('div');
+        colsWrap.id = 'mh-lobby-cols';
+        colsWrap.className = 'mh-lobby-cols';
+        const colLeft = document.createElement('div');
+        colLeft.className = 'mh-lobby-col';
+        const colRight = document.createElement('div');
+        colRight.className = 'mh-lobby-col';
+        colsWrap.appendChild(colLeft);
+        colsWrap.appendChild(colRight);
+        if (h3) h3.insertAdjacentElement('afterend', colsWrap);
+        else modal.insertBefore(colsWrap, modal.firstChild);
+
+        const cardsGrid = modal.querySelector('.cards-options-grid:not(#bet-tier-options)');
+        const quickBetPanel = modal.querySelector('.quick-bet-panel');
+        if (cardsGrid) colLeft.appendChild(cardsGrid);
+        if (quickBetPanel) colLeft.appendChild(quickBetPanel);
+
+        const speedOptions = document.getElementById('speed-options');
+        const speedGroup = speedOptions ? speedOptions.closest('.option-group') : null;
+        const betTierOptions = document.getElementById('bet-tier-options');
+        const betTierGroup = betTierOptions ? betTierOptions.closest('.option-group') : null;
+        if (speedGroup) colRight.appendChild(speedGroup);
+        if (betTierGroup) {
+          colRight.appendChild(betTierGroup);
+          if (betTierOptions) betTierOptions.classList.add('mh-compact-tiers');
+        }
+        const specialBanner = document.getElementById('mh-special-pattern-banner');
+        if (specialBanner) {
+          specialBanner.classList.add('mh-lobby-highlight');
+          colRight.appendChild(specialBanner);
+        }
+      }
+
+      let bottomWrap = document.getElementById('mh-lobby-bottom');
+      if (!bottomWrap) {
+        bottomWrap = document.createElement('div');
+        bottomWrap.id = 'mh-lobby-bottom';
+        bottomWrap.className = 'mh-lobby-bottom';
+        colsWrap.insertAdjacentElement('afterend', bottomWrap);
+        const riskBox = document.getElementById('risk-return-box');
+        const jugarBtn = modal.querySelector('.game-action-btn[onclick="startBingoGame()"]');
+        if (riskBox) bottomWrap.appendChild(riskBox);
+        if (jugarBtn) {
+          jugarBtn.innerText = '🚀 ¡Jugar!';
+          bottomWrap.appendChild(jugarBtn);
+        }
+      }
+
+      let extrasWrap = document.getElementById('mh-lobby-extras');
+      if (!extrasWrap) {
+        extrasWrap = document.createElement('div');
+        extrasWrap.id = 'mh-lobby-extras';
+        extrasWrap.className = 'mh-lobby-extras';
+        bottomWrap.insertAdjacentElement('afterend', extrasWrap);
+        ['mh-voice-shop-open-btn', 'mh-bt-open-btn', 'bonus-summary'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) extrasWrap.appendChild(el);
+        });
       }
     } catch (e) {}
   }
 
-  function toggleLobbyCompact() {
-    const modal = document.getElementById('lobby-modal');
-    const btn = document.getElementById('mh-lobby-fit-btn');
-    if (!modal || !btn) return;
-    window._mhLobbyCompactOn = !window._mhLobbyCompactOn;
-    if (window._mhLobbyCompactOn) {
-      modal.classList.add('mh-compact');
-      btn.classList.add('active');
-      btn.innerText = '↩️ Volver al tamaño normal';
-      fitLobbyToScreen();
-    } else {
-      modal.classList.remove('mh-compact');
-      modal.style.zoom = '1';
-      btn.classList.remove('active');
-      btn.innerText = '🗜️ Ver todo sin deslizar';
-    }
-  }
-  window._mhToggleLobbyCompact = toggleLobbyCompact;
-
-  function ensureFitButton() {
-    const modal = document.getElementById('lobby-modal');
-    if (!modal) return;
-    if (!document.getElementById('mh-lobby-fit-btn')) {
-      const btn = document.createElement('button');
-      btn.id = 'mh-lobby-fit-btn';
-      btn.type = 'button';
-      btn.innerText = '🗜️ Ver todo sin deslizar';
-      btn.onclick = toggleLobbyCompact;
-      modal.insertBefore(btn, modal.firstChild);
-    }
-  }
-
-  if (typeof window.openBingoLobby === 'function' && !window._mhLobbyFitWired) {
+  if (typeof window.openBingoLobby === 'function' && !window._mhLobbyRedesignWired) {
     const original = window.openBingoLobby;
     window.openBingoLobby = function () {
       const r = original.apply(this, arguments);
-      ensureFitButton();
-      requestAnimationFrame(fitLobbyToScreen);
+      applyLobbyRedesign();
       return r;
     };
-    window._mhLobbyFitWired = true;
+    window._mhLobbyRedesignWired = true;
   }
-
-  const modalEl = document.getElementById('lobby-modal');
-  if (modalEl && !window._mhLobbyObserverWired) {
-    let raf = null;
-    const observer = new MutationObserver(() => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(fitLobbyToScreen);
-    });
-    observer.observe(modalEl, { childList: true, subtree: true, attributes: true, characterData: true });
-    window._mhLobbyObserverWired = true;
-  }
-
-  window.addEventListener('resize', () => requestAnimationFrame(fitLobbyToScreen));
-  window.addEventListener('orientationchange', () => setTimeout(fitLobbyToScreen, 250));
 })();
