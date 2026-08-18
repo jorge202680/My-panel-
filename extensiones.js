@@ -1345,6 +1345,89 @@
        su alto máximo y se deja con scroll interno propio, sin tocar el
        diseño original del juego. */
     #win-popup-gold, #win-popup-extra{ margin-top:2px !important; margin-bottom:2px !important; }
+
+    /* === Rediseño "V3 Type Hero" del popup de victoria === */
+    @keyframes mhBingoPulse{0%,100%{filter:drop-shadow(0 0 6px rgba(255,215,0,.55))}50%{filter:drop-shadow(0 0 16px rgba(255,215,0,.9))}}
+    @keyframes mhStarPop{0%{transform:scale(0) rotate(-25deg);opacity:0}55%{transform:scale(1.15) rotate(6deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+    @keyframes mhCoinBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+    @keyframes mhShine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .mh-win2-wrap{ margin-top:6px; text-align:center; font-family:inherit; }
+    .mh-win2-badge{
+      display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:999px;
+      background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.15);
+      font-size:9.5px; font-weight:800; letter-spacing:.14em; color:#d7fbe8; text-transform:uppercase;
+    }
+    .mh-win2-badge .dot{ width:6px; height:6px; border-radius:50%; background:#2ecc71; }
+    .mh-win2-title{ position:relative; margin:10px 0 4px; }
+    .mh-win2-bingo-text{
+      display:inline-block; font-weight:900; font-size:34px; letter-spacing:.03em;
+      color:#ffe45a; -webkit-text-stroke:2px #3d2600;
+      text-shadow:0 3px 0 #b8860b,0 5px 0 #5c4300,0 6px 0 #000,0 10px 18px rgba(0,0,0,.7),0 0 20px rgba(255,215,0,.6);
+      animation:mhBingoPulse 2s ease-in-out infinite;
+    }
+    .mh-win2-star{ position:absolute; font-weight:900; font-size:11px; padding:3px 7px; border-radius:8px; border:2px solid #000; color:#000; animation:mhStarPop .5s ease-out both; }
+    .mh-win2-star-pow{ left:2%; top:-6px; background:#ff4d6d; transform:rotate(-14deg); animation-delay:.05s; }
+    .mh-win2-star-boom{ right:2%; top:-2px; background:#3fd0ff; transform:rotate(12deg); animation-delay:.2s; }
+    .mh-win2-star-win{ left:50%; bottom:-14px; transform:translateX(-50%) rotate(-6deg); background:#ffe45a; animation-delay:.35s; }
+    .mh-win2-sub{
+      display:inline-flex; align-items:center; gap:6px; margin-top:10px; padding:5px 12px; border-radius:999px;
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      font-size:10px; font-weight:800; letter-spacing:.1em; color:#c9c9d6; text-transform:uppercase;
+    }
+    .mh-win2-sub .dot2{ width:5px; height:5px; border-radius:50%; background:#2ecc71; }
+    .mh-win2-total-card{
+      margin-top:14px; padding:12px 14px; border-radius:18px; text-align:left; position:relative; overflow:hidden;
+      background:linear-gradient(135deg, rgba(255,196,0,.18), rgba(255,140,0,.10));
+      border:1px solid rgba(255,196,0,.35);
+    }
+    .mh-win2-total-top{ display:flex; align-items:center; gap:10px; }
+    .mh-win2-coin{ font-size:26px; animation:mhCoinBounce 1.2s ease-in-out infinite; }
+    .mh-win2-total-label{ font-size:10px; font-weight:900; letter-spacing:.12em; color:#c98a1f; }
+    .mh-win2-total-num{ font-size:26px; font-weight:900; color:#2b1900; letter-spacing:.01em; }
+    .mh-win2-slot-tag{ margin-left:auto; align-self:flex-start; font-size:8.5px; font-weight:900; letter-spacing:.14em; background:rgba(0,0,0,.35); color:#ffe45a; padding:3px 8px; border-radius:999px; }
+    .mh-win2-segments{ display:grid; grid-template-columns:repeat(6,1fr); gap:4px; margin-top:10px; }
+    .mh-win2-segments span{ height:4px; border-radius:999px; background:linear-gradient(90deg,#ffe45a,#ffb400); }
+    .mh-win2-xp-card{ margin-top:8px; padding:10px 14px; border-radius:16px; display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1); text-align:left; }
+    .mh-win2-xp-icon{ font-size:24px; }
+    .mh-win2-xp-label{ font-size:9.5px; font-weight:900; letter-spacing:.12em; color:#8a8a9a; }
+    .mh-win2-xp-num{ font-size:18px; font-weight:900; color:#fff; }
+    .mh-win2-detail-card{ margin-top:10px; padding:10px 12px 4px; border-radius:16px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); text-align:left; }
+    .mh-win2-detail-title{ font-size:9.5px; font-weight:900; letter-spacing:.14em; color:#8a8a9a; margin-bottom:8px; text-transform:uppercase; }
+    .mh-win2-row{ display:flex; align-items:center; gap:10px; padding:8px 6px; border-radius:12px; margin-bottom:6px; background:rgba(255,255,255,.02); }
+    .mh-win2-row.bonus{ background:rgba(217,70,239,.10); }
+    .mh-win2-row.sala{ background:rgba(255,255,255,.05); }
+    .mh-win2-row.guarantee{ background:rgba(46,204,113,.10); }
+    .mh-win2-icon{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; flex:0 0 auto; background:rgba(0,0,0,.25); }
+    .mh-win2-row.bonus .mh-win2-icon{ background:linear-gradient(135deg,#d946ef,#7e22ce); }
+    .mh-win2-row.guarantee .mh-win2-icon{ background:linear-gradient(135deg,#2ecc71,#178a4c); }
+    .mh-win2-row-txt{ flex:1; min-width:0; }
+    .mh-win2-row-label{ font-size:11.5px; font-weight:900; color:#fff; line-height:1.2; }
+    .mh-win2-row-sub{ font-size:9.5px; color:#8a8a9a; margin-top:1px; }
+    .mh-win2-row-amt{ font-size:15px; font-weight:900; color:#fff; white-space:nowrap; }
+    .mh-win2-row.bonus .mh-win2-row-amt{ color:#f0abfc; }
+    .mh-win2-row.guarantee .mh-win2-row-amt{ color:#7bf1a8; }
+    .mh-win2-tag{ display:inline-block; margin-left:6px; font-size:7.5px; font-weight:900; padding:1px 5px; border-radius:999px; background:#e879f9; color:#2b0033; vertical-align:1px; }
+
+    /* === Retema del popup real (win-popup-box) a fondo oscuro === */
+    .win-popup-box{
+      background:linear-gradient(180deg,#1c1c26,#100f16) !important;
+      border-color:#3a3a4a !important;
+      box-shadow:0 0 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,215,0,.15) inset !important;
+      max-height:88vh !important; overflow-y:auto !important;
+    }
+    .win-popup-banner, .win-popup-rewards{ display:none !important; }
+    .win-popup-close{ background:rgba(255,255,255,.12) !important; color:#fff !important; }
+    #win-popup-subtitle{
+      margin-top:8px !important; font-size:34px !important; font-weight:900 !important;
+      letter-spacing:.03em; color:#ffe45a !important; -webkit-text-stroke:2px #3d2600;
+      text-shadow:0 3px 0 #b8860b,0 5px 0 #5c4300,0 6px 0 #000,0 10px 18px rgba(0,0,0,.7),0 0 20px rgba(255,215,0,.6) !important;
+      animation:mhBingoPulse 2s ease-in-out infinite; position:relative;
+    }
+    .win-popup-box .game-action-btn{
+      background:linear-gradient(180deg,#FFF176,#FFD700,#FF8A00) !important;
+      color:#2b1900 !important; border:3px solid #000 !important; font-weight:900 !important;
+    }
+    .mh-win2-title-stars{ position:relative; display:block; height:0; }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
@@ -1416,32 +1499,81 @@
           total += guaranteeTopUp;
         }
 
-        // Actualiza el número grande del popup para que refleje el total real (incluye Bono de Sala si aplica)
+        const xpGained = info.xp || 0;
+
+        // Actualiza el número grande original (queda oculto, pero otras
+        // partes del juego pueden seguir leyéndolo) y arma el nuevo diseño
+        // "V3 Type Hero" en su lugar.
         const goldEl = document.getElementById('win-popup-gold');
-        if (goldEl) goldEl.innerText = '+' + an(total);
+        if (goldEl) { goldEl.innerText = '+' + an(total); goldEl.style.display = 'none'; }
+
+        // El título real del popup (#win-popup-subtitle) ya dice "¡BINGO!"
+        // (forzado más arriba en este archivo); acá solo le agregamos las
+        // estrellitas POW/BOOM/WIN encima, sin tocar el texto que el juego
+        // ya puso.
+        const subtitleTitleEl = document.getElementById('win-popup-subtitle');
+        if (subtitleTitleEl && !subtitleTitleEl.querySelector('.mh-win2-star')) {
+          const bingoText = subtitleTitleEl.textContent;
+          subtitleTitleEl.innerHTML = `<span>${escapeHtml(bingoText)}</span>
+            <span class="mh-win2-star mh-win2-star-pow">POW!</span>
+            <span class="mh-win2-star mh-win2-star-boom">BOOM!</span>
+            <span class="mh-win2-star mh-win2-star-win">WIN!</span>`;
+        }
 
         const extraEl = document.getElementById('win-popup-extra');
         if (extraEl && extraEl.parentElement) {
-          let box = document.getElementById('mh-win-bonus-box');
-          if (!box) {
-            box = document.createElement('div');
-            box.id = 'mh-win-bonus-box';
-            box.className = 'mh-win-bonus-box';
-            extraEl.insertAdjacentElement('afterend', box);
+          extraEl.style.display = 'none';
+          let wrap = document.getElementById('mh-win2-wrap');
+          if (!wrap) {
+            wrap = document.createElement('div');
+            wrap.id = 'mh-win2-wrap';
+            wrap.className = 'mh-win2-wrap';
+            extraEl.insertAdjacentElement('afterend', wrap);
           }
-          let rows = `<div class="mh-win-row"><span>🎯 Premio base:</span><span>🪙 ${an(basePrize)}</span></div>`;
-          if (bonusMultis > 0) rows += `<div class="mh-win-row bonus"><span>🎁 Bonus (VIP/apuesta/mascota):</span><span>+🪙 ${an(bonusMultis)}</span></div>`;
+
+          const subtitle = matchedSpecial
+            ? `¡${escapeHtml(specialLabel).toUpperCase()} COMPLETADO!`
+            : '¡CARTÓN COMPLETADO!';
+
+          let detailRows = `<div class="mh-win2-row"><div class="mh-win2-icon">🎯</div><div class="mh-win2-row-txt"><div class="mh-win2-row-label">Premio base</div><div class="mh-win2-row-sub">Cartón completo</div></div><div class="mh-win2-row-amt">${an(basePrize)}</div></div>`;
+          if (bonusMultis > 0) {
+            detailRows += `<div class="mh-win2-row bonus"><div class="mh-win2-icon">🎁</div><div class="mh-win2-row-txt"><div class="mh-win2-row-label">Bonus<span class="mh-win2-tag">EXTRA</span></div><div class="mh-win2-row-sub">VIP / apuesta / mascota</div></div><div class="mh-win2-row-amt">+${an(bonusMultis)}</div></div>`;
+          }
           if (matchedSpecial) {
-            rows += `<div class="mh-win-row sala"><span>🏛️ Bono de Sala (${escapeHtml(specialLabel)} ✓ +20%):</span><span>+🪙 ${an(roomBonus)}</span></div>`;
+            detailRows += `<div class="mh-win2-row sala"><div class="mh-win2-icon">🏛️</div><div class="mh-win2-row-txt"><div class="mh-win2-row-label">Bono de Sala</div><div class="mh-win2-row-sub">${escapeHtml(specialLabel)} ✓ +20%</div></div><div class="mh-win2-row-amt">+${an(roomBonus)}</div></div>`;
           } else if (specialLabel) {
-            rows += `<div class="mh-win-row" style="color:#8b949e;font-weight:700"><span>🏛️ Bono de Sala:</span><span>No (necesitabas ${escapeHtml(specialLabel)})</span></div>`;
+            detailRows += `<div class="mh-win2-row"><div class="mh-win2-icon">🏛️</div><div class="mh-win2-row-txt"><div class="mh-win2-row-label">Bono de Sala</div><div class="mh-win2-row-sub">No (necesitabas ${escapeHtml(specialLabel)})</div></div><div class="mh-win2-row-amt">—</div></div>`;
           }
           if (guaranteeTopUp > 0) {
-            rows += `<div class="mh-win-row bonus"><span>🛡️ Garantía mínima:</span><span>+🪙 ${an(guaranteeTopUp)}</span></div>`;
+            detailRows += `<div class="mh-win2-row guarantee"><div class="mh-win2-icon">🛡️</div><div class="mh-win2-row-txt"><div class="mh-win2-row-label">Garantía mínima</div><div class="mh-win2-row-sub">Completa hasta lo gastado</div></div><div class="mh-win2-row-amt">+${an(guaranteeTopUp)}</div></div>`;
           }
-          rows += `<div class="mh-win-row total"><span>💰 Total:</span><span>🪙 ${an(total)}</span></div>`;
-          box.innerHTML = rows;
-          fitPopupCardToScreen(box);
+
+          wrap.innerHTML = `
+            <div class="mh-win2-sub"><span class="dot2"></span>${subtitle}</div>
+            <div class="mh-win2-total-card">
+              <div class="mh-win2-total-top">
+                <div class="mh-win2-coin">🪙</div>
+                <div>
+                  <div class="mh-win2-total-label">GANANCIA TOTAL</div>
+                  <div class="mh-win2-total-num">${an(total)}</div>
+                </div>
+                <div class="mh-win2-slot-tag">BINGO</div>
+              </div>
+              <div class="mh-win2-segments">${'<span></span>'.repeat(6)}</div>
+            </div>
+            <div class="mh-win2-xp-card">
+              <div class="mh-win2-xp-icon">⭐</div>
+              <div>
+                <div class="mh-win2-xp-label">EXPERIENCIA</div>
+                <div class="mh-win2-xp-num">+${an(xpGained)} XP</div>
+              </div>
+            </div>
+            <div class="mh-win2-detail-card">
+              <div class="mh-win2-detail-title">Detalle del premio</div>
+              ${detailRows}
+            </div>
+          `;
+          fitPopupCardToScreen(wrap);
         }
       } catch (e) {}
       return result;
