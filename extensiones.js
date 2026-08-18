@@ -2812,10 +2812,13 @@
     #active-game-area .chat-panel{ order:6; flex-basis:100% !important; }
 
     #mh-ball-history-col .mh-hist-ball{
-      width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
-      font-size:9.5px; font-weight:900; color:#fff; border:2px solid rgba(255,255,255,.5);
-      box-shadow:0 2px 5px rgba(0,0,0,.4);
+      border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
+      font-weight:900; color:#fff; border:3px solid rgba(255,255,255,.85);
+      box-shadow:0 2px 6px rgba(0,0,0,.5), inset 0 2px 4px rgba(255,255,255,.35);
+      line-height:1.05;
     }
+    #mh-ball-history-col .mh-hist-ball .mh-hist-letter{ font-size:.55em; opacity:.9; }
+    #mh-ball-history-col .mh-hist-ball .mh-hist-num{ font-size:1.1em; }
     #mh-call-panel{
       background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.1); border-radius:10px;
       padding:6px; font-size:8.5px; box-sizing:border-box;
@@ -2828,7 +2831,9 @@
     #mh-call-grid .mh-cg-cell{
       text-align:center; font-size:7px; padding:2px 0; border-radius:3px; color:#8b949e; background:rgba(255,255,255,.04);
     }
-    #mh-call-grid .mh-cg-cell.called{ background:#d29922; color:#1a1200; font-weight:900; }
+    #mh-call-grid .mh-cg-cell.called{
+      background:#d29922; color:#1a1200; font-weight:900;
+    }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
@@ -2880,7 +2885,9 @@
       const remaining = Math.max(0, 75 - drawn.length);
       const rtext = document.getElementById('mh-remaining-text');
       if (rtext) rtext.textContent = remaining + ' BOLAS RESTANTES';
-      document.querySelectorAll('#mh-call-grid .mh-cg-cell.called').forEach(c => c.classList.remove('called'));
+      document.querySelectorAll('#mh-call-grid .mh-cg-cell.called').forEach(c => {
+        if (!drawn.includes(parseInt(c.id.replace('mh-cg-', ''), 10))) c.classList.remove('called');
+      });
       drawn.forEach(n => {
         const cell = document.getElementById('mh-cg-' + n);
         if (cell) cell.classList.add('called');
@@ -2890,9 +2897,10 @@
         const last = drawn.slice(-5).reverse();
         col.innerHTML = last.map((n, i) => {
           const l = letterForNumber(n);
-          const size = i === 0 ? 38 : 26;
-          const fs = i === 0 ? 12 : 9;
-          return '<div class="mh-hist-ball" style="width:' + size + 'px;height:' + size + 'px;font-size:' + fs + 'px;background:' + LETTER_COLORS[l] + ';">' + l + n + '</div>';
+          const size = i === 0 ? 42 : 28;
+          const fs = i === 0 ? 15 : 10;
+          return '<div class="mh-hist-ball" style="width:' + size + 'px;height:' + size + 'px;font-size:' + fs + 'px;background:' + LETTER_COLORS[l] + ';border-color:' + LETTER_COLORS[l] + ';">' +
+            '<span class="mh-hist-letter">' + l + '</span><span class="mh-hist-num">' + n + '</span></div>';
         }).join('');
       }
     } catch (e) {}
@@ -2951,4 +2959,40 @@
     wireFixedGameScreen();
   }
   setTimeout(wireFixedGameScreen, 800);
+})();
+
+/* ============================================================
+   APAGAR EL PARPADEO DE NÚMEROS DE LA TARJETA A LOS 2s
+   ------------------------------------------------------------
+   La app original le pone la clase .flash-new a cada casilla
+   recién marcada (parpadeo con newNumberFlash, infinito) y solo
+   la saca si el jugador hace click en la celda — pero acá el
+   cartón se marca solo, nadie hace click, así que TODAS las
+   casillas marcadas quedaban parpadeando para siempre a la vez
+   (efecto "mucho LED"). Acá se les da un par de segundos de
+   parpadeo (para que se note qué número acaba de salir) y
+   después se apagan solas.
+   ============================================================ */
+(function () {
+  function wireCardFlashTimeout() {
+    if (window._mhCardFlashWired) return;
+    if (typeof window.handleBallDraw !== 'function') return;
+    const original = window.handleBallDraw;
+    window.handleBallDraw = function () {
+      const r = original.apply(this, arguments);
+      setTimeout(() => {
+        document.querySelectorAll('.b-cell.flash-new').forEach(cell => {
+          cell.classList.remove('flash-new');
+        });
+      }, 2000);
+      return r;
+    };
+    window._mhCardFlashWired = true;
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireCardFlashTimeout);
+  } else {
+    wireCardFlashTimeout();
+  }
+  setTimeout(wireCardFlashTimeout, 800);
 })();
