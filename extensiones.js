@@ -690,6 +690,23 @@
         background:rgba(0,0,0,.25); border-radius:999px; padding:2px 8px;
       }
       @keyframes mhGraceIn{ from{ opacity:0; transform:translate(-50%,-10px); } to{ opacity:1; transform:translate(-50%,0); } }
+
+      #mh-round-timeout-timer{
+        position:fixed; top:10px; left:50%; transform:translateX(-50%);
+        z-index:9997; max-width:92vw;
+        display:flex; align-items:center; gap:8px;
+        padding:9px 16px; border-radius:999px;
+        background:linear-gradient(180deg,#d97706,#9a4a06);
+        border:2px solid #fcd34d; color:#fff7e6;
+        font-weight:800; font-size:13px; text-align:center;
+        box-shadow:0 4px 14px rgba(0,0,0,.45);
+        animation: mhGraceIn .35s ease;
+      }
+      #mh-round-timeout-timer .mh-rt-secs{
+        display:inline-block; min-width:22px; text-align:center;
+        background:rgba(0,0,0,.25); border-radius:999px; padding:2px 8px;
+      }
+      #mh-round-timeout-timer.warn{ background:linear-gradient(180deg,#dc2626,#7f1d1d); border-color:#fca5a5; animation: mhCardBtnPulse 1s ease-in-out infinite; }
     `;
     const styleTag = document.createElement('style');
     styleTag.textContent = css;
@@ -712,9 +729,12 @@
       window._mhGraceWinnerCard = null;
       window._mhClaimedCardsOrder = [];
       clearGraceTimer();
+      clearRoundTimeoutTimer();
       const result = originalStartBingoGame.apply(this, arguments);
       setTimeout(ensurePerCardButtons, 50);
       setTimeout(ensurePerCardButtons, 400);
+      // Arranca el temporizador de 45s apenas empieza la partida real.
+      startRoundTimeoutTimer();
       return result;
     };
 
@@ -765,6 +785,76 @@
     }
 
     const MH_GRACE_SECONDS = 30;
+    const MH_ROUND_TIMEOUT_SECONDS = 45;
+
+    function clearRoundTimeoutTimer() {
+      if (window._mhRoundTimeoutInterval) {
+        clearInterval(window._mhRoundTimeoutInterval);
+        window._mhRoundTimeoutInterval = null;
+      }
+      const bar = document.getElementById('mh-round-timeout-timer');
+      if (bar) bar.remove();
+    }
+
+    // Termina la ronda cuando nadie completó ningún cartón: se paga SOLO
+    // el 10% de lo gastado como devolución (ese es el "premio final" en
+    // este caso). No activa el temporizador de gracia de 30s en absoluto
+    // (ese es solo para cuando SÍ hay un bingo real).
+    function endRoundNoWinner(motivo) {
+      if (window._mhRoundFinalized || window._mhGraceActive) return;
+      window._mhRoundFinalized = true;
+      window._mhRoundSettled = true;
+      clearRoundTimeoutTimer();
+      clearGraceTimer();
+
+      const costo = (typeof window._mhLastGameCost === 'number' && window._mhLastGameCost > 0)
+        ? window._mhLastGameCost
+        : (window._mhComputeTotalCost ? (window._mhComputeTotalCost() || 0) : 0);
+      const refund = Math.max(0, Math.round(costo * 0.10));
+      if (refund > 0 && typeof state !== 'undefined' && state) {
+        state.gold = (state.gold || 0) + refund;
+        if (typeof saveState === 'function') saveState();
+        if (typeof refreshAllUI === 'function') refreshAllUI();
+      }
+      if (typeof showToast === 'function') {
+        const msg = motivo === 'tiempo'
+          ? `⏱️ Se acabaron los 45s y nadie completó el cartón. Devolución: 🪙 ${refund.toLocaleString('es')} (10% de lo gastado)`
+          : `Nadie completó el cartón. Devolución: 🪙 ${refund.toLocaleString('es')} (10% de lo gastado)`;
+        showToast(msg);
+      }
+
+      window._mhBingoManualCall = true;
+      try { endRound(false); } catch (e) {}
+      window._mhBingoManualCall = false;
+    }
+
+    function startRoundTimeoutTimer() {
+      clearRoundTimeoutTimer();
+      let secondsLeft = MH_ROUND_TIMEOUT_SECONDS;
+      const bar = document.createElement('div');
+      bar.id = 'mh-round-timeout-timer';
+      bar.innerHTML = `⏱️ Si nadie hace BINGO, la partida termina en <span class="mh-rt-secs">${secondsLeft}</span>s`;
+      document.body.appendChild(bar);
+      window._mhRoundTimeoutInterval = setInterval(() => {
+        // Si ya hubo un bingo real, este cronómetro deja de importar —
+        // desde ahí manda el temporizador de gracia de 30s, ya programado.
+        if (window._mhGraceActive || window._mhRoundFinalized) {
+          clearRoundTimeoutTimer();
+          return;
+        }
+        secondsLeft--;
+        const secEl = bar.querySelector('.mh-rt-secs');
+        if (secEl) secEl.textContent = Math.max(secondsLeft, 0);
+        if (secondsLeft <= 10) bar.classList.add('warn');
+        if (secondsLeft <= 0) {
+          clearRoundTimeoutTimer();
+          endRoundNoWinner('tiempo');
+        }
+      }, 1000);
+    }
+    window._mhStartRoundTimeoutTimer = startRoundTimeoutTimer;
+    window._mhClearRoundTimeoutTimer = clearRoundTimeoutTimer;
+
     function clearGraceTimer() {
       if (window._mhGraceInterval) {
         clearInterval(window._mhGraceInterval);
@@ -801,6 +891,7 @@
       window._mhRoundFinalized = true;
       window._mhRoundSettled = true;
       clearGraceTimer();
+      clearRoundTimeoutTimer();
       const claimed = window._mhClaimedCardsOrder || [];
       if (claimed.length === 0) return;
 
@@ -833,6 +924,7 @@
       playFullscreenBingo();
       if (!window._mhGraceActive) {
         window._mhGraceActive = true;
+        clearRoundTimeoutTimer();
         startGraceTimer();
       } else {
         updateGraceBarCount();
@@ -888,14 +980,13 @@
             window._mhClaimedCardsOrder = window._mhClaimedCardsOrder || [];
             window._mhClaimedCardsOrder.push(anyCompleted);
             window._mhGraceActive = true;
+            clearRoundTimeoutTimer();
             stampCard(anyCompleted);
             finalizeRound();
           } else {
-            window._mhRoundFinalized = true;
-            window._mhRoundSettled = true;
-            window._mhBingoManualCall = true;
-            endRound(false);
-            window._mhBingoManualCall = false;
+            // Se agotaron las 75 bolas sin que nadie complete nada: mismo
+            // caso que el timeout de 45s (nadie ganó), misma devolución del 10%.
+            endRoundNoWinner('bolas');
           }
         }
       }
@@ -1234,7 +1325,26 @@
           if (typeof saveState === 'function') saveState();
           if (typeof refreshAllUI === 'function') refreshAllUI();
         }
-        const total = gameReward + roomBonus;
+        let total = gameReward + roomBonus;
+
+        // 🛡️ GARANTÍA MÍNIMA: si ganaste, el total pagado tiene que ser
+        // MAYOR a lo que gastaste para entrar a esta partida (cartones +
+        // apuesta). Si el patrón con el que ganaste vale tan poco que el
+        // premio queda por debajo del costo, se completa con oro real
+        // hasta superarlo — no es solo un número distinto en pantalla.
+        const costoPartida = (typeof window._mhLastGameCost === 'number' && window._mhLastGameCost > 0)
+          ? window._mhLastGameCost
+          : (window._mhComputeTotalCost ? window._mhComputeTotalCost() : null);
+        let guaranteeTopUp = 0;
+        if (typeof costoPartida === 'number' && costoPartida > 0 && total <= costoPartida) {
+          guaranteeTopUp = (costoPartida - total) + Math.max(1, Math.round(costoPartida * 0.10));
+          if (typeof state !== 'undefined' && state) {
+            state.gold = (state.gold || 0) + guaranteeTopUp;
+            if (typeof saveState === 'function') saveState();
+            if (typeof refreshAllUI === 'function') refreshAllUI();
+          }
+          total += guaranteeTopUp;
+        }
 
         // Actualiza el número grande del popup para que refleje el total real (incluye Bono de Sala si aplica)
         const goldEl = document.getElementById('win-popup-gold');
@@ -1255,6 +1365,9 @@
             rows += `<div class="mh-win-row sala"><span>🏛️ Bono de Sala (${escapeHtml(specialLabel)} ✓ +20%):</span><span>+🪙 ${an(roomBonus)}</span></div>`;
           } else if (specialLabel) {
             rows += `<div class="mh-win-row" style="color:#8b949e;font-weight:700"><span>🏛️ Bono de Sala:</span><span>No (necesitabas ${escapeHtml(specialLabel)})</span></div>`;
+          }
+          if (guaranteeTopUp > 0) {
+            rows += `<div class="mh-win-row bonus"><span>🛡️ Garantía mínima:</span><span>+🪙 ${an(guaranteeTopUp)}</span></div>`;
           }
           rows += `<div class="mh-win-row total"><span>💰 Total:</span><span>🪙 ${an(total)}</span></div>`;
           box.innerHTML = rows;
@@ -1304,6 +1417,9 @@
     const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { cost: 0 };
     return entryCost + (tier.cost || 0);
   }
+  // Se expone para que el bloque de "premio potencial" pueda comparar
+  // el premio mínimo posible contra lo que realmente vas a gastar.
+  window._mhComputeTotalCost = computeTotalCost;
 
   function ensureCostBanner() {
     const btn = document.querySelector('.game-action-btn[onclick="startBingoGame()"]');
@@ -1334,6 +1450,18 @@
       window['_mhCostWired_' + fnName] = true;
     }
   });
+
+  // Guarda el costo REAL de la partida justo cuando arranca (cartones +
+  // apuesta elegidos en ese momento), para poder compararlo después
+  // contra el premio pagado, sin importar si la selección cambia luego.
+  if (typeof window.startBingoGame === 'function' && !window._mhCostCaptureWired) {
+    const originalStartForCost = window.startBingoGame;
+    window.startBingoGame = function () {
+      window._mhLastGameCost = computeTotalCost();
+      return originalStartForCost.apply(this, arguments);
+    };
+    window._mhCostCaptureWired = true;
+  }
 
   function setupCostBanner() { ensureCostBanner(); }
   if (document.readyState === 'loading') {
@@ -1781,35 +1909,68 @@
     stampBlocks.forEach(b => WIN_PATTERNS.push({ id: b.id, label: '4 Números', cells: b.cells, mult: 0.3 }));
   }
 
+  // Calcula las casillas de cada modo directamente sobre una grilla 5x5
+  // (índices 0-24, fila por fila), SIN depender de que WIN_PATTERNS del
+  // juego base tenga exactamente esos mismos ids. Así el punto dorado
+  // nunca falla aunque los nombres internos del juego sean otros.
+  function cellsForPattern(tipo, i) {
+    if (tipo === 'diagonal') {
+      return i === 0 ? [0, 6, 12, 18, 24] : [4, 8, 12, 16, 20];
+    }
+    if (tipo === 'fila') {
+      return [5 * i, 5 * i + 1, 5 * i + 2, 5 * i + 3, 5 * i + 4];
+    }
+    if (tipo === 'esquinas') {
+      return [0, 4, 20, 24];
+    }
+    if (tipo === 'cartonlleno') {
+      return Array.from({ length: 25 }, (_, k) => k);
+    }
+    if (tipo === 'columna') {
+      return [i, 5 + i, 10 + i, 15 + i, 20 + i];
+    }
+    // 4numeros
+    const stampCells = [[0, 1, 5, 6], [3, 4, 8, 9], [15, 16, 20, 21], [18, 19, 23, 24]];
+    return stampCells[i];
+  }
+
   // Elige al azar UNO de los 6 modos que pediste: Diagonal, Fila, 4 Esquinas,
   // Cartón Lleno, Columna de una letra, o 4 Números.
+  // Se llama en CADA partida nueva (no solo al abrir el lobby), para que
+  // sea realmente aleatorio ronda a ronda y no se quede pegado en uno solo.
   function pickSpecialPattern() {
     const tipos = ['diagonal', 'fila', 'esquinas', 'cartonlleno', 'columna', '4numeros'];
     const tipo = tipos[Math.floor(Math.random() * tipos.length)];
     if (tipo === 'diagonal') {
-      window._mhSpecialPatternId = Math.random() < 0.5 ? 'diag1' : 'diag2';
+      const i = Math.random() < 0.5 ? 0 : 1;
+      window._mhSpecialPatternId = i === 0 ? 'diag1' : 'diag2';
       window._mhSpecialPatternLabel = 'Diagonal';
+      window._mhSpecialPatternCells = cellsForPattern('diagonal', i);
     } else if (tipo === 'fila') {
       const i = Math.floor(Math.random() * 5);
       window._mhSpecialPatternId = 'row' + i;
       window._mhSpecialPatternLabel = ROW_LABELS[i];
+      window._mhSpecialPatternCells = cellsForPattern('fila', i);
     } else if (tipo === 'esquinas') {
       window._mhSpecialPatternId = 'corners';
       window._mhSpecialPatternLabel = '4 Esquinas';
+      window._mhSpecialPatternCells = cellsForPattern('esquinas');
     } else if (tipo === 'cartonlleno') {
       window._mhSpecialPatternId = 'full';
       window._mhSpecialPatternLabel = 'Cartón Lleno';
+      window._mhSpecialPatternCells = cellsForPattern('cartonlleno');
     } else if (tipo === 'columna') {
       const i = Math.floor(Math.random() * 5);
       window._mhSpecialPatternId = 'col' + i;
       window._mhSpecialPatternLabel = `Todos los "${LETTER_NAMES[i]}"`;
+      window._mhSpecialPatternCells = cellsForPattern('columna', i);
     } else {
       const i = Math.floor(Math.random() * 4);
       window._mhSpecialPatternId = 'stamp' + i;
       window._mhSpecialPatternLabel = '4 Números';
+      window._mhSpecialPatternCells = cellsForPattern('4numeros', i);
     }
-    const patDef = (typeof WIN_PATTERNS !== 'undefined') ? WIN_PATTERNS.find(p => p.id === window._mhSpecialPatternId) : null;
-    window._mhSpecialPatternCells = patDef ? patDef.cells : [];
+    console.log('🎲 Modo especial de esta partida:', window._mhSpecialPatternLabel, window._mhSpecialPatternId);
   }
 
   // Marca con un punto dorado + brillo pulsante las casillas que hacen
@@ -1865,7 +2026,9 @@
       const original = window.openBingoLobby;
       window.openBingoLobby = function () {
         const r = original.apply(this, arguments);
-        pickSpecialPattern();
+        // Vista previa en el lobby (se puede volver a sortear justo al
+        // arrancar la partida real, así que esto es solo orientativo).
+        if (!window._mhSpecialPatternId) pickSpecialPattern();
         ensureSpecialBanner();
         return r;
       };
@@ -1875,6 +2038,9 @@
       const originalStart = window.startBingoGame;
       window.startBingoGame = function () {
         const r = originalStart.apply(this, arguments);
+        // Sorteo REAL, uno nuevo en cada partida que arranca de verdad,
+        // sin importar si volviste a pasar por el lobby o no.
+        pickSpecialPattern();
         ensureSpecialBannerInGame();
         return r;
       };
@@ -1922,10 +2088,17 @@
       const minMult = Math.min(...mults);
       const maxMult = Math.max(...mults);
       const common = roomBaseReward * chosenCardCount * vipBonus * (pendingMultiplier > 1 ? pendingMultiplier : 1) * (tier.mult || 1);
-      const minReward = Math.round(common * minMult);
+      let minReward = Math.round(common * minMult);
       const maxReward = Math.round(common * maxMult);
+      // La Garantía Mínima (ver popup de victoria) asegura que si ganás,
+      // el premio real nunca queda por debajo de lo que gastás — así que
+      // el número de "mínimo" que se muestra acá ya lo tiene en cuenta.
+      const costoEstimado = window._mhComputeTotalCost ? window._mhComputeTotalCost() : null;
+      if (typeof costoEstimado === 'number' && costoEstimado > 0 && minReward <= costoEstimado) {
+        minReward = costoEstimado + Math.max(1, Math.round(costoEstimado * 0.10));
+      }
       rewardEl.innerText = `🪙 ${minReward.toLocaleString('es')} – ${maxReward.toLocaleString('es')}`;
-      rewardEl.title = 'Depende de con qué patrón completes el bingo (Línea/Columna valen menos, Cartón Lleno vale más)';
+      rewardEl.title = 'Si ganás, el premio siempre queda por encima de lo que gastaste en esta partida (Garantía Mínima incluida)';
     } catch (e) {}
   }
 
