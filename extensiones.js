@@ -2786,18 +2786,21 @@
    ============================================================ */
 (function () {
   const css = `
-    /* 🩹 FIX: la app original hace parpadear .b-cell.flash-new agrandando
-       la celda y agregándole un halo (box-shadow/brightness) — efecto
-       "LED". Se pidió que solo titile el número, sin ese brillo/escala
-       en el círculo. Se anula la animación original y se pone una
-       propia que solo cambia el color del texto. */
+    /* 🩹 FIX: antes esto parpadeaba solo el color del texto (blanco↔amarillo)
+       sobre fondo blanco, pensado para cuando .flash-new se ponía sobre una
+       celda YA marcada (círculo rojo) — ahí alcanzaba con algo sutil.
+       Ahora el marcado es MANUAL: .flash-new se usa para avisar "este
+       número salió, tocalo" en una celda blanca sin marcar todavía, así
+       que el parpadeo de solo texto casi no se nota. Se cambia a un
+       parpadeo de fondo + borde bien visible (sin duplicar el look del
+       círculo rojo de marcado). */
     .b-cell.flash-new{
-      animation: mhNumberBlink .7s steps(1) infinite !important;
-      transform:none !important; box-shadow:none !important; filter:none !important;
+      animation: mhNumberBlink .6s ease-in-out infinite !important;
+      position:relative !important; z-index:2 !important;
     }
     @keyframes mhNumberBlink{
-      0%,49%{ color:#fff; }
-      50%,100%{ color:#ffe066; }
+      0%,100%{ background:#ffffff !important; border-color:#c7d6f5 !important; color:#16233f !important; box-shadow:none !important; transform:scale(1) !important; }
+      50%{ background:#ffd23f !important; border-color:#f2a900 !important; color:#3a2600 !important; box-shadow:0 0 10px 3px rgba(255,210,63,.85) !important; transform:scale(1.08) !important; }
     }
     /* 🩹 FIX: antes tenía "display:flex !important" fijo e incondicional
        acá, lo que anulaba el display:none que pone la app cuando esta
