@@ -2920,27 +2920,29 @@
 /* ============================================================
    PANTALLA DE BINGO FIJA (no debe moverse / scrollear)
    ------------------------------------------------------------
-   La app ya tiene un mecanismo para esto: la clase
-   body.no-scroll-fixed-screen (overflow:hidden, height:100%,
-   touch-action:none). goToScreen() la activa para
-   'pet-battle-screen', 'isla-screen' y 'main-screen', pero
-   nunca para 'game-screen' (Bingo) — por eso esa pantalla se
-   podía mover/scrollear y las demás no. Enganchamos goToScreen
-   para agregarla también cuando se entra a game-screen, sin
-   tocar el resto de su lógica original.
+   Ojo: game-screen tiene 3 sub-vistas (#room-select-view,
+   #lobby-modal, #active-game-area) y solo la última es la
+   partida jugándose de verdad — las otras dos (elegir sala,
+   elegir apuesta) tienen que poder scrollear normal. Por eso NO
+   se engancha a goToScreen (fijaría las 3), sino que se observa
+   directamente cuándo #active-game-area pasa a display:block
+   (ver openBingoLobby / botón "Comenzar Bingo" en index.html) y
+   ahí sí se agrega body.no-scroll-fixed-screen — el mismo
+   mecanismo que ya usan Isla y Arena — y se saca apenas se sale
+   de esa vista.
    ============================================================ */
 (function () {
   function wireFixedGameScreen() {
     if (window._mhFixedGameScreenWired) return;
-    if (typeof window.goToScreen !== 'function') return;
-    const originalGoToScreen = window.goToScreen;
-    window.goToScreen = function (screenId, isReplace) {
-      const r = originalGoToScreen.apply(this, arguments);
-      if (screenId === 'game-screen') {
-        document.body.classList.add('no-scroll-fixed-screen');
-      }
-      return r;
-    };
+    const area = document.getElementById('active-game-area');
+    if (!area) return;
+    function syncFixedClass() {
+      const isPlaying = area.style.display !== 'none' && area.style.display !== '';
+      document.body.classList.toggle('no-scroll-fixed-screen', isPlaying);
+    }
+    const observer = new MutationObserver(syncFixedClass);
+    observer.observe(area, { attributes: true, attributeFilter: ['style'] });
+    syncFixedClass();
     window._mhFixedGameScreenWired = true;
   }
   if (document.readyState === 'loading') {
