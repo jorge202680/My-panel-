@@ -2885,12 +2885,21 @@
      se re-aplican estos valores por JS cada vez que el DOM de las
      tarjetas cambia, así siempre quedan pisados los de arriba. */
   function forceCardSizing() {
+    const container = document.querySelector('#active-game-area .cards-container');
+    if (container) {
+      container.style.setProperty('display', 'flex', 'important');
+      container.style.setProperty('flex-direction', 'row', 'important');
+      container.style.setProperty('flex-wrap', 'wrap', 'important');
+      container.style.setProperty('gap', '6px', 'important');
+      container.style.setProperty('justify-content', 'center', 'important');
+    }
     document.querySelectorAll('#active-game-area .cards-container .bingo-card').forEach(card => {
       card.style.setProperty('max-width', '260px', 'important');
       card.style.setProperty('width', '260px', 'important');
       card.style.setProperty('flex', '0 1 260px', 'important');
       const grid = card.querySelector('.bingo-grid');
       if (grid) {
+        grid.style.setProperty('display', 'grid', 'important');
         grid.style.setProperty('grid-template-columns', 'repeat(5, 1fr)', 'important');
         grid.style.setProperty('width', '100%', 'important');
       }
@@ -2903,11 +2912,18 @@
 
   if (!window._mhCardSizingObserverWired) {
     window._mhCardSizingObserverWired = true;
+    // 🩹 FIX 4: antes esto dependía 100% de un MutationObserver + el CSS
+    // ganándole por especificidad — y en algún escenario (con 1 sola
+    // tarjeta) algo seguía ganando esa pelea. En vez de seguir adivinando
+    // QUÉ regla gana, ahora se refuerza el tamaño por JS cada 300ms sin
+    // parar mientras la pantalla de juego esté visible — así no importa
+    // qué otra cosa esté tocando el estilo, esto siempre lo vuelve a
+    // pisar poco después.
     const cardObserver = new MutationObserver(() => forceCardSizing());
     const wireCardObserver = () => {
       const container = document.querySelector('#active-game-area .cards-container');
       if (!container) return;
-      cardObserver.observe(container, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class'] });
+      cardObserver.observe(container, { childList: true, subtree: true });
       forceCardSizing();
     };
     if (document.readyState === 'loading') {
@@ -2916,6 +2932,7 @@
       wireCardObserver();
     }
     setTimeout(wireCardObserver, 800);
+    setInterval(forceCardSizing, 300);
   }
 
   function ensurePanels() {
