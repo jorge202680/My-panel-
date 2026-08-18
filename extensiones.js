@@ -2786,6 +2786,19 @@
    ============================================================ */
 (function () {
   const css = `
+    /* 🩹 FIX: la app original hace parpadear .b-cell.flash-new agrandando
+       la celda y agregándole un halo (box-shadow/brightness) — efecto
+       "LED". Se pidió que solo titile el número, sin ese brillo/escala
+       en el círculo. Se anula la animación original y se pone una
+       propia que solo cambia el color del texto. */
+    .b-cell.flash-new{
+      animation: mhNumberBlink .7s steps(1) infinite !important;
+      transform:none !important; box-shadow:none !important; filter:none !important;
+    }
+    @keyframes mhNumberBlink{
+      0%,49%{ color:#fff; }
+      50%,100%{ color:#ffe066; }
+    }
     /* 🩹 FIX: antes tenía "display:flex !important" fijo e incondicional
        acá, lo que anulaba el display:none que pone la app cuando esta
        zona no debe verse (por ej. mientras estás en el modal de apuesta
@@ -2806,8 +2819,14 @@
     #active-game-area .ball-callout-container{ order:2; flex:0 0 78px !important; margin:0 !important; }
     #active-game-area .card-tabs-strip{ display:none !important; }
     #active-game-area #mh-ball-history-col{ order:3; flex:0 0 60px !important; display:flex; flex-direction:column; gap:5px; align-items:center; padding-top:4px; }
-    #active-game-area .cards-container{ order:4; display:flex !important; flex-direction:row !important; flex:1 1 260px !important; gap:6px !important; overflow-x:auto !important; }
-    #active-game-area .cards-container .bingo-card{ flex:1 1 0 !important; min-width:0 !important; }
+    #active-game-area .cards-container{ order:4; display:flex !important; flex-direction:row !important; flex:1 1 260px !important; gap:6px !important; overflow-x:auto !important; justify-content:center !important; }
+    /* 🩹 FIX: con "flex:1 1 0" la tarjeta crece para llenar todo el
+       ancho libre — con 2 tarjetas se reparten bien, pero con 1 sola
+       se estiraba enorme (y por el aspect-ratio:1 de cada celda, la
+       tarjeta terminaba más alta que la pantalla y se cortaba abajo).
+       Se le pone un máximo de ancho fijo para que no crezca de más,
+       juegues con 1 o con 2. */
+    #active-game-area .cards-container .bingo-card{ flex:0 1 260px !important; max-width:260px !important; min-width:0 !important; }
     #active-game-area #mh-call-panel{ order:5; flex:0 0 150px !important; }
     #active-game-area .chat-panel{ order:6; flex-basis:100% !important; }
 
@@ -2962,37 +2981,30 @@
 })();
 
 /* ============================================================
-   APAGAR EL PARPADEO DE NÚMEROS DE LA TARJETA A LOS 2s
+   APAGAR EL PARPADEO DE NÚMEROS DE LA TARJETA AL TOCARLO
    ------------------------------------------------------------
-   La app original le pone la clase .flash-new a cada casilla
-   recién marcada (parpadeo con newNumberFlash, infinito) y solo
-   la saca si el jugador hace click en la celda — pero acá el
-   cartón se marca solo, nadie hace click, así que TODAS las
-   casillas marcadas quedaban parpadeando para siempre a la vez
-   (efecto "mucho LED"). Acá se les da un par de segundos de
-   parpadeo (para que se note qué número acaba de salir) y
-   después se apagan solas.
+   La app original ya hace exactamente esto: le pone .flash-new
+   a cada casilla recién marcada (parpadeo con newNumberFlash) y
+   la saca cuando el jugador toca esa celda — ver el onclick que
+   ya trae cada celda en index.html. No hace falta duplicar nada
+   acá; este bloque queda solo para asegurarse de que el toque
+   siga funcionando aunque el resto de la app cambie el layout.
    ============================================================ */
 (function () {
-  function wireCardFlashTimeout() {
-    if (window._mhCardFlashWired) return;
-    if (typeof window.handleBallDraw !== 'function') return;
-    const original = window.handleBallDraw;
-    window.handleBallDraw = function () {
-      const r = original.apply(this, arguments);
-      setTimeout(() => {
-        document.querySelectorAll('.b-cell.flash-new').forEach(cell => {
-          cell.classList.remove('flash-new');
-        });
-      }, 2000);
-      return r;
-    };
-    window._mhCardFlashWired = true;
+  function wireTapToStopFlash() {
+    if (window._mhTapFlashWired) return;
+    const grid = document.getElementById('active-game-area');
+    if (!grid) return;
+    grid.addEventListener('click', function (e) {
+      const cell = e.target.closest('.b-cell.flash-new');
+      if (cell) cell.classList.remove('flash-new');
+    });
+    window._mhTapFlashWired = true;
   }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wireCardFlashTimeout);
+    document.addEventListener('DOMContentLoaded', wireTapToStopFlash);
   } else {
-    wireCardFlashTimeout();
+    wireTapToStopFlash();
   }
-  setTimeout(wireCardFlashTimeout, 800);
+  setTimeout(wireTapToStopFlash, 800);
 })();
