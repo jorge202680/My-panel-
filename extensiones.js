@@ -756,6 +756,11 @@
       window._mhGraceActive = false;
       window._mhGraceWinnerCard = null;
       window._mhClaimedCardsOrder = [];
+      // 🩹 FIX: sin esto, una tarjeta que ya ganó una vez quedaba con
+      // _mhClaimed=true para siempre y el botón "¡BINGO!" seguía
+      // deshabilitado en todas las rondas siguientes.
+      const _mhCardList = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+      _mhCardList.forEach(c => { if (c) c._mhClaimed = false; });
       clearGraceTimer();
       clearRoundTimeoutTimer();
       const result = originalStartBingoGame.apply(this, arguments);
@@ -2781,7 +2786,16 @@
    ============================================================ */
 (function () {
   const css = `
-    #active-game-area{ display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important; gap:6px !important; }
+    /* 🩹 FIX: antes tenía "display:flex !important" fijo e incondicional
+       acá, lo que anulaba el display:none que pone la app cuando esta
+       zona no debe verse (por ej. mientras estás en el modal de apuesta
+       Sencillo/Doble/Triple/Múltiple, antes de arrancar la partida) —
+       por eso el área de juego en vivo quedaba pegada visible abajo.
+       Ahora solo se fuerza flex cuando la propia app NO la tiene oculta
+       con display:none; si la oculta, se respeta. */
+    #active-game-area:not([style*="display: none"]):not([style*="display:none"]){
+      display:flex !important; flex-wrap:wrap !important; align-items:flex-start !important; gap:6px !important;
+    }
     #active-game-area .battle-status{ order:1; flex-basis:100% !important; }
     #active-game-area .tombola-wrap{ display:none !important; }
     #active-game-area .ball-callout-container{ order:2; flex:0 0 78px !important; margin:0 !important; }
@@ -2856,8 +2870,8 @@
   function refreshCallPanel() {
     try {
       ensurePanels();
-      if (typeof window.drawnNumbers === 'undefined') return;
-      const drawn = window.drawnNumbers || [];
+      if (typeof drawnNumbers === 'undefined') return;
+      const drawn = drawnNumbers || [];
       const remaining = Math.max(0, 75 - drawn.length);
       const rtext = document.getElementById('mh-remaining-text');
       if (rtext) rtext.textContent = remaining + ' BOLAS RESTANTES';
@@ -2867,10 +2881,10 @@
         if (cell) cell.classList.add('called');
       });
       const col = document.getElementById('mh-ball-history-col');
-      if (col && typeof window.letterForNumber === 'function') {
+      if (col && typeof letterForNumber === 'function') {
         const last = drawn.slice(-5).reverse();
         col.innerHTML = last.map((n, i) => {
-          const l = window.letterForNumber(n);
+          const l = letterForNumber(n);
           const size = i === 0 ? 38 : 26;
           const fs = i === 0 ? 12 : 9;
           return '<div class="mh-hist-ball" style="width:' + size + 'px;height:' + size + 'px;font-size:' + fs + 'px;background:' + LETTER_COLORS[l] + ';">' + l + n + '</div>';
