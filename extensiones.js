@@ -1746,22 +1746,87 @@
     }
     .mh-special-banner b{ color:#7dd3fc; }
     .mh-special-banner .sub{ font-size:9.5px; color:#8b949e; }
+    #mh-special-pattern-banner-ingame{ margin:8px 0 4px; padding:8px 12px; font-size:11px; text-align:center; }
+    .mh-special-cell{
+      position:relative !important;
+      box-shadow:0 0 0 2px #fbbf24, 0 0 14px 2px rgba(251,191,36,.85) !important;
+      animation: mhSpecialPulse 1.1s ease-in-out infinite;
+      z-index:2;
+    }
+    .mh-special-cell::after{
+      content:''; position:absolute; top:2px; right:2px; width:8px; height:8px;
+      border-radius:50%; background:#fbbf24; box-shadow:0 0 6px #fbbf24; pointer-events:none;
+    }
+    @keyframes mhSpecialPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
   document.head.appendChild(styleTag);
 
   const ROW_LABELS = ['Fila 1 (arriba)', 'Fila 2', 'Fila 3 (centro)', 'Fila 4', 'Fila 5 (abajo)'];
+  const LETTER_NAMES = ['B', 'I', 'N', 'G', 'O'];
 
+  // Suma el patrón "4 Números" (bloque de 2x2, un clásico del bingo) como
+  // forma real de ganar — antes solo existían Línea/Columna/Diagonal/
+  // Esquinas/Cartón Lleno. Se agrega UNA sola vez al arreglo real del juego
+  // (WIN_PATTERNS), así que a partir de ahora también cuenta como bingo
+  // válido en cualquier partida, no solo cuando es el patrón especial.
+  if (typeof WIN_PATTERNS !== 'undefined' && !WIN_PATTERNS.some(p => p.id === 'stamp0')) {
+    const stampBlocks = [
+      { id: 'stamp0', cells: [0, 1, 5, 6] },     // esquina superior izquierda
+      { id: 'stamp1', cells: [3, 4, 8, 9] },     // esquina superior derecha
+      { id: 'stamp2', cells: [15, 16, 20, 21] }, // esquina inferior izquierda
+      { id: 'stamp3', cells: [18, 19, 23, 24] }, // esquina inferior derecha
+    ];
+    stampBlocks.forEach(b => WIN_PATTERNS.push({ id: b.id, label: '4 Números', cells: b.cells, mult: 0.3 }));
+  }
+
+  // Elige al azar UNO de los 6 modos que pediste: Diagonal, Fila, 4 Esquinas,
+  // Cartón Lleno, Columna de una letra, o 4 Números.
   function pickSpecialPattern() {
-    if (Math.random() < 0.5) {
-      window._mhSpecialPatternId = 'corners';
-      window._mhSpecialPatternLabel = '4 Esquinas';
-    } else {
+    const tipos = ['diagonal', 'fila', 'esquinas', 'cartonlleno', 'columna', '4numeros'];
+    const tipo = tipos[Math.floor(Math.random() * tipos.length)];
+    if (tipo === 'diagonal') {
+      window._mhSpecialPatternId = Math.random() < 0.5 ? 'diag1' : 'diag2';
+      window._mhSpecialPatternLabel = 'Diagonal';
+    } else if (tipo === 'fila') {
       const i = Math.floor(Math.random() * 5);
       window._mhSpecialPatternId = 'row' + i;
       window._mhSpecialPatternLabel = ROW_LABELS[i];
+    } else if (tipo === 'esquinas') {
+      window._mhSpecialPatternId = 'corners';
+      window._mhSpecialPatternLabel = '4 Esquinas';
+    } else if (tipo === 'cartonlleno') {
+      window._mhSpecialPatternId = 'full';
+      window._mhSpecialPatternLabel = 'Cartón Lleno';
+    } else if (tipo === 'columna') {
+      const i = Math.floor(Math.random() * 5);
+      window._mhSpecialPatternId = 'col' + i;
+      window._mhSpecialPatternLabel = `Todos los "${LETTER_NAMES[i]}"`;
+    } else {
+      const i = Math.floor(Math.random() * 4);
+      window._mhSpecialPatternId = 'stamp' + i;
+      window._mhSpecialPatternLabel = '4 Números';
     }
+    const patDef = (typeof WIN_PATTERNS !== 'undefined') ? WIN_PATTERNS.find(p => p.id === window._mhSpecialPatternId) : null;
+    window._mhSpecialPatternCells = patDef ? patDef.cells : [];
+  }
+
+  // Marca con un punto dorado + brillo pulsante las casillas que hacen
+  // falta para el patrón especial de esta ronda, en TODOS tus cartones.
+  function highlightSpecialCells() {
+    try {
+      document.querySelectorAll('.mh-special-cell').forEach(el => el.classList.remove('mh-special-cell'));
+      const idxList = window._mhSpecialPatternCells || [];
+      const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+      list.forEach(cardObj => {
+        if (!cardObj || !cardObj.cells) return;
+        idxList.forEach(i => {
+          const cell = cardObj.cells[i];
+          if (cell) cell.classList.add('mh-special-cell');
+        });
+      });
+    } catch (e) {}
   }
 
   function ensureSpecialBanner() {
@@ -1776,7 +1841,23 @@
     }
     banner.innerHTML = `
       <span>🎯 Para ganar el <b>Bono de Sala (+20%)</b> completa: <b>${escapeHtml(window._mhSpecialPatternLabel || '')}</b></span>
-      <span class="sub">Si ganás de otra forma, tu premio normal se paga igual — solo que sin este extra.</span>`;
+      <span class="sub">Se marca con un punto dorado en tus cartones. Si ganás de otra forma, tu premio normal se paga igual — solo que sin este extra.</span>`;
+  }
+
+  // Mismo cartel, pero visible DURANTE la partida (arriba de las bolas), ya
+  // que una vez que empieza el juego el de la pantalla anterior desaparece.
+  function ensureSpecialBannerInGame() {
+    const anchor = document.querySelector('#active-game-area .battle-status');
+    if (!anchor) return;
+    let banner = document.getElementById('mh-special-pattern-banner-ingame');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'mh-special-pattern-banner-ingame';
+      banner.className = 'mh-special-banner';
+      anchor.insertAdjacentElement('afterend', banner);
+    }
+    banner.innerHTML = `<span>🎯 Bono de Sala (+20%) si completás: <b>${escapeHtml(window._mhSpecialPatternLabel || '')}</b></span>`;
+    highlightSpecialCells();
   }
 
   function setupSpecialPattern() {
@@ -1790,6 +1871,15 @@
       };
       window._mhSpecialPatternLobbyWired = true;
     }
+    if (typeof window.startBingoGame === 'function' && !window._mhSpecialPatternStartWired) {
+      const originalStart = window.startBingoGame;
+      window.startBingoGame = function () {
+        const r = originalStart.apply(this, arguments);
+        ensureSpecialBannerInGame();
+        return r;
+      };
+      window._mhSpecialPatternStartWired = true;
+    }
   }
 
   if (document.readyState === 'loading') {
@@ -1798,4 +1888,54 @@
     setupSpecialPattern();
   }
   setTimeout(setupSpecialPattern, 800);
+
+  // Refresco periódico: si el juego vuelve a dibujar las cartas (extra
+  // ball, nuevo cartón de mascota, etc.) el punto dorado se vuelve a poner.
+  setInterval(() => {
+    const area = document.getElementById('active-game-area');
+    if (area && area.style.display !== 'none') highlightSpecialCells();
+  }, 1200);
+})();
+
+/* ============================================================
+   "PREMIO POTENCIAL ESTIMADO" HONESTO (rango, no un solo número)
+   ------------------------------------------------------------
+   El cartel original asumía el mejor caso posible (como si fueras
+   a ganar con Cartón Lleno, el patrón de más valor) y lo mostraba
+   como "36.000+" — dando a entender que ibas a ganar ESO como
+   mínimo. En la práctica la mayoría de los bingos se ganan con
+   patrones más chicos (Línea, Columna, 4 Esquinas) que valen
+   bastante menos, así que terminabas ganando mucho menos de lo
+   prometido. Ahora se muestra el RANGO real: desde el patrón de
+   menor valor hasta el de mayor valor, calculado con las mismas
+   variables que ya usa tu juego (nada inventado).
+   ============================================================ */
+(function () {
+  function fixRewardEstimate() {
+    try {
+      const rewardEl = document.getElementById('risk-reward-value');
+      if (!rewardEl || typeof selectedRoom === 'undefined' || !selectedRoom) return;
+      const tier = (CONFIG.betTiers || [])[selectedBetTierIndex] || { cost: 0, mult: 1 };
+      const vipBonus = 1 + state.vipCards * (CONFIG.vipBonusPerCard / 100);
+      const roomBaseReward = (selectedRoom && selectedRoom.baseWinReward) || CONFIG.baseWinReward;
+      const mults = WIN_PATTERNS.map(p => p.mult);
+      const minMult = Math.min(...mults);
+      const maxMult = Math.max(...mults);
+      const common = roomBaseReward * chosenCardCount * vipBonus * (pendingMultiplier > 1 ? pendingMultiplier : 1) * (tier.mult || 1);
+      const minReward = Math.round(common * minMult);
+      const maxReward = Math.round(common * maxMult);
+      rewardEl.innerText = `🪙 ${minReward.toLocaleString('es')} – ${maxReward.toLocaleString('es')}`;
+      rewardEl.title = 'Depende de con qué patrón completes el bingo (Línea/Columna valen menos, Cartón Lleno vale más)';
+    } catch (e) {}
+  }
+
+  if (typeof window.updateRiskReturnBox === 'function' && !window._mhRiskFixWired) {
+    const original = window.updateRiskReturnBox;
+    window.updateRiskReturnBox = function () {
+      const r = original.apply(this, arguments);
+      fixRewardEstimate();
+      return r;
+    };
+    window._mhRiskFixWired = true;
+  }
 })();
