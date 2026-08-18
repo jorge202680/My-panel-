@@ -2362,43 +2362,46 @@
     #lobby-modal.mh-lobby-redesign #mh-cost-banner,
     #lobby-modal.mh-lobby-redesign .quick-bet-slider-row{ display:none !important; }
     #lobby-modal.mh-lobby-redesign h3{ margin:0 0 6px !important; font-size:13px !important; text-align:center; }
+    #lobby-modal.mh-lobby-redesign{ max-height:100vh !important; overflow:hidden !important; }
 
-    .mh-lobby-cols{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; align-items:start; }
-    .mh-lobby-col{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:6px; height:100%; box-sizing:border-box; }
-    .mh-lobby-col .option-group{ margin:6px 0 0 !important; }
+    .mh-lobby-cols{ display:grid; grid-template-columns:1.18fr 1.1fr 0.82fr; gap:6px; align-items:start; overflow:hidden; }
+    .mh-lobby-col{ background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:6px; height:100%; box-sizing:border-box; min-width:0; overflow:hidden; }
+    .mh-lobby-col .option-group{ margin:7px 0 0 !important; }
     .mh-lobby-col .option-group:first-child{ margin-top:0 !important; }
-    .mh-lobby-col .option-group-label{ font-size:9px !important; margin-bottom:3px !important; }
-    .mh-lobby-col .option-row{ gap:3px !important; flex-wrap:wrap; }
-    .mh-lobby-col .opt-chip{ padding:5px 2px !important; font-size:8.5px !important; }
+    .mh-lobby-col .option-group-label{ font-size:10px !important; margin-bottom:4px !important; }
+    .mh-lobby-col .option-row{ gap:4px !important; flex-wrap:wrap; }
+    .mh-lobby-col .opt-chip{ padding:6px 3px !important; font-size:9.5px !important; }
 
-    .mh-lobby-col .cards-options-grid:not(#bet-tier-options){ gap:4px !important; margin:0 !important; grid-template-columns:1fr 1fr !important; }
-    .mh-lobby-col .cards-options-grid:not(#bet-tier-options) .card-opt-btn{ padding:8px 2px !important; font-size:11px !important; font-weight:800; }
+    .mh-lobby-col .cards-options-grid:not(#bet-tier-options){ gap:5px !important; margin:0 !important; grid-template-columns:1fr 1fr !important; }
+    .mh-lobby-col .cards-options-grid:not(#bet-tier-options) .card-opt-btn{ padding:10px 3px !important; font-size:12.5px !important; font-weight:800; }
     .mh-lobby-col .cards-options-grid:not(#bet-tier-options) .card-opt-btn span{ display:none !important; }
-    .mh-lobby-col .quick-bet-panel{ padding:0 !important; margin:5px 0 0 !important; }
-    .mh-lobby-col .quick-bet-actions{ display:grid !important; grid-template-columns:1fr !important; gap:4px !important; margin-top:0 !important; }
-    .mh-lobby-col .quick-bet-actions button{ padding:6px 2px !important; font-size:8.5px !important; }
+    .mh-lobby-col .quick-bet-panel{ padding:0 !important; margin:6px 0 0 !important; }
+    .mh-lobby-col .quick-bet-actions{ display:grid !important; grid-template-columns:1fr !important; gap:5px !important; margin-top:0 !important; }
+    .mh-lobby-col .quick-bet-actions button{ padding:7px 3px !important; font-size:9.5px !important; }
 
-    #bet-tier-options.mh-compact-tiers{ grid-template-columns:1fr 1fr !important; gap:4px !important; }
-    #bet-tier-options.mh-compact-tiers .card-opt-btn{ padding:5px 2px !important; font-size:9px !important; }
-    #bet-tier-options.mh-compact-tiers .card-opt-btn span{ display:block !important; font-size:7.3px !important; margin-top:1px !important; opacity:.8; }
+    #bet-tier-options.mh-compact-tiers{ grid-template-columns:1fr 1fr !important; gap:5px !important; }
+    #bet-tier-options.mh-compact-tiers .card-opt-btn{ padding:6px 3px !important; font-size:9.8px !important; }
+    #bet-tier-options.mh-compact-tiers .card-opt-btn span{ display:block !important; font-size:7.6px !important; margin-top:1px !important; opacity:.8; }
 
     .mh-lobby-highlight{
-      margin-top:6px !important; padding:6px 6px !important; border-radius:8px !important;
+      margin-top:6px !important; padding:5px 6px !important; border-radius:8px !important;
       background:linear-gradient(90deg,#ff4d4d,#ff9966) !important; border:none !important; color:#fff !important;
-      font-size:8.5px !important; font-weight:800 !important; text-align:center !important; line-height:1.2;
+      font-size:8.5px !important; font-weight:800 !important; text-align:center !important; line-height:1.25;
+      max-height:34px !important; overflow:hidden !important;
     }
-    .mh-lobby-highlight span.sub{ display:none !important; }
+    .mh-lobby-highlight span.sub,
+    #mh-special-pattern-banner .sub{ display:none !important; }
 
-    #risk-return-box{ display:flex !important; flex-direction:column !important; gap:4px !important; margin:0 !important; }
-    .mh-lobby-col .risk-return-item{ padding:5px !important; }
-    .mh-lobby-col .risk-return-label{ font-size:7.5px !important; }
-    .mh-lobby-col .risk-return-value{ font-size:12px !important; }
-    .mh-lobby-col .game-action-btn{ width:100% !important; padding:8px 4px !important; margin:6px 0 0 !important; font-size:11.5px !important; }
+    #risk-return-box{ display:flex !important; flex-direction:column !important; gap:3px !important; margin:0 !important; }
+    .mh-lobby-col .risk-return-item{ padding:4px !important; }
+    .mh-lobby-col .risk-return-label{ font-size:7px !important; }
+    .mh-lobby-col .risk-return-value{ font-size:11px !important; }
+    .mh-lobby-col .game-action-btn{ width:100% !important; padding:7px 4px !important; margin:5px 0 0 !important; font-size:10.5px !important; }
 
-    .mh-lobby-extras{ display:flex; flex-direction:column; align-items:stretch; gap:4px; margin-top:6px; }
+    .mh-lobby-extras{ display:flex; flex-direction:column; align-items:stretch; gap:3px; margin-top:5px; }
     .mh-lobby-extras #mh-voice-shop-open-btn,
-    .mh-lobby-extras #mh-bt-open-btn{ font-size:8px !important; padding:4px 5px !important; margin:0 !important; }
-    .mh-lobby-extras #bonus-summary{ font-size:7px !important; margin:0 !important; }
+    .mh-lobby-extras #mh-bt-open-btn{ font-size:7.3px !important; padding:3px 4px !important; margin:0 !important; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .mh-lobby-extras #bonus-summary{ font-size:6.5px !important; margin:0 !important; }
   `;
   const styleTag = document.createElement('style');
   styleTag.textContent = css;
@@ -2481,5 +2484,54 @@
       return r;
     };
     window._mhLobbyRedesignWired = true;
+  }
+})();
+
+
+/* ============================================================
+   BOTONES CIRCULARES FLOTANTES (event-fab 🎉, admin-fab 🔧,
+   neon-aura-fab 🌟): NO deben aparecer sobre el Bingo (tapaban
+   "Selecciona tus Cartones") y en Inicio deben quedar fijos en
+   un lugar que no tape nada (antes quedaban ocultos siempre en
+   main-screen por compartir clase con isla/pet-battle, y cuando
+   se mostraban, su posición pegada abajo tapaba "Explora Mi Isla"
+   y las insignias).
+   ------------------------------------------------------------
+   1) Reposicionados arriba (debajo de la barra de stats), en el
+      hueco vacío antes del panel de Nivel / de las insignias.
+   2) mh-hide-fabs ahora se controla para la lista completa de
+      pantallas donde deben ocultarse (se agrega game-screen).
+   3) Se re-habilitan específicamente en Inicio (main-screen)
+      aunque comparta la clase no-scroll-fixed-screen con
+      isla/pet-battle (que sí deben seguir ocultándolos).
+   ============================================================ */
+(function () {
+  const css = `
+    .event-fab{ top:96px !important; bottom:auto !important; left:12px !important; }
+    .admin-fab{ top:154px !important; bottom:auto !important; left:14px !important; }
+    #neon-aura-fab{ top:96px !important; bottom:auto !important; right:12px !important; }
+
+    body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .event-fab,
+    body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .admin-fab,
+    body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) #neon-aura-fab{
+      display:flex !important;
+    }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  const HIDE_FABS_SCREENS = ['game-screen', 'mascota-screen', 'isla-screen', 'pet-battle-screen'];
+
+  if (typeof window.goToScreen === 'function' && !window._mhFabVisibilityWired) {
+    const original = window.goToScreen;
+    window.goToScreen = function (screenId, isReplace) {
+      const r = original.apply(this, arguments);
+      try {
+        document.body.classList.toggle('mh-hide-fabs', HIDE_FABS_SCREENS.includes(screenId));
+      } catch (e) {}
+      return r;
+    };
+    window._mhFabVisibilityWired = true;
   }
 })();
