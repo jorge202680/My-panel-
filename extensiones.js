@@ -2798,6 +2798,11 @@
     }
     #active-game-area .battle-status{ order:1; flex-basis:100% !important; }
     #active-game-area .tombola-wrap{ display:none !important; }
+    /* 🩹 FIX: el círculo de bolas duplicado arriba era #history-strip, la
+       tira original de la app (ya venía de antes). Como ahora tenemos
+       nuestra propia columna de historial (#mh-ball-history-col) con la
+       misma info, se oculta la original para que no aparezcan las dos. */
+    #active-game-area .history-strip{ display:none !important; }
     #active-game-area .ball-callout-container{ order:2; flex:0 0 78px !important; margin:0 !important; }
     #active-game-area .card-tabs-strip{ display:none !important; }
     #active-game-area #mh-ball-history-col{ order:3; flex:0 0 60px !important; display:flex; flex-direction:column; gap:5px; align-items:center; padding-top:4px; }
@@ -2910,4 +2915,38 @@
   } else {
     refreshCallPanel();
   }
+})();
+
+/* ============================================================
+   PANTALLA DE BINGO FIJA (no debe moverse / scrollear)
+   ------------------------------------------------------------
+   La app ya tiene un mecanismo para esto: la clase
+   body.no-scroll-fixed-screen (overflow:hidden, height:100%,
+   touch-action:none). goToScreen() la activa para
+   'pet-battle-screen', 'isla-screen' y 'main-screen', pero
+   nunca para 'game-screen' (Bingo) — por eso esa pantalla se
+   podía mover/scrollear y las demás no. Enganchamos goToScreen
+   para agregarla también cuando se entra a game-screen, sin
+   tocar el resto de su lógica original.
+   ============================================================ */
+(function () {
+  function wireFixedGameScreen() {
+    if (window._mhFixedGameScreenWired) return;
+    if (typeof window.goToScreen !== 'function') return;
+    const originalGoToScreen = window.goToScreen;
+    window.goToScreen = function (screenId, isReplace) {
+      const r = originalGoToScreen.apply(this, arguments);
+      if (screenId === 'game-screen') {
+        document.body.classList.add('no-scroll-fixed-screen');
+      }
+      return r;
+    };
+    window._mhFixedGameScreenWired = true;
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', wireFixedGameScreen);
+  } else {
+    wireFixedGameScreen();
+  }
+  setTimeout(wireFixedGameScreen, 800);
 })();
