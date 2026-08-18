@@ -2507,9 +2507,9 @@
    ============================================================ */
 (function () {
   const css = `
-    .event-fab{ top:96px !important; bottom:auto !important; left:12px !important; }
-    .admin-fab{ top:154px !important; bottom:auto !important; left:14px !important; }
-    #neon-aura-fab{ top:96px !important; bottom:auto !important; right:12px !important; }
+    .event-fab{ top:4px !important; bottom:auto !important; left:4px !important; width:34px !important; height:34px !important; font-size:15px !important; }
+    .admin-fab{ top:4px !important; bottom:auto !important; left:44px !important; width:28px !important; height:28px !important; font-size:13px !important; }
+    #neon-aura-fab{ top:4px !important; bottom:auto !important; right:4px !important; width:34px !important; height:34px !important; font-size:15px !important; }
 
     body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .event-fab,
     body.no-scroll-fixed-screen:has(#main-screen.active):not(.mh-hide-fabs) .admin-fab,
@@ -2554,16 +2554,28 @@
 
     #main-screen .hero-orbit{
       width:100% !important; max-width:none !important; aspect-ratio:auto !important;
-      min-height:0 !important; display:flex !important; align-items:center !important; justify-content:center !important;
+      height:100% !important; min-height:0 !important; max-height:100% !important;
+      display:flex !important; align-items:center !important; justify-content:center !important;
+      overflow:hidden !important;
     }
     #main-screen .hero-orbit-ring{
       position:static !important; inset:auto !important; animation:none !important;
-      display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:8px !important;
-      width:100% !important; max-width:380px !important; margin:0 auto !important;
+      display:grid !important;
+      grid-auto-flow:column !important;
+      grid-template-rows:repeat(2,1fr) !important;
+      grid-auto-columns:104px !important;
+      gap:7px !important;
+      width:100% !important; max-width:none !important; height:100% !important; margin:0 !important;
+      overflow-x:auto !important; overflow-y:hidden !important;
+      -webkit-overflow-scrolling:touch;
+      scroll-snap-type:x proximity;
+      padding:2px 4px !important;
+      box-sizing:border-box !important;
     }
     #main-screen .hero-badge{
       position:static !important; top:auto !important; left:auto !important; margin:0 !important;
-      width:auto !important; aspect-ratio:0.82/1 !important; transform:none !important;
+      width:104px !important; height:auto !important; transform:none !important;
+      scroll-snap-align:start;
     }
     #main-screen .hb-inner{
       width:100% !important; height:100% !important; display:flex !important; flex-direction:column !important;
