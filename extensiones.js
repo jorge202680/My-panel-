@@ -2535,3 +2535,160 @@
     window._mhFabVisibilityWired = true;
   }
 })();
+
+
+/* ============================================================
+   REDISEÑO DE INICIO (main-screen), estilo "vidrio" (glass):
+   - Se quita la mascota (pollito) del centro.
+   - La órbita circular de accesos se convierte en una grilla de
+     tarjetas de vidrio (3 columnas), con ícono grande + etiqueta.
+   - El panel de Nivel se convierte en tarjeta de vidrio oscura,
+     con el bono XP dividido en 3 chips (antes era 1 sola línea).
+   - Los botones "Bingo Automático" / "Mi Isla" pasan a tener un
+     círculo con el ícono a la izquierda y el texto al lado.
+   ============================================================ */
+(function () {
+  const css = `
+    #main-screen .hero-mascot,
+    #main-screen .hero-sparkle{ display:none !important; }
+
+    #main-screen .hero-orbit{
+      width:100% !important; max-width:none !important; aspect-ratio:auto !important;
+      min-height:0 !important; display:flex !important; align-items:center !important; justify-content:center !important;
+    }
+    #main-screen .hero-orbit-ring{
+      position:static !important; inset:auto !important; animation:none !important;
+      display:grid !important; grid-template-columns:repeat(3,1fr) !important; gap:8px !important;
+      width:100% !important; max-width:380px !important; margin:0 auto !important;
+    }
+    #main-screen .hero-badge{
+      position:static !important; top:auto !important; left:auto !important; margin:0 !important;
+      width:auto !important; aspect-ratio:0.82/1 !important; transform:none !important;
+    }
+    #main-screen .hb-inner{
+      width:100% !important; height:100% !important; display:flex !important; flex-direction:column !important;
+      align-items:center !important; justify-content:center !important; gap:5px !important;
+      border-radius:16px !important; position:relative !important; overflow:hidden !important;
+      border:1px solid rgba(255,255,255,.4) !important; backdrop-filter:blur(6px);
+      box-shadow:0 6px 14px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.35) !important;
+    }
+    #main-screen .hb-inner::before{
+      content:''; position:absolute; top:9px; right:9px; width:13px; height:2px;
+      background:rgba(255,255,255,.75); border-radius:2px;
+      box-shadow:0 4px 0 rgba(255,255,255,.75), 0 8px 0 rgba(255,255,255,.75);
+    }
+    #main-screen .hb-inner .hb-icon{ font-size:26px !important; filter:drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
+    #main-screen .hb-inner .hb-label{ font-size:9.5px !important; font-weight:800 !important; text-transform:uppercase; letter-spacing:.3px; text-shadow:0 1px 2px rgba(0,0,0,.35) !important; }
+
+    #main-screen .hb-c0 .hb-inner{ background:linear-gradient(160deg, rgba(255,143,179,.6), rgba(224,35,79,.5)) !important; }
+    #main-screen .hb-c1 .hb-inner{ background:linear-gradient(160deg, rgba(185,140,240,.6), rgba(110,64,201,.5)) !important; }
+    #main-screen .hb-c2 .hb-inner{ background:linear-gradient(160deg, rgba(123,224,138,.6), rgba(46,160,67,.5)) !important; }
+    #main-screen .hb-c3 .hb-inner{ background:linear-gradient(160deg, rgba(255,224,138,.6), rgba(210,153,34,.5)) !important; }
+    #main-screen .hb-c4 .hb-inner{ background:linear-gradient(160deg, rgba(143,214,255,.6), rgba(31,143,214,.5)) !important; }
+    #main-screen .hb-c5 .hb-inner{ background:linear-gradient(160deg, rgba(227,156,255,.6), rgba(162,63,214,.5)) !important; }
+    #main-screen .hb-c6 .hb-inner{ background:linear-gradient(160deg, rgba(255,158,110,.6), rgba(217,72,15,.5)) !important; }
+    #main-screen .hb-c7 .hb-inner{ background:linear-gradient(160deg, rgba(255,240,122,.6), rgba(255,160,0,.5)) !important; }
+    #main-screen .hb-c8 .hb-inner{ background:linear-gradient(160deg, rgba(255,216,102,.6), rgba(137,87,229,.5)) !important; }
+
+    #main-screen .userlvl-widget{
+      background:rgba(15,18,28,.55) !important; backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.18) !important; border-radius:20px !important;
+      padding:12px 16px !important;
+    }
+    #main-screen .userlvl-badge{ font-size:15px !important; }
+    #main-screen .userlvl-bar-bg{ height:18px !important; border-radius:20px !important; background:rgba(255,255,255,.08) !important; border:none !important; }
+    #main-screen .userlvl-bar-fill{ border-radius:20px !important; box-shadow:0 0 10px rgba(255,216,102,.6); }
+
+    #main-screen .mh-xp-chips{ display:flex !important; gap:6px !important; margin-top:8px !important; }
+    #main-screen .mh-xp-chip{
+      flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
+      border-radius:12px; padding:6px 4px; font-size:9px; font-weight:800; color:#fff;
+      text-shadow:0 1px 2px rgba(0,0,0,.4);
+    }
+    #main-screen .mh-xp-chip .mh-xp-chip-ico{ font-size:14px; }
+
+    #main-screen .hero-cta-inner{ text-align:left !important; padding:8px 14px !important; }
+    #main-screen .mh-cta-row{ display:flex !important; align-items:center !important; gap:10px !important; }
+    #main-screen .mh-cta-icon{
+      flex-shrink:0; width:38px; height:38px; border-radius:50%;
+      background:rgba(255,255,255,.25); border:1px solid rgba(255,255,255,.5);
+      display:flex; align-items:center; justify-content:center; font-size:19px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
+    }
+    #main-screen .mh-cta-text .hc-sub{ letter-spacing:2px !important; }
+  `;
+  const styleTag = document.createElement('style');
+  styleTag.textContent = css;
+  document.head.appendChild(styleTag);
+
+  function restyleCta(selector, icon, sub, main) {
+    const cta = document.querySelector(selector);
+    if (!cta || cta._mhCtaRestyled) return;
+    const inner = cta.querySelector('.hero-cta-inner');
+    if (!inner) return;
+    inner.innerHTML =
+      '<div class="mh-cta-row">' +
+      '<div class="mh-cta-icon">' + icon + '</div>' +
+      '<div class="mh-cta-text"><div class="hc-sub">' + sub + '</div><div class="hc-main">' + main + '</div></div>' +
+      '</div>';
+    cta._mhCtaRestyled = true;
+  }
+
+  function applyHomeRedesign() {
+    try {
+      restyleCta('.hero-cta[onclick*="game-screen"]', '🚀', 'ÚNETE A', 'BINGO AUTOMÁTICO');
+      restyleCta('.hero-cta[onclick*="isla-screen"]', '🏝️', 'EXPLORA', 'MI ISLA');
+    } catch (e) {}
+  }
+
+  function rebuildXPChips() {
+    try {
+      const bonusEl = document.getElementById('userlvl-bonus-text');
+      if (!bonusEl) return;
+      let vB = 0, cB = 0;
+      if (typeof window.vipRankXPBonusPercent === 'function') vB = window.vipRankXPBonusPercent();
+      if (typeof window.cardXPBonusPercent === 'function') cB = window.cardXPBonusPercent();
+      if (!vB && !cB) {
+        const raw = bonusEl.getAttribute('data-raw') || bonusEl.innerText;
+        const mV = raw.match(/VIP\s*\+([\d.]+)%/);
+        const mC = raw.match(/Cartones\s*\+(\d+)%/);
+        if (mV) vB = parseFloat(mV[1]);
+        if (mC) cB = parseFloat(mC[1]);
+      }
+      let chips = document.getElementById('mh-xp-chips');
+      if (!chips) {
+        chips = document.createElement('div');
+        chips.id = 'mh-xp-chips';
+        chips.className = 'mh-xp-chips';
+        bonusEl.insertAdjacentElement('afterend', chips);
+      }
+      if (vB > 0 || cB > 0) {
+        bonusEl.style.display = 'none';
+        chips.style.display = 'flex';
+        chips.innerHTML =
+          '<div class="mh-xp-chip"><span class="mh-xp-chip-ico">⚡</span>Bono XP +' + vB.toFixed(1) + '%</div>' +
+          '<div class="mh-xp-chip"><span class="mh-xp-chip-ico">💎</span>VIP +' + vB.toFixed(1) + '%</div>' +
+          '<div class="mh-xp-chip"><span class="mh-xp-chip-ico">🃏</span>Cartones +' + cB + '%</div>';
+      } else {
+        chips.style.display = 'none';
+      }
+    } catch (e) {}
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', applyHomeRedesign);
+  } else {
+    applyHomeRedesign();
+  }
+
+  if (typeof window.renderUserLevelWidget === 'function' && !window._mhXPChipsWired) {
+    const original = window.renderUserLevelWidget;
+    window.renderUserLevelWidget = function () {
+      const r = original.apply(this, arguments);
+      rebuildXPChips();
+      return r;
+    };
+    window._mhXPChipsWired = true;
+  }
+})();
