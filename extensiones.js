@@ -786,6 +786,29 @@
       }
     };
 
+    // 🩹 CLAVE para que se puedan hacer varios BINGO en el mismo cartón:
+    // el juego original, dentro de handleBallDraw(), hace
+    // "if (cardObj.completed) return;" antes de marcar números nuevos en
+    // cada cartón — es decir que apenas evaluateCardPatterns() marca un
+    // cartón como completed=true (al completar el PRIMER patrón), ese
+    // cartón deja de recibir marcas automáticas para siempre en esa
+    // ronda, aunque el sorteo de bolas siga. Sin este parche, ningún
+    // cartón podía llegar nunca a un segundo patrón, por más que la
+    // ronda no se cortara. Acá se "reabre" el cartón apenas el juego
+    // termina de evaluarlo, para que el marcado automático de las
+    // bolas siguientes lo siga teniendo en cuenta.
+    if (typeof window.evaluateCardPatterns === 'function' && !window._mhEvalPatternsWired) {
+      window._mhEvalPatternsWired = true;
+      const originalEvaluateCardPatterns = window.evaluateCardPatterns;
+      window.evaluateCardPatterns = function (cardObj) {
+        const result = originalEvaluateCardPatterns.apply(this, arguments);
+        if (cardObj && cardObj.completed) {
+          cardObj.completed = false;
+        }
+        return result;
+      };
+    }
+
     function stampCard(cardObj) {
       try {
         if (!cardObj || !cardObj.cells || !cardObj.cells[0]) return;
@@ -959,19 +982,28 @@
       window._mhBingoManualCall = false;
     }
 
-    // Calcula el mismo "premio base" que usa el juego (sala × cartones ×
-    // multiplicador del patrón), reutilizando las variables reales del
-    // motor — misma cuenta que se replica en el desglose del popup de
-    // victoria (ver openWinPopup), así que cada BINGO paga según el
-    // multiplicador real de SU patrón (una línea no vale lo mismo que un
-    // cartón lleno, por ejemplo).
+    // Calcula el premio con la MISMA fórmula real que usa endRound() para
+    // el premio oficial (sala × cartones × patrón × bono VIP × multiplicador
+    // de apuesta × bonus de mascota) — así un BINGO extra paga justo, no
+    // una versión recortada sin VIP/apuesta/mascota.
     function computeCardPrize(pattern) {
       try {
-        const roomBase = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.baseWinReward) || 0;
-        const cardsPlayed = (typeof playerCardData !== 'undefined' && playerCardData && playerCardData.length) || 1;
+        const vipBonus = 1 + ((typeof state !== 'undefined' && state && state.vipCards) || 0) *
+          (((typeof CONFIG !== 'undefined' && CONFIG && CONFIG.vipBonusPerCard) || 0) / 100);
+        const usedMultiplier = (typeof pendingMultiplier !== 'undefined' && pendingMultiplier) || 1;
+        const betMult = (typeof activeBetMultiplier !== 'undefined' && activeBetMultiplier) || 1;
+        const roomBase = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.baseWinReward) ||
+          ((typeof CONFIG !== 'undefined' && CONFIG && CONFIG.baseWinReward) || 0);
+        const mascotBonus = (typeof getMascotBonusTotals === 'function')
+          ? getMascotBonusTotals() : { goldMult: 1, powerMult: 1 };
+        const cardsPlayed = (typeof playerCardData !== 'undefined' && playerCardData && playerCardData.length) ||
+          (typeof chosenCardCount !== 'undefined' && chosenCardCount) || 1;
         const patternMult = (pattern && pattern.mult) ||
           (typeof roundWinPattern !== 'undefined' && roundWinPattern && roundWinPattern.mult) || 1;
-        return Math.max(0, Math.round(roomBase * cardsPlayed * patternMult));
+        return Math.max(0, Math.round(
+          roomBase * cardsPlayed * patternMult * vipBonus * usedMultiplier * betMult *
+          (mascotBonus.goldMult || 1) * (mascotBonus.powerMult || 1)
+        ));
       } catch (e) {
         return 0;
       }
@@ -985,22 +1017,28 @@
 
     // 🩹 NÚCLEO DEL PEDIDO: antes había UN solo patrón ganador por ronda y
     // cada cartón lo podía reclamar una única vez. Ahora se compara cada
-    // cartón contra TODOS los patrones reales del juego (WIN_PATTERNS —
-    // línea por línea, columna por columna, ambas diagonales, 4 esquinas,
-    // cartón lleno, 4 números) y el que ya esté completo Y no se haya
-    // cobrado todavía en esta partida se valida solo, sin apretar ningún
-    // botón. Así, en el mismo cartón, hacer una línea en la B cuenta como
-    // un BINGO, y más tarde completar también la diagonal cuenta como
-    // OTRO BINGO — y así sucesivamente hasta que se acaben los 90s o las
-    // 75 bolas.
+    // cartón contra TODOS los patrones activos del juego real
+    // (getActivePatterns(), la misma función que usa tu motor — línea por
+    // línea, columna por columna, ambas diagonales, 4 esquinas, cartón
+    // lleno) y el que ya esté completo Y no se haya cobrado todavía en
+    // esta partida se valida solo, sin apretar ningún botón. Se usa
+    // getActivePatterns() en vez de la lista cruda para respetar también
+    // la regla real de "4 Esquinas" (solo cuenta dentro de las primeras 8
+    // bolas cantadas). Así, en el mismo cartón, hacer una línea en la B
+    // cuenta como un BINGO, y más tarde completar también la diagonal
+    // cuenta como OTRO BINGO — y así sucesivamente hasta que se acaben
+    // los 90s o las 75 bolas.
     function scanForNewBingos() {
       if (window._mhRoundFinalized) return;
-      if (typeof WIN_PATTERNS === 'undefined' || !WIN_PATTERNS.length) return;
+      const patterns = (typeof getActivePatterns === 'function')
+        ? getActivePatterns()
+        : (typeof WIN_PATTERNS !== 'undefined' ? WIN_PATTERNS : null);
+      if (!patterns || !patterns.length) return;
       const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
       list.forEach((cardObj) => {
         if (!cardObj || !cardObj.cells || !cardObj.cells.length) return;
         cardObj._mhClaimedPatterns = cardObj._mhClaimedPatterns || new Set();
-        WIN_PATTERNS.forEach((pattern) => {
+        patterns.forEach((pattern) => {
           if (!pattern || !pattern.id || !pattern.cells || !pattern.cells.length) return;
           if (cardObj._mhClaimedPatterns.has(pattern.id)) return;
           if (pattern.cells.every((idx) => isCellMarked(cardObj, idx))) {
@@ -3005,28 +3043,44 @@
      real de layout del elemento (no solo lo visual), así que su propio
      alto ya queda achicado de verdad — no hace falta ningún envoltorio
      ni recortar nada por separado. */
+  /* 🩹 FIX 8: el cálculo anterior dividía "budget / naturalHeight" UNA
+     sola vez para sacar el zoom — pero el zoom cambia cuánto espacio
+     "efectivo" tienen las tarjetas/panel para acomodarse en fila (a
+     menos zoom, más espacio CSS disponible), así que el alto real ya
+     zoomeado casi nunca es exactamente proporcional al alto a tamaño
+     completo. Esa única cuenta se quedaba corta y terminaba achicando
+     de más, dejando espacio libre sin usar abajo. Ahora se prueba un
+     zoom candidato y se mide el alto REAL ya con ese zoom puesto (no
+     una cuenta matemática), ajustando de a poco hasta acercarse al
+     límite justo — así las tarjetas quedan lo más grandes posible sin
+     dejar de entrar completas. */
   function fitGameScreen() {
     const area = document.getElementById('active-game-area');
     if (!area) return;
     const cs = window.getComputedStyle(area);
     if (cs.display === 'none') return;
 
-    // Se resetea al 100% para medir bien cuánto ocupa de verdad ANTES de
-    // decidir cuánto reducir.
-    area.style.setProperty('zoom', '1', 'important');
     forceCardSizing();
+    area.style.setProperty('overflow', 'hidden', 'important');
 
     const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
-    const top = area.getBoundingClientRect().top;
-    const budget = Math.max(120, Math.floor(vh - top - 6));
 
-    const naturalHeight = area.scrollHeight;
     let zoomLevel = 1;
-    if (naturalHeight > budget) {
-      zoomLevel = Math.max(0.42, budget / naturalHeight);
+    let h = 0;
+    const budget = (() => {
+      area.style.setProperty('zoom', '1', 'important');
+      const top = area.getBoundingClientRect().top;
+      return Math.max(120, Math.floor(vh - top - 6));
+    })();
+
+    for (let i = 0; i < 8; i++) {
+      area.style.setProperty('zoom', zoomLevel.toFixed(3), 'important');
+      h = area.getBoundingClientRect().height;
+      if (h <= budget || zoomLevel <= 0.42) break;
+      // Margen de seguridad chico (3%) para converger sin pasarse de
+      // largo y necesitar demasiadas vueltas.
+      zoomLevel = Math.max(0.42, zoomLevel * (budget / h) * 0.97);
     }
-    area.style.setProperty('zoom', zoomLevel.toFixed(3), 'important');
-    area.style.setProperty('overflow', 'hidden', 'important');
   }
 
   if (!window._mhCardSizingObserverWired) {
@@ -3274,4 +3328,469 @@
   } else {
     syncCalledNumbers();
   }
+})();
+
+/* ============================================================
+   🛠️ EDITOR DE PANTALLA (mover / achicar / agrandar cualquier
+   bloque de CUALQUIER pantalla de la app, a mano)
+   ------------------------------------------------------------
+   Botón flotante propio (independiente del panel de administrador
+   real, que vive en tu index.html y no puedo tocar desde acá sin
+   arriesgarme a romperlo a ciegas). Al activar el modo edición,
+   tocás cualquier bloque de la pantalla que estés viendo (juego,
+   mascotas, tienda, lo que sea) y aparecen controles para
+   moverlo y cambiarle el tamaño con botones +/-, con un mini
+   cronómetro de posición en vivo. Todo lo que ajustés queda
+   guardado en ESTE celular (localStorage) y se vuelve a aplicar
+   solo cada vez que abrís esa pantalla — no hace falta pedirme
+   que te lo retoque yo cada vez.
+
+   Limitaciones a tener en cuenta:
+   - Se guarda en PORCENTAJES del ancho/alto de pantalla (no en
+     píxeles fijos) para que no se rompa en celulares de otra
+     medida — pero no es magia: un ajuste pensado para tu pantalla
+     puede no quedar igual de perfecto en una pantalla MUY distinta.
+   - Se guarda solo en este celular (no en la nube), así que por
+     ahora es tu calibración de prueba, no algo que ya vean todos
+     los jugadores.
+   - Si un bloque ya se mueve solo por su cuenta (por ejemplo algo
+     que gira o flota con su propia animación), moverlo acá puede
+     chocar con esa animación — mejor no tocar esos con el editor.
+   ============================================================ */
+(function () {
+  function setupLayoutEditor() {
+    if (window._mhLayoutEditorWired) return;
+    window._mhLayoutEditorWired = true;
+
+    const LS_KEY = 'mh_layout_overrides_v1';
+    const STEP_OPTIONS = [0.5, 1, 2, 5];
+
+    const css = `
+      .mh-editor-admin-btn{
+        display:block; width:100%; padding:12px; margin-top:8px; border:none; border-radius:10px;
+        font-weight:900; font-size:13.5px; cursor:pointer;
+      }
+      .mh-editor-admin-btn.on{ background:linear-gradient(180deg,#ffe58a,#d29922); color:#2a1c00; }
+      .mh-editor-admin-btn.off{ background:linear-gradient(180deg,#3a3010,#1c1804); color:#ffd75e; border:1px solid #ffd75e; }
+      .mh-editor-admin-btn.danger{ background:#5b2222; color:#ffd8d8; font-size:12px; padding:9px; }
+      .mh-editor-admin-note{ font-size:11.5px; color:#8b949e; margin:8px 0; line-height:1.5; }
+      .mh-editor-banner{
+        position:fixed; top:8px; left:50%; transform:translateX(-50%);
+        z-index:99991; background:rgba(20,16,4,.9); border:1px solid #ffd75e;
+        color:#ffe9ad; font-size:11.5px; font-weight:800; padding:6px 12px;
+        border-radius:999px; display:none; align-items:center; gap:8px;
+        box-shadow:0 3px 10px rgba(0,0,0,.5);
+      }
+      .mh-editor-banner.show{ display:flex; }
+      .mh-editor-banner button{
+        border:none; background:rgba(255,255,255,.12); color:#ffe9ad;
+        font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; cursor:pointer;
+      }
+      .mh-editor-selected{ outline:2px dashed #ffd75e !important; outline-offset:2px !important; }
+      .mh-editor-toolbar{
+        position:fixed; left:8px; right:8px; bottom:8px; z-index:99992;
+        background:rgba(15,12,3,.96); border:1px solid #ffd75e; border-radius:14px;
+        padding:10px; box-sizing:border-box; color:#ffe9ad;
+        box-shadow:0 6px 20px rgba(0,0,0,.6); display:none;
+        max-height:60vh; overflow-y:auto;
+      }
+      .mh-editor-toolbar.show{ display:block; }
+      .mh-editor-toolbar .mh-et-title{ font-size:11px; font-weight:800; opacity:.8; margin-bottom:6px; word-break:break-all; }
+      .mh-editor-toolbar .mh-et-row{ display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+      .mh-editor-toolbar .mh-et-label{ font-size:11px; font-weight:700; width:52px; flex-shrink:0; }
+      .mh-editor-toolbar button.mh-et-btn{
+        flex:1; border:none; border-radius:8px; padding:9px 0; font-size:15px; font-weight:900;
+        background:linear-gradient(180deg,#3a3010,#1c1804); color:#ffd75e; cursor:pointer;
+      }
+      .mh-editor-toolbar button.mh-et-btn:active{ background:linear-gradient(180deg,#ffe58a,#d29922); color:#2a1c00; }
+      .mh-editor-toolbar .mh-et-readout{ font-size:10.5px; opacity:.75; text-align:right; flex:0 0 auto; width:90px; }
+      .mh-editor-toolbar .mh-et-steps{ display:flex; gap:4px; margin-bottom:8px; }
+      .mh-editor-toolbar .mh-et-step{
+        flex:1; border:1px solid rgba(255,215,94,.4); background:transparent; color:#ffe9ad;
+        border-radius:8px; padding:5px 0; font-size:11px; font-weight:800; cursor:pointer;
+      }
+      .mh-editor-toolbar .mh-et-step.active{ background:#ffd75e; color:#2a1c00; border-color:#ffd75e; }
+      .mh-editor-toolbar .mh-et-actions{ display:flex; gap:6px; margin-top:6px; }
+      .mh-editor-toolbar .mh-et-actions button{
+        flex:1; border:none; border-radius:8px; padding:9px 0; font-size:11.5px; font-weight:800; cursor:pointer;
+      }
+      .mh-editor-toolbar .mh-et-reset{ background:#5b2222; color:#ffd8d8; }
+      .mh-editor-toolbar .mh-et-close{ background:#234a2c; color:#d8ffe0; }
+    `;
+    const styleTag = document.createElement('style');
+    styleTag.textContent = css;
+    document.head.appendChild(styleTag);
+
+    // 🩹 Ahora que tenemos el index.html real: ya existen funciones
+    // globales de Firestore (fsGet/fsSet/waitForFirebase) — así que en
+    // vez de guardar el diseño SOLO en este celular, se sube también a
+    // la nube (colección "config", documento "layoutOverrides"), igual
+    // que el resto de la configuración del admin (config/main,
+    // config/admin). Así, una vez que ajustás algo, lo ven TODOS los
+    // jugadores, no solo vos. Se guarda en localStorage además como
+    // respaldo rápido (por si no hay conexión en ese momento).
+    let layoutCache = null;
+
+    function localLoad() {
+      try { return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch (e) { return {}; }
+    }
+    function localSave(data) {
+      try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch (e) {}
+    }
+    async function cloudLoad() {
+      try {
+        if (typeof waitForFirebase === 'function') await waitForFirebase();
+        if (typeof fsGet !== 'function') return null;
+        const doc = await fsGet('config', 'layoutOverrides');
+        return (doc && doc.data) ? doc.data : null;
+      } catch (e) { return null; }
+    }
+    async function cloudSave(data) {
+      try {
+        if (typeof fsSet !== 'function') return;
+        await fsSet('config', 'layoutOverrides', { data: data, updatedAt: Date.now() });
+      } catch (e) {}
+    }
+    function loadAll() {
+      if (layoutCache) return layoutCache;
+      layoutCache = localLoad();
+      return layoutCache;
+    }
+    function saveAll(data) {
+      layoutCache = data;
+      localSave(data);
+      cloudSave(data);
+    }
+    async function initLayoutFromCloud() {
+      const cloud = await cloudLoad();
+      if (cloud) {
+        layoutCache = cloud;
+        localSave(cloud);
+        reapplyForCurrentScreen();
+      }
+    }
+    window._mhInitLayoutFromCloud = initLayoutFromCloud;
+
+    function currentScreenKey() {
+      const el = document.querySelector('[id$="-screen"].active');
+      return (el && el.id) || 'global';
+    }
+    function screenScopeEl() {
+      return document.querySelector('[id$="-screen"].active') || document.body;
+    }
+
+    // Genera una "ruta" razonablemente estable para un elemento dentro de
+    // su pantalla (tag + clases fijas + posición entre hermanos del mismo
+    // tag), ignorando clases que cambian solas (active, marked, called,
+    // show, warn, nuestras propias mh-editor-*, etc.) para no perder el
+    // rastro del bloque de un toque al otro.
+    const VOLATILE_CLASSES = ['active', 'marked', 'free', 'called', 'show', 'warn', 'flash-new', 'is-ready', 'mh-called-num'];
+    function stableClassList(node) {
+      if (!node.className || typeof node.className !== 'string') return '';
+      return node.className.split(/\s+/)
+        .filter(c => c && !c.startsWith('mh-editor') && !VOLATILE_CLASSES.includes(c))
+        .sort().join('.');
+    }
+    function elementKey(el) {
+      const scopeEl = screenScopeEl();
+      let node = el;
+      const parts = [];
+      let guard = 0;
+      while (node && node !== scopeEl && node.parentElement && guard < 30) {
+        guard++;
+        const tag = node.tagName.toLowerCase();
+        const cls = stableClassList(node);
+        const siblings = Array.from(node.parentElement.children).filter(s => s.tagName === node.tagName);
+        const idx = siblings.indexOf(node);
+        parts.unshift(tag + (cls ? '.' + cls : '') + '@' + idx);
+        node = node.parentElement;
+      }
+      return parts.join('>');
+    }
+    function findByKey(key) {
+      const scopeEl = screenScopeEl();
+      if (!key) return null;
+      const parts = key.split('>');
+      let node = scopeEl;
+      for (const part of parts) {
+        const atIdx = part.lastIndexOf('@');
+        if (atIdx < 0) return null;
+        const sel = part.slice(0, atIdx);
+        const idx = parseInt(part.slice(atIdx + 1), 10);
+        const tag = sel.split('.')[0];
+        const siblings = Array.from(node.children).filter(s => s.tagName.toLowerCase() === tag);
+        if (!siblings[idx]) return null;
+        node = siblings[idx];
+      }
+      return node;
+    }
+
+    function applyOverride(el, ov) {
+      if (!el || !ov) return;
+      const vw = window.innerWidth, vh = window.innerHeight;
+      const dx = ((ov.dxPct || 0) / 100) * vw;
+      const dy = ((ov.dyPct || 0) / 100) * vh;
+      el.style.setProperty('transform', 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)', 'important');
+      if (ov.wPct) el.style.setProperty('width', (ov.wPct / 100 * vw).toFixed(1) + 'px', 'important');
+      if (ov.hPct) el.style.setProperty('height', (ov.hPct / 100 * vh).toFixed(1) + 'px', 'important');
+      el.classList.add('mh-editor-has-override');
+    }
+
+    function reapplyForCurrentScreen() {
+      const all = loadAll();
+      const screenKey = currentScreenKey();
+      const screenData = all[screenKey];
+      if (!screenData) return;
+      Object.keys(screenData).forEach((key) => {
+        const el = findByKey(key);
+        if (el) applyOverride(el, screenData[key]);
+      });
+    }
+
+    // -------- UI --------
+    // El punto de entrada ahora es una pestaña nueva DENTRO de tu panel de
+    // administrador real (.admin-tabs / .admin-body), no un botón aparte
+    // — así usa la misma contraseña/candado que ya tiene tu panel, sin
+    // inventar un acceso paralelo.
+    function injectAdminEditorTab() {
+      if (window._mhEditorAdminTabWired) return;
+      const tabsWrap = document.querySelector('#admin-screen .admin-tabs');
+      const bodyWrap = document.querySelector('#admin-screen .admin-body');
+      if (!tabsWrap || !bodyWrap) return;
+      window._mhEditorAdminTabWired = true;
+
+      const tabBtn = document.createElement('div');
+      tabBtn.className = 'admin-tab';
+      tabBtn.dataset.tab = 'editor';
+      tabBtn.textContent = '🛠️ Editor';
+      tabBtn.onclick = function () { switchAdminTab('editor', tabBtn); };
+      tabsWrap.appendChild(tabBtn);
+
+      const section = document.createElement('div');
+      section.className = 'admin-section';
+      section.id = 'admin-editor';
+      section.innerHTML = `
+        <div class="admin-group">
+          <div class="admin-group-title">🛠️ Editor de Pantalla</div>
+          <div class="mh-editor-admin-note">
+            Movés y achicás/agrandás cualquier bloque de cualquier pantalla
+            de la app (juego, mascotas, tienda, etc.) a mano. Se guarda en
+            porcentaje de pantalla y se sube a la nube — se aplica para
+            todos los jugadores, no solo en este celular.
+          </div>
+          <button type="button" class="mh-editor-admin-btn off" id="mh-editor-toggle-btn">▶️ Activar modo edición</button>
+          <div class="mh-editor-admin-note" id="mh-editor-cloud-status">☁️ Estado: cargando…</div>
+          <button type="button" class="mh-editor-admin-btn danger" id="mh-editor-reset-screen-btn">🗑️ Borrar ajustes de ESTA pantalla</button>
+          <button type="button" class="mh-editor-admin-btn danger" id="mh-editor-reset-all-btn">🗑️ Borrar TODOS los ajustes guardados</button>
+        </div>`;
+      bodyWrap.appendChild(section);
+
+      section.querySelector('#mh-editor-toggle-btn').addEventListener('click', () => {
+        const turningOn = !window._mhEditorModeOn;
+        setEditorMode(turningOn);
+        if (turningOn && typeof closeAdminPanel === 'function') {
+          closeAdminPanel();
+        }
+      });
+      section.querySelector('#mh-editor-reset-screen-btn').addEventListener('click', () => {
+        const all = loadAll();
+        const screenKey = currentScreenKey();
+        if (!all[screenKey]) { alert('Esta pantalla no tiene ajustes guardados.'); return; }
+        if (!confirm('¿Borrar todos los ajustes guardados de "' + screenKey + '"?')) return;
+        delete all[screenKey];
+        saveAll(all);
+        alert('Listo. Volvé a entrar a esa pantalla para ver los cambios.');
+      });
+      section.querySelector('#mh-editor-reset-all-btn').addEventListener('click', () => {
+        if (!confirm('¿Borrar TODOS los ajustes guardados de TODAS las pantallas? Esto no se puede deshacer.')) return;
+        saveAll({});
+        alert('Listo, se borró todo.');
+      });
+    }
+    const adminTabInterval = setInterval(() => {
+      injectAdminEditorTab();
+      if (window._mhEditorAdminTabWired) clearInterval(adminTabInterval);
+    }, 1000);
+    injectAdminEditorTab();
+
+    const banner = document.createElement('div');
+    banner.className = 'mh-editor-banner';
+    banner.innerHTML = '✏️ Modo edición — tocá un bloque <button id="mh-editor-exit">Salir</button>';
+    document.body.appendChild(banner);
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'mh-editor-toolbar';
+    toolbar.innerHTML = `
+      <div class="mh-et-title" id="mh-et-title">—</div>
+      <div class="mh-et-steps" id="mh-et-steps"></div>
+      <div class="mh-et-row">
+        <div class="mh-et-label">Mover</div>
+        <button class="mh-et-btn" data-act="left">⬅️</button>
+        <button class="mh-et-btn" data-act="up">⬆️</button>
+        <button class="mh-et-btn" data-act="down">⬇️</button>
+        <button class="mh-et-btn" data-act="right">➡️</button>
+      </div>
+      <div class="mh-et-row">
+        <div class="mh-et-label">Ancho</div>
+        <button class="mh-et-btn" data-act="w-">－</button>
+        <button class="mh-et-btn" data-act="w+">＋</button>
+        <div class="mh-et-readout" id="mh-et-w">—</div>
+      </div>
+      <div class="mh-et-row">
+        <div class="mh-et-label">Alto</div>
+        <button class="mh-et-btn" data-act="h-">－</button>
+        <button class="mh-et-btn" data-act="h+">＋</button>
+        <div class="mh-et-readout" id="mh-et-h">—</div>
+      </div>
+      <div class="mh-et-actions">
+        <button class="mh-et-reset" data-act="reset">↩️ Restablecer este bloque</button>
+        <button class="mh-et-close" data-act="close">✅ Listo</button>
+      </div>
+    `;
+    document.body.appendChild(toolbar);
+    const stepsWrap = toolbar.querySelector('#mh-et-steps');
+    STEP_OPTIONS.forEach((s, i) => {
+      const b = document.createElement('button');
+      b.className = 'mh-et-step' + (i === 1 ? ' active' : '');
+      b.textContent = s + '%';
+      b.dataset.step = s;
+      b.onclick = () => {
+        stepsWrap.querySelectorAll('.mh-et-step').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        window._mhEditorStep = s;
+      };
+      stepsWrap.appendChild(b);
+    });
+    window._mhEditorStep = STEP_OPTIONS[1];
+
+    let selectedEl = null;
+    let selectedKey = null;
+
+    function currentOverride() {
+      const all = loadAll();
+      const screenKey = currentScreenKey();
+      all[screenKey] = all[screenKey] || {};
+      all[screenKey][selectedKey] = all[screenKey][selectedKey] || { dxPct: 0, dyPct: 0, wPct: 0, hPct: 0 };
+      return { all, screenKey, ov: all[screenKey][selectedKey] };
+    }
+
+    function updateReadout() {
+      if (!selectedEl) return;
+      const rect = selectedEl.getBoundingClientRect();
+      toolbar.querySelector('#mh-et-w').textContent = Math.round(rect.width) + 'px';
+      toolbar.querySelector('#mh-et-h').textContent = Math.round(rect.height) + 'px';
+    }
+
+    function selectElement(el) {
+      if (selectedEl) selectedEl.classList.remove('mh-editor-selected');
+      selectedEl = el;
+      selectedKey = elementKey(el);
+      selectedEl.classList.add('mh-editor-selected');
+      const label = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (stableClassList(el) ? '.' + stableClassList(el) : '');
+      toolbar.querySelector('#mh-et-title').textContent = label;
+      toolbar.classList.add('show');
+      updateReadout();
+    }
+    function deselect() {
+      if (selectedEl) selectedEl.classList.remove('mh-editor-selected');
+      selectedEl = null;
+      selectedKey = null;
+      toolbar.classList.remove('show');
+    }
+
+    toolbar.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-act]');
+      if (!btn || !selectedEl) return;
+      const act = btn.dataset.act;
+      const step = window._mhEditorStep;
+      const { all, screenKey, ov } = currentOverride();
+
+      if (act === 'left') ov.dxPct -= step;
+      else if (act === 'right') ov.dxPct += step;
+      else if (act === 'up') ov.dyPct -= step;
+      else if (act === 'down') ov.dyPct += step;
+      else if (act === 'w-' || act === 'w+') {
+        if (!ov.wPct) ov.wPct = (selectedEl.getBoundingClientRect().width / window.innerWidth) * 100;
+        ov.wPct = Math.max(3, ov.wPct + (act === 'w+' ? step : -step));
+      } else if (act === 'h-' || act === 'h+') {
+        if (!ov.hPct) ov.hPct = (selectedEl.getBoundingClientRect().height / window.innerHeight) * 100;
+        ov.hPct = Math.max(3, ov.hPct + (act === 'h+' ? step : -step));
+      } else if (act === 'reset') {
+        delete all[screenKey][selectedKey];
+        selectedEl.style.removeProperty('transform');
+        selectedEl.style.removeProperty('width');
+        selectedEl.style.removeProperty('height');
+        saveAll(all);
+        updateReadout();
+        return;
+      } else if (act === 'close') {
+        deselect();
+        return;
+      }
+
+      saveAll(all);
+      applyOverride(selectedEl, ov);
+      updateReadout();
+    });
+
+    function isEditorOwnElement(el) {
+      return !!el.closest('.mh-editor-banner, .mh-editor-toolbar, #admin-editor, #admin-screen');
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!window._mhEditorModeOn) return;
+      if (isEditorOwnElement(e.target)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      selectElement(e.target);
+    }, true);
+
+    function syncAdminToggleBtn() {
+      const btn = document.getElementById('mh-editor-toggle-btn');
+      if (!btn) return;
+      if (window._mhEditorModeOn) {
+        btn.textContent = '⏹️ Desactivar modo edición';
+        btn.classList.remove('off');
+        btn.classList.add('on');
+      } else {
+        btn.textContent = '▶️ Activar modo edición';
+        btn.classList.remove('on');
+        btn.classList.add('off');
+      }
+    }
+
+    function setEditorMode(on) {
+      window._mhEditorModeOn = on;
+      banner.classList.toggle('show', on);
+      if (!on) deselect();
+      syncAdminToggleBtn();
+    }
+
+    banner.querySelector('#mh-editor-exit').addEventListener('click', () => setEditorMode(false));
+
+    setInterval(reapplyForCurrentScreen, 700);
+    const screenObserver = new MutationObserver((mutations) => {
+      const relevant = mutations.some(m => m.target && m.target.id && m.target.id.endsWith('-screen'));
+      if (relevant) setTimeout(reapplyForCurrentScreen, 30);
+    });
+    document.querySelectorAll('[id$="-screen"]').forEach(s => {
+      screenObserver.observe(s, { attributes: true, attributeFilter: ['class'] });
+    });
+    reapplyForCurrentScreen();
+    // Trae lo que ya esté guardado en la nube (si otro dispositivo ya
+    // ajustó algo, o vos mismo desde otra sesión) y lo aplica encima de
+    // lo local apenas esté disponible, y actualiza el texto de estado en
+    // la pestaña del admin.
+    initLayoutFromCloud().then(() => {
+      const statusEl = document.getElementById('mh-editor-cloud-status');
+      if (statusEl) statusEl.textContent = '☁️ Estado: sincronizado con la nube';
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupLayoutEditor);
+  } else {
+    setupLayoutEditor();
+  }
+  setTimeout(setupLayoutEditor, 800);
 })();
