@@ -1073,11 +1073,28 @@
     // Reacciona apenas se marca/desmarca una celda (tap manual del
     // jugador), sin esperar al próximo intervalo — así el BINGO se valida
     // casi al instante en vez de tardar hasta 500ms.
+    // 🩹 FIX (congelamiento): este observador vigila cambios de clase en
+    // TODO el bloque de tarjetas — pero la propia insignia "🏆 X BINGOS"
+    // (updateBingoBadge) también vive ahí adentro y le cambia la clase
+    // "show" cada vez que se actualiza. Sin filtrar, eso hacía que el
+    // observador se disparara a sí mismo en bucle sin parar (cada
+    // actualización de la insignia contaba como "cambio", así que volvía
+    // a llamar a scanForNewBingos()/refreshAllBingoBadges(), que volvía a
+    // tocar la insignia, que volvía a disparar el observador...), lo que
+    // saturaba el navegador y congelaba TODO (el reloj, el sorteo
+    // automático, todo). Ahora se ignoran los cambios que no sean
+    // justo en una celda de número (.b-cell) — así solo reacciona a
+    // marcas reales del jugador, nunca a sus propios elementos.
     function wireCellMarkObserver() {
       if (window._mhCellMarkObserverWired) return;
       const container = document.querySelector('#active-game-area .cards-container');
       if (!container) return;
-      const obs = new MutationObserver(() => {
+      const obs = new MutationObserver((mutations) => {
+        const isRealCellChange = mutations.some((m) => {
+          const t = m.target;
+          return t && t.classList && t.classList.contains('b-cell');
+        });
+        if (!isRealCellChange) return;
         scanForNewBingos();
         refreshAllBingoBadges();
       });
