@@ -587,11 +587,24 @@
 })();
 
 /* ============================================================
-   BOTÓN MANUAL "¡BINGO!"
+   BINGO AUTOMÁTICO POR PATRÓN (multi-bingo por cartón)
+   ------------------------------------------------------------
+   Antes la ronda tenía UN solo patrón ganador sorteado al azar
+   (línea, diagonal, esquinas, columna, cartón lleno o 4 números)
+   y cada cartón podía reclamarlo UNA sola vez con un botón
+   manual "¡BINGO!". Ahora se compara el cartón, en cada cambio,
+   contra TODOS los patrones reales del juego (WIN_PATTERNS) —
+   así que si marcás una línea en la B, eso ya cuenta como un
+   BINGO; si después completás también la diagonal, cuenta como
+   OTRO BINGO más en el mismo cartón, y así sucesivamente,
+   siempre que ese patrón puntual no se haya cobrado antes en esa
+   partida. Se valida solo (sin botón) apenas el patrón queda
+   completo, y sigue funcionando hasta que se acaben los 90s o
+   las 75 bolas.
    ============================================================ */
 (function () {
-  function setupManualBingo() {
-    if (window._mhManualBingoWired) return;
+  function setupAutoBingo() {
+    if (window._mhAutoBingoWired) return;
     if (typeof window.endRound !== 'function' || typeof window.handleBallDraw !== 'function' ||
         typeof window.focusCard !== 'function' || typeof window.startBingoGame !== 'function') return;
 
@@ -627,21 +640,17 @@
       @keyframes mhStampShine{ from{ left:-60%; } to{ left:130%; } }
 
       .bingo-card{ position:relative; }
-      .mh-bingo-card-btn{
-        display:block; width:100%; margin-top:6px; padding:8px;
-        font-size:13px; font-weight:900; letter-spacing:1px; text-transform:uppercase;
-        color:#1a1a1a; background:linear-gradient(180deg,#ffe58a,#d29922);
-        border:2px solid #ffd75e; border-radius:99px; cursor:pointer;
+      /* Insignia pasiva (no es un botón, no hace falta tocarla) que muestra
+         cuántos BINGO ya lleva ese cartón en la partida actual. */
+      .mh-bingo-count-badge{
+        display:none; align-items:center; justify-content:center; gap:5px;
+        width:100%; margin-top:6px; padding:7px;
+        font-size:12px; font-weight:900; letter-spacing:.5px; text-transform:uppercase;
+        color:#3b2604; background:linear-gradient(180deg,#ffe58a,#d29922);
+        border:2px solid #ffd75e; border-radius:99px;
         box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35);
       }
-      .mh-bingo-card-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 #8a6a12; }
-      .mh-bingo-card-btn.is-ready{
-        animation: mhCardBtnPulse 1s ease-in-out infinite;
-      }
-      @keyframes mhCardBtnPulse{
-        0%,100%{ box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35), 0 0 0 rgba(255,215,94,.6); }
-        50%{ box-shadow:0 2px 0 #8a6a12, 0 3px 6px rgba(0,0,0,.35), 0 0 14px rgba(255,215,94,.9); }
-      }
+      .mh-bingo-count-badge.show{ display:flex; }
 
       #mh-bingo-fullscreen{
         position:fixed; inset:0; z-index:99999;
@@ -674,23 +683,6 @@
       }
       @keyframes mhFsSpin{ to{ transform:rotate(360deg); } }
 
-      #mh-bingo-grace-timer{
-        position:fixed; top:10px; left:50%; transform:translateX(-50%);
-        z-index:9998; max-width:92vw;
-        display:flex; align-items:center; gap:8px;
-        padding:9px 16px; border-radius:999px;
-        background:linear-gradient(180deg,#2fae54,#1d7a3a);
-        border:2px solid #7be3a0; color:#eafff0;
-        font-weight:800; font-size:13px; text-align:center;
-        box-shadow:0 4px 14px rgba(0,0,0,.45);
-        animation: mhGraceIn .35s ease;
-      }
-      #mh-bingo-grace-timer .mh-grace-secs{
-        display:inline-block; min-width:22px; text-align:center;
-        background:rgba(0,0,0,.25); border-radius:999px; padding:2px 8px;
-      }
-      @keyframes mhGraceIn{ from{ opacity:0; transform:translate(-50%,-10px); } to{ opacity:1; transform:translate(-50%,0); } }
-
       #mh-round-timeout-timer{
         position:fixed; top:10px; left:50%; transform:translateX(-50%);
         z-index:9997; max-width:92vw;
@@ -707,6 +699,11 @@
         background:rgba(0,0,0,.25); border-radius:999px; padding:2px 8px;
       }
       #mh-round-timeout-timer.warn{ background:linear-gradient(180deg,#dc2626,#7f1d1d); border-color:#fca5a5; animation: mhCardBtnPulse 1s ease-in-out infinite; }
+      @keyframes mhGraceIn{ from{ opacity:0; transform:translate(-50%,-10px); } to{ opacity:1; transform:translate(-50%,0); } }
+      @keyframes mhCardBtnPulse{
+        0%,100%{ box-shadow:0 4px 14px rgba(0,0,0,.45), 0 0 0 rgba(255,215,94,.6); }
+        50%{ box-shadow:0 4px 14px rgba(0,0,0,.45), 0 0 14px rgba(255,215,94,.9); }
+      }
 
       /* Popup de "nadie ganó" — mismo lenguaje visual que el popup de
          victoria del juego (tarjeta clara, redondeada), pero compacto para
@@ -754,16 +751,17 @@
       window._mhRoundSettled = false;
       window._mhRoundFinalized = false;
       window._mhClaimedCardsOrder = [];
-      // 🩹 FIX: sin esto, una tarjeta que ya ganó una vez quedaba con
-      // _mhClaimed=true para siempre y el botón "¡BINGO!" seguía
-      // deshabilitado en todas las rondas siguientes.
       const _mhCardList = (typeof playerCardData !== 'undefined' && playerCardData) || [];
-      _mhCardList.forEach(c => { if (c) c._mhClaimed = false; });
+      // 🩹 Cada cartón lleva su propia lista de patrones ya cobrados en ESTA
+      // partida (Set de ids, ej. "row2", "diag1", "col0", "full"...). Se
+      // reinicia siempre que arranca una partida nueva.
+      _mhCardList.forEach(c => { if (c) c._mhClaimedPatterns = new Set(); });
       clearGraceTimer();
       clearRoundTimeoutTimer();
       const result = originalStartBingoGame.apply(this, arguments);
-      setTimeout(ensurePerCardButtons, 50);
-      setTimeout(ensurePerCardButtons, 400);
+      setTimeout(refreshAllBingoBadges, 50);
+      setTimeout(refreshAllBingoBadges, 400);
+      setTimeout(wireCellMarkObserver, 500);
       // Arranca el único cronómetro de la ronda (90s) apenas empieza la
       // partida real. Ya no hay un segundo temporizador de "gracia" de
       // 30s aparte: este mismo reloj corre entero, haya o no BINGO en
@@ -783,7 +781,7 @@
       if (!window._mhRivalAlerted) {
         window._mhRivalAlerted = true;
         if (typeof showToast === 'function') {
-          showToast('🤖 Tu rival ya completó su cartón, pero la partida sigue: ¡marca y presiona BINGO en tu tarjeta!');
+          showToast('🤖 Tu rival ya completó su cartón, pero la partida sigue: ¡seguí marcando tu tarjeta!');
         }
       }
     };
@@ -829,10 +827,9 @@
       if (bar) bar.remove();
     }
 
-    // Termina la ronda cuando nadie completó ningún cartón: se paga SOLO
+    // Termina la ronda cuando nadie completó ningún patrón: se paga SOLO
     // el 10% de lo gastado como devolución (ese es el "premio final" en
-    // este caso). No activa el temporizador de gracia de 30s en absoluto
-    // (ese es solo para cuando SÍ hay un bingo real).
+    // este caso).
     function endRoundNoWinner(motivo) {
       if (window._mhRoundFinalized) return;
       window._mhRoundFinalized = true;
@@ -904,12 +901,9 @@
       bar.innerHTML = `⏱️ Tiempo restante de la partida: <span class="mh-rt-secs">${secondsLeft}</span>s`;
       document.body.appendChild(bar);
       window._mhRoundTimeoutInterval = setInterval(() => {
-        // 🩹 Antes este cronómetro se apagaba apenas alguien hacía el
-        // primer BINGO (pasaba la posta a un temporizador de gracia de
-        // 30s aparte). Ahora es el ÚNICO reloj de la ronda: sigue
-        // corriendo entero aunque ya haya uno o más BINGO reclamados,
-        // para que se pueda seguir marcando y sumando más BINGO hasta
-        // que se acabe el tiempo de verdad.
+        // Único reloj de la ronda: sigue corriendo entero aunque ya haya
+        // uno o más BINGO reclamados, para que se pueda seguir marcando
+        // y sumando más BINGO hasta que se acabe el tiempo de verdad.
         if (window._mhRoundFinalized) {
           clearRoundTimeoutTimer();
           return;
@@ -950,137 +944,175 @@
       const claimed = window._mhClaimedCardsOrder || [];
       if (claimed.length === 0) return;
 
-      const mainCard = claimed[0];
-      roundWinPattern = mainCard.winPattern || roundWinPattern;
+      const first = claimed[0];
+      roundWinPattern = first.pattern || roundWinPattern;
 
       // El premio "oficial" del popup del juego (con animación, XP, Bono de
-      // Sala, garantía mínima, etc.) se sigue pagando UNA sola vez, para el
-      // primer cartón reclamado en la ronda — igual que antes. Los BINGO
-      // extra que se hayan hecho durante la partida (2do cartón, etc.) ya
-      // recibieron su propio premio real al momento de reclamarlos, en
-      // claimCard() — ver más abajo — así que acá no hay que pagarles nada
-      // de nuevo, solo cerrar la ronda con el popup principal.
+      // Sala, garantía mínima, etc.) se paga UNA sola vez, con el PRIMER
+      // patrón validado en la ronda — igual que antes. Cada BINGO extra que
+      // se haya hecho durante la partida (otra línea, la diagonal, etc.) ya
+      // recibió su propio premio real al momento de completarse — ver
+      // awardPatternBingo() más abajo — así que acá no hay que pagarles
+      // nada de nuevo, solo cerrar la ronda con el popup principal.
       window._mhBingoManualCall = true;
       endRound(true);
       window._mhBingoManualCall = false;
     }
 
     // Calcula el mismo "premio base" que usa el juego (sala × cartones ×
-    // patrón), reutilizando las variables reales del motor — es la misma
-    // cuenta que ya se replica más abajo en el desglose del popup de
-    // victoria (ver openWinPopup), así que un BINGO extra paga lo mismo
-    // que pagaría un BINGO normal de este patrón.
-    function computeCardPrize() {
+    // multiplicador del patrón), reutilizando las variables reales del
+    // motor — misma cuenta que se replica en el desglose del popup de
+    // victoria (ver openWinPopup), así que cada BINGO paga según el
+    // multiplicador real de SU patrón (una línea no vale lo mismo que un
+    // cartón lleno, por ejemplo).
+    function computeCardPrize(pattern) {
       try {
         const roomBase = (typeof selectedRoom !== 'undefined' && selectedRoom && selectedRoom.baseWinReward) || 0;
         const cardsPlayed = (typeof playerCardData !== 'undefined' && playerCardData && playerCardData.length) || 1;
-        const patternMult = (typeof roundWinPattern !== 'undefined' && roundWinPattern && roundWinPattern.mult) || 1;
+        const patternMult = (pattern && pattern.mult) ||
+          (typeof roundWinPattern !== 'undefined' && roundWinPattern && roundWinPattern.mult) || 1;
         return Math.max(0, Math.round(roomBase * cardsPlayed * patternMult));
       } catch (e) {
         return 0;
       }
     }
 
-    function claimCard(cardObj) {
-      if (!cardObj || !cardObj.completed) return false;
-      if (window._mhRoundFinalized) return false;
-      if (cardObj._mhClaimed) return false;
-      cardObj._mhClaimed = true;
+    function isCellMarked(cardObj, idx) {
+      const cell = cardObj.cells && cardObj.cells[idx];
+      if (!cell) return false;
+      return cell.classList.contains('marked') || cell.classList.contains('free');
+    }
+
+    // 🩹 NÚCLEO DEL PEDIDO: antes había UN solo patrón ganador por ronda y
+    // cada cartón lo podía reclamar una única vez. Ahora se compara cada
+    // cartón contra TODOS los patrones reales del juego (WIN_PATTERNS —
+    // línea por línea, columna por columna, ambas diagonales, 4 esquinas,
+    // cartón lleno, 4 números) y el que ya esté completo Y no se haya
+    // cobrado todavía en esta partida se valida solo, sin apretar ningún
+    // botón. Así, en el mismo cartón, hacer una línea en la B cuenta como
+    // un BINGO, y más tarde completar también la diagonal cuenta como
+    // OTRO BINGO — y así sucesivamente hasta que se acaben los 90s o las
+    // 75 bolas.
+    function scanForNewBingos() {
+      if (window._mhRoundFinalized) return;
+      if (typeof WIN_PATTERNS === 'undefined' || !WIN_PATTERNS.length) return;
+      const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+      list.forEach((cardObj) => {
+        if (!cardObj || !cardObj.cells || !cardObj.cells.length) return;
+        cardObj._mhClaimedPatterns = cardObj._mhClaimedPatterns || new Set();
+        WIN_PATTERNS.forEach((pattern) => {
+          if (!pattern || !pattern.id || !pattern.cells || !pattern.cells.length) return;
+          if (cardObj._mhClaimedPatterns.has(pattern.id)) return;
+          if (pattern.cells.every((idx) => isCellMarked(cardObj, idx))) {
+            awardPatternBingo(cardObj, pattern);
+          }
+        });
+      });
+    }
+
+    function awardPatternBingo(cardObj, pattern) {
+      if (window._mhRoundFinalized) return;
+      cardObj._mhClaimedPatterns = cardObj._mhClaimedPatterns || new Set();
+      if (cardObj._mhClaimedPatterns.has(pattern.id)) return;
+      cardObj._mhClaimedPatterns.add(pattern.id);
       window._mhClaimedCardsOrder = window._mhClaimedCardsOrder || [];
-      const isExtraBingo = window._mhClaimedCardsOrder.length > 0;
-      window._mhClaimedCardsOrder.push(cardObj);
+      const isFirstOfRound = window._mhClaimedCardsOrder.length === 0;
+      window._mhClaimedCardsOrder.push({ cardObj: cardObj, pattern: pattern });
       stampCard(cardObj);
+      updateBingoBadge(cardObj);
       if (typeof window._mhSpeakBingoVoice === 'function') window._mhSpeakBingoVoice();
       playFullscreenBingo();
 
-      // 🩹 Antes solo el PRIMER cartón reclamado pagaba de verdad — el
-      // resto quedaba marcado en pantalla nomás, sin premio, y encima la
-      // ronda se cortaba 30s después del primer BINGO. Ahora la ronda no
-      // se corta por hacer BINGO (sigue hasta que se acaben los 90s o las
-      // bolas), así que se puede seguir marcando y reclamar BINGO de
-      // nuevo en el otro cartón — y ese BINGO extra paga premio real al
-      // toque, sin esperar a que termine el tiempo.
-      if (isExtraBingo) {
-        const extraPrize = computeCardPrize();
+      // El primer BINGO de la ronda se paga al final (junto con el popup
+      // oficial de victoria, en finalizeRound). Cada BINGO EXTRA en la
+      // misma partida (otro patrón, mismo o distinto cartón) paga premio
+      // real al toque, sin esperar a que termine el tiempo.
+      if (!isFirstOfRound) {
+        const extraPrize = computeCardPrize(pattern);
         if (extraPrize > 0 && typeof state !== 'undefined' && state) {
           state.gold = (state.gold || 0) + extraPrize;
           if (typeof saveState === 'function') saveState();
           if (typeof refreshAllUI === 'function') refreshAllUI();
         }
         if (typeof showToast === 'function') {
-          showToast('🎯 ¡BINGO extra! +🪙 ' + Math.round(extraPrize).toLocaleString('es'));
+          const label = pattern.label || 'patrón';
+          showToast('🎯 ¡BINGO extra (' + label + ')! +🪙 ' + Math.round(extraPrize).toLocaleString('es'));
         }
       }
-      return true;
     }
 
-    function ensurePerCardButtons() {
-      const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
-      list.forEach((cardObj) => {
+    // Insignia pasiva (no un botón — no hace falta tocar nada) que muestra
+    // cuántos BINGO ya lleva ese cartón en la partida actual.
+    function updateBingoBadge(cardObj) {
+      try {
         if (!cardObj || !cardObj.cells || !cardObj.cells[0]) return;
         const cardDiv = cardObj.cells[0].closest('.bingo-card');
         if (!cardDiv) return;
-        let btn = cardDiv.querySelector('.mh-bingo-card-btn');
-        if (!btn) {
-          btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'mh-bingo-card-btn';
-          btn.textContent = '🎯 ¡BINGO!';
-          btn.onclick = function (e) {
-            e.stopPropagation();
-            if (!claimCard(cardObj)) {
-              btn.classList.remove('mh-bingo-shake');
-              void btn.offsetWidth;
-              btn.classList.add('mh-bingo-shake');
-            }
-          };
-          cardDiv.appendChild(btn);
+        let badge = cardDiv.querySelector('.mh-bingo-count-badge');
+        if (!badge) {
+          badge = document.createElement('div');
+          badge.className = 'mh-bingo-count-badge';
+          cardDiv.appendChild(badge);
         }
-        if (cardObj._mhClaimed) {
-          btn.disabled = true;
-          btn.textContent = '✅ Reclamado';
-          btn.classList.remove('is-ready');
+        const count = (cardObj._mhClaimedPatterns && cardObj._mhClaimedPatterns.size) || 0;
+        if (count > 0) {
+          badge.textContent = '🏆 ' + count + (count === 1 ? ' BINGO' : ' BINGOS');
+          badge.classList.add('show');
         } else {
-          btn.classList.toggle('is-ready', !!cardObj.completed);
+          badge.classList.remove('show');
         }
-      });
+      } catch (e) {}
     }
-    window._mhEnsurePerCardButtons = ensurePerCardButtons;
+
+    function refreshAllBingoBadges() {
+      const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
+      list.forEach(updateBingoBadge);
+    }
+    window._mhRefreshAllBingoBadges = refreshAllBingoBadges;
+
+    // Reacciona apenas se marca/desmarca una celda (tap manual del
+    // jugador), sin esperar al próximo intervalo — así el BINGO se valida
+    // casi al instante en vez de tardar hasta 500ms.
+    function wireCellMarkObserver() {
+      if (window._mhCellMarkObserverWired) return;
+      const container = document.querySelector('#active-game-area .cards-container');
+      if (!container) return;
+      const obs = new MutationObserver(() => {
+        scanForNewBingos();
+        refreshAllBingoBadges();
+      });
+      obs.observe(container, { attributes: true, attributeFilter: ['class'], subtree: true });
+      window._mhCellMarkObserverWired = true;
+    }
 
     const originalHandleBallDraw = window.handleBallDraw;
     window.handleBallDraw = function () {
       originalHandleBallDraw.apply(this, arguments);
-      ensurePerCardButtons();
+      scanForNewBingos();
+      refreshAllBingoBadges();
       if (typeof drawnNumbers !== 'undefined' && drawnNumbers.length >= 75 && !window._mhRoundFinalized) {
         const claimedSoFar = window._mhClaimedCardsOrder || [];
         if (claimedSoFar.length > 0) {
           finalizeRound();
         } else {
-          const list = (typeof playerCardData !== 'undefined' && playerCardData) || [];
-          const anyCompleted = list.find(c => c.completed);
-          if (anyCompleted) {
-            claimCard(anyCompleted);
-            finalizeRound();
-          } else {
-            // Se agotaron las 75 bolas sin que nadie complete nada: mismo
-            // caso que el timeout de 90s (nadie ganó), misma devolución del 10%.
-            endRoundNoWinner('bolas');
-          }
+          // Se agotaron las 75 bolas sin que nadie complete ningún patrón:
+          // mismo caso que el timeout de 90s (nadie ganó), misma devolución del 10%.
+          endRoundNoWinner('bolas');
         }
       }
     };
 
-    setInterval(ensurePerCardButtons, 500);
+    setInterval(() => { scanForNewBingos(); refreshAllBingoBadges(); }, 500);
 
     window._mhManualBingoWired = true;
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupManualBingo);
+    document.addEventListener('DOMContentLoaded', setupAutoBingo);
   } else {
-    setupManualBingo();
+    setupAutoBingo();
   }
-  setTimeout(setupManualBingo, 800);
+  setTimeout(setupAutoBingo, 800);
 })();
 
 /* ============================================================
@@ -2838,12 +2870,14 @@
        se estiraba enorme (y por el aspect-ratio:1 de cada celda, la
        tarjeta terminaba más alta que la pantalla y se cortaba abajo).
        Se le pone un máximo de ancho fijo para que no crezca de más,
-       juegues con 1 o con 2. El valor real (--mh-card-w) lo calcula
-       fitGameScreen() en JS más abajo según el espacio real disponible
-       en pantalla; 260px acá es solo un valor inicial de arranque. */
+       juegues con 1 o con 2. Es un ancho fijo (260px); el ajuste real
+       para que TODO entre en pantalla (tarjetas, bolas y tabla) lo hace
+       fitGameScreen() en JS más abajo, escalando el bloque completo, no
+       cambiando este número.
+    */
     #active-game-area .cards-container .bingo-card{
-      flex:0 0 var(--mh-card-w, 260px) !important; max-width:var(--mh-card-w, 260px) !important;
-      width:var(--mh-card-w, 260px) !important; min-width:0 !important; box-sizing:border-box !important;
+      flex:0 0 260px !important; max-width:260px !important;
+      width:260px !important; min-width:0 !important; box-sizing:border-box !important;
     }
     /* 🩹 FIX 2: lo de arriba no alcanzaba con 1 sola tarjeta porque el
        juego recalcula el tamaño de la GRILLA interna (.bingo-grid) y de
@@ -2868,7 +2902,11 @@
        terreno para que ese alto en px realmente se respete y no se
        desborde. */
     body.no-scroll-fixed-screen{ overflow:hidden !important; position:fixed !important; inset:0 !important; width:100% !important; }
-    #active-game-area{ box-sizing:border-box !important; overflow:hidden !important; }
+    #active-game-area{ box-sizing:border-box !important; }
+    /* 🩹 FIX 6: envoltorio que reserva el espacio ya "achicado" en la
+       pantalla (ver fitGameScreen más abajo) — ver comentario ahí de
+       por qué hace falta un elemento aparte del que se escala. */
+    #mh-fit-wrapper{ display:block; width:100%; box-sizing:border-box; }
 
     #mh-ball-history-col .mh-hist-ball{
       border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -2905,7 +2943,11 @@
      directo en el atributo style (style.setProperty(..., 'important')),
      eso le gana a nuestro <style> aunque tenga !important. Por eso además
      se re-aplican estos valores por JS cada vez que el DOM de las
-     tarjetas cambia, así siempre quedan pisados los de arriba. */
+     tarjetas cambia, así siempre quedan pisados los de arriba. Esto solo
+     fija un ancho BASE fijo (no depende de cuánto espacio quede en la
+     pantalla) — el que realmente ajusta todo para que entre entero es
+     fitGameScreen(), más abajo, escalando el bloque completo.
+  */
   function forceCardSizing() {
     const container = document.querySelector('#active-game-area .cards-container');
     if (container) {
@@ -2915,7 +2957,7 @@
       container.style.setProperty('gap', '6px', 'important');
       container.style.setProperty('justify-content', 'center', 'important');
     }
-    const cardW = document.documentElement.style.getPropertyValue('--mh-card-w') || '260px';
+    const cardW = '260px';
     document.querySelectorAll('#active-game-area .cards-container .bingo-card').forEach(card => {
       card.style.setProperty('max-width', cardW, 'important');
       card.style.setProperty('width', cardW, 'important');
@@ -2933,40 +2975,69 @@
     });
   }
 
-  /* 🩹 FIX 5: "que no se mueva / entre en una sola pantalla" — antes el
-     tamaño de tarjeta era un número fijo (260px) que en pantallas más
-     chicas o con la barra del navegador ocupando espacio se pasaba del
-     alto real disponible, y el usuario terminaba teniendo que scrollear.
-     Ahora se mide de verdad cuánto alto queda libre (desde donde empieza
-     #active-game-area hasta el borde inferior de la pantalla) y se prueba
-     un ancho de tarjeta cada vez más chico hasta que TODO (banner de
-     tiempo + bolas recientes + tarjetas + panel de bolas restantes) entra
-     sin desbordar. Así siempre cabe entero, sea 1 o 2 tarjetas, y ambas
-     quedan siempre del mismo tamaño entre sí. */
+  /* 🩹 FIX 5/6: "que no se mueva / entre en una sola pantalla, con la
+     tabla completa hasta el 75" — el intento anterior solo achicaba el
+     ANCHO de las tarjetas, pero el panel de "bolas restantes" (con toda
+     la tabla 1-75) no se achicaba con ellas, así que cuando no entraba
+     completo se cortaba (se veía solo hasta el número 70 más o menos).
+     Ahora se mide el alto real que ocupa TODO el bloque (bolas recientes
+     + tarjetas + tabla completa) a tamaño normal, y si no entra en el
+     espacio libre de la pantalla, se reduce el bloque ENTERO como una
+     sola unidad (con un transform de escala), no solo las tarjetas. Así
+     la tabla de bolas restantes también se achica junto con todo lo
+     demás y se ve completa hasta el 75, nada más chico que el resto.
+
+     Nota técnica: el propio elemento que se escala (#active-game-area)
+     tiene que quedar con su alto NATURAL (sin recortar) para que nada se
+     pierda antes de escalarlo — el recorte real (para no dejar un hueco
+     vacío abajo ni forzar scroll de la página) se hace en un envoltorio
+     aparte (#mh-fit-wrapper) que NO tiene el transform, solo el tamaño ya
+     reducido reservado en el lugar justo. */
+  function ensureFitWrapper(area) {
+    if (area.parentElement && area.parentElement.id === 'mh-fit-wrapper') {
+      return area.parentElement;
+    }
+    const wrapper = document.createElement('div');
+    wrapper.id = 'mh-fit-wrapper';
+    area.parentNode.insertBefore(wrapper, area);
+    wrapper.appendChild(area);
+    return wrapper;
+  }
+
   function fitGameScreen() {
     const area = document.getElementById('active-game-area');
     if (!area) return;
     const cs = window.getComputedStyle(area);
     if (cs.display === 'none') return;
 
-    const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
-    const top = area.getBoundingClientRect().top;
-    const budget = Math.max(140, Math.floor(vh - top - 6));
-    area.style.setProperty('max-height', budget + 'px', 'important');
-    area.style.setProperty('height', budget + 'px', 'important');
-    area.style.setProperty('overflow', 'hidden', 'important');
+    const wrapper = ensureFitWrapper(area);
 
-    const MAX_CARD = 260, MIN_CARD = 118, STEP = 6;
-    let cardW = MAX_CARD;
-    for (let i = 0; i <= (MAX_CARD - MIN_CARD) / STEP; i++) {
-      document.documentElement.style.setProperty('--mh-card-w', cardW + 'px');
-      forceCardSizing();
-      // Fuerza a recalcular layout ANTES de leer el alto real ya con
-      // este ancho de tarjeta aplicado.
-      const contentH = area.scrollHeight;
-      if (contentH <= budget || cardW <= MIN_CARD) break;
-      cardW -= STEP;
+    // Se resetea todo a estado "natural" (sin achicar) para medir bien
+    // cuánto ocupa de verdad ANTES de decidir cuánto reducir.
+    area.style.setProperty('transform', 'none', 'important');
+    area.style.removeProperty('height');
+    area.style.removeProperty('max-height');
+    wrapper.style.removeProperty('height');
+    wrapper.style.setProperty('overflow', 'visible', 'important');
+    forceCardSizing();
+
+    const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
+    const top = wrapper.getBoundingClientRect().top;
+    const budget = Math.max(120, Math.floor(vh - top - 6));
+
+    const naturalHeight = area.scrollHeight;
+    let scale = 1;
+    if (naturalHeight > budget) {
+      scale = Math.max(0.42, budget / naturalHeight);
     }
+
+    area.style.setProperty('transform-origin', 'top center', 'important');
+    area.style.setProperty('transform', 'scale(' + scale.toFixed(3) + ')', 'important');
+
+    const scaledHeight = Math.ceil(naturalHeight * scale);
+    wrapper.style.setProperty('height', scaledHeight + 'px', 'important');
+    wrapper.style.setProperty('overflow', 'hidden', 'important');
+    wrapper.style.setProperty('box-sizing', 'border-box', 'important');
   }
 
   if (!window._mhCardSizingObserverWired) {
