@@ -3387,32 +3387,43 @@
         font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; cursor:pointer;
       }
       .mh-editor-selected{ outline:2px dashed #ffd75e !important; outline-offset:2px !important; }
+      /* 🩹 Antes ocupaba casi toda la pantalla (ancho completo + hasta
+         60vh de alto) y no dejaba ver lo que estabas editando. Ahora es
+         un panel chico, fijo en una esquina, que no tapa el resto. */
       .mh-editor-toolbar{
-        position:fixed; left:8px; right:8px; bottom:8px; z-index:99992;
-        background:rgba(15,12,3,.96); border:1px solid #ffd75e; border-radius:14px;
-        padding:10px; box-sizing:border-box; color:#ffe9ad;
-        box-shadow:0 6px 20px rgba(0,0,0,.6); display:none;
-        max-height:60vh; overflow-y:auto;
+        position:fixed; right:6px; bottom:6px; z-index:99992;
+        width:172px; background:rgba(15,12,3,.97); border:1px solid #ffd75e; border-radius:10px;
+        padding:6px; box-sizing:border-box; color:#ffe9ad;
+        box-shadow:0 4px 14px rgba(0,0,0,.6); display:none;
+        max-height:44vh; overflow-y:auto;
       }
       .mh-editor-toolbar.show{ display:block; }
-      .mh-editor-toolbar .mh-et-title{ font-size:11px; font-weight:800; opacity:.8; margin-bottom:6px; word-break:break-all; }
-      .mh-editor-toolbar .mh-et-row{ display:flex; align-items:center; gap:6px; margin-bottom:6px; }
-      .mh-editor-toolbar .mh-et-label{ font-size:11px; font-weight:700; width:52px; flex-shrink:0; }
+      .mh-editor-toolbar.minimized{ width:auto; max-height:none; padding:0; }
+      .mh-editor-toolbar.minimized .mh-et-body{ display:none; }
+      .mh-editor-toolbar .mh-et-head{ display:flex; align-items:center; justify-content:space-between; gap:4px; margin-bottom:4px; }
+      .mh-editor-toolbar.minimized .mh-et-head{ margin-bottom:0; padding:6px 8px; }
+      .mh-editor-toolbar .mh-et-title{ font-size:9px; font-weight:800; opacity:.75; word-break:break-all; line-height:1.2; flex:1; }
+      .mh-editor-toolbar .mh-et-min-btn{
+        flex-shrink:0; border:none; background:rgba(255,255,255,.12); color:#ffe9ad;
+        width:18px; height:18px; border-radius:5px; font-size:11px; line-height:1; cursor:pointer;
+      }
+      .mh-editor-toolbar .mh-et-row{ display:flex; align-items:center; gap:3px; margin-bottom:4px; }
+      .mh-editor-toolbar .mh-et-label{ font-size:9px; font-weight:700; width:28px; flex-shrink:0; }
       .mh-editor-toolbar button.mh-et-btn{
-        flex:1; border:none; border-radius:8px; padding:9px 0; font-size:15px; font-weight:900;
+        flex:1; border:none; border-radius:6px; padding:5px 0; font-size:11px; font-weight:900;
         background:linear-gradient(180deg,#3a3010,#1c1804); color:#ffd75e; cursor:pointer;
       }
       .mh-editor-toolbar button.mh-et-btn:active{ background:linear-gradient(180deg,#ffe58a,#d29922); color:#2a1c00; }
-      .mh-editor-toolbar .mh-et-readout{ font-size:10.5px; opacity:.75; text-align:right; flex:0 0 auto; width:90px; }
-      .mh-editor-toolbar .mh-et-steps{ display:flex; gap:4px; margin-bottom:8px; }
+      .mh-editor-toolbar .mh-et-readout{ font-size:8.5px; opacity:.7; text-align:right; flex:0 0 auto; width:38px; }
+      .mh-editor-toolbar .mh-et-steps{ display:flex; gap:2px; margin-bottom:4px; }
       .mh-editor-toolbar .mh-et-step{
         flex:1; border:1px solid rgba(255,215,94,.4); background:transparent; color:#ffe9ad;
-        border-radius:8px; padding:5px 0; font-size:11px; font-weight:800; cursor:pointer;
+        border-radius:5px; padding:3px 0; font-size:8.5px; font-weight:800; cursor:pointer;
       }
       .mh-editor-toolbar .mh-et-step.active{ background:#ffd75e; color:#2a1c00; border-color:#ffd75e; }
-      .mh-editor-toolbar .mh-et-actions{ display:flex; gap:6px; margin-top:6px; }
+      .mh-editor-toolbar .mh-et-actions{ display:flex; gap:3px; margin-top:4px; }
       .mh-editor-toolbar .mh-et-actions button{
-        flex:1; border:none; border-radius:8px; padding:9px 0; font-size:11.5px; font-weight:800; cursor:pointer;
+        flex:1; border:none; border-radius:6px; padding:6px 0; font-size:9px; font-weight:800; cursor:pointer;
       }
       .mh-editor-toolbar .mh-et-reset{ background:#5b2222; color:#ffd8d8; }
       .mh-editor-toolbar .mh-et-close{ background:#234a2c; color:#d8ffe0; }
@@ -3621,33 +3632,44 @@
     const toolbar = document.createElement('div');
     toolbar.className = 'mh-editor-toolbar';
     toolbar.innerHTML = `
-      <div class="mh-et-title" id="mh-et-title">—</div>
-      <div class="mh-et-steps" id="mh-et-steps"></div>
-      <div class="mh-et-row">
-        <div class="mh-et-label">Mover</div>
-        <button class="mh-et-btn" data-act="left">⬅️</button>
-        <button class="mh-et-btn" data-act="up">⬆️</button>
-        <button class="mh-et-btn" data-act="down">⬇️</button>
-        <button class="mh-et-btn" data-act="right">➡️</button>
+      <div class="mh-et-head">
+        <div class="mh-et-title" id="mh-et-title">—</div>
+        <button type="button" class="mh-et-min-btn" id="mh-et-min-btn">－</button>
       </div>
-      <div class="mh-et-row">
-        <div class="mh-et-label">Ancho</div>
-        <button class="mh-et-btn" data-act="w-">－</button>
-        <button class="mh-et-btn" data-act="w+">＋</button>
-        <div class="mh-et-readout" id="mh-et-w">—</div>
-      </div>
-      <div class="mh-et-row">
-        <div class="mh-et-label">Alto</div>
-        <button class="mh-et-btn" data-act="h-">－</button>
-        <button class="mh-et-btn" data-act="h+">＋</button>
-        <div class="mh-et-readout" id="mh-et-h">—</div>
-      </div>
-      <div class="mh-et-actions">
-        <button class="mh-et-reset" data-act="reset">↩️ Restablecer este bloque</button>
-        <button class="mh-et-close" data-act="close">✅ Listo</button>
+      <div class="mh-et-body">
+        <div class="mh-et-steps" id="mh-et-steps"></div>
+        <div class="mh-et-row">
+          <div class="mh-et-label">Mover</div>
+          <button class="mh-et-btn" data-act="left">⬅️</button>
+          <button class="mh-et-btn" data-act="up">⬆️</button>
+          <button class="mh-et-btn" data-act="down">⬇️</button>
+          <button class="mh-et-btn" data-act="right">➡️</button>
+        </div>
+        <div class="mh-et-row">
+          <div class="mh-et-label">Ancho</div>
+          <button class="mh-et-btn" data-act="w-">－</button>
+          <button class="mh-et-btn" data-act="w+">＋</button>
+          <div class="mh-et-readout" id="mh-et-w">—</div>
+        </div>
+        <div class="mh-et-row">
+          <div class="mh-et-label">Alto</div>
+          <button class="mh-et-btn" data-act="h-">－</button>
+          <button class="mh-et-btn" data-act="h+">＋</button>
+          <div class="mh-et-readout" id="mh-et-h">—</div>
+        </div>
+        <div class="mh-et-actions">
+          <button class="mh-et-reset" data-act="reset">↩️ Reset</button>
+          <button class="mh-et-close" data-act="close">✅ Listo</button>
+        </div>
       </div>
     `;
     document.body.appendChild(toolbar);
+    toolbar.querySelector('#mh-et-min-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      const nowMin = !toolbar.classList.contains('minimized');
+      toolbar.classList.toggle('minimized', nowMin);
+      toolbar.querySelector('#mh-et-min-btn').textContent = nowMin ? '＋' : '－';
+    });
     const stepsWrap = toolbar.querySelector('#mh-et-steps');
     STEP_OPTIONS.forEach((s, i) => {
       const b = document.createElement('button');
@@ -3689,6 +3711,8 @@
       const label = el.tagName.toLowerCase() + (el.id ? '#' + el.id : '') + (stableClassList(el) ? '.' + stableClassList(el) : '');
       toolbar.querySelector('#mh-et-title').textContent = label;
       toolbar.classList.add('show');
+      toolbar.classList.remove('minimized');
+      toolbar.querySelector('#mh-et-min-btn').textContent = '－';
       updateReadout();
     }
     function deselect() {
@@ -3737,9 +3761,30 @@
       return !!el.closest('.mh-editor-banner, .mh-editor-toolbar, #admin-editor, #admin-screen');
     }
 
+    // 🩹 "Para qué quiero mover el login" — tocar el fondo vacío de una
+    // pantalla (el contenedor grande con clase "screen", o cualquier
+    // elemento con id que termine en "-screen") seleccionaba la pantalla
+    // ENTERA, algo que nunca tiene sentido mover/achicar. Ahora esos
+    // toques se ignoran — solo se puede seleccionar un bloque real de
+    // adentro (un cartón, un botón, un panel, etc.).
+    function isScreenRoot(el) {
+      if (!el) return false;
+      if (el.classList && el.classList.contains('screen')) return true;
+      if (el.id && el.id.endsWith('-screen')) return true;
+      return false;
+    }
+
     document.addEventListener('click', (e) => {
       if (!window._mhEditorModeOn) return;
       if (isEditorOwnElement(e.target)) return;
+      if (isScreenRoot(e.target)) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (typeof showToast === 'function') {
+          showToast('👆 Tocá un bloque real (un cartón, un botón, un panel) — no el fondo de la pantalla.');
+        }
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       selectElement(e.target);
