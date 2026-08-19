@@ -2903,10 +2903,6 @@
        desborde. */
     body.no-scroll-fixed-screen{ overflow:hidden !important; position:fixed !important; inset:0 !important; width:100% !important; }
     #active-game-area{ box-sizing:border-box !important; }
-    /* 🩹 FIX 6: envoltorio que reserva el espacio ya "achicado" en la
-       pantalla (ver fitGameScreen más abajo) — ver comentario ahí de
-       por qué hace falta un elemento aparte del que se escala. */
-    #mh-fit-wrapper{ display:block; width:100%; box-sizing:border-box; }
 
     #mh-ball-history-col .mh-hist-ball{
       border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -2980,64 +2976,40 @@
      ANCHO de las tarjetas, pero el panel de "bolas restantes" (con toda
      la tabla 1-75) no se achicaba con ellas, así que cuando no entraba
      completo se cortaba (se veía solo hasta el número 70 más o menos).
-     Ahora se mide el alto real que ocupa TODO el bloque (bolas recientes
-     + tarjetas + tabla completa) a tamaño normal, y si no entra en el
-     espacio libre de la pantalla, se reduce el bloque ENTERO como una
-     sola unidad (con un transform de escala), no solo las tarjetas. Así
-     la tabla de bolas restantes también se achica junto con todo lo
-     demás y se ve completa hasta el 75, nada más chico que el resto.
 
-     Nota técnica: el propio elemento que se escala (#active-game-area)
-     tiene que quedar con su alto NATURAL (sin recortar) para que nada se
-     pierda antes de escalarlo — el recorte real (para no dejar un hueco
-     vacío abajo ni forzar scroll de la página) se hace en un envoltorio
-     aparte (#mh-fit-wrapper) que NO tiene el transform, solo el tamaño ya
-     reducido reservado en el lugar justo. */
-  function ensureFitWrapper(area) {
-    if (area.parentElement && area.parentElement.id === 'mh-fit-wrapper') {
-      return area.parentElement;
-    }
-    const wrapper = document.createElement('div');
-    wrapper.id = 'mh-fit-wrapper';
-    area.parentNode.insertBefore(wrapper, area);
-    wrapper.appendChild(area);
-    return wrapper;
-  }
-
+     🩹 FIX 7: el primer intento de arreglar eso envolvía #active-game-area
+     en un <div> nuevo (moviéndolo de lugar en el DOM) para poder reducir
+     el bloque entero con un transform — pero mover ese elemento de lugar
+     rompía el arranque del sorteo automático (la partida se quedaba
+     trabada en "Sorteo automático en curso..." sin avanzar). Ahora se
+     logra el mismo resultado (reducir TODO el bloque como una unidad,
+     tabla incluida) SIN mover nada de lugar: se usa la propiedad CSS
+     "zoom", que a diferencia de "transform: scale()" sí reduce el tamaño
+     real de layout del elemento (no solo lo visual), así que su propio
+     alto ya queda achicado de verdad — no hace falta ningún envoltorio
+     ni recortar nada por separado. */
   function fitGameScreen() {
     const area = document.getElementById('active-game-area');
     if (!area) return;
     const cs = window.getComputedStyle(area);
     if (cs.display === 'none') return;
 
-    const wrapper = ensureFitWrapper(area);
-
-    // Se resetea todo a estado "natural" (sin achicar) para medir bien
-    // cuánto ocupa de verdad ANTES de decidir cuánto reducir.
-    area.style.setProperty('transform', 'none', 'important');
-    area.style.removeProperty('height');
-    area.style.removeProperty('max-height');
-    wrapper.style.removeProperty('height');
-    wrapper.style.setProperty('overflow', 'visible', 'important');
+    // Se resetea al 100% para medir bien cuánto ocupa de verdad ANTES de
+    // decidir cuánto reducir.
+    area.style.setProperty('zoom', '1', 'important');
     forceCardSizing();
 
     const vh = (window.visualViewport ? window.visualViewport.height : window.innerHeight);
-    const top = wrapper.getBoundingClientRect().top;
+    const top = area.getBoundingClientRect().top;
     const budget = Math.max(120, Math.floor(vh - top - 6));
 
     const naturalHeight = area.scrollHeight;
-    let scale = 1;
+    let zoomLevel = 1;
     if (naturalHeight > budget) {
-      scale = Math.max(0.42, budget / naturalHeight);
+      zoomLevel = Math.max(0.42, budget / naturalHeight);
     }
-
-    area.style.setProperty('transform-origin', 'top center', 'important');
-    area.style.setProperty('transform', 'scale(' + scale.toFixed(3) + ')', 'important');
-
-    const scaledHeight = Math.ceil(naturalHeight * scale);
-    wrapper.style.setProperty('height', scaledHeight + 'px', 'important');
-    wrapper.style.setProperty('overflow', 'hidden', 'important');
-    wrapper.style.setProperty('box-sizing', 'border-box', 'important');
+    area.style.setProperty('zoom', zoomLevel.toFixed(3), 'important');
+    area.style.setProperty('overflow', 'hidden', 'important');
   }
 
   if (!window._mhCardSizingObserverWired) {
