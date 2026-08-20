@@ -3627,6 +3627,10 @@
             de la app (juego, mascotas, tienda, etc.) a mano. Se guarda en
             porcentaje de pantalla y se sube a la nube — se aplica para
             todos los jugadores, no solo en este celular.
+            <br><br>
+            💡 Atajo: mantené apretado el botón 🔧 (donde sea que aparezca)
+            para activar el editor DIRECTO en esa misma pantalla, sin
+            pasar por acá.
           </div>
           <button type="button" class="mh-editor-admin-btn off" id="mh-editor-toggle-btn">▶️ Activar modo edición</button>
           <div class="mh-editor-admin-note" id="mh-editor-cloud-status">☁️ Estado: cargando…</div>
@@ -3851,6 +3855,71 @@
     }
 
     banner.querySelector('#mh-editor-exit').addEventListener('click', () => setEditorMode(false));
+
+    // 🩹 "En todo lados que aparezca el botón administrador, para poder
+    // editar en cualquier sitio" — el 🔧 (.admin-fab) es un único botón
+    // fijo que aparece en casi todas las pantallas de la app. Ahora,
+    // MANTENIÉNDOLO APRETADO (pulsación larga) activa el editor
+    // directamente en la pantalla en la que ya estás — sin abrir el
+    // panel completo ni navegar a ningún lado. Un toque corto sigue
+    // abriendo el panel de administrador normal, como siempre.
+    function wireAdminFabLongPress() {
+      if (window._mhAdminFabLongPressWired) return;
+      const fabBtn = document.querySelector('.admin-fab');
+      if (!fabBtn) return;
+      window._mhAdminFabLongPressWired = true;
+
+      const LONG_PRESS_MS = 550;
+      let pressTimer = null;
+      let longPressFired = false;
+
+      function startPress() {
+        longPressFired = false;
+        pressTimer = setTimeout(async () => {
+          longPressFired = true;
+          try {
+            if (window._mhEditorModeOn) {
+              setEditorMode(false);
+              return;
+            }
+            let savedPass = null;
+            try {
+              savedPass = (typeof getAdminPassword === 'function') ? await getAdminPassword() : null;
+            } catch (e) {}
+            if (savedPass) {
+              const attempt = prompt('🛠️ Editor de pantalla — contraseña de administrador:');
+              if (attempt !== savedPass) return;
+            }
+            setEditorMode(true);
+            if (typeof showToast === 'function') {
+              showToast('🛠️ Editor activado en esta pantalla — tocá un bloque.');
+            }
+          } catch (e) {}
+        }, LONG_PRESS_MS);
+      }
+      function cancelPress() {
+        if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+      }
+
+      fabBtn.addEventListener('pointerdown', startPress);
+      fabBtn.addEventListener('pointerup', cancelPress);
+      fabBtn.addEventListener('pointerleave', cancelPress);
+      fabBtn.addEventListener('pointercancel', cancelPress);
+      // Si fue pulsación larga, se bloquea el tap normal (que abriría el
+      // modal real de admin) para que no se disparen los dos a la vez.
+      fabBtn.addEventListener('click', (e) => {
+        if (longPressFired) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          longPressFired = false;
+        }
+      }, true);
+    }
+    const adminFabInterval = setInterval(() => {
+      wireAdminFabLongPress();
+      if (window._mhAdminFabLongPressWired) clearInterval(adminFabInterval);
+    }, 800);
+    wireAdminFabLongPress();
 
     setInterval(reapplyForCurrentScreen, 700);
     const screenObserver = new MutationObserver((mutations) => {
