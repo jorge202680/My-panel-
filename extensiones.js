@@ -3558,6 +3558,45 @@
       });
     }
 
+    // 🩹 "Solo se queda en login" — el botón de activar edición cerraba
+    // el panel llamando a closeAdminPanel(), pero esa función de tu app
+    // NO es un simple "cerrar este cartel": además te desloguea del todo
+    // (isAdmin=false, currentUser=null, state=null) y te tira siempre al
+    // login-screen, sea cual sea la pantalla en la que estabas antes de
+    // entrar al admin. Por eso quedabas atascado ahí. Ahora se guarda en
+    // qué pantalla/sesión estabas ANTES de abrir el admin (openAdminPanel
+    // pisa currentUser/isAdmin con los valores del admin), y al activar
+    // el editor se restaura exactamente eso — sin cerrar sesión.
+    if (typeof window.openAdminPanel === 'function' && !window._mhAdminOpenWired) {
+      window._mhAdminOpenWired = true;
+      const originalOpenAdminPanel = window.openAdminPanel;
+      window.openAdminPanel = function () {
+        const activeScreen = document.querySelector('.screen.active');
+        window._mhPrevScreenId = (activeScreen && activeScreen.id) || 'main-screen';
+        window._mhPrevCurrentUser = (typeof currentUser !== 'undefined') ? currentUser : null;
+        window._mhPrevIsAdmin = (typeof isAdmin !== 'undefined') ? isAdmin : false;
+        return originalOpenAdminPanel.apply(this, arguments);
+      };
+    }
+    function returnFromAdminWithoutLogout() {
+      try {
+        if (typeof currentUser !== 'undefined') currentUser = window._mhPrevCurrentUser;
+        if (typeof isAdmin !== 'undefined') isAdmin = !!window._mhPrevIsAdmin;
+        const target = window._mhPrevScreenId || 'main-screen';
+        if (typeof goToScreen === 'function' && document.getElementById(target)) {
+          goToScreen(target, true);
+        } else {
+          document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+          const el = document.getElementById(target);
+          if (el) el.classList.add('active');
+        }
+        // openAdminPanel oculta la barra inferior a mano — goToScreen no la
+        // vuelve a mostrar, así que se restaura acá.
+        const bottomNav = document.getElementById('bottom-nav');
+        if (bottomNav) bottomNav.style.display = 'flex';
+      } catch (e) {}
+    }
+
     // -------- UI --------
     // El punto de entrada ahora es una pestaña nueva DENTRO de tu panel de
     // administrador real (.admin-tabs / .admin-body), no un botón aparte
@@ -3599,8 +3638,8 @@
       section.querySelector('#mh-editor-toggle-btn').addEventListener('click', () => {
         const turningOn = !window._mhEditorModeOn;
         setEditorMode(turningOn);
-        if (turningOn && typeof closeAdminPanel === 'function') {
-          closeAdminPanel();
+        if (turningOn) {
+          returnFromAdminWithoutLogout();
         }
       });
       section.querySelector('#mh-editor-reset-screen-btn').addEventListener('click', () => {
