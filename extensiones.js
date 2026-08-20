@@ -3450,6 +3450,19 @@
       }
       .mh-editor-toolbar .mh-et-reset{ background:#5b2222; color:#ffd8d8; }
       .mh-editor-toolbar .mh-et-close{ background:#234a2c; color:#d8ffe0; }
+      /* 🆕 Ventana del editor movible: la cabecera se puede arrastrar
+         (mouse o dedo) para reubicar todo el panel en la pantalla. */
+      .mh-editor-toolbar .mh-et-head{ cursor:move; touch-action:none; }
+      /* 🆕 Color de fondo / color de letra */
+      .mh-editor-toolbar .mh-et-color-row input[type="color"]{
+        flex:1; height:24px; border:none; border-radius:6px; padding:0;
+        background:transparent; cursor:pointer;
+      }
+      .mh-editor-toolbar .mh-et-clear{
+        flex-shrink:0; border:none; background:rgba(255,255,255,.12); color:#ffe9ad;
+        width:20px; height:20px; border-radius:5px; font-size:10px; line-height:1; cursor:pointer;
+      }
+      .mh-editor-toolbar input[type="file"]{ display:none; }
     `;
     const styleTag = document.createElement('style');
     styleTag.textContent = css;
@@ -3567,6 +3580,24 @@
       el.style.setProperty('transform', 'translate(' + dx.toFixed(1) + 'px,' + dy.toFixed(1) + 'px)', 'important');
       if (ov.wPct) el.style.setProperty('width', (ov.wPct / 100 * vw).toFixed(1) + 'px', 'important');
       if (ov.hPct) el.style.setProperty('height', (ov.hPct / 100 * vh).toFixed(1) + 'px', 'important');
+      // 🆕 Color de fondo / color de letra / tamaño de letra
+      if (ov.bg) el.style.setProperty('background-color', ov.bg, 'important');
+      if (ov.fg) el.style.setProperty('color', ov.fg, 'important');
+      if (ov.fontPx) el.style.setProperty('font-size', ov.fontPx + 'px', 'important');
+      // 🆕 Texto editado a mano
+      if (ov.text != null && el.textContent !== ov.text) el.textContent = ov.text;
+      // 🆕 Imagen / logo subido: si el bloque es una etiqueta <img>, se
+      // reemplaza el src; si es cualquier otro bloque (div, botón, etc.),
+      // se pone como imagen de fondo cubriendo todo el bloque.
+      if (ov.imgSrc) {
+        if (el.tagName === 'IMG') {
+          if (el.src !== ov.imgSrc) el.src = ov.imgSrc;
+        } else {
+          el.style.setProperty('background-image', 'url(' + ov.imgSrc + ')', 'important');
+          el.style.setProperty('background-size', 'cover', 'important');
+          el.style.setProperty('background-position', 'center', 'important');
+        }
+      }
       el.classList.add('mh-editor-has-override');
     }
 
@@ -3723,6 +3754,30 @@
           <button class="mh-et-btn" data-act="h+">＋</button>
           <div class="mh-et-readout" id="mh-et-h">—</div>
         </div>
+        <div class="mh-et-row">
+          <button class="mh-et-btn" data-act="text" style="flex:1 1 100%;">✏️ Editar letras</button>
+        </div>
+        <div class="mh-et-row mh-et-color-row">
+          <div class="mh-et-label">Fondo</div>
+          <input type="color" id="mh-et-bg-input" value="#000000">
+          <button type="button" class="mh-et-clear" data-act="bg-clear">✕</button>
+        </div>
+        <div class="mh-et-row mh-et-color-row">
+          <div class="mh-et-label">Letra</div>
+          <input type="color" id="mh-et-fg-input" value="#000000">
+          <button type="button" class="mh-et-clear" data-act="fg-clear">✕</button>
+        </div>
+        <div class="mh-et-row">
+          <div class="mh-et-label">Tam.</div>
+          <button class="mh-et-btn" data-act="font-">－</button>
+          <button class="mh-et-btn" data-act="font+">＋</button>
+          <div class="mh-et-readout" id="mh-et-font">—</div>
+        </div>
+        <div class="mh-et-row">
+          <button class="mh-et-btn" data-act="img" style="flex:1;">🖼️ Imagen / Logo</button>
+          <button type="button" class="mh-et-clear" data-act="img-clear">✕</button>
+        </div>
+        <input type="file" id="mh-et-img-file" accept="image/*">
         <div class="mh-et-actions">
           <button class="mh-et-reset" data-act="reset">↩️ Reset</button>
           <button class="mh-et-close" data-act="close">✅ Listo</button>
@@ -3736,6 +3791,59 @@
       toolbar.classList.toggle('minimized', nowMin);
       toolbar.querySelector('#mh-et-min-btn').textContent = nowMin ? '＋' : '－';
     });
+
+    // 🆕 Ventana del editor movible: arrastrando la cabecera (mouse o
+    // dedo) se reubica todo el panel en cualquier parte de la pantalla.
+    // La posición elegida se recuerda en este celular (no depende del
+    // bloque seleccionado ni de la pantalla del juego).
+    (function makeToolbarDraggable() {
+      const TB_POS_KEY = 'mh_editor_toolbar_pos_v1';
+      const headEl = toolbar.querySelector('.mh-et-head');
+      function loadPos() {
+        try { return JSON.parse(localStorage.getItem(TB_POS_KEY) || 'null'); } catch (e) { return null; }
+      }
+      function savePos(pos) {
+        try { localStorage.setItem(TB_POS_KEY, JSON.stringify(pos)); } catch (e) {}
+      }
+      function applyPos(pos) {
+        if (!pos) return;
+        toolbar.style.left = pos.left + 'px';
+        toolbar.style.top = pos.top + 'px';
+        toolbar.style.right = 'auto';
+        toolbar.style.bottom = 'auto';
+      }
+      applyPos(loadPos());
+
+      let dragging = false, offX = 0, offY = 0;
+      headEl.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('#mh-et-min-btn')) return; // el botón de minimizar no arrastra
+        dragging = true;
+        const rect = toolbar.getBoundingClientRect();
+        offX = e.clientX - rect.left;
+        offY = e.clientY - rect.top;
+        try { headEl.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+      headEl.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        let left = e.clientX - offX;
+        let top = e.clientY - offY;
+        const maxLeft = window.innerWidth - toolbar.offsetWidth - 4;
+        const maxTop = window.innerHeight - 30;
+        left = Math.max(4, Math.min(left, maxLeft));
+        top = Math.max(4, Math.min(top, maxTop));
+        toolbar.style.left = left + 'px';
+        toolbar.style.top = top + 'px';
+        toolbar.style.right = 'auto';
+        toolbar.style.bottom = 'auto';
+      });
+      function endDrag() {
+        if (!dragging) return;
+        dragging = false;
+        savePos({ left: toolbar.offsetLeft, top: toolbar.offsetTop });
+      }
+      headEl.addEventListener('pointerup', endDrag);
+      headEl.addEventListener('pointercancel', endDrag);
+    })();
     const stepsWrap = toolbar.querySelector('#mh-et-steps');
     STEP_OPTIONS.forEach((s, i) => {
       const b = document.createElement('button');
@@ -3769,6 +3877,17 @@
       toolbar.querySelector('#mh-et-h').textContent = Math.round(rect.height) + 'px';
     }
 
+    // 🆕 Pone en los controles (color de fondo, color de letra, tamaño de
+    // letra) los valores ya guardados del bloque seleccionado, para que
+    // el panel muestre lo que ya está aplicado en vez de quedar en blanco.
+    function syncControlsFromOverride() {
+      if (!selectedEl) return;
+      const { ov } = currentOverride();
+      toolbar.querySelector('#mh-et-bg-input').value = ov.bg || '#000000';
+      toolbar.querySelector('#mh-et-fg-input').value = ov.fg || '#000000';
+      toolbar.querySelector('#mh-et-font').textContent = ov.fontPx ? Math.round(ov.fontPx) + 'px' : '—';
+    }
+
     function selectElement(el) {
       if (selectedEl) selectedEl.classList.remove('mh-editor-selected');
       selectedEl = el;
@@ -3780,6 +3899,7 @@
       toolbar.classList.remove('minimized');
       toolbar.querySelector('#mh-et-min-btn').textContent = '－';
       updateReadout();
+      syncControlsFromOverride();
     }
     function deselect() {
       if (selectedEl) selectedEl.classList.remove('mh-editor-selected');
@@ -3805,13 +3925,52 @@
       } else if (act === 'h-' || act === 'h+') {
         if (!ov.hPct) ov.hPct = (selectedEl.getBoundingClientRect().height / window.innerHeight) * 100;
         ov.hPct = Math.max(3, ov.hPct + (act === 'h+' ? step : -step));
+      } else if (act === 'font-' || act === 'font+') {
+        if (!ov.fontPx) {
+          const cs = window.getComputedStyle(selectedEl);
+          ov.fontPx = parseFloat(cs.fontSize) || 16;
+        }
+        ov.fontPx = Math.max(6, ov.fontPx + (act === 'font+' ? 1 : -1));
+      } else if (act === 'text') {
+        // 🆕 Guarda el texto original UNA sola vez (para poder volver a
+        // él con "Reset"), y pide el texto nuevo con un prompt simple.
+        if (ov.origText === undefined) ov.origText = selectedEl.textContent;
+        const actual = (ov.text != null) ? ov.text : selectedEl.textContent;
+        const nuevo = prompt('Nuevo texto para este bloque:', actual);
+        if (nuevo === null) return; // canceló el prompt, no toca nada
+        ov.text = nuevo;
+      } else if (act === 'bg-clear') {
+        delete ov.bg;
+        selectedEl.style.removeProperty('background-color');
+      } else if (act === 'fg-clear') {
+        delete ov.fg;
+        selectedEl.style.removeProperty('color');
+      } else if (act === 'img') {
+        toolbar.querySelector('#mh-et-img-file').click();
+        return;
+      } else if (act === 'img-clear') {
+        delete ov.imgSrc;
+        selectedEl.style.removeProperty('background-image');
+        selectedEl.style.removeProperty('background-size');
+        selectedEl.style.removeProperty('background-position');
+        if (selectedEl.tagName === 'IMG' && ov.origSrc !== undefined) selectedEl.src = ov.origSrc;
       } else if (act === 'reset') {
+        const savedOv = all[screenKey][selectedKey];
         delete all[screenKey][selectedKey];
         selectedEl.style.removeProperty('transform');
         selectedEl.style.removeProperty('width');
         selectedEl.style.removeProperty('height');
+        selectedEl.style.removeProperty('background-color');
+        selectedEl.style.removeProperty('color');
+        selectedEl.style.removeProperty('font-size');
+        selectedEl.style.removeProperty('background-image');
+        selectedEl.style.removeProperty('background-size');
+        selectedEl.style.removeProperty('background-position');
+        if (savedOv && savedOv.origText !== undefined) selectedEl.textContent = savedOv.origText;
+        if (savedOv && savedOv.origSrc !== undefined && selectedEl.tagName === 'IMG') selectedEl.src = savedOv.origSrc;
         saveAll(all);
         updateReadout();
+        syncControlsFromOverride();
         return;
       } else if (act === 'close') {
         deselect();
@@ -3821,6 +3980,50 @@
       saveAll(all);
       applyOverride(selectedEl, ov);
       updateReadout();
+      syncControlsFromOverride();
+    });
+
+    // 🆕 Color de fondo y color de letra: los inputs type="color" no
+    // usan data-act (no son <button>), así que se escuchan aparte.
+    toolbar.querySelector('#mh-et-bg-input').addEventListener('input', (e) => {
+      if (!selectedEl) return;
+      const { all, ov } = currentOverride();
+      ov.bg = e.target.value;
+      saveAll(all);
+      applyOverride(selectedEl, ov);
+    });
+    toolbar.querySelector('#mh-et-fg-input').addEventListener('input', (e) => {
+      if (!selectedEl) return;
+      const { all, ov } = currentOverride();
+      ov.fg = e.target.value;
+      saveAll(all);
+      applyOverride(selectedEl, ov);
+    });
+
+    // 🆕 Subir imagen o logo: se lee el archivo elegido y se guarda como
+    // imagen en base64 (dataURL) dentro del propio ajuste — así viaja
+    // junto con el resto de los overrides sin necesitar subirla a otro
+    // lado. Ojo: si la foto es muy pesada, avisa, porque todos los
+    // ajustes de TODAS las pantallas viven en un solo documento de la
+    // nube y una imagen enorme puede hacer fallar el guardado en la nube
+    // (localmente en el celular sí queda guardada igual).
+    toolbar.querySelector('#mh-et-img-file').addEventListener('change', (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file || !selectedEl) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        if (dataUrl.length > 250000 && typeof showToast === 'function') {
+          showToast('⚠️ Imagen pesada — si podés, subí una más chica/comprimida para que no falle al guardar en la nube.');
+        }
+        const { all, ov } = currentOverride();
+        if (selectedEl.tagName === 'IMG' && ov.origSrc === undefined) ov.origSrc = selectedEl.src;
+        ov.imgSrc = dataUrl;
+        saveAll(all);
+        applyOverride(selectedEl, ov);
+      };
+      reader.readAsDataURL(file);
+      e.target.value = '';
     });
 
     function isEditorOwnElement(el) {
