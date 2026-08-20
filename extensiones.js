@@ -923,6 +923,9 @@
       bar.id = 'mh-round-timeout-timer';
       bar.innerHTML = `⏱️ Tiempo restante de la partida: <span class="mh-rt-secs">${secondsLeft}</span>s`;
       document.body.appendChild(bar);
+      // 🆕 Si el modo edición ya estaba activo cuando arrancó esta ronda,
+      // el reloj nace directamente oculto/congelado.
+      if (window._mhRoundTimerFrozen) bar.style.display = 'none';
       window._mhRoundTimeoutInterval = setInterval(() => {
         // Único reloj de la ronda: sigue corriendo entero aunque ya haya
         // uno o más BINGO reclamados, para que se pueda seguir marcando
@@ -931,6 +934,9 @@
           clearRoundTimeoutTimer();
           return;
         }
+        // 🆕 Congelado (modo edición activo): no descuenta segundos ni
+        // corta la ronda mientras dure la edición.
+        if (window._mhRoundTimerFrozen) return;
         secondsLeft--;
         const secEl = bar.querySelector('.mh-rt-secs');
         if (secEl) secEl.textContent = Math.max(secondsLeft, 0);
@@ -3692,17 +3698,17 @@
           <button type="button" class="mh-editor-admin-btn danger" id="mh-editor-reset-all-btn">🗑️ Borrar TODOS los ajustes guardados</button>
         </div>
         <div class="admin-group">
-          <div class="admin-group-title">👁️ Vista previa de Bingo</div>
+          <div class="admin-group-title">🧪 Editar Bingo</div>
           <div class="mh-editor-admin-note">
-            Entra a la sala como jugador normal (elegís sala y cartones
-            vos mismo) pero SIN gastar saldo real: al salir de la pantalla
-            de Bingo, tu oro y diamantes vuelven exactamente a como
-            estaban antes de entrar, gane o pierda la partida de prueba.
-            Ideal para probar el diseño con el tablero real sin arriesgar
-            tu saldo.
+            Te manda directo a la pantalla de Bingo (elegís sala y
+            cartones normal). Una vez adentro, mantené apretado el 🔧
+            para activar el modo edición: mientras esté activo, el
+            reloj de "Tiempo restante" se oculta y no corre, para que
+            puedas editar con calma sin que la ronda se corte sola.
           </div>
-          <button type="button" class="mh-editor-admin-btn off" id="mh-bingo-preview-btn">👁️ Entrar en modo vista previa</button>
-        </div>`;
+          <button type="button" class="mh-editor-admin-btn off" id="mh-bingo-preview-btn">🧪 Ir a Bingo para editar</button>
+        </div>
+      </div>`;
       bodyWrap.appendChild(section);
 
       section.querySelector('#mh-editor-toggle-btn').addEventListener('click', () => {
@@ -3728,7 +3734,7 @@
       });
       section.querySelector('#mh-bingo-preview-btn').addEventListener('click', () => {
         returnFromAdminWithoutLogout();
-        if (typeof window._mhStartBingoPreview === 'function') window._mhStartBingoPreview();
+        if (typeof window._mhGoToBingoScreen === 'function') window._mhGoToBingoScreen();
       });
     }
     const adminTabInterval = setInterval(() => {
@@ -3948,7 +3954,21 @@
         }
         ov.fontPx = Math.max(6, ov.fontPx + (act === 'font+' ? 1 : -1));
       } else if (act === 'text') {
-        // 🆕 Guarda el texto original UNA sola vez (para poder volver a
+        // 🆕 Si el bloque tiene elementos adentro (botones, casilleros,
+        // números, etc.), cambiarle el texto los borra a TODOS y no se
+        // puede deshacer con Reset (Reset solo puede devolver texto
+        // plano, no reconstruir la estructura real). Por eso se avisa
+        // antes de aplicar, y si cancela no se toca nada.
+        if (selectedEl.children.length > 0) {
+          const seguro = confirm(
+            '⚠️ Este bloque tiene elementos adentro (botones, casilleros, números, etc.). ' +
+            'Cambiarle el texto los va a borrar a TODOS y no se puede deshacer.\n\n' +
+            '¿Seguro que querés continuar? Si solo querés cambiar una etiqueta suelta, ' +
+            'cancelá y tocá ese texto puntual en vez de este bloque grande.'
+          );
+          if (!seguro) return;
+        }
+        // Guarda el texto original UNA sola vez (para poder volver a
         // él con "Reset"), y pide el texto nuevo con un prompt simple.
         if (ov.origText === undefined) ov.origText = selectedEl.textContent;
         const actual = (ov.text != null) ? ov.text : selectedEl.textContent;
@@ -4094,6 +4114,10 @@
       banner.classList.toggle('show', on);
       if (!on) deselect();
       syncAdminToggleBtn();
+      // 🆕 Mientras el modo edición está activo (dentro de una partida de
+      // Bingo, por ejemplo), el reloj de "Tiempo restante" se congela y
+      // se oculta, para poder editar con calma sin que la ronda se corte.
+      if (typeof window._mhSetRoundTimerFrozen === 'function') window._mhSetRoundTimerFrozen(on);
     }
 
     banner.querySelector('#mh-editor-exit').addEventListener('click', () => setEditorMode(false));
@@ -4191,121 +4215,52 @@
 })();
 
 /* ============================================================
-   👁️ VISTA PREVIA DE BINGO (sin gastar saldo real)
+   🧪 EDITAR BINGO SIN PRESIÓN DE TIEMPO
    ------------------------------------------------------------
-   Botón dentro de la pestaña 🛠️ Editor del panel de administrador
-   ("👁️ Entrar en modo vista previa"). Te manda a la pantalla real
-   de Bingo, donde elegís sala y cartones exactamente como un
-   jugador normal (para poder ver/editar el tablero real con el
-   Editor de Pantalla) — pero apenas SALÍS de la pantalla de Bingo
-   (con el botón "Salir" real del juego, el de este cartel, o
-   volviendo al menú), tu oro y diamantes vuelven exactamente a
-   como estaban ANTES de entrar, gane o pierda esa partida de
-   prueba. No toca la lógica del juego en sí (cartones, bolas,
-   premios se calculan de verdad) — solo congela tu saldo real
-   mientras estás en modo vista previa.
+   El saldo gastado no importa (lo aclaró el usuario) — lo único
+   que hacía falta era que, mientras estás con el modo edición
+   (🔧) activo DENTRO de una partida de Bingo, el reloj de "Tiempo
+   restante de la partida" no corra ni se vea, para poder editar
+   con calma sin que la ronda se corte sola. Apenas se apaga el
+   modo edición, el reloj vuelve a aparecer y a correr donde se
+   había quedado.
+   Además: botón directo en el panel admin para ir a la pantalla
+   de Bingo (elegís sala/cartones como siempre) sin tener que
+   navegar por el menú.
    ============================================================ */
 (function () {
-  function setupBingoPreview() {
-    if (window._mhBingoPreviewWired) return;
-    // Necesita que goToScreen (de tu index.html) ya exista, para poder
-    // engancharse a ella y detectar cuándo salís de game-screen.
+  function setupBingoEditHelpers() {
+    if (window._mhBingoEditHelpersWired) return;
     if (typeof window.goToScreen !== 'function') return;
-    window._mhBingoPreviewWired = true;
+    window._mhBingoEditHelpersWired = true;
 
-    const css = `
-      .mh-preview-banner{
-        position:fixed; top:44px; left:50%; transform:translateX(-50%);
-        z-index:99993; background:rgba(10,30,60,.94); border:1px solid #58a6ff;
-        color:#cfe6ff; font-size:11.5px; font-weight:800; padding:6px 12px;
-        border-radius:999px; display:none; align-items:center; gap:8px;
-        box-shadow:0 3px 10px rgba(0,0,0,.5);
-      }
-      .mh-preview-banner.show{ display:flex; }
-      .mh-preview-banner button{
-        border:none; background:rgba(255,255,255,.16); color:#cfe6ff;
-        font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; cursor:pointer;
-      }
-    `;
-    const styleTag = document.createElement('style');
-    styleTag.textContent = css;
-    document.head.appendChild(styleTag);
+    // Congela (oculta) o reanuda (muestra) el cronómetro de la ronda.
+    // Mientras está congelado no descuenta segundos ni corta la ronda.
+    window._mhSetRoundTimerFrozen = function (frozen) {
+      window._mhRoundTimerFrozen = !!frozen;
+      const bar = document.getElementById('mh-round-timeout-timer');
+      if (bar) bar.style.display = frozen ? 'none' : '';
+    };
 
-    const banner = document.createElement('div');
-    banner.className = 'mh-preview-banner';
-    banner.innerHTML = '👁️ VISTA PREVIA — no se gasta saldo real <button type="button" id="mh-preview-exit">Salir</button>';
-    document.body.appendChild(banner);
-
-    // Guarda todos los campos de saldo que existan en "state" (oro,
-    // diamantes, xp...) tal como están justo antes de entrar, para
-    // devolverlos exactos al salir — sin importar qué pase adentro.
-    function snapshotEconomy() {
-      if (typeof state === 'undefined' || !state) return null;
-      const snap = {};
-      ['gold', 'diamonds', 'diamantes', 'xp'].forEach((k) => {
-        if (state[k] !== undefined) snap[k] = state[k];
-      });
-      return snap;
-    }
-    function restoreEconomy(snap) {
-      if (!snap || typeof state === 'undefined' || !state) return;
-      Object.keys(snap).forEach((k) => { state[k] = snap[k]; });
-      if (typeof saveState === 'function') saveState();
-      if (typeof refreshAllUI === 'function') refreshAllUI();
-    }
-
-    function endPreview() {
-      if (!window._mhBingoPreviewMode) return;
-      window._mhBingoPreviewMode = false;
-      restoreEconomy(window._mhBingoPreviewSnapshot);
-      window._mhBingoPreviewSnapshot = null;
-      banner.classList.remove('show');
-      if (typeof showToast === 'function') {
-        showToast('👁️ Vista previa terminada — tu saldo real quedó intacto.');
-      }
-    }
-    window._mhEndBingoPreview = endPreview;
-
-    window._mhStartBingoPreview = function () {
+    window._mhGoToBingoScreen = function () {
       if (!document.getElementById('game-screen')) {
         if (typeof showToast === 'function') showToast('⚠️ No se encontró la pantalla de Bingo.');
         return;
       }
-      window._mhBingoPreviewMode = true;
-      window._mhBingoPreviewSnapshot = snapshotEconomy();
       goToScreen('game-screen', true);
-      banner.classList.add('show');
       if (typeof showToast === 'function') {
-        showToast('👁️ Vista previa activada — elegí sala y cartones normal, tu saldo real queda intacto al salir.');
+        showToast('🧪 Elegí sala y cartones normal. Activá el 🔧 (mantenerlo apretado) para editar sin que corra el reloj.');
       }
-    };
-
-    banner.querySelector('#mh-preview-exit').addEventListener('click', () => {
-      endPreview();
-      if (typeof goToScreen === 'function' && document.getElementById('main-screen')) {
-        goToScreen('main-screen', true);
-      }
-    });
-
-    // Se apaga sola apenas la app navega a CUALQUIER pantalla que no sea
-    // game-screen (botón real de "Salir" del propio Bingo, volver al
-    // menú, etc.) — así nunca queda "trabada" en modo vista previa.
-    const originalGoToScreen = window.goToScreen;
-    window.goToScreen = function (screenId) {
-      if (window._mhBingoPreviewMode && screenId !== 'game-screen') {
-        endPreview();
-      }
-      return originalGoToScreen.apply(this, arguments);
     };
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupBingoPreview);
+    document.addEventListener('DOMContentLoaded', setupBingoEditHelpers);
   } else {
-    setupBingoPreview();
+    setupBingoEditHelpers();
   }
-  const previewRetryInterval = setInterval(() => {
-    setupBingoPreview();
-    if (window._mhBingoPreviewWired) clearInterval(previewRetryInterval);
+  const bingoEditRetryInterval = setInterval(() => {
+    setupBingoEditHelpers();
+    if (window._mhBingoEditHelpersWired) clearInterval(bingoEditRetryInterval);
   }, 800);
 })();
