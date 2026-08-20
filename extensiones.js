@@ -3366,14 +3366,24 @@
     const STEP_OPTIONS = [0.5, 1, 2, 5];
 
     const css = `
-      /* 🩹 "En todo lados que aparezca el botón administrador" — tu app
-         (en un ajuste anterior, en otra conversación) manda el 🔧 fuera
-         de la pantalla (top:-9999px) en TODAS las pantallas salvo Inicio,
-         a propósito. Acá se lo fuerza a quedar visible y en su posición
-         normal SIEMPRE — incluida la pantalla del bingo, donde no
-         aparecía — sin tocar esa otra lógica para los otros dos íconos
-         (cohete/estrella), que siguen igual que antes.
+      /* 🩹 "Quitale el bloqueo a bingo" — la regla de arriba
+         (.admin-fab{ display:flex !important }) NO le ganaba a las
+         reglas que lo ocultan durante el juego, porque en CSS, entre dos
+         reglas con !important, gana la más ESPECÍFICA, no la que está
+         más abajo en el archivo. Y hay DOS reglas más específicas
+         escondiéndolo en bingo: una de tu index.html original
+         (body.no-scroll-fixed-screen .admin-fab, porque la pantalla de
+         juego le pone esa clase al body mientras se juega) y otra de un
+         ajuste anterior tuyo en este mismo extensiones.js
+         (body.mh-hide-fabs .admin-fab, porque game-screen está en la
+         lista de pantallas que ocultan los íconos flotantes). Ahora se
+         sobreescriben las DOS, con la misma especificidad exacta, para
+         que el 🔧 se vea también en bingo.
       */
+      body.no-scroll-fixed-screen .admin-fab,
+      body.mh-hide-fabs .admin-fab{
+        display:flex !important;
+      }
       .admin-fab{
         top:auto !important; bottom:85px !important; left:12px !important; right:auto !important;
         width:38px !important; height:38px !important; font-size:17px !important;
