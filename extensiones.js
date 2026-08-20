@@ -3366,6 +3366,19 @@
     const STEP_OPTIONS = [0.5, 1, 2, 5];
 
     const css = `
+      /* 🩹 "En todo lados que aparezca el botón administrador" — tu app
+         (en un ajuste anterior, en otra conversación) manda el 🔧 fuera
+         de la pantalla (top:-9999px) en TODAS las pantallas salvo Inicio,
+         a propósito. Acá se lo fuerza a quedar visible y en su posición
+         normal SIEMPRE — incluida la pantalla del bingo, donde no
+         aparecía — sin tocar esa otra lógica para los otros dos íconos
+         (cohete/estrella), que siguen igual que antes.
+      */
+      .admin-fab{
+        top:auto !important; bottom:85px !important; left:12px !important; right:auto !important;
+        width:38px !important; height:38px !important; font-size:17px !important;
+        display:flex !important;
+      }
       .mh-editor-admin-btn{
         display:block; width:100%; padding:12px; margin-top:8px; border:none; border-radius:10px;
         font-weight:900; font-size:13.5px; cursor:pointer;
