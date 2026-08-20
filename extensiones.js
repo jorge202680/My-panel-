@@ -3690,6 +3690,18 @@
           <div class="mh-editor-admin-note" id="mh-editor-cloud-status">☁️ Estado: cargando…</div>
           <button type="button" class="mh-editor-admin-btn danger" id="mh-editor-reset-screen-btn">🗑️ Borrar ajustes de ESTA pantalla</button>
           <button type="button" class="mh-editor-admin-btn danger" id="mh-editor-reset-all-btn">🗑️ Borrar TODOS los ajustes guardados</button>
+        </div>
+        <div class="admin-group">
+          <div class="admin-group-title">👁️ Vista previa de Bingo</div>
+          <div class="mh-editor-admin-note">
+            Entra a la sala como jugador normal (elegís sala y cartones
+            vos mismo) pero SIN gastar saldo real: al salir de la pantalla
+            de Bingo, tu oro y diamantes vuelven exactamente a como
+            estaban antes de entrar, gane o pierda la partida de prueba.
+            Ideal para probar el diseño con el tablero real sin arriesgar
+            tu saldo.
+          </div>
+          <button type="button" class="mh-editor-admin-btn off" id="mh-bingo-preview-btn">👁️ Entrar en modo vista previa</button>
         </div>`;
       bodyWrap.appendChild(section);
 
@@ -3713,6 +3725,10 @@
         if (!confirm('¿Borrar TODOS los ajustes guardados de TODAS las pantallas? Esto no se puede deshacer.')) return;
         saveAll({});
         alert('Listo, se borró todo.');
+      });
+      section.querySelector('#mh-bingo-preview-btn').addEventListener('click', () => {
+        returnFromAdminWithoutLogout();
+        if (typeof window._mhStartBingoPreview === 'function') window._mhStartBingoPreview();
       });
     }
     const adminTabInterval = setInterval(() => {
@@ -4172,4 +4188,124 @@
     setupLayoutEditor();
   }
   setTimeout(setupLayoutEditor, 800);
+})();
+
+/* ============================================================
+   👁️ VISTA PREVIA DE BINGO (sin gastar saldo real)
+   ------------------------------------------------------------
+   Botón dentro de la pestaña 🛠️ Editor del panel de administrador
+   ("👁️ Entrar en modo vista previa"). Te manda a la pantalla real
+   de Bingo, donde elegís sala y cartones exactamente como un
+   jugador normal (para poder ver/editar el tablero real con el
+   Editor de Pantalla) — pero apenas SALÍS de la pantalla de Bingo
+   (con el botón "Salir" real del juego, el de este cartel, o
+   volviendo al menú), tu oro y diamantes vuelven exactamente a
+   como estaban ANTES de entrar, gane o pierda esa partida de
+   prueba. No toca la lógica del juego en sí (cartones, bolas,
+   premios se calculan de verdad) — solo congela tu saldo real
+   mientras estás en modo vista previa.
+   ============================================================ */
+(function () {
+  function setupBingoPreview() {
+    if (window._mhBingoPreviewWired) return;
+    // Necesita que goToScreen (de tu index.html) ya exista, para poder
+    // engancharse a ella y detectar cuándo salís de game-screen.
+    if (typeof window.goToScreen !== 'function') return;
+    window._mhBingoPreviewWired = true;
+
+    const css = `
+      .mh-preview-banner{
+        position:fixed; top:44px; left:50%; transform:translateX(-50%);
+        z-index:99993; background:rgba(10,30,60,.94); border:1px solid #58a6ff;
+        color:#cfe6ff; font-size:11.5px; font-weight:800; padding:6px 12px;
+        border-radius:999px; display:none; align-items:center; gap:8px;
+        box-shadow:0 3px 10px rgba(0,0,0,.5);
+      }
+      .mh-preview-banner.show{ display:flex; }
+      .mh-preview-banner button{
+        border:none; background:rgba(255,255,255,.16); color:#cfe6ff;
+        font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px; cursor:pointer;
+      }
+    `;
+    const styleTag = document.createElement('style');
+    styleTag.textContent = css;
+    document.head.appendChild(styleTag);
+
+    const banner = document.createElement('div');
+    banner.className = 'mh-preview-banner';
+    banner.innerHTML = '👁️ VISTA PREVIA — no se gasta saldo real <button type="button" id="mh-preview-exit">Salir</button>';
+    document.body.appendChild(banner);
+
+    // Guarda todos los campos de saldo que existan en "state" (oro,
+    // diamantes, xp...) tal como están justo antes de entrar, para
+    // devolverlos exactos al salir — sin importar qué pase adentro.
+    function snapshotEconomy() {
+      if (typeof state === 'undefined' || !state) return null;
+      const snap = {};
+      ['gold', 'diamonds', 'diamantes', 'xp'].forEach((k) => {
+        if (state[k] !== undefined) snap[k] = state[k];
+      });
+      return snap;
+    }
+    function restoreEconomy(snap) {
+      if (!snap || typeof state === 'undefined' || !state) return;
+      Object.keys(snap).forEach((k) => { state[k] = snap[k]; });
+      if (typeof saveState === 'function') saveState();
+      if (typeof refreshAllUI === 'function') refreshAllUI();
+    }
+
+    function endPreview() {
+      if (!window._mhBingoPreviewMode) return;
+      window._mhBingoPreviewMode = false;
+      restoreEconomy(window._mhBingoPreviewSnapshot);
+      window._mhBingoPreviewSnapshot = null;
+      banner.classList.remove('show');
+      if (typeof showToast === 'function') {
+        showToast('👁️ Vista previa terminada — tu saldo real quedó intacto.');
+      }
+    }
+    window._mhEndBingoPreview = endPreview;
+
+    window._mhStartBingoPreview = function () {
+      if (!document.getElementById('game-screen')) {
+        if (typeof showToast === 'function') showToast('⚠️ No se encontró la pantalla de Bingo.');
+        return;
+      }
+      window._mhBingoPreviewMode = true;
+      window._mhBingoPreviewSnapshot = snapshotEconomy();
+      goToScreen('game-screen', true);
+      banner.classList.add('show');
+      if (typeof showToast === 'function') {
+        showToast('👁️ Vista previa activada — elegí sala y cartones normal, tu saldo real queda intacto al salir.');
+      }
+    };
+
+    banner.querySelector('#mh-preview-exit').addEventListener('click', () => {
+      endPreview();
+      if (typeof goToScreen === 'function' && document.getElementById('main-screen')) {
+        goToScreen('main-screen', true);
+      }
+    });
+
+    // Se apaga sola apenas la app navega a CUALQUIER pantalla que no sea
+    // game-screen (botón real de "Salir" del propio Bingo, volver al
+    // menú, etc.) — así nunca queda "trabada" en modo vista previa.
+    const originalGoToScreen = window.goToScreen;
+    window.goToScreen = function (screenId) {
+      if (window._mhBingoPreviewMode && screenId !== 'game-screen') {
+        endPreview();
+      }
+      return originalGoToScreen.apply(this, arguments);
+    };
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupBingoPreview);
+  } else {
+    setupBingoPreview();
+  }
+  const previewRetryInterval = setInterval(() => {
+    setupBingoPreview();
+    if (window._mhBingoPreviewWired) clearInterval(previewRetryInterval);
+  }, 800);
 })();
